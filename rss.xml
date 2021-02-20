@@ -10,18 +10,15 @@
         </author>
         <description>Stay curious, stay naive.</description>
         <language>zh-CN</language>
-        <pubDate>Sun, 12 Apr 2020 20:46:25 +0800</pubDate>
-        <lastBuildDate>Sun, 12 Apr 2020 20:46:25 +0800</lastBuildDate>
+        <pubDate>Sat, 20 Feb 2021 15:13:36 +0800</pubDate>
+        <lastBuildDate>Sat, 20 Feb 2021 15:13:36 +0800</lastBuildDate>
         <category term="Fusice" />
         <category term="sjfcs" />
         <item>
             <guid isPermalink="true">https://sjfcs.github.io/%E8%B7%AF%E7%94%B1%E4%BA%A4%E6%8D%A2/week-1/</guid>
-            <title>第1周 计算</title>
+            <title></title>
             <link>https://sjfcs.github.io/%E8%B7%AF%E7%94%B1%E4%BA%A4%E6%8D%A2/week-1/</link>
-            <category term="计算机科学" scheme="https://sjfcs.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6/" />
-            <category term="Java" scheme="https://sjfcs.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6/Java/" />
-            <category term="零基础学Java语言-浙江大学-翁恺" scheme="https://sjfcs.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6/Java/%E9%9B%B6%E5%9F%BA%E7%A1%80%E5%AD%A6Java%E8%AF%AD%E8%A8%80-%E6%B5%99%E6%B1%9F%E5%A4%A7%E5%AD%A6-%E7%BF%81%E6%81%BA/" />
-            <pubDate>Sun, 12 Apr 2020 20:46:25 +0800</pubDate>
+            <pubDate>Sat, 20 Feb 2021 15:13:36 +0800</pubDate>
             <description><![CDATA[ &lt;p&gt;:::note info&lt;br /&gt;
  以下为个人学习笔记和习题整理&lt;br /&gt;
 课程：零基础学 Java 语言 - 浙江大学 - 翁恺 @ 中国大学 MOOC&lt;br /&gt;
