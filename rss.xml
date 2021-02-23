@@ -18,15 +18,14 @@
             <guid isPermalink="true">https://sjfcs.github.io/%E7%BD%91%E7%BB%9C/RS-1-smart%20link/</guid>
             <title>RS-Smart-link</title>
             <link>https://sjfcs.github.io/%E7%BD%91%E7%BB%9C/RS-1-smart%20link/</link>
-            <category term="note" scheme="https://sjfcs.github.io/categories/note/" />
-            <category term="Hexo" scheme="https://sjfcs.github.io/tags/Hexo/" />
+            <category term="网络" scheme="https://sjfcs.github.io/categories/%E7%BD%91%E7%BB%9C/" />
             <category term="教程" scheme="https://sjfcs.github.io/tags/%E6%95%99%E7%A8%8B/" />
             <pubDate>Thu, 13 Aug 2020 20:45:48 +0800</pubDate>
             <description><![CDATA[ &lt;div class=&#34;note info&#34;&gt;
 &lt;p&gt;H3C 华为私有&lt;/p&gt;
 &lt;p&gt;定义：针对 &lt;code&gt;双上行&lt;/code&gt; 组网的解决方案，实现高可靠链路冗余和故障切换&lt;/p&gt;
 &lt;p&gt;优势：故障切换厘秒级&lt;/p&gt;
-&lt;p&gt;运行机制：双上行端两个口组成一个 Smart-link 组，配置主备端口。故障时自动切换，恢复后仍保持不重新抢占主备&lt;/p&gt;
+&lt;p&gt;运行机制：双上行端两个口组成一个 Smart-link 组，配置主备端口。故障时自动切换，恢复后仍保持不重新抢占主备，默认不角色抢占和自动回切&lt;/p&gt;
 &lt;/div&gt;
 &lt;h3 id=&#34;交换机收到smartlink的flush报文后是如何处理的&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#交换机收到smartlink的flush报文后是如何处理的&#34;&gt;#&lt;/a&gt; 交换机收到 SmartLink 的 flush 报文后是如何处理的&lt;/h3&gt;
 &lt;p&gt;交换机收到 SmartLink 的 flush 报文后，会对报文中的密码进行检查，若与端口下配置的控制 VLAN 以及密码相同，则清除设备上的 MAC 表项，否则将 flush 报文丢弃。&lt;/p&gt;

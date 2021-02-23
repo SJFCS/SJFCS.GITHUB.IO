@@ -11,10 +11,9 @@
             "url": "https://sjfcs.github.io/%E7%BD%91%E7%BB%9C/RS-1-smart%20link/",
             "title": "RS-Smart-link",
             "date_published": "2020-08-13T12:45:48.000Z",
-            "content_html": "<div class=\"note info\">\n<p>H3C 华为私有</p>\n<p>定义：针对 <code>双上行</code> 组网的解决方案，实现高可靠链路冗余和故障切换</p>\n<p>优势：故障切换厘秒级</p>\n<p>运行机制：双上行端两个口组成一个 Smart-link 组，配置主备端口。故障时自动切换，恢复后仍保持不重新抢占主备</p>\n</div>\n<h3 id=\"交换机收到smartlink的flush报文后是如何处理的\"><a class=\"anchor\" href=\"#交换机收到smartlink的flush报文后是如何处理的\">#</a> 交换机收到 SmartLink 的 flush 报文后是如何处理的</h3>\n<p>交换机收到 SmartLink 的 flush 报文后，会对报文中的密码进行检查，若与端口下配置的控制 VLAN 以及密码相同，则清除设备上的 MAC 表项，否则将 flush 报文丢弃。</p>\n<p>如果接口下配置了<strong> smart-link flush receive</strong> 命令，且该命令中的控制 VLAN 与接收 flush 报文中的控制 VLAN 相同，则清除该接口下的 MAC 表项。</p>\n",
+            "content_html": "<div class=\"note info\">\n<p>H3C 华为私有</p>\n<p>定义：针对 <code>双上行</code> 组网的解决方案，实现高可靠链路冗余和故障切换</p>\n<p>优势：故障切换厘秒级</p>\n<p>运行机制：双上行端两个口组成一个 Smart-link 组，配置主备端口。故障时自动切换，恢复后仍保持不重新抢占主备，默认不角色抢占和自动回切</p>\n</div>\n<h3 id=\"交换机收到smartlink的flush报文后是如何处理的\"><a class=\"anchor\" href=\"#交换机收到smartlink的flush报文后是如何处理的\">#</a> 交换机收到 SmartLink 的 flush 报文后是如何处理的</h3>\n<p>交换机收到 SmartLink 的 flush 报文后，会对报文中的密码进行检查，若与端口下配置的控制 VLAN 以及密码相同，则清除设备上的 MAC 表项，否则将 flush 报文丢弃。</p>\n<p>如果接口下配置了<strong> smart-link flush receive</strong> 命令，且该命令中的控制 VLAN 与接收 flush 报文中的控制 VLAN 相同，则清除该接口下的 MAC 表项。</p>\n",
             "tags": [
-                "note",
-                "Hexo",
+                "网络",
                 "教程"
             ]
         }
