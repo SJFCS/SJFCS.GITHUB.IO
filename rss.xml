@@ -10,261 +10,27 @@
         </author>
         <description>Stay curious, stay naive.</description>
         <language>zh-CN</language>
-        <pubDate>Thu, 13 Aug 2020 21:12:48 +0800</pubDate>
-        <lastBuildDate>Thu, 13 Aug 2020 21:12:48 +0800</lastBuildDate>
+        <pubDate>Thu, 13 Aug 2020 20:45:48 +0800</pubDate>
+        <lastBuildDate>Thu, 13 Aug 2020 20:45:48 +0800</lastBuildDate>
         <category term="Fusice" />
         <category term="sjfcs" />
         <item>
-            <guid isPermalink="true">https://sjfcs.github.io/note/theme-shoka-doc/display/</guid>
-            <title>Step.3 界面显示</title>
-            <link>https://sjfcs.github.io/note/theme-shoka-doc/display/</link>
-            <category term="note" scheme="https://sjfcs.github.io/categories/note/" />
-            <category term="theme-shoka-doc" scheme="https://sjfcs.github.io/categories/note/theme-shoka-doc/" />
-            <category term="Hexo" scheme="https://sjfcs.github.io/tags/Hexo/" />
-            <category term="教程" scheme="https://sjfcs.github.io/tags/%E6%95%99%E7%A8%8B/" />
-            <pubDate>Thu, 13 Aug 2020 21:12:48 +0800</pubDate>
-            <description><![CDATA[ &lt;div class=&#34;note primary&#34;&gt;
-&lt;p&gt;&lt;a href=&#34;/computer-science/note/theme-shoka-doc/&#34;&gt;🚀快速开始&lt;/a&gt; - &lt;a href=&#34;/computer-science/note/theme-shoka-doc/dependents/&#34;&gt;💌依赖插件&lt;/a&gt; - &lt;a href=&#34;/computer-science/note/theme-shoka-doc/config/&#34;&gt;📌基本配置&lt;/a&gt; - &lt;a href=&#34;/computer-science/note/theme-shoka-doc/display/&#34;&gt;&lt;strong&gt;🌈界面显示&lt;/strong&gt;&lt;/a&gt; - &lt;a href=&#34;/computer-science/note/theme-shoka-doc/special/&#34;&gt;🦄特殊功能&lt;/a&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;h1 id=&#34;首页置顶文章&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#首页置顶文章&#34;&gt;#&lt;/a&gt; 首页置顶文章&lt;/h1&gt;
-&lt;p&gt;在文章的 Front Matter 设置 &lt;code&gt;sticky: true&lt;/code&gt; ，则该文章将显示在首页最上方的 &lt;code&gt;置顶文章&lt;/code&gt; 列。&lt;br /&gt;
-多篇文章按照发布时间倒序排列，不分页。&lt;/p&gt;
-&lt;figure class=&#34;highlight raw&#34;&gt;&lt;figcaption data-lang=&#34;&#34;&gt;&lt;/figcaption&gt;&lt;table&gt;&lt;tr&gt;&lt;td data-num=&#34;1&#34;&gt;&lt;/td&gt;&lt;td&gt;&lt;pre&gt;---&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td data-num=&#34;2&#34;&gt;&lt;/td&gt;&lt;td&gt;&lt;pre&gt;title: 置顶文章&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td data-num=&#34;3&#34;&gt;&lt;/td&gt;&lt;td&gt;&lt;pre&gt;sticky: true&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td data-num=&#34;4&#34;&gt;&lt;/td&gt;&lt;td&gt;&lt;pre&gt;---&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;&lt;h1 id=&#34;首页精选分类&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#首页精选分类&#34;&gt;#&lt;/a&gt; 首页精选分类&lt;/h1&gt;
-&lt;p&gt;想要在首页显示分类翻转块，需要按照以下示例的方式，给需要显示的分类加上封面图。&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;
-&lt;p&gt;首先，修改站点配置：&lt;br /&gt;
-找到 &lt;code&gt;category_map:&lt;/code&gt; ，配置每个分类对应的英文映射，比如：&lt;/p&gt;
-&lt;figure class=&#34;highlight yml&#34;&gt;&lt;figcaption data-lang=&#34;YAML&#34;&gt;&lt;/figcaption&gt;&lt;table&gt;&lt;tr&gt;&lt;td data-num=&#34;1&#34;&gt;&lt;/td&gt;&lt;td&gt;&lt;pre&gt;&lt;span class=&#34;token key atrule&#34;&gt;category_map&lt;/span&gt;&lt;span class=&#34;token punctuation&#34;&gt;:&lt;/span&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td data-num=&#34;2&#34;&gt;&lt;/td&gt;&lt;td&gt;&lt;pre&gt;  &lt;span class=&#34;token key atrule&#34;&gt;计算机科学&lt;/span&gt;&lt;span class=&#34;token punctuation&#34;&gt;:&lt;/span&gt; computer&lt;span class=&#34;token punctuation&#34;&gt;-&lt;/span&gt;science&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td data-num=&#34;3&#34;&gt;&lt;/td&gt;&lt;td&gt;&lt;pre&gt;  &lt;span class=&#34;token key atrule&#34;&gt;Java&lt;/span&gt;&lt;span class=&#34;token punctuation&#34;&gt;:&lt;/span&gt; java&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td data-num=&#34;4&#34;&gt;&lt;/td&gt;&lt;td&gt;&lt;pre&gt;  &lt;span class=&#34;token key atrule&#34;&gt;C++&lt;/span&gt;&lt;span class=&#34;token punctuation&#34;&gt;:&lt;/span&gt; cpp&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td data-num=&#34;5&#34;&gt;&lt;/td&gt;&lt;td&gt;&lt;pre&gt;  &lt;span class=&#34;token key atrule&#34;&gt;二进制杂谈&lt;/span&gt;&lt;span class=&#34;token punctuation&#34;&gt;:&lt;/span&gt; note&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td data-num=&#34;6&#34;&gt;&lt;/td&gt;&lt;td&gt;&lt;pre&gt;  &lt;span class=&#34;token key atrule&#34;&gt;计算机程序设计（C++）-西安交通大学&lt;/span&gt;&lt;span class=&#34;token punctuation&#34;&gt;:&lt;/span&gt; course&lt;span class=&#34;token punctuation&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;token number&#34;&gt;1&lt;/span&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td data-num=&#34;7&#34;&gt;&lt;/td&gt;&lt;td&gt;&lt;pre&gt;  &lt;span class=&#34;token key atrule&#34;&gt;零基础学Java语言-浙江大学-翁恺&lt;/span&gt;&lt;span class=&#34;token punctuation&#34;&gt;:&lt;/span&gt; course&lt;span class=&#34;token punctuation&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;token number&#34;&gt;1&lt;/span&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td data-num=&#34;8&#34;&gt;&lt;/td&gt;&lt;td&gt;&lt;pre&gt;  &lt;span class=&#34;token key atrule&#34;&gt;面向对象程序设计-Java语言-浙江大学-翁恺&lt;/span&gt;&lt;span class=&#34;token punctuation&#34;&gt;:&lt;/span&gt; course&lt;span class=&#34;token punctuation&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;token number&#34;&gt;2&lt;/span&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;&lt;blockquote&gt;
-&lt;p&gt;注意：hexo 会自动处理路径中的特殊字符，~`!@#$%&lt;span&gt;&lt;/span&gt;^&amp;amp;*()-_+=&lt;span&gt;&lt;/span&gt;{}|\;:&amp;quot;&#39;&amp;lt;&amp;gt;,.? 以及空格，这些全部会被替换成 &lt;code&gt;-&lt;/code&gt; &lt;br /&gt;
- 所以避免在设置中使用上述字符，否则可导致无法抓取到目录下的 &lt;code&gt;cover.jpg&lt;/code&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;在 &lt;code&gt;&amp;lt;root&amp;gt;/source/_posts&lt;/code&gt;  文件夹相应的目录里，存放封面图&lt;br /&gt;
-例子：如 &lt;span class=&#34;exturl&#34; data-url=&#34;aHR0cHM6Ly9zaG9rYS5sb3N0eXUubWUvY29tcHV0ZXItc2NpZW5jZS9qYXZhL2NvdXJzZS0xL3dlZWstMS8=&#34;&gt;第 1 周 计算&lt;/span&gt; 这篇文章。&lt;br /&gt;
-所处的分类是&lt;/p&gt;
-&lt;figure class=&#34;highlight yml&#34;&gt;&lt;figcaption data-lang=&#34;YAML&#34;&gt;&lt;/figcaption&gt;&lt;table&gt;&lt;tr&gt;&lt;td data-num=&#34;1&#34;&gt;&lt;/td&gt;&lt;td&gt;&lt;pre&gt;&lt;span class=&#34;token key atrule&#34;&gt;categories&lt;/span&gt;&lt;span class=&#34;token punctuation&#34;&gt;:&lt;/span&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td data-num=&#34;2&#34;&gt;&lt;/td&gt;&lt;td&gt;&lt;pre&gt;&lt;span class=&#34;token punctuation&#34;&gt;-&lt;/span&gt; &lt;span class=&#34;token punctuation&#34;&gt;[&lt;/span&gt;计算机科学&lt;span class=&#34;token punctuation&#34;&gt;,&lt;/span&gt; Java&lt;span class=&#34;token punctuation&#34;&gt;,&lt;/span&gt; 零基础学Java语言&lt;span class=&#34;token punctuation&#34;&gt;-&lt;/span&gt;浙江大学&lt;span class=&#34;token punctuation&#34;&gt;-&lt;/span&gt;翁恺&lt;span class=&#34;token punctuation&#34;&gt;]&lt;/span&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;&lt;p&gt;现在需要在首页显示 &lt;code&gt;零基础学Java语言-浙江大学-翁恺&lt;/code&gt; 这个分类，翻转卡片后，显示这个分类下的文章们。&lt;br /&gt;
-而该分类经过英文映射，它的路径将是 &lt;code&gt;/computer-science/java/course-1/&lt;/code&gt; 。&lt;/p&gt;
-&lt;p&gt;那么，请在 &lt;code&gt;&amp;lt;root&amp;gt;/source/_posts/computer-science/java/course-1/&lt;/code&gt;  的目录下放置 &lt;code&gt;cover.jpg&lt;/code&gt;  文件。&lt;br /&gt;
-只要 &lt;code&gt;分类路径&lt;/code&gt; 对应的目录下&lt;strong&gt;存在&lt;/strong&gt; &lt;code&gt;cover.jpg&lt;/code&gt;  文件，这个分类就会在首页显示。&lt;br /&gt;
-在进行 &lt;code&gt;hexo g&lt;/code&gt;  时，本分类的封面图会自动被复制到 public 目录里相应的位置。&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;事实上，为了方便文章管理，这个分类下所有文章的 md 文件，我都会放在 &lt;code&gt;&amp;lt;root&amp;gt;/source/_posts/computer-science/java/course-1/&lt;/code&gt;  这个目录下。&lt;/p&gt;
-&lt;p&gt;且站点配置文件里，永久链接设置如下&lt;/p&gt;
-&lt;figure class=&#34;highlight yml&#34;&gt;&lt;figcaption data-lang=&#34;YAML&#34;&gt;&lt;/figcaption&gt;&lt;table&gt;&lt;tr&gt;&lt;td data-num=&#34;1&#34;&gt;&lt;/td&gt;&lt;td&gt;&lt;pre&gt;&lt;span class=&#34;token key atrule&#34;&gt;permalink&lt;/span&gt;&lt;span class=&#34;token punctuation&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;token punctuation&#34;&gt;:&lt;/span&gt;title/&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;&lt;p&gt;&lt;code&gt;hexo g&lt;/code&gt;  后，文章的 html 文件们将全部生成到 &lt;code&gt;&amp;lt;root&amp;gt;/public/computer-science/java/course-1/&lt;/code&gt;  目录。&lt;br /&gt;
-具体可以查看&lt;span class=&#34;exturl&#34; data-url=&#34;aHR0cHM6Ly9naXRodWIuY29tL2FtZWhpbWUvc2hva2E=&#34;&gt;本博客的 github 仓库&lt;/span&gt;。&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;文章详情界面中的 &lt;code&gt;系列文章&lt;/code&gt; ，显示的是与当前文章同一分类的其他文章，并按照文章名正序排序。&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ol&gt;
-&lt;blockquote&gt;
-&lt;p&gt;o (*￣▽￣*) ゞ&lt;br /&gt;
-其实，不设置 &lt;code&gt;category_map&lt;/code&gt;  也可以，只要在分类路径对应的文件夹下存在 &lt;code&gt;cover.jpg&lt;/code&gt;  文件就行。&lt;br /&gt;
-现在，这项功能与 &lt;code&gt;category_dir&lt;/code&gt;  的配置也无关， &lt;code&gt;hexo g&lt;/code&gt;  生成后，图片会自动被转移到 &lt;code&gt;category_dir&lt;/code&gt;  的相关子目录下。&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;h1 id=&#34;文章封面图&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#文章封面图&#34;&gt;#&lt;/a&gt; 文章封面图&lt;/h1&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;如果文章的 Front Matter 设置了 &lt;code&gt;cover: image path&lt;/code&gt; ，则封面会显示这张图片。&lt;/p&gt;
-&lt;figure class=&#34;highlight yml&#34;&gt;&lt;figcaption data-lang=&#34;YAML&#34;&gt;&lt;span&gt;举个栗子&lt;/span&gt;&lt;/figcaption&gt;&lt;table&gt;&lt;tr&gt;&lt;td data-num=&#34;1&#34;&gt;&lt;/td&gt;&lt;td&gt;&lt;pre&gt;&lt;span class=&#34;token key atrule&#34;&gt;title&lt;/span&gt;&lt;span class=&#34;token punctuation&#34;&gt;:&lt;/span&gt; Images&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td data-num=&#34;2&#34;&gt;&lt;/td&gt;&lt;td&gt;&lt;pre&gt;&lt;span class=&#34;token key atrule&#34;&gt;cover&lt;/span&gt;&lt;span class=&#34;token punctuation&#34;&gt;:&lt;/span&gt; assets/wallpaper&lt;span class=&#34;token punctuation&#34;&gt;-&lt;/span&gt;2572384.jpg&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td data-num=&#34;3&#34;&gt;&lt;/td&gt;&lt;td&gt;&lt;pre&gt;&lt;span class=&#34;token comment&#34;&gt;# 或者写成&lt;/span&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td data-num=&#34;4&#34;&gt;&lt;/td&gt;&lt;td&gt;&lt;pre&gt;&lt;span class=&#34;token key atrule&#34;&gt;cover&lt;/span&gt;&lt;span class=&#34;token punctuation&#34;&gt;:&lt;/span&gt; http&lt;span class=&#34;token punctuation&#34;&gt;:&lt;/span&gt;//placehold.it/350x150.jpg&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td data-num=&#34;5&#34;&gt;&lt;/td&gt;&lt;td&gt;&lt;pre&gt;&lt;span class=&#34;token punctuation&#34;&gt;---&lt;/span&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;&lt;p&gt;这里 &lt;code&gt;cover&lt;/code&gt;  的值可以是位于 &lt;code&gt;source&lt;/code&gt;  目录里的图片文件，此处是 &lt;code&gt;&amp;lt;root&amp;gt;/source/assets/wallpaper-2572384.jpg&lt;/code&gt;  文件，也可以是一个某网址。&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;如果文章是一个 &lt;code&gt;gallery post&lt;/code&gt; ，即 Front Matter 设置了 &lt;code&gt;photos&lt;/code&gt; ，则会封面会显示设置的第一张图片。&lt;/p&gt;
-&lt;figure class=&#34;highlight yml&#34;&gt;&lt;figcaption data-lang=&#34;YAML&#34;&gt;&lt;span&gt;举个栗子&lt;/span&gt;&lt;/figcaption&gt;&lt;table&gt;&lt;tr&gt;&lt;td data-num=&#34;1&#34;&gt;&lt;/td&gt;&lt;td&gt;&lt;pre&gt;&lt;span class=&#34;token key atrule&#34;&gt;title&lt;/span&gt;&lt;span class=&#34;token punctuation&#34;&gt;:&lt;/span&gt; Gallery Post&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td data-num=&#34;2&#34;&gt;&lt;/td&gt;&lt;td&gt;&lt;pre&gt;&lt;span class=&#34;token key atrule&#34;&gt;photos&lt;/span&gt;&lt;span class=&#34;token punctuation&#34;&gt;:&lt;/span&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td data-num=&#34;3&#34;&gt;&lt;/td&gt;&lt;td&gt;&lt;pre&gt;&lt;span class=&#34;token punctuation&#34;&gt;-&lt;/span&gt; assets/wallpaper&lt;span class=&#34;token punctuation&#34;&gt;-&lt;/span&gt;2572384.jpg&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td data-num=&#34;4&#34;&gt;&lt;/td&gt;&lt;td&gt;&lt;pre&gt;&lt;span class=&#34;token punctuation&#34;&gt;-&lt;/span&gt; assets/wallpaper&lt;span class=&#34;token punctuation&#34;&gt;-&lt;/span&gt;2311325.jpg&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td data-num=&#34;5&#34;&gt;&lt;/td&gt;&lt;td&gt;&lt;pre&gt;&lt;span class=&#34;token punctuation&#34;&gt;-&lt;/span&gt; assets/wallpaper&lt;span class=&#34;token punctuation&#34;&gt;-&lt;/span&gt;878514.jpg&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td data-num=&#34;6&#34;&gt;&lt;/td&gt;&lt;td&gt;&lt;pre&gt;&lt;span class=&#34;token punctuation&#34;&gt;-&lt;/span&gt; http&lt;span class=&#34;token punctuation&#34;&gt;:&lt;/span&gt;//placehold.it/350x150.jpg&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td data-num=&#34;7&#34;&gt;&lt;/td&gt;&lt;td&gt;&lt;pre&gt;&lt;span class=&#34;token punctuation&#34;&gt;---&lt;/span&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;&lt;p&gt;此时默认会显示第一个图片，即位于 &lt;code&gt;&amp;lt;root&amp;gt;/source/assets/&lt;/code&gt;  目录里的 &lt;code&gt;wallpaper-2572384.jpg&lt;/code&gt; 。&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;如果站点配置中设置了 &lt;code&gt;post_asset_folder: true&lt;/code&gt; ，那么上述本地图片路径应为 &lt;code&gt;&amp;lt;root&amp;gt;/source/_posts/文章同名的文件夹/assets/wallpaper-2572384.jpg&lt;/code&gt; ，当然此时 &lt;code&gt;assets&lt;/code&gt;  目录可以省掉。&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;如果以上设置均不存在，将显示一张随机图片，&lt;a href=&#34;../config/#%E9%9A%8F%E6%9C%BA%E5%9B%BE%E5%BA%93&#34;&gt;随机图库配置戳此&lt;/a&gt;。&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h1 id=&#34;图片展示与相册&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#图片展示与相册&#34;&gt;#&lt;/a&gt; 图片展示与相册&lt;/h1&gt;
-&lt;p&gt;在文章的 Front Matter 设置 &lt;code&gt;fancybox: false&lt;/code&gt; ，可以关闭文章页的图片展示功能。&lt;br /&gt;
-使用&lt;span class=&#34;exturl&#34; data-url=&#34;aHR0cDovL21pcm9tYW5uaW5vLmdpdGh1Yi5pby9KdXN0aWZpZWQtR2FsbGVyeS8=&#34;&gt; Justified-Gallery&lt;/span&gt; 对 Gallery Post 内图案进行排列。&lt;/p&gt;
-&lt;p&gt;下面介绍一些小技巧：&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;让图案下方显示 &lt;code&gt;title&lt;/code&gt;  的 markdown 代码&lt;/li&gt;
-&lt;/ol&gt;
-&lt;figure class=&#34;highlight raw&#34;&gt;&lt;figcaption data-lang=&#34;&#34;&gt;&lt;/figcaption&gt;&lt;table&gt;&lt;tr&gt;&lt;td data-num=&#34;1&#34;&gt;&lt;/td&gt;&lt;td&gt;&lt;pre&gt;![这里是 alt](https:&amp;#x2F;&amp;#x2F;tva3.sinaimg.cn&amp;#x2F;large&amp;#x2F;6833939bly1gicis081o9j20zk0m8dmr.jpg &amp;quot;这里是 title&amp;quot;)&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;&lt;p&gt;&lt;img data-src=&#34;https://tva3.sinaimg.cn/large/6833939bly1gicis081o9j20zk0m8dmr.jpg&#34; alt=&#34;这里是alt&#34; title=&#34;这里是title&#34; /&gt;&lt;/p&gt;
-&lt;ol start=&#34;2&#34;&gt;
-&lt;li&gt;除了在 Front Matter 里配置 &lt;code&gt;photos&lt;/code&gt;  可以显示相册图案列表外，还可以这样写&lt;/li&gt;
-&lt;/ol&gt;
-&lt;figure class=&#34;highlight raw&#34;&gt;&lt;figcaption data-lang=&#34;&#34;&gt;&lt;/figcaption&gt;&lt;table&gt;&lt;tr&gt;&lt;td data-num=&#34;1&#34;&gt;&lt;/td&gt;&lt;td&gt;&lt;pre&gt;## 图案列表 No.1&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td data-num=&#34;2&#34;&gt;&lt;/td&gt;&lt;td&gt;&lt;pre&gt;![](https:&amp;#x2F;&amp;#x2F;tva3.sinaimg.cn&amp;#x2F;large&amp;#x2F;6833939bly1giclfdu6exj20zk0m87hw.jpg &amp;quot;这里是 title&amp;quot;)&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td data-num=&#34;3&#34;&gt;&lt;/td&gt;&lt;td&gt;&lt;pre&gt;![](https:&amp;#x2F;&amp;#x2F;tva3.sinaimg.cn&amp;#x2F;large&amp;#x2F;6833939bly1giclflwv2aj20zk0m84qp.jpg)&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td data-num=&#34;4&#34;&gt;&lt;/td&gt;&lt;td&gt;&lt;pre&gt;![](https:&amp;#x2F;&amp;#x2F;tva3.sinaimg.cn&amp;#x2F;large&amp;#x2F;6833939bly1giclg5ms2rj20zk0m8u0x.jpg)&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td data-num=&#34;5&#34;&gt;&lt;/td&gt;&lt;td&gt;&lt;pre&gt;![](https:&amp;#x2F;&amp;#x2F;tva3.sinaimg.cn&amp;#x2F;large&amp;#x2F;6833939bly1giclhnx9glj20zk0m8npd.jpg)&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td data-num=&#34;6&#34;&gt;&lt;/td&gt;&lt;td&gt;&lt;pre&gt;&amp;#123;.gallery&amp;#125;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td data-num=&#34;7&#34;&gt;&lt;/td&gt;&lt;td&gt;&lt;pre&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td data-num=&#34;8&#34;&gt;&lt;/td&gt;&lt;td&gt;&lt;pre&gt;## 图案列表 No.2&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td data-num=&#34;9&#34;&gt;&lt;/td&gt;&lt;td&gt;&lt;pre&gt;![](https:&amp;#x2F;&amp;#x2F;tva3.sinaimg.cn&amp;#x2F;large&amp;#x2F;6833939bly1gicitht3xtj20zk0m8k5v.jpg)&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td data-num=&#34;10&#34;&gt;&lt;/td&gt;&lt;td&gt;&lt;pre&gt;![](https:&amp;#x2F;&amp;#x2F;tva3.sinaimg.cn&amp;#x2F;large&amp;#x2F;6833939bly1giclil3m4ej20zk0m8tn8.jpg)&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td data-num=&#34;11&#34;&gt;&lt;/td&gt;&lt;td&gt;&lt;pre&gt;![](https:&amp;#x2F;&amp;#x2F;tva3.sinaimg.cn&amp;#x2F;large&amp;#x2F;6833939bly1gicljgocqbj20zk0m8e81.jpg)&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td data-num=&#34;12&#34;&gt;&lt;/td&gt;&lt;td&gt;&lt;pre&gt;![](https:&amp;#x2F;&amp;#x2F;tva3.sinaimg.cn&amp;#x2F;large&amp;#x2F;6833939bly1gipetfk5zwj20zk0m8e81.jpg)&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td data-num=&#34;13&#34;&gt;&lt;/td&gt;&lt;td&gt;&lt;pre&gt;&amp;#123;.gallery data-height&amp;#x3D;&amp;quot;220&amp;quot;&amp;#125;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;&lt;p&gt;&lt;code&gt;data-height&lt;/code&gt;  用来设置每行的高度，默认为 &lt;code&gt;120&lt;/code&gt;&lt;/p&gt;
-&lt;h2 id=&#34;图案列表no1&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#图案列表no1&#34;&gt;#&lt;/a&gt; 图案列表 No.1&lt;/h2&gt;
-&lt;p class=&#34;gallery&#34;&gt;&lt;img data-src=&#34;https://tva3.sinaimg.cn/large/6833939bly1giclfdu6exj20zk0m87hw.jpg&#34; alt=&#34;&#34; title=&#34;这里是title&#34; /&gt;&lt;br /&gt;
-&lt;img data-src=&#34;https://tva3.sinaimg.cn/large/6833939bly1giclflwv2aj20zk0m84qp.jpg&#34; alt=&#34;&#34; /&gt;&lt;br /&gt;
-&lt;img data-src=&#34;https://tva3.sinaimg.cn/large/6833939bly1giclg5ms2rj20zk0m8u0x.jpg&#34; alt=&#34;&#34; /&gt;&lt;br /&gt;
-&lt;img data-src=&#34;https://tva3.sinaimg.cn/large/6833939bly1giclhnx9glj20zk0m8npd.jpg&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
-&lt;h2 id=&#34;图案列表no2&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#图案列表no2&#34;&gt;#&lt;/a&gt; 图案列表 No.2&lt;/h2&gt;
-&lt;p class=&#34;gallery&#34; data-height=&#34;220&#34;&gt;&lt;img data-src=&#34;https://tva3.sinaimg.cn/large/6833939bly1gicitht3xtj20zk0m8k5v.jpg&#34; alt=&#34;&#34; /&gt;&lt;br /&gt;
-&lt;img data-src=&#34;https://tva3.sinaimg.cn/large/6833939bly1giclil3m4ej20zk0m8tn8.jpg&#34; alt=&#34;&#34; /&gt;&lt;br /&gt;
-&lt;img data-src=&#34;https://tva3.sinaimg.cn/large/6833939bly1gicljgocqbj20zk0m8e81.jpg&#34; alt=&#34;&#34; /&gt;&lt;br /&gt;
-&lt;img data-src=&#34;https://tva3.sinaimg.cn/large/6833939bly1gipetfk5zwj20zk0m8e81.jpg&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
-&lt;h1 id=&#34;自定义页面配色&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#自定义页面配色&#34;&gt;#&lt;/a&gt; 自定义页面配色&lt;/h1&gt;
-&lt;p&gt;主题配色全部在 &lt;code&gt;&amp;lt;root&amp;gt;/themes/shoka/source/css/_colors.styl&lt;/code&gt;  文件中，可以自行查看。&lt;/p&gt;
-&lt;p&gt;在 &lt;code&gt;&amp;lt;root&amp;gt;/source/_data/&lt;/code&gt;  目录新建文件 &lt;code&gt;colors.styl&lt;/code&gt; ，在此文件中添改样式。&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;自定义 &lt;code&gt;colors.styl&lt;/code&gt;  文件将覆盖主题默认样式，为了避免出错，请保证原有样式名均存在，在原有样式基础上进行增删改。&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;主题支持在 &lt;code&gt;&amp;lt;root&amp;gt;/source/_data/&lt;/code&gt;  目录建立三个自定义 &lt;code&gt;styl&lt;/code&gt;  文件：&lt;/p&gt;
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;自定义文件名&lt;/th&gt;
-&lt;th&gt;对应默认样式文件&lt;/th&gt;
-&lt;th&gt;样式功能&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;code&gt;colors.styl&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;_colors.styl&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;页面配色&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;code&gt;iconfont.styl&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;_iconfont.styl&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;&lt;a href=&#34;../config/#iconfont%E5%9B%BE%E6%A0%87&#34;&gt;图标样式&lt;/a&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;code&gt;custom.styl&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;-&lt;/td&gt;
-&lt;td&gt;任意自定义样式&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;h1 id=&#34;自定义主题图片&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#自定义主题图片&#34;&gt;#&lt;/a&gt; 自定义主题图片&lt;/h1&gt;
-&lt;p&gt;如果想要修改主题的 &lt;code&gt;&amp;lt;root&amp;gt;/themes/shoka/source/images/&lt;/code&gt;  目录内的某张图片，请在 &lt;code&gt;&amp;lt;root&amp;gt;/source/_data/&lt;/code&gt;  目录新建目录 &lt;code&gt;images&lt;/code&gt; ，并在这个文件夹中添加&lt;ins&gt;同名&lt;/ins&gt;文件，部署时将自动覆盖主题内的默认图片。&lt;/p&gt;
-&lt;p&gt;可以用此方法自定义头像、打赏二维码等图片，并且避免覆盖更新主题时遗失自定义文件。&lt;/p&gt;
-&lt;h1 id=&#34;自定义语言包&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#自定义语言包&#34;&gt;#&lt;/a&gt; 自定义语言包&lt;/h1&gt;
-&lt;p&gt;本功能参考 NexT，主要可以用来定义菜单等处显示的文字，且可以方便主题无脑覆盖升级。&lt;/p&gt;
-&lt;p&gt;在 &lt;code&gt;&amp;lt;root&amp;gt;/source/_data/&lt;/code&gt;  目录新建文件 &lt;code&gt;languages.yml&lt;/code&gt; 。&lt;/p&gt;
-&lt;p&gt;按照以下格式添加配置项：&lt;/p&gt;
-&lt;figure class=&#34;highlight yml&#34;&gt;&lt;figcaption data-lang=&#34;YAML&#34;&gt;&lt;/figcaption&gt;&lt;table&gt;&lt;tr&gt;&lt;td data-num=&#34;1&#34;&gt;&lt;/td&gt;&lt;td&gt;&lt;pre&gt;&lt;span class=&#34;token comment&#34;&gt;# language&lt;/span&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td data-num=&#34;2&#34;&gt;&lt;/td&gt;&lt;td&gt;&lt;pre&gt;&lt;span class=&#34;token key atrule&#34;&gt;zh-CN&lt;/span&gt;&lt;span class=&#34;token punctuation&#34;&gt;:&lt;/span&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td data-num=&#34;3&#34;&gt;&lt;/td&gt;&lt;td&gt;&lt;pre&gt;  &lt;span class=&#34;token comment&#34;&gt;# items&lt;/span&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td data-num=&#34;4&#34;&gt;&lt;/td&gt;&lt;td&gt;&lt;pre&gt;  &lt;span class=&#34;token key atrule&#34;&gt;post&lt;/span&gt;&lt;span class=&#34;token punctuation&#34;&gt;:&lt;/span&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td data-num=&#34;5&#34;&gt;&lt;/td&gt;&lt;td&gt;&lt;pre&gt;    &lt;span class=&#34;token key atrule&#34;&gt;copyright&lt;/span&gt;&lt;span class=&#34;token punctuation&#34;&gt;:&lt;/span&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td data-num=&#34;6&#34;&gt;&lt;/td&gt;&lt;td&gt;&lt;pre&gt;      &lt;span class=&#34;token comment&#34;&gt;# the translation you perfer&lt;/span&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td data-num=&#34;7&#34;&gt;&lt;/td&gt;&lt;td&gt;&lt;pre&gt;      &lt;span class=&#34;token key atrule&#34;&gt;author&lt;/span&gt;&lt;span class=&#34;token punctuation&#34;&gt;:&lt;/span&gt; 本文博主&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td data-num=&#34;8&#34;&gt;&lt;/td&gt;&lt;td&gt;&lt;pre&gt;&lt;span class=&#34;token key atrule&#34;&gt;en&lt;/span&gt;&lt;span class=&#34;token punctuation&#34;&gt;:&lt;/span&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td data-num=&#34;9&#34;&gt;&lt;/td&gt;&lt;td&gt;&lt;pre&gt;  &lt;span class=&#34;token key atrule&#34;&gt;menu&lt;/span&gt;&lt;span class=&#34;token punctuation&#34;&gt;:&lt;/span&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td data-num=&#34;10&#34;&gt;&lt;/td&gt;&lt;td&gt;&lt;pre&gt;    &lt;span class=&#34;token key atrule&#34;&gt;travellings&lt;/span&gt;&lt;span class=&#34;token punctuation&#34;&gt;:&lt;/span&gt; Travellings&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;&lt;p&gt;可以参考主题目录下的 &lt;code&gt;example/source/_data&lt;/code&gt;  文件夹。&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;站点配置及文件的 Front Matter 中， &lt;code&gt;language&lt;/code&gt;  项只支持 &lt;code&gt;zh-CN&lt;/code&gt; 、 &lt;code&gt;zh-HK&lt;/code&gt; 、 &lt;code&gt;zh-TW&lt;/code&gt; 、 &lt;code&gt;ja&lt;/code&gt; 、 &lt;code&gt;en&lt;/code&gt; 。&lt;br /&gt;
-类似写成 &lt;code&gt;zh_CN&lt;/code&gt;  这样是不可以的。&lt;/p&gt;
-&lt;/blockquote&gt;
- ]]></description>
-        </item>
-        <item>
-            <guid isPermalink="true">https://sjfcs.github.io/note/theme-shoka-doc/</guid>
-            <title>Hexo主题Shoka &amp; multi-markdown-it渲染器使用说明</title>
-            <link>https://sjfcs.github.io/note/theme-shoka-doc/</link>
+            <guid isPermalink="true">https://sjfcs.github.io/%E7%BD%91%E7%BB%9C/RS-1-smart%20link/</guid>
+            <title>RS-Smart-link</title>
+            <link>https://sjfcs.github.io/%E7%BD%91%E7%BB%9C/RS-1-smart%20link/</link>
             <category term="note" scheme="https://sjfcs.github.io/categories/note/" />
             <category term="Hexo" scheme="https://sjfcs.github.io/tags/Hexo/" />
             <category term="教程" scheme="https://sjfcs.github.io/tags/%E6%95%99%E7%A8%8B/" />
             <pubDate>Thu, 13 Aug 2020 20:45:48 +0800</pubDate>
             <description><![CDATA[ &lt;div class=&#34;note info&#34;&gt;
-&lt;p&gt;跳票 N 久终于更新的简单的使用说明&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;span class=&#34;exturl&#34; data-url=&#34;aHR0cHM6Ly9naXRodWIuY29tL2FtZWhpbWUvaGV4by10aGVtZS1zaG9rYQ==&#34;&gt;hexo-theme-shoka&lt;/span&gt; ：本博客自用的主题&lt;/li&gt;
-&lt;li&gt;&lt;span class=&#34;exturl&#34; data-url=&#34;aHR0cHM6Ly9naXRodWIuY29tL2FtZWhpbWUvaGV4by1yZW5kZXJlci1tdWx0aS1tYXJrZG93bi1pdA==&#34;&gt;hexo-renderer-multi-markdown-it&lt;/span&gt;：配套的 markdown 渲染器&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;已经支持 hexo 5。。。本文档和 bug 不定期更新中。&lt;br /&gt;
-如果有什么功能需求，欢迎留言。&lt;/p&gt;
+&lt;p&gt;H3C 华为私有&lt;/p&gt;
+&lt;p&gt;定义：针对 &lt;code&gt;双上行&lt;/code&gt; 组网的解决方案，实现高可靠链路冗余和故障切换&lt;/p&gt;
+&lt;p&gt;优势：故障切换厘秒级&lt;/p&gt;
+&lt;p&gt;运行机制：双上行端两个口组成一个 Smart-link 组，配置主备端口。故障时自动切换，恢复后仍保持不重新抢占主备&lt;/p&gt;
 &lt;/div&gt;
-&lt;div class=&#34;note warning&#34;&gt;
-&lt;p&gt;当前版本更新至 0.2.5，&lt;a href=&#34;#%E6%9B%B4%E6%96%B0%E8%AE%B0%E5%BD%95&#34;&gt;更新记录点此&lt;/a&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;div class=&#34;note primary&#34;&gt;
-&lt;p&gt;&lt;a href=&#34;/computer-science/note/theme-shoka-doc/&#34;&gt;&lt;strong&gt;🚀快速开始&lt;/strong&gt;&lt;/a&gt; - &lt;a href=&#34;/computer-science/note/theme-shoka-doc/dependents/&#34;&gt;💌依赖插件&lt;/a&gt; - &lt;a href=&#34;/computer-science/note/theme-shoka-doc/config/&#34;&gt;📌基本配置&lt;/a&gt; - &lt;a href=&#34;/computer-science/note/theme-shoka-doc/display/&#34;&gt;🌈界面显示&lt;/a&gt; - &lt;a href=&#34;/computer-science/note/theme-shoka-doc/special/&#34;&gt;🦄特殊功能&lt;/a&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;h1 id=&#34;设计缘由&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#设计缘由&#34;&gt;#&lt;/a&gt; 设计缘由&lt;/h1&gt;
-&lt;p&gt;前几年在 Bear 和 Evernote 上整理了大量笔记，非常喜欢 Bear 默认的 markdown 渲染样式。&lt;br /&gt;
-后来因为换了安卓手机，用不了 Bear，四处搜寻替代品，没有满意的。&lt;br /&gt;
-然后阴差阳错知道了 Hexo，又得知 Github 也可以免费建私有仓库了，故再次转移阵地到了自建博客，并部署在 Github Pages。&lt;/p&gt;
-&lt;p&gt;因为这个博客是用来记笔记的，故起名 &lt;code&gt;书架&lt;/code&gt; 。&lt;br /&gt;
-对应的主题即 &lt;code&gt;Theme.Shoka&lt;/code&gt; ，可以说是为了笔记阅读而生的主题。&lt;br /&gt;
-样式严重参考 Bear，部分代码严重参考&lt;span class=&#34;exturl&#34; data-url=&#34;aHR0cHM6Ly9naXRodWIuY29tL3RoZW1lLW5leHQv&#34;&gt; NexT&lt;/span&gt;。&lt;/p&gt;
-&lt;p&gt;Hexo 的默认及常用渲染器均使用 &lt;code&gt;highlight.js&lt;/code&gt;  进行代码高亮，而我喜欢 &lt;code&gt;Prism.js&lt;/code&gt; ，故重写了一个渲染器配合主题食用。&lt;br /&gt;
-渲染器取名 &lt;code&gt;multi&lt;/code&gt; ，因为集成了很多很多很多 &lt;code&gt;markdown-it&lt;/code&gt;  插件，以及压缩静态文件的功能。&lt;br /&gt;
-（最新版的默认渲染器也支持 &lt;code&gt;Prism.js&lt;/code&gt;  了，可喜可贺，但不想用，哈哈哈哈哈哈哈&lt;/p&gt;
-&lt;p&gt;墙内 Github Pages 访问速度时而感人，所以用了&lt;span class=&#34;exturl&#34; data-url=&#34;aHR0cDovL3d3dy5qc2RlbGl2ci5jb20v&#34;&gt; jsDelivr&lt;/span&gt; 加速，主要是因为它可以按需合并依赖文件。&lt;/p&gt;
-&lt;h1 id=&#34;快速安装&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#快速安装&#34;&gt;#&lt;/a&gt; 快速安装&lt;/h1&gt;
-&lt;figure class=&#34;highlight bash&#34;&gt;&lt;figcaption data-lang=&#34;bash&#34;&gt;&lt;/figcaption&gt;&lt;table&gt;&lt;tr&gt;&lt;td data-num=&#34;1&#34;&gt;&lt;/td&gt;&lt;td&gt;&lt;pre&gt;&lt;span class=&#34;token comment&#34;&gt;# cd your-blog&lt;/span&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td data-num=&#34;2&#34;&gt;&lt;/td&gt;&lt;td&gt;&lt;pre&gt;&lt;span class=&#34;token function&#34;&gt;git&lt;/span&gt; clone https://github.com/amehime/hexo-theme-shoka.git ./themes/shoka&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;&lt;p&gt;打开主题目录，内有 &lt;code&gt;example&lt;/code&gt;  文件夹，提供了配置文件的 demo 供参考。&lt;/p&gt;
-&lt;h1 id=&#34;安装依赖插件&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#安装依赖插件&#34;&gt;#&lt;/a&gt; 安装依赖插件&lt;/h1&gt;
-&lt;p&gt;在应用主题之前，必须至少安装 &lt;span class=&#34;exturl&#34; data-url=&#34;aHR0cHM6Ly9naXRodWIuY29tL2FtZWhpbWUvaGV4by1yZW5kZXJlci1tdWx0aS1tYXJrZG93bi1pdA==&#34;&gt;hexo-renderer-multi-markdown-it&lt;/span&gt; 渲染插件 和 &lt;span class=&#34;exturl&#34; data-url=&#34;aHR0cHM6Ly93d3cubnBtanMuY29tL3BhY2thZ2UvaGV4by1hdXRvcHJlZml4ZXI=&#34;&gt;hexo-autoprefixer&lt;/span&gt;。&lt;/p&gt;
-&lt;p&gt;&lt;a href=&#34;dependents/&#34;&gt;插件安装与配置教程戳此&lt;/a&gt;&lt;/p&gt;
-&lt;h1 id=&#34;应用主题&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#应用主题&#34;&gt;#&lt;/a&gt; 应用主题&lt;/h1&gt;
-&lt;h2 id=&#34;修改站点配置&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#修改站点配置&#34;&gt;#&lt;/a&gt; 修改站点配置&lt;/h2&gt;
-&lt;p&gt;修改站点配置文件 &lt;code&gt;&amp;lt;root&amp;gt;/_config.yml&lt;/code&gt; ，把主题改为  &lt;code&gt;shoka&lt;/code&gt;&lt;/p&gt;
-&lt;figure class=&#34;highlight yml&#34;&gt;&lt;figcaption data-lang=&#34;YAML&#34;&gt;&lt;/figcaption&gt;&lt;table&gt;&lt;tr&gt;&lt;td data-num=&#34;1&#34;&gt;&lt;/td&gt;&lt;td&gt;&lt;pre&gt;&lt;span class=&#34;token key atrule&#34;&gt;theme&lt;/span&gt;&lt;span class=&#34;token punctuation&#34;&gt;:&lt;/span&gt; shoka&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;&lt;h2 id=&#34;修改主题配置&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#修改主题配置&#34;&gt;#&lt;/a&gt; 修改主题配置&lt;/h2&gt;
-&lt;p&gt;主题配置的所有参数在 &lt;code&gt;&amp;lt;root&amp;gt;/themes/shoka/_config.yml&lt;/code&gt;  文件中。&lt;/p&gt;
-&lt;p&gt;为了方便主题升级，请在根目录新建一个 yml 文件，命名为 &lt;code&gt;_config.shoka.yml&lt;/code&gt; 。&lt;br /&gt;
-也就是说，所有主题的自定义配置均保存于 &lt;code&gt;&amp;lt;root&amp;gt;/_config.shoka.yml&lt;/code&gt;  文件。&lt;/p&gt;
-&lt;p&gt;&lt;a href=&#34;config/&#34;&gt;主题的基础配置可以参考这里&lt;/a&gt;&lt;br /&gt;
-&lt;a href=&#34;display/&#34;&gt;界面显示相关的配置参考这里&lt;/a&gt;&lt;/p&gt;
-&lt;h1 id=&#34;更新记录&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#更新记录&#34;&gt;#&lt;/a&gt; 更新记录&lt;/h1&gt;
-&lt;p&gt;标签含义：&lt;br /&gt;
-❗ 需要手动操作的更新信息&lt;br /&gt;
-⚠️ 需要注意的更新信息&lt;br /&gt;
-🔧 已修复的问题&lt;br /&gt;
-⌛ TODO&lt;/p&gt;
-&lt;h2 id=&#34;024-025&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#024-025&#34;&gt;#&lt;/a&gt; 0.2.4 👉 0.2.5&lt;/h2&gt;
-&lt;p&gt;💡  避免直接修改主题文件，添加各种自定义：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;display/#%E8%87%AA%E5%AE%9A%E4%B9%89%E9%A1%B5%E9%9D%A2%E9%85%8D%E8%89%B2&#34;&gt;样式&lt;/a&gt;：包括配色、&lt;a href=&#34;config/#iconfont%E5%9B%BE%E6%A0%87&#34;&gt;icon&lt;/a&gt;、其他自定义样式&lt;/li&gt;
-&lt;li&gt;图片：包括&lt;a href=&#34;display/#%E8%87%AA%E5%AE%9A%E4%B9%89%E4%B8%BB%E9%A2%98%E5%9B%BE%E7%89%87&#34;&gt;主题图片&lt;/a&gt;、&lt;a href=&#34;config/#%E9%9A%8F%E6%9C%BA%E5%9B%BE%E5%BA%93&#34;&gt;随机图库&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;🔧 修复一些 BUG&lt;/p&gt;
-&lt;h2 id=&#34;023-024&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#023-024&#34;&gt;#&lt;/a&gt; 0.2.3 👉 0.2.4&lt;/h2&gt;
-&lt;p&gt;⚠️ &lt;strong&gt;评论功能更新&lt;/strong&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;MiniValine 魔改版更新至 beta10，修改过主题默认 &lt;code&gt;_config.yml&lt;/code&gt;  的同学，记得更新末尾的 &lt;code&gt;vendors&lt;/code&gt;  到最新哦&lt;/li&gt;
-&lt;li&gt;❗ 评论相关的配置有更新，&lt;a href=&#34;config/#%E6%96%87%E7%AB%A0%E8%AF%84%E8%AE%BA&#34;&gt;配置戳此&lt;/a&gt;
-&lt;ul&gt;
-&lt;li&gt;主要增加的 Tag 配置，现在可以各种自定义啦&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;⚠️ 配置新增&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;夜间模式 &lt;code&gt;darkmode&lt;/code&gt; ，&lt;a href=&#34;config/#%E5%A4%9C%E9%97%B4%E6%A8%A1%E5%BC%8F&#34;&gt;配置戳此&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;自动定位 &lt;code&gt;auto_scroll&lt;/code&gt; ，&lt;a href=&#34;config/#%E8%87%AA%E5%8A%A8%E5%AE%9A%E4%BD%8D&#34;&gt;配置戳此&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;图床 API 设置 &lt;code&gt;image_server&lt;/code&gt; ，&lt;a href=&#34;config/#%E9%9A%8F%E6%9C%BA%E5%9B%BE%E5%BA%93&#34;&gt;配置戳此&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;⚠️ 背景音乐功能增强，&lt;a href=&#34;config/#%E8%83%8C%E6%99%AF%E9%9F%B3%E4%B9%90&#34;&gt;配置戳此&lt;/a&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;可以添加多个播放列表&lt;/li&gt;
-&lt;li&gt;加了一些控制按钮&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;⚠️ 增加 &lt;code&gt;media&lt;/code&gt;  标签，在文章中插入音频和视频播放列表，&lt;a href=&#34;special/#media%E5%A4%9A%E5%AA%92%E4%BD%93&#34;&gt;方法戳此&lt;/a&gt;&lt;br /&gt;
-⌛  视频播放器有待增强（显示分段标签，字幕）&lt;/p&gt;
-&lt;p&gt;🔧 随机图库支持非渣浪图床的任意图片&lt;br /&gt;
-🔧 还有许多小 BUG&lt;/p&gt;
-&lt;h2 id=&#34;022-023&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#022-023&#34;&gt;#&lt;/a&gt; 0.2.2 👉 0.2.3&lt;/h2&gt;
-&lt;p&gt;❗ 增加主题文件外自定义语言包的功能，&lt;a href=&#34;display/#%E8%87%AA%E5%AE%9A%E4%B9%89%E8%AF%AD%E8%A8%80%E5%8C%85&#34;&gt;配置戳此&lt;/a&gt;&lt;br /&gt;
-🔧 提高低版本浏览器兼容性&lt;/p&gt;
-&lt;h2 id=&#34;021-022&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#021-022&#34;&gt;#&lt;/a&gt; 0.2.1 👉 0.2.2&lt;/h2&gt;
-&lt;p&gt;⚠️ 弃用 &lt;code&gt;mediumzoom&lt;/code&gt; ，改成 &lt;code&gt;fancybox&lt;/code&gt; ，&lt;a href=&#34;display/#%E5%9B%BE%E7%89%87%E5%B1%95%E7%A4%BA%E4%B8%8E%E7%9B%B8%E5%86%8C&#34;&gt;配置戳此&lt;/a&gt;&lt;br /&gt;
-💡  增加语言包： &lt;code&gt;繁体中文&lt;/code&gt; 和 &lt;code&gt;日语&lt;/code&gt; &lt;br /&gt;
-💡  quiz 功能优化，根据语言显示题型标签&lt;br /&gt;
-🔧 修复评论功能中反复初始化 leancloud-storage&lt;br /&gt;
-🔧 修复 &lt;code&gt;audio: false&lt;/code&gt;  时不能隐藏播放按钮、停止播放&lt;/p&gt;
-&lt;h2 id=&#34;02-021&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#02-021&#34;&gt;#&lt;/a&gt; 0.2 👉 0.2.1&lt;/h2&gt;
-&lt;p&gt;⚠️ 配置文件添加  &lt;code&gt;loader&lt;/code&gt;  参数，&lt;a href=&#34;config/#%E5%8A%A0%E8%BD%BD%E5%8A%A8%E7%94%BB&#34;&gt;配置戳此&lt;/a&gt;&lt;br /&gt;
-💡  二级 list 区别显示&lt;br /&gt;
-🔧 修复浏览位置定位 BUG&lt;br /&gt;
-🔧 修复 firework 动画延迟&lt;br /&gt;
-🔧 优化评论功能&lt;/p&gt;
-&lt;h2 id=&#34;019-02&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#019-02&#34;&gt;#&lt;/a&gt; 0.1.9 👉 0.2&lt;/h2&gt;
-&lt;p&gt;⚠️  &lt;strong&gt;评论功能大改&lt;/strong&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;弃用不开源的 Valine，改用 MiniValine，并且进行了魔改，&lt;span class=&#34;exturl&#34; data-url=&#34;aHR0cHM6Ly9naXRodWIuY29tL2FtZWhpbWUvTWluaVZhbGluZQ==&#34;&gt;项目戳此&lt;/span&gt;&lt;br /&gt;
-主要是大量压缩了代码，弃用一些花里胡哨的功能，又加了一些别的花里胡哨的功能。&lt;/li&gt;
-&lt;li&gt;为防止泄露用户邮箱、IP 等隐私信息，弃用 QQ 号获取昵称及头像。&lt;br /&gt;
-❗ 同时需要手动进行一些迁移，&lt;span class=&#34;exturl&#34; data-url=&#34;aHR0cHM6Ly9naXRodWIuY29tL2ltYWVnb28vVmFsaW5l&#34;&gt;具体步骤戳此&lt;/span&gt;&lt;/li&gt;
-&lt;li&gt;❗ 评论相关的配置亦有更新，&lt;a href=&#34;config/#%E6%96%87%E7%AB%A0%E8%AF%84%E8%AE%BA&#34;&gt;配置戳此&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;⚠️ 增加单击页面烟花效果，&lt;a href=&#34;config/#%E9%A1%B5%E9%9D%A2%E7%89%B9%E6%95%88&#34;&gt;配置戳此&lt;/a&gt;&lt;br /&gt;
-💡  弃用 Velocity，改用 anime.js，方便未来添加更多&lt;span class=&#34;spoiler&#34; title=&#34;你知道得太多了&#34;&gt;花里胡哨的&lt;/span&gt;功能&lt;span class=&#34;spoiler&#34; title=&#34;你知道得太多了&#34;&gt;严重拖慢页面滑行速度&lt;/span&gt;&lt;br /&gt;
-🔧 新增多枚 icon，包括豆瓣 &lt;code&gt;i-douban&lt;/code&gt;  等&lt;br /&gt;
-🔧 一些显示问题&lt;/p&gt;
+&lt;h3 id=&#34;交换机收到smartlink的flush报文后是如何处理的&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#交换机收到smartlink的flush报文后是如何处理的&#34;&gt;#&lt;/a&gt; 交换机收到 SmartLink 的 flush 报文后是如何处理的&lt;/h3&gt;
+&lt;p&gt;交换机收到 SmartLink 的 flush 报文后，会对报文中的密码进行检查，若与端口下配置的控制 VLAN 以及密码相同，则清除设备上的 MAC 表项，否则将 flush 报文丢弃。&lt;/p&gt;
+&lt;p&gt;如果接口下配置了&lt;strong&gt; smart-link flush receive&lt;/strong&gt; 命令，且该命令中的控制 VLAN 与接收 flush 报文中的控制 VLAN 相同，则清除该接口下的 MAC 表项。&lt;/p&gt;
  ]]></description>
         </item>
     </channel>
