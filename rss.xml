@@ -3,8 +3,8 @@
     <channel>
         <title>Stay curious, stay naive.</title>
         <subtitle></subtitle>
-        <icon>https://sjfcs.github.io/images/favicon.ico</icon>
-        <link>https://sjfcs.github.io</link>
+        <icon>https://songjinfeng.gitee.io/images/favicon.ico</icon>
+        <link>https://songjinfeng.gitee.io</link>
         <author>
           <name>Fusice</name>
         </author>
@@ -15,11 +15,11 @@
         <category term="Fusice" />
         <category term="sjfcs" />
         <item>
-            <guid isPermalink="true">https://sjfcs.github.io/%E7%BD%91%E7%BB%9C/RS-1-smart%20link/</guid>
+            <guid isPermalink="true">https://songjinfeng.gitee.io/%E7%BD%91%E7%BB%9C/RS-1-smart%20link/</guid>
             <title>RS-Smart-link</title>
-            <link>https://sjfcs.github.io/%E7%BD%91%E7%BB%9C/RS-1-smart%20link/</link>
-            <category term="网络" scheme="https://sjfcs.github.io/categories/%E7%BD%91%E7%BB%9C/" />
-            <category term="教程" scheme="https://sjfcs.github.io/tags/%E6%95%99%E7%A8%8B/" />
+            <link>https://songjinfeng.gitee.io/%E7%BD%91%E7%BB%9C/RS-1-smart%20link/</link>
+            <category term="网络" scheme="https://songjinfeng.gitee.io/categories/%E7%BD%91%E7%BB%9C/" />
+            <category term="教程" scheme="https://songjinfeng.gitee.io/tags/%E6%95%99%E7%A8%8B/" />
             <pubDate>Thu, 13 Aug 2020 20:45:48 +0800</pubDate>
             <description><![CDATA[ &lt;div class=&#34;note info&#34;&gt;
 &lt;p&gt;H3C 华为私有&lt;/p&gt;
@@ -33,21 +33,22 @@
  ]]></description>
         </item>
         <item>
-            <guid isPermalink="true">https://sjfcs.github.io/%E7%BD%91%E7%BB%9C/RS-Vlan/</guid>
+            <guid isPermalink="true">https://songjinfeng.gitee.io/%E7%BD%91%E7%BB%9C/RS-Vlan/</guid>
             <title>RS-VLAN</title>
-            <link>https://sjfcs.github.io/%E7%BD%91%E7%BB%9C/RS-Vlan/</link>
-            <category term="网络" scheme="https://sjfcs.github.io/categories/%E7%BD%91%E7%BB%9C/" />
-            <category term="教程" scheme="https://sjfcs.github.io/tags/%E6%95%99%E7%A8%8B/" />
+            <link>https://songjinfeng.gitee.io/%E7%BD%91%E7%BB%9C/RS-Vlan/</link>
+            <category term="网络" scheme="https://songjinfeng.gitee.io/categories/%E7%BD%91%E7%BB%9C/" />
+            <category term="教程" scheme="https://songjinfeng.gitee.io/tags/%E6%95%99%E7%A8%8B/" />
             <pubDate>Thu, 13 Aug 2020 20:45:48 +0800</pubDate>
             <description><![CDATA[ &lt;h1 id=&#34;vlan理论&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#vlan理论&#34;&gt;#&lt;/a&gt; VLAN 理论&lt;/h1&gt;
 &lt;div class=&#34;tab&#34; data-id=&#34;id1&#34; data-title=&#34;## VLAN内部转发流程&#34;&gt;
 &lt;h2 id=&#34;vlan内部转发流程&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#vlan内部转发流程&#34;&gt;#&lt;/a&gt; VLAN 内部转发流程&lt;/h2&gt;
-&lt;p&gt;&lt;img data-src=&#34;https://sjfcs.github.io/assets/RS-Vlan/image-20210224094838419.png&#34; alt=&#34;image-20210224094838419&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;D:\hexo\source_posts\assets\&lt;span class=&#34;exturl&#34; data-url=&#34;aHR0cHM6Ly9zamZjcy5naXRodWIuaW8vYXNzZXRzLyQlN0JmaWxlbmFtZSU3RA==&#34;&gt;https://sjfcs.github.io/assets/${filename}&lt;/span&gt;&lt;br /&gt;
+&lt;img data-src=&#34;/assets/RS-Vlan/image-20210224094838419.png&#34; alt=&#34;image-20210224094838419&#34; /&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class=&#34;tab&#34; data-id=&#34;id1&#34; data-title=&#34;## VLAN内部转发流程&#34;&gt;
 &lt;h2 id=&#34;vlan跨交换机处理流程&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#vlan跨交换机处理流程&#34;&gt;#&lt;/a&gt; VLAN 跨交换机处理流程&lt;/h2&gt;
-&lt;p&gt;&lt;img data-src=&#34;D:%5Chexo%5Csource%5C_posts%5C.assets%5CRS-Vlan%5Cimage-20210224095053353.png&#34; alt=&#34;image-20210224095053353&#34; /&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img data-src=&#34;D:%5Chexo%5Csource%5C_posts%5C.assets%5CRS-Vlan%5Cimage-20210224095116777.png&#34; alt=&#34;image-20210224095116777&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img data-src=&#34;/assets/RS-Vlan/image-20210224095053353.png&#34; alt=&#34;image-20210224095053353&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&amp;lt;img src=&amp;quot;/assets/RS-Vlan/image-20210224095116777.png&amp;quot; alt=&amp;quot;image-20210224095116777&amp;quot; style=&amp;quot;zoom: 80%;&amp;quot; /&amp;gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;h1 id=&#34;vlan命令&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#vlan命令&#34;&gt;#&lt;/a&gt; VLAN 命令&lt;/h1&gt;
 &lt;h1 id=&#34;vlan实验&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#vlan实验&#34;&gt;#&lt;/a&gt; VLAN 实验&lt;/h1&gt;
