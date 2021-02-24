@@ -36,7 +36,7 @@
         <content type="html">&lt;h1 id=&#34;vlan理论&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#vlan理论&#34;&gt;#&lt;/a&gt; VLAN 理论&lt;/h1&gt;
 &lt;div class=&#34;tab&#34; data-id=&#34;id1&#34; data-title=&#34;## VLAN内部转发流程&#34;&gt;
 &lt;h2 id=&#34;vlan内部转发流程&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#vlan内部转发流程&#34;&gt;#&lt;/a&gt; VLAN 内部转发流程&lt;/h2&gt;
-&lt;p&gt;&lt;img data-src=&#34;../assets/RS-Vlan/image-20210224094838419.png&#34; alt=&#34;image-20210224094838419&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img data-src=&#34;https://sjfcs.github.io/assets/RS-Vlan/image-20210224094838419.png&#34; alt=&#34;image-20210224094838419&#34; /&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class=&#34;tab&#34; data-id=&#34;id1&#34; data-title=&#34;## VLAN内部转发流程&#34;&gt;
 &lt;h2 id=&#34;vlan跨交换机处理流程&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#vlan跨交换机处理流程&#34;&gt;#&lt;/a&gt; VLAN 跨交换机处理流程&lt;/h2&gt;
