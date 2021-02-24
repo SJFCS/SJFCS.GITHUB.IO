@@ -32,5 +32,25 @@
 &lt;p&gt;如果接口下配置了&lt;strong&gt; smart-link flush receive&lt;/strong&gt; 命令，且该命令中的控制 VLAN 与接收 flush 报文中的控制 VLAN 相同，则清除该接口下的 MAC 表项。&lt;/p&gt;
  ]]></description>
         </item>
+        <item>
+            <guid isPermalink="true">https://sjfcs.github.io/%E7%BD%91%E7%BB%9C/RS-Vlan/</guid>
+            <title>RS-VLAN</title>
+            <link>https://sjfcs.github.io/%E7%BD%91%E7%BB%9C/RS-Vlan/</link>
+            <category term="网络" scheme="https://sjfcs.github.io/categories/%E7%BD%91%E7%BB%9C/" />
+            <category term="教程" scheme="https://sjfcs.github.io/tags/%E6%95%99%E7%A8%8B/" />
+            <pubDate>Thu, 13 Aug 2020 20:45:48 +0800</pubDate>
+            <description><![CDATA[ &lt;h1 id=&#34;vlan理论&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#vlan理论&#34;&gt;#&lt;/a&gt; VLAN 理论&lt;/h1&gt;
+&lt;div class=&#34;tab&#34; data-id=&#34;id1&#34; data-title=&#34;## VLAN内部转发流程&#34;&gt;
+&lt;p&gt;vlan untag 和 tag  打标签模式&lt;/p&gt;
+&lt;h2 id=&#34;vlan内部转发流程&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#vlan内部转发流程&#34;&gt;#&lt;/a&gt; VLAN 内部转发流程&lt;/h2&gt;
+&lt;p&gt;&lt;img data-src=&#34;D:%5Chexo%5Csource%5C_posts%5C.assets%5CRS-Vlan%5Cimage-20210224094838419.png&#34; alt=&#34;image-20210224094838419&#34; /&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;h2 id=&#34;vlan跨交换机处理流程&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#vlan跨交换机处理流程&#34;&gt;#&lt;/a&gt; VLAN 跨交换机处理流程&lt;/h2&gt;
+&lt;p&gt;&lt;img data-src=&#34;D:%5Chexo%5Csource%5C_posts%5C.assets%5CRS-Vlan%5Cimage-20210224095053353.png&#34; alt=&#34;image-20210224095053353&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img data-src=&#34;D:%5Chexo%5Csource%5C_posts%5C.assets%5CRS-Vlan%5Cimage-20210224095116777.png&#34; alt=&#34;image-20210224095116777&#34; /&gt;&lt;/p&gt;
+&lt;h1 id=&#34;vlan命令&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#vlan命令&#34;&gt;#&lt;/a&gt; VLAN 命令&lt;/h1&gt;
+&lt;h1 id=&#34;vlan实验&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#vlan实验&#34;&gt;#&lt;/a&gt; VLAN 实验&lt;/h1&gt;
+ ]]></description>
+        </item>
     </channel>
 </rss>
