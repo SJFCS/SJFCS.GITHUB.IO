@@ -4,16 +4,130 @@
         <title>Stay curious, stay naive.</title>
         <subtitle></subtitle>
         <icon>https://songjinfeng.gitee.io/images/favicon.ico</icon>
-        <link>https://songjinfeng.gitee.io</link>
+        <link>https://SongJinfeng.gitee.io</link>
         <author>
           <name>Fusice</name>
         </author>
         <description>Stay curious, stay naive.</description>
         <language>zh-CN</language>
-        <pubDate>Thu, 13 Aug 2020 20:45:48 +0800</pubDate>
-        <lastBuildDate>Thu, 13 Aug 2020 20:45:48 +0800</lastBuildDate>
+        <pubDate>Thu, 25 Feb 2021 10:45:48 +0800</pubDate>
+        <lastBuildDate>Thu, 25 Feb 2021 10:45:48 +0800</lastBuildDate>
         <category term="Fusice" />
         <category term="sjfcs" />
+        <item>
+            <guid isPermalink="true">https://songjinfeng.gitee.io/%E7%BD%91%E7%BB%9C/RS-OSPF/</guid>
+            <title>RS-VLAN</title>
+            <link>https://songjinfeng.gitee.io/%E7%BD%91%E7%BB%9C/RS-OSPF/</link>
+            <category term="网络" scheme="https://songjinfeng.gitee.io/categories/%E7%BD%91%E7%BB%9C/" />
+            <category term="教程" scheme="https://songjinfeng.gitee.io/tags/%E6%95%99%E7%A8%8B/" />
+            <pubDate>Thu, 25 Feb 2021 10:45:48 +0800</pubDate>
+            <description><![CDATA[ &lt;div class=&#34;note info&#34;&gt;
+&lt;p&gt;本文重点&lt;br /&gt;
+了解 OSPF 协议的特点&lt;br /&gt;
+掌握 OSPF 协议分层结构&lt;br /&gt;
+掌握 OSPF 协议中的网络类型&lt;br /&gt;
+掌握 OSPF 协议的报文封装&lt;br /&gt;
+掌握 OSPF 协议状态迁移&lt;/p&gt;
+&lt;/div&gt;
+&lt;h1 id=&#34;ospf理论&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#ospf理论&#34;&gt;#&lt;/a&gt; OSPF 理论&lt;/h1&gt;
+&lt;h2 id=&#34;rip协议存在的问题&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#rip协议存在的问题&#34;&gt;#&lt;/a&gt; RIP 协议存在的问题&lt;/h2&gt;
+&lt;p&gt;存在最大 15 跳的限制，不能适应大规模组网的需求&lt;br /&gt;
+周期性发送全部路由信息，占用大量的带宽资源&lt;br /&gt;
+路由收敛速度慢&lt;br /&gt;
+以跳数作为度量值&lt;br /&gt;
+存在路由环路可能性&lt;/p&gt;
+&lt;h2 id=&#34;ospf特点&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#ospf特点&#34;&gt;#&lt;/a&gt; OSPF 特点&lt;/h2&gt;
+&lt;p&gt;没有路由跳数的限制&lt;br /&gt;
+使用组播更新变化的路由和网络信息&lt;br /&gt;
+路由收敛速度较快&lt;br /&gt;
+以开销（Cost）作为度量值&lt;br /&gt;
+采用的 SPF 算法可以有效的避免环路&lt;br /&gt;
+在互联网上大量使用，是运用最广泛的路由协议&lt;/p&gt;
+&lt;h2 id=&#34;链路状态数据库同步过程-报文类型与封装&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#链路状态数据库同步过程-报文类型与封装&#34;&gt;#&lt;/a&gt; 链路状态数据库同步过程  报文类型与封装&lt;/h2&gt;
+&lt;p&gt;邻居邻接区别 为什么&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;&lt;strong&gt;OSPF&lt;/strong&gt;  &lt;strong&gt;报文类型&lt;/strong&gt;&lt;/th&gt;
+&lt;th&gt;&lt;strong&gt;作用&lt;/strong&gt;&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Hello&lt;/td&gt;
+&lt;td&gt;建立并维护邻居关系&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Database  Description（DD）&lt;/td&gt;
+&lt;td&gt;数据库内容的汇总（仅包含 LSA 摘要）&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Link  State Request（LSR）&lt;/td&gt;
+&lt;td&gt;请求自己没有的或者比自己更新的链路状态详细信息&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Link  State Update（LSU)&lt;/td&gt;
+&lt;td&gt;链路状态更新信息&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Link  State Acknowledge（LSAck）&lt;/td&gt;
+&lt;td&gt;对 LSU 的确认&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;OSPF 报文直接封装在 IP 报文中，协议号为 89。&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;链路层帧头&lt;/td&gt;
+&lt;td&gt;IP Header&lt;/td&gt;
+&lt;td&gt;OSPF Packet&lt;/td&gt;
+&lt;td&gt;链路层帧尾&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h2 id=&#34;划分区域优势&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#划分区域优势&#34;&gt;#&lt;/a&gt; 划分区域优势&lt;/h2&gt;
+&lt;p&gt;减少了区域内 LSDB 中链路状态信息 (LSA) 的数量，降低了运行 OSPF 协议对路由器性能的要求&lt;br /&gt;
+可以将相同功能性或者地理位置的路由器划分在一个区域内，以便于管理。&lt;br /&gt;
+隔离拓扑变化，减少路由震荡对整个自治系统的影响。&lt;/p&gt;
+&lt;h2 id=&#34;ospf区域类型&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#ospf区域类型&#34;&gt;#&lt;/a&gt; OSPF 区域类型&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;1、骨干区域只能有一个 2、非骨干区域都要对接到骨干区域&lt;/strong&gt;&lt;br /&gt;
+区域内路由器（Internal Router）// 所有接口都在同一区域内&lt;br /&gt;
+区域边界路由器（ABR，Area Border Router）&lt;strong&gt;// 连接骨干区域和非骨干区域&lt;/strong&gt;&lt;br /&gt;
+骨干路由器（Backbone Router）// 所有接口在骨干区域内&lt;br /&gt;
+自治系统边界路由器（ASBR， Autonomous System Border Router ）&lt;strong&gt;// 连接外部自治系统，并引入了外部路由&lt;/strong&gt;&lt;/p&gt;
+&lt;h3 id=&#34;dr-选举规则接口改pri优先级默认1大的优先-router-id大的优先-已选的dr后加入优先级更高不会被替代-reset-ospf-pro-重置重新选举-改完rid要重置才能生效&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#dr-选举规则接口改pri优先级默认1大的优先-router-id大的优先-已选的dr后加入优先级更高不会被替代-reset-ospf-pro-重置重新选举-改完rid要重置才能生效&#34;&gt;#&lt;/a&gt; DR 选举规则，接口改 pri 优先级默认 1 大的优先、Router ID 大的优先。已选的 DR，后加入优先级更高不会被替代   reset ospf pro 重置重新选举   改完 rid 要重置才能生效&lt;/h3&gt;
+&lt;h2 id=&#34;router-id&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#router-id&#34;&gt;#&lt;/a&gt; Router ID&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;配置全局 Router-ID 对所有协议生效&lt;br /&gt;
+协议内指定的 Router-ID 优先级更高&lt;/strong&gt;&lt;br /&gt;
+一台路由器如果要运行 OSPF 协议，则必须存在 Router ID（RID）。&lt;br /&gt;
+RID 是一个 32 比特无符号整数，可以在一个自治系统中唯一的标识一台路由器。&lt;br /&gt;
+RID 可以手工配置，也可以自动生成。&lt;br /&gt;
+如果没有通过命令指定 RID，将按照如下顺序自动生成一个 RID：&lt;br /&gt;
+如果存在配置 IP 地址的 Loopback 接口，则选择 Loopback 接口地址中最大的作为 Router ID；&lt;br /&gt;
+如果没有配置 IP 地址的 Loopback 接口，则从其他接口的 IP 地址中选择最大的作为 Router ID（不考虑接口的 up/down 状态）。&lt;/p&gt;
+&lt;h2 id=&#34;ospf网络类型&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#ospf网络类型&#34;&gt;#&lt;/a&gt; OSPF 网络类型&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;对于不同&lt;/strong&gt;二层链路类型&lt;strong&gt;的网段，ospf 会生成不同网络类型&lt;br /&gt;
+不同网络类型，DR/BDR 选举，LSA 细节，协议报文发送形式等会有所不同&lt;/strong&gt;&lt;br /&gt;
+ Broadcast（广播网络，以太网默认的网络类型）&lt;br /&gt;
+组播发送协议报文&lt;br /&gt;
+ 224.0.0.5 所有运行 OSPF 的接口会监听&lt;br /&gt;
+ 225.0.0.6 所有 DR/BDR 的接口会监听&lt;br /&gt;
+需要选举 DR/BDR&lt;br /&gt;
+hello-time 10 秒 每隔 10 秒发一次&lt;br /&gt;
+ dead-time  40 秒 40 秒没收到就断掉&lt;br /&gt;
+ NBMA（Non-Broadcast Multi-Access，非广播多点可达网络）&lt;/p&gt;
+&lt;p&gt;P2MP（Point-to-MultiPoint，点到多点）&lt;br /&gt;
+P2P（Point-to-Point，点到点）&lt;/p&gt;
+&lt;h2 id=&#34;nbma与p2mp&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#nbma与p2mp&#34;&gt;#&lt;/a&gt; NBMA 与 P2MP&lt;/h2&gt;
+&lt;p&gt;NBMA 网络是指那些全连通的、非广播、多点可达网络。而 P2MP 网络，则并不需要一定是全连通的。&lt;br /&gt;
+NBMA 是一种缺省的网络类型，而 P2MP 网络必须是由其它的网络强制更改的。&lt;br /&gt;
+NBMA 网络采用单播发送报文，需要手工配置邻居。P2MP 网络采用组播方式发送报文。&lt;/p&gt;
+ ]]></description>
+        </item>
         <item>
             <guid isPermalink="true">https://songjinfeng.gitee.io/%E7%BD%91%E7%BB%9C/RS-1-smart%20link/</guid>
             <title>RS-Smart-link</title>
