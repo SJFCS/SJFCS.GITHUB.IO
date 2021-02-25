@@ -91,9 +91,12 @@
 &lt;p class=&#34;primary&#34;&gt;&lt;strong&gt;1、骨干区域只能有一个 2、非骨干区域都要对接到骨干区域&lt;/strong&gt;&lt;/p&gt;
 &lt;ul class=&#34;task-list&#34;&gt;
 &lt;li&gt;[1] 区域内路由器（Internal Router）// 所有接口都在同一区域内&lt;/li&gt;
-&lt;li&gt;[ ] 区域边界路由器（ABR，Area Border Router）&lt;strong&gt;// 连接骨干区域和非骨干区域&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;① 1️⃣区域边界路由器（ABR，Area Border Router）&lt;strong&gt;// 连接骨干区域和非骨干区域&lt;/strong&gt;&lt;/li&gt;
 &lt;li class=&#34;task-list-item&#34;&gt;&lt;input type=&#34;checkbox&#34; id=&#34;cbx_0&#34; disabled=&#34;true&#34; /&gt;&lt;label for=&#34;cbx_0&#34;&gt; 骨干路由器（Backbone Router）// 所有接口在骨干区域内&lt;br /&gt;
-自治系统边界路由器（ASBR， Autonomous System Border Router ）&lt;strong&gt;// 连接外部自治系统，并引入了外部路由&lt;/strong&gt;&lt;/label&gt;&lt;/li&gt;
+::before == $0&lt;br /&gt;
+ 自治系统边界路由器（ASBR， Autonomous System Border Router ）&lt;strong&gt;// 连接外部自治系统，并引入了外部路由&lt;/strong&gt;&lt;br /&gt;
+::before&lt;br /&gt;
+ 阿萨大大？？？&lt;/label&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h3 id=&#34;dr-选举规则接口改pri优先级默认1大的优先-router-id大的优先-已选的dr后加入优先级更高不会被替代-reset-ospf-pro-重置重新选举-改完rid要重置才能生效&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#dr-选举规则接口改pri优先级默认1大的优先-router-id大的优先-已选的dr后加入优先级更高不会被替代-reset-ospf-pro-重置重新选举-改完rid要重置才能生效&#34;&gt;#&lt;/a&gt; DR 选举规则，接口改 pri 优先级默认 1 大的优先、Router ID 大的优先。已选的 DR，后加入优先级更高不会被替代   reset ospf pro 重置重新选举   改完 rid 要重置才能生效&lt;/h3&gt;
 &lt;h2 id=&#34;router-id&#34;&gt;&lt;a class=&#34;anchor&#34; href=&#34;#router-id&#34;&gt;#&lt;/a&gt; Router ID&lt;/h2&gt;
