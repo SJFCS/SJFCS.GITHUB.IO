@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang='zh' ><meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+
+
+<title>Iptables详解(4)处理动作 | Iptables详解 | Songjinfeng&#39;s BLOG</title>
+<link rel="stylesheet" href="/css/eureka.min.css">
+<script defer src="/js/eureka.min.js"></script>
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Noto+Serif+SC:wght@400;600;700&display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/styles/solarized-light.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/highlight.min.js"
+   crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/dart.min.js"
+     crossorigin></script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/js/all.min.js"
+   integrity="sha256-uNYoXefWRqv&#43;PsIF/OflNmwtKM4lStn9yrz2gVl6ymo="  crossorigin></script>
+
+
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css"
+   integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3&#43;Aro6EYUG4&#43;cU&#43;KJWu/X"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js" 
+  integrity="sha384-g7c&#43;Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI&#43;sEnkvrMWph2EDg4"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js"
+   integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC&#43;Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.9.2/dist/mermaid.min.js" 
+  integrity="sha256-Zmpaaj&#43;GXFsPF5WdPArSrnW3b30dovldeKsW00xBVwE="  crossorigin></script>
+
+
+<link rel="icon" type="image/png" sizes="32x32" href="/images/icon_hucfa16751ac9c82c06b84c3502c0db793_16378_32x32_fill_box_center_2.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hucfa16751ac9c82c06b84c3502c0db793_16378_180x180_fill_box_center_2.png">
+
+<meta name="description"
+  content="参考链接：http://www.faqs.org/docs/iptables/targets.html
+常用的处理动作： (-j 指定对满足条件包的处理，常用动作有ACCEPT接受报、DROP丢弃报、REJECT丢弃报并通知对方、REDIRECT重定向包等)
+-j 参数用来指定要进行的处理动作，常用的处理动作包括：ACCEPT、REJECT、DROP、REDIRECT、MASQUERADE、LOG、DNAT、SNAT、MIRROR、QUEUE、RETURN、MARK，分别说明如下：
+ACCEPT 将封包放行，进行完此处理动作后，将不再比对其它规则，直接跳往下一个规则链（natostrouting）。
+REJECT 拦阻该封包，并传送封包通知对方，可以传送的封包有几个选择：ICMP port-unreachable、ICMP echo-reply 或是 tcp-reset（这个封包会要求对方关闭联机），进行完此处理动作后，将不再比对其它规则，直接中断过滤程序。
+例如：iptables -A FORWARD -p TCP &ndash;dport 22 -j REJECT &ndash;reject-with tcp-reset
+DROP 丢弃封包不予处理，进行完此处理动作后，将不再比对其它规则，直接中断过滤程序。
+REDIRECT 将封包重新导向到另一个端口（PNAT），进行完此处理动作后，将会继续比对其它规则。
+​ 这个功能可以用来实作通透式porxy 或用来保护 web 服务器。
+​ 例如：iptables -t nat -A PREROUTING -p tcp &ndash;dport 80 -j REDIRECT &ndash;to-ports 8080
+MASQUERADE 改写封包来源 IP 为防火墙 NIC IP，可以指定 port 对应的范围，进行完此处理动作后，直接跳往下一个规则（mangleostrouting）。这个功能与 SNAT 略有不同，当进行 IP 伪装时，不需指定要伪装成哪个 IP，IP 会从网卡直接读，当使用拨接连线时，IP 通常是由 ISP 公司的 DHCP 服务器指派的，这个时候 MASQUERADE 特别有用。
+ 例如：iptables -t nat -A POSTROUTING -p TCP -j MASQUERADE --to-ports 1024-31000  LOG 使用LOG动作，可以将符合条件的报文的相关信息记录到日志中，但当前报文具体是被”接受”，还是被”拒绝”，都由后面的规则控制，换句话说，LOG动作只负责记录匹配到的报文的相关信息，不负责对报文的其他处理，如果想要对报文进行进一步的处理，可以在之后设置具体规则，进行进一步的处理。">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"文档笔记",
+      "item":"/docs/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"Iptables详解",
+      "item":"/docs/iptables/"},{
+      "@type": "ListItem",
+      "position": 3 ,
+      "name":"Iptables详解(4)处理动作",
+      "item":"/docs/iptables/iptables%E8%AF%A6%E8%A7%A34%E5%A4%84%E7%90%86%E5%8A%A8%E4%BD%9C/"}]
+}
+</script>
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/docs/iptables/iptables%E8%AF%A6%E8%A7%A34%E5%A4%84%E7%90%86%E5%8A%A8%E4%BD%9C/"
+    },
+    "headline": "Iptables详解(4)处理动作 | Iptables详解 | Songjinfeng\u0027s BLOG","datePublished": "2021-04-21T00:00:00+00:00",
+    "dateModified": "2021-04-21T00:00:00+00:00",
+    "wordCount":  356 ,
+    "author": {
+        "@type": "Person",
+        "name": ["songjinfeng"]
+    },
+    "publisher": {
+        "@type": "Person",
+        "name": "JF. Song",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "/images/icon.png"
+        }
+        },
+    "description": "参考链接：http:\/\/www.faqs.org\/docs\/iptables\/targets.html\n常用的处理动作： (-j 指定对满足条件包的处理，常用动作有ACCEPT接受报、DROP丢弃报、REJECT丢弃报并通知对方、REDIRECT重定向包等)\n-j 参数用来指定要进行的处理动作，常用的处理动作包括：ACCEPT、REJECT、DROP、REDIRECT、MASQUERADE、LOG、DNAT、SNAT、MIRROR、QUEUE、RETURN、MARK，分别说明如下：\nACCEPT 将封包放行，进行完此处理动作后，将不再比对其它规则，直接跳往下一个规则链（natostrouting）。\nREJECT 拦阻该封包，并传送封包通知对方，可以传送的封包有几个选择：ICMP port-unreachable、ICMP echo-reply 或是 tcp-reset（这个封包会要求对方关闭联机），进行完此处理动作后，将不再比对其它规则，直接中断过滤程序。\n例如：iptables -A FORWARD -p TCP \u0026ndash;dport 22 -j REJECT \u0026ndash;reject-with tcp-reset\nDROP 丢弃封包不予处理，进行完此处理动作后，将不再比对其它规则，直接中断过滤程序。\nREDIRECT 将封包重新导向到另一个端口（PNAT），进行完此处理动作后，将会继续比对其它规则。\n​ 这个功能可以用来实作通透式porxy 或用来保护 web 服务器。\n​ 例如：iptables -t nat -A PREROUTING -p tcp \u0026ndash;dport 80 -j REDIRECT \u0026ndash;to-ports 8080\nMASQUERADE 改写封包来源 IP 为防火墙 NIC IP，可以指定 port 对应的范围，进行完此处理动作后，直接跳往下一个规则（mangleostrouting）。这个功能与 SNAT 略有不同，当进行 IP 伪装时，不需指定要伪装成哪个 IP，IP 会从网卡直接读，当使用拨接连线时，IP 通常是由 ISP 公司的 DHCP 服务器指派的，这个时候 MASQUERADE 特别有用。\n 例如：iptables -t nat -A POSTROUTING -p TCP -j MASQUERADE --to-ports 1024-31000  LOG 使用LOG动作，可以将符合条件的报文的相关信息记录到日志中，但当前报文具体是被”接受”，还是被”拒绝”，都由后面的规则控制，换句话说，LOG动作只负责记录匹配到的报文的相关信息，不负责对报文的其他处理，如果想要对报文进行进一步的处理，可以在之后设置具体规则，进行进一步的处理。"
+}
+</script><meta property="og:title" content="Iptables详解(4)处理动作 | Iptables详解 | Songjinfeng&#39;s BLOG" />
+<meta property="og:type" content="article" />
+
+
+<meta property="og:image" content="/images/icon.png">
+
+
+<meta property="og:url" content="/docs/iptables/iptables%E8%AF%A6%E8%A7%A34%E5%A4%84%E7%90%86%E5%8A%A8%E4%BD%9C/" />
+
+
+
+
+<meta property="og:description" content="参考链接：http://www.faqs.org/docs/iptables/targets.html
+常用的处理动作： (-j 指定对满足条件包的处理，常用动作有ACCEPT接受报、DROP丢弃报、REJECT丢弃报并通知对方、REDIRECT重定向包等)
+-j 参数用来指定要进行的处理动作，常用的处理动作包括：ACCEPT、REJECT、DROP、REDIRECT、MASQUERADE、LOG、DNAT、SNAT、MIRROR、QUEUE、RETURN、MARK，分别说明如下：
+ACCEPT 将封包放行，进行完此处理动作后，将不再比对其它规则，直接跳往下一个规则链（natostrouting）。
+REJECT 拦阻该封包，并传送封包通知对方，可以传送的封包有几个选择：ICMP port-unreachable、ICMP echo-reply 或是 tcp-reset（这个封包会要求对方关闭联机），进行完此处理动作后，将不再比对其它规则，直接中断过滤程序。
+例如：iptables -A FORWARD -p TCP &ndash;dport 22 -j REJECT &ndash;reject-with tcp-reset
+DROP 丢弃封包不予处理，进行完此处理动作后，将不再比对其它规则，直接中断过滤程序。
+REDIRECT 将封包重新导向到另一个端口（PNAT），进行完此处理动作后，将会继续比对其它规则。
+​ 这个功能可以用来实作通透式porxy 或用来保护 web 服务器。
+​ 例如：iptables -t nat -A PREROUTING -p tcp &ndash;dport 80 -j REDIRECT &ndash;to-ports 8080
+MASQUERADE 改写封包来源 IP 为防火墙 NIC IP，可以指定 port 对应的范围，进行完此处理动作后，直接跳往下一个规则（mangleostrouting）。这个功能与 SNAT 略有不同，当进行 IP 伪装时，不需指定要伪装成哪个 IP，IP 会从网卡直接读，当使用拨接连线时，IP 通常是由 ISP 公司的 DHCP 服务器指派的，这个时候 MASQUERADE 特别有用。
+ 例如：iptables -t nat -A POSTROUTING -p TCP -j MASQUERADE --to-ports 1024-31000  LOG 使用LOG动作，可以将符合条件的报文的相关信息记录到日志中，但当前报文具体是被”接受”，还是被”拒绝”，都由后面的规则控制，换句话说，LOG动作只负责记录匹配到的报文的相关信息，不负责对报文的其他处理，如果想要对报文进行进一步的处理，可以在之后设置具体规则，进行进一步的处理。" />
+
+
+
+
+<meta property="og:locale" content="zh" />
+
+
+
+
+<meta property="og:site_name" content="Songjinfeng&#39;s BLOG" />
+
+
+
+
+
+
+<meta property="article:published_time" content="2021-04-21T00:00:00&#43;00:00" />
+
+
+<meta property="article:modified_time" content="2021-04-21T00:00:00&#43;00:00" />
+
+
+
+<meta property="article:section" content="docs" />
+
+
+<meta property="article:tag" content="Iptables" />
+
+<meta property="article:tag" content="Linux网络安全" />
+
+
+
+
+
+
+
+
+
+<meta property="og:see_also" content="/docs/iptables/iptables%E8%AF%A6%E8%A7%A31%E6%A6%82%E5%BF%B5/" />
+
+
+
+<meta property="og:see_also" content="/docs/iptables/iptables%E8%AF%A6%E8%A7%A32%E5%9F%BA%E7%A1%80%E7%AE%A1%E7%90%86%E5%91%BD%E4%BB%A4/" />
+
+
+
+<meta property="og:see_also" content="/docs/iptables/iptables%E8%AF%A6%E8%A7%A332%E6%89%A9%E5%B1%95%E5%8C%B9%E9%85%8D%E6%9D%A1%E4%BB%B6%E6%A8%A1%E5%9D%97/" />
+
+
+
+<meta property="og:see_also" content="/docs/iptables/iptables%E8%AF%A6%E8%A7%A333%E5%AE%89%E5%85%A8%E6%A8%A1%E5%9D%97/" />
+
+
+
+
+
+
+
+<body class="flex flex-col min-h-screen">
+  <header class="fixed flex items-center w-full min-h-16 pl-scrollbar z-50 bg-secondary-bg shadow-sm">
+    <div class="w-full max-w-screen-xl mx-auto"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="mr-6 text-primary-text text-xl font-bold">Songjinfeng&#39;s BLOG</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:flex-grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:flex-grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">技术专栏</a>
+            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  mr-4">文档笔记</a>
+            <a href="/series/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">主题系列</a>
+            <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">标签</a>
+            <a href="/authors/songjinfeng/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">关于</a>
+            <a href="/index.xml" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">RSS</a>
+            <a href="/webstack" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">友链&amp;导航</a>
+        </div>
+
+        <div class="flex">
+            <div class="relative pt-4 md:pt-0">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col left-0 md:left-auto right-auto md:right-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">浅色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">深色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">自动</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            switchMode('Auto')
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+  </header>
+  <main class="flex-grow pt-16">
+    <div class="pl-scrollbar">
+      <div class="w-full max-w-screen-xl lg:px-4 xl:px-8 mx-auto">
+
+
+<div class="lg:pt-12">
+    <div class="flex flex-col md:flex-row bg-secondary-bg rounded">
+        <div class="md:w-1/4 lg:w-1/5 border-r">
+            <div class="sticky top-16 pt-6">
+                
+
+
+
+
+
+
+
+
+
+
+<div id="sidebar-title" class="md:hidden mx-4 px-2 pt-4 pb-2 md:border-b text-tertiary-text md:text-primary-text">
+    <span class="font-semibold">目录</span>
+    <i class="fas fa-caret-right ml-1"></i>
+</div>
+
+<div id="sidebar-toc"
+    class="hidden md:block overflow-y-auto mx-6 md:mx-0 pr-6 pt-2 md:max-h-doc-sidebar bg-primary-bg md:bg-transparent">
+    <div class="flex flex-wrap ml-4 -mr-2 p-2 bg-secondary-bg md:bg-primary-bg rounded">
+        <a class=" hover:text-eureka"
+            href="/docs/iptables/">Iptables详解</a>
+        
+        
+        
+
+
+    </div>
+    
+<ul class="pl-6">
+    
+    
+    
+    <li class="py-2">
+        <div class="">
+            <a class=" hover:text-eureka"
+                href="/docs/iptables/iptables%E8%AF%A6%E8%A7%A31%E6%A6%82%E5%BF%B5/">Iptables详解(1)概念</a>
+        </div>
+        
+    </li>
+    
+    
+    
+    
+    <li class="py-2">
+        <div class="">
+            <a class=" hover:text-eureka"
+                href="/docs/iptables/iptables%E8%AF%A6%E8%A7%A32%E5%9F%BA%E7%A1%80%E7%AE%A1%E7%90%86%E5%91%BD%E4%BB%A4/">Iptables详解(2)管理</a>
+        </div>
+        
+    </li>
+    
+    
+    
+    
+    <li class="py-2">
+        <div class="">
+            <a class=" hover:text-eureka"
+                href="/docs/iptables/iptables%E8%AF%A6%E8%A7%A332%E6%89%A9%E5%B1%95%E5%8C%B9%E9%85%8D%E6%9D%A1%E4%BB%B6%E6%A8%A1%E5%9D%97/">Iptables详解(3)2扩展匹配条件模块</a>
+        </div>
+        
+    </li>
+    
+    
+    
+    
+    <li class="py-2">
+        <div class="">
+            <a class=" hover:text-eureka"
+                href="/docs/iptables/iptables%E8%AF%A6%E8%A7%A333%E5%AE%89%E5%85%A8%E6%A8%A1%E5%9D%97/">Iptables详解(3)3安全模块</a>
+        </div>
+        
+    </li>
+    
+    
+    
+    
+    <li class="py-2">
+        <div class="">
+            <a class=" text-eureka  hover:text-eureka"
+                href="/docs/iptables/iptables%E8%AF%A6%E8%A7%A34%E5%A4%84%E7%90%86%E5%8A%A8%E4%BD%9C/">Iptables详解(4)处理动作</a>
+        </div>
+        
+    </li>
+    
+    
+    
+    
+    <li class="py-2">
+        <div class="">
+            <a class=" hover:text-eureka"
+                href="/docs/iptables/iptables%E8%AF%A6%E8%A7%A37%E8%87%AA%E5%AE%9A%E4%B9%89%E9%93%BE/"></a>
+        </div>
+        
+    </li>
+    
+    
+    
+    
+    <li class="py-2">
+        <div class="">
+            <a class=" hover:text-eureka"
+                href="/docs/iptables/iptables%E8%AF%A6%E8%A7%A3%E5%85%B6%E4%BB%96/"></a>
+        </div>
+        
+    </li>
+    
+    
+    
+    
+    <li class="py-2">
+        <div class="">
+            <a class=" hover:text-eureka"
+                href="/docs/iptables/%E5%88%A9%E7%94%A8-iptables-%E5%8A%A0%E4%B8%8A-recent-%E6%A8%A1%E5%9D%97%E9%98%BB%E6%8C%A1%E5%A4%A7%E9%87%8F%E7%9A%84%E8%AF%B7%E6%B1%82/"></a>
+        </div>
+        
+    </li>
+    
+    
+    
+    
+    <li class="py-2">
+        <div class="">
+            <a class=" hover:text-eureka"
+                href="/docs/iptables/%E6%80%BB%E7%BB%93%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/"></a>
+        </div>
+        
+    </li>
+    
+    
+    
+    
+    <li class="py-2">
+        <div class="">
+            <a class=" hover:text-eureka"
+                href="/docs/iptables/%E6%9C%AA%E5%8F%91%E5%B8%83/iptables-or-nftables/"></a>
+        </div>
+        
+    </li>
+    
+    
+    
+    
+    <li class="py-2">
+        <div class="">
+            <a class=" hover:text-eureka"
+                href="/docs/iptables/cluster%E6%A8%A1%E5%9D%97/">iptables CLUSTERIP模块 负载均衡</a>
+        </div>
+        
+    </li>
+    
+    
+</ul>
+
+</div>
+
+
+
+
+
+            </div>
+
+        </div>
+        <div class="w-full md:w-3/4 lg:w-4/5 pb-8 pt-2 md:pt-8">
+            <div class="w-full lg:w-3/4 pl-6 ml-0 mr-auto">
+                <h1 class="font-bold text-3xl text-primary-text">Iptables详解(4)处理动作</h1>
+                <div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>2021-04-21</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>2分钟阅读时长</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="/categories/blog/" class="hover:text-eureka">blog</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/docs/" class="hover:text-eureka">docs</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/iptables/" class="hover:text-eureka">iptables</a>
+        
+    </div>
+    
+
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-th-list mr-1"></i>
+        
+        <a href="/series/iptables%E8%AF%A6%E8%A7%A3/" class="hover:text-eureka">Iptables详解</a>
+        
+    </div>
+    
+</div>
+            </div>
+            <div class="flex">
+                <div class="w-full lg:w-3/4 px-6">
+                    
+                    
+                    <div class="content">
+                        <p>参考链接：http://www.faqs.org/docs/iptables/targets.html</p>
+<p><img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/Iptables%E8%AF%A6%E8%A7%A3(4)%E5%8A%A8%E4%BD%9C/2021.04.23-11:26:05-D-assets-Iptables%E8%AF%A6%E8%A7%A3-4-%E5%8A%A8%E4%BD%9C-image-20210423100939737.png" alt="image-20210423100939737"></p>
+<p><strong>常用的处理动作： (<strong><strong>-j 指定对满足条件包的处理，常用动作有ACCEPT接受报、DROP丢弃报、REJECT丢弃报并通知对方、REDIRECT重定向包等</strong></strong>)</strong></p>
+<p>-j  参数用来指定要进行的处理动作，常用的处理动作包括：ACCEPT、REJECT、DROP、REDIRECT、MASQUERADE、LOG、DNAT、SNAT、MIRROR、QUEUE、RETURN、MARK，分别说明如下：</p>
+<p>ACCEPT     将封包放行，进行完此处理动作后，将不再比对其它规则，直接跳往下一个规则链（natostrouting）。</p>
+<p>REJECT     拦阻该封包，并传送封包通知对方，可以传送的封包有几个选择：ICMP port-unreachable、ICMP echo-reply 或是 tcp-reset（这个封包会要求对方关闭联机），进行完此处理动作后，将不再比对其它规则，直接中断过滤程序。</p>
+<p>例如：iptables -A FORWARD -p TCP &ndash;dport 22 -j REJECT &ndash;reject-with tcp-reset</p>
+<p>DROP      丢弃封包不予处理，进行完此处理动作后，将不再比对其它规则，直接中断过滤程序。</p>
+<p>REDIRECT    将封包重新导向到另一个端口（PNAT），进行完此处理动作后，将会继续比对其它规则。</p>
+<p>​            这个功能可以用来实作通透式porxy 或用来保护 web 服务器。</p>
+<p>​        例如：iptables -t nat -A PREROUTING -p tcp &ndash;dport 80 -j REDIRECT &ndash;to-ports 8080</p>
+<p>MASQUERADE       改写封包来源 IP 为防火墙 NIC IP，可以指定 port 对应的范围，进行完此处理动作后，直接跳往下一个规则（mangleostrouting）。这个功能与 SNAT 略有不同，当进行 IP 伪装时，不需指定要伪装成哪个 IP，IP 会从网卡直接读，当使用拨接连线时，IP 通常是由 ISP 公司的 DHCP 服务器指派的，这个时候 MASQUERADE 特别有用。</p>
+<pre><code>    例如：iptables -t nat -A POSTROUTING -p TCP -j MASQUERADE --to-ports 1024-31000
+</code></pre>
+<p>LOG      使用LOG动作，可以将符合条件的报文的相关信息记录到日志中，但当前报文具体是被”接受”，还是被”拒绝”，都由后面的规则控制，换句话说，LOG动作只负责记录匹配到的报文的相关信息，不负责对报文的其他处理，如果想要对报文进行进一步的处理，可以在之后设置具体规则，进行进一步的处理。</p>
+<p>默认记录到日志/var/log/messages记录在指定的文件中，以防止iptables的相关信息与其他日志信息相混淆，修改/etc/rsyslog.conf文件（或者/etc/syslog.conf），在rsyslog配置文件中添加如下配置即可。
+vim /etc/rsyslog.conf
+kern.warning /var/log/iptables.log
+加入上述配置后，报文的相关信息将会被记录到/var/log/iptables.log文件中。
+完成上述配置后，重启rsyslog服务（或者syslogd）
+service rsyslog restart
+服务重启后，配置即可生效，匹配到的报文的相关信息将被记录到指定的文件中。</p>
+<p>LOG动作也有自己的选项，常用选项如下（先列出概念，后面有示例）</p>
+<p>–log-level选项可以指定记录日志的日志级别，可用级别有emerg，alert，crit，error，warning，notice，info，debug。</p>
+<p>–log-prefix选项可以给记录到的相关信息添加”标签”之类的信息，以便区分各种记录到的报文信息，方便在分析时进行过滤。</p>
+<p>注：–log-prefix对应的值不能超过29个字符。</p>
+<pre><code>    例如：iptables -A INPUT -p tcp -j LOG --log-prefix &quot;INPUT packets&quot;
+</code></pre>
+<p>如果想要NAT功能能够正常使用，需要开启Linux主机的核心转发功能。</p>
+<pre><code>echo 1 &gt; /proc/sys/net/ipv4/ip_forward
+</code></pre>
+<p><img src="D:%5Cassets%5CIptables%E8%AF%A6%E8%A7%A3(4)%E5%A4%84%E7%90%86%E5%8A%A8%E4%BD%9C%5C051517_1411_1.png" alt="img"></p>
+<p>外部主机将响应报文发送给路由器，路由器根据刚才NAT表中的映射记录，将响应报文中的目标IP与目标端口再改为内部主机的IP与端口号，然后再将响应报文发送给内部网络中的主机。整个过程中，外部主机都不知道内部主机的IP地址，内部主机还能与外部主机通讯，于是起到了隐藏网络内主机IP的作用。</p>
+<p>NAPT是NAT的一种，全称为Network Address Port Translation，说白了就是映射报文IP地址的同时还会映射其端口号</p>
+<p>内部网络的报文发送出去时，报文的源IP会被修改，也就是源地址转换：Source Network Address Translation，缩写为SNAT。 网络内部的主机可以借助SNAT隐藏自己的IP地址，同时还能够共享合法的公网IP，让局域网内的多台主机共享公网IP访问互联网。</p>
+<p>SNET：</p>
+<p><img src="D:%5Cassets%5CIptables%E8%AF%A6%E8%A7%A3(4)%E5%A4%84%E7%90%86%E5%8A%A8%E4%BD%9C%5C1036128-20161102184753033-243372896.png" alt="img"></p>
+<p><img src="D:%5Cassets%5CIptables%E8%AF%A6%E8%A7%A3(4)%E5%A4%84%E7%90%86%E5%8A%A8%E4%BD%9C%5C1036128-20161102184826486-418364414.png" alt="img"></p>
+<p><img src="D:%5Cassets%5CIptables%E8%AF%A6%E8%A7%A3(4)%E5%A4%84%E7%90%86%E5%8A%A8%E4%BD%9C%5Cimage-20210425092955885.png" alt="N"></p>
+<p><img src="D:%5Cassets%5CIptables%E8%AF%A6%E8%A7%A3(4)%E5%A4%84%E7%90%86%E5%8A%A8%E4%BD%9C%5C051517_1411_11.png" alt="img"></p>
+<p>外部网络的报文响应时，响应报文的目标IP会再次被修改，也就是目标地址转换：Destinationnetwork address translation，缩写为DNAT。</p>
+<pre><code>“-t nat”表示操作nat表，我们之前一直在灌输一个概念，就是不同的表有不同的功能，filter表的功能是过滤，nat表的功能就是地址转换，所以我们需要在nat表中定义nat规则。
+
+“-A POSTROUTING”表示将SNAT规则添加到POSTROUTING链的末尾，在centos7中，SNAT规则只能存在于POSTROUTING链与INPUT链中，在centos6中，SNAT规则只能存在于POSTROUTING链中。
+
+你可能会问，为什么SNAT规则必须定义在POSTROUTING链中，我们可以这样认为，POSTROUTING链是iptables中报文发出的最后一个”关卡”，我们应该在报文马上发出之前，修改报文的源地址，否则就再也没有机会修改报文的源地址了，在centos7中，SNAT规则也可以定义在INPUT链中，我们可以这样理解，发往本机的报文经过INPUT链以后报文就到达了本机，如果再不修改报文的源地址，就没有机会修改了。
+
+“-s 10.1.0.0/16″表示报文来自于10.1.0.0/16网段，前文中一直在使用这个匹配条件，我想此处应该不用赘述了。
+
+“-j SNAT”表示使用SNAT动作，对匹配到的报文进行处理，对匹配到的报文进行源地址转换。
+
+“–to-source 192.168.1.146″表示将匹配到的报文的源IP修改为192.168.1.146，前文中，我们已经总结过，某些动作会有自己的选项，”–to-source”就是SNAT动作的常用选项，用于指定SNAT需要将报文的源IP修改为哪个IP地址。
+</code></pre>
+<p><img src="D:%5Cassets%5CIptables%E8%AF%A6%E8%A7%A3(4)%E5%A4%84%E7%90%86%E5%8A%A8%E4%BD%9C%5C051517_1411_13.png" alt="img"></p>
+<p><img src="D:%5Cassets%5CIptables%E8%AF%A6%E8%A7%A3(4)%E5%A4%84%E7%90%86%E5%8A%A8%E4%BD%9C%5C051517_1411_14.png" alt="img"></p>
+<hr>
+<p>DNET:</p>
+<p><img src="D:%5Cassets%5CIptables%E8%AF%A6%E8%A7%A3(4)%E5%A4%84%E7%90%86%E5%8A%A8%E4%BD%9C%5C1036128-20161102200509033-575942301.png" alt="img"></p>
+<p><img src="D:%5Cassets%5CIptables%E8%AF%A6%E8%A7%A3(4)%E5%A4%84%E7%90%86%E5%8A%A8%E4%BD%9C%5C051517_1411_19.png" alt="img"></p>
+<p>如上图所示，我们先将nat表中的规则清空了，从头来过，清空nat表规则后，定义了一条DNAT规则。</p>
+<p>“-t nat -I PREROUTING”表示在nat表中的PREROUTING链中配置DNAT规则，DNAT规则只配置在PREROUTING链与OUTPUT链中。</p>
+<p>“-d 192.168.1.146 -p tcp –dport 3389″表示报文的目标地址为公司的公网IP地址，目标端口为tcp的3389号端口，而我们知道，windows远程桌面使用的默认端口号就是3389，当外部主机访问公司公网IP的3389号端口时，报文则符合匹配条件。</p>
+<p>“-j DNAT –to-destination 10.1.0.6:3389″表示将符合条件的报文进行DNAT，也就是目标地址转换，将符合条件的报文的目标地址与目标端口修改为10.1.0.6:3389，”–to-destination”就是动作DNAT的常用选项。</p>
+<p>那么综上所述，上图中定义的规则的含义为，当外网主机访问公司公网IP的3389时，其报文的目标地址与端口将会被映射到10.1.0.6:3389上。</p>
+<p>好了，DNAT规则定义完了，现在能够直接使用外网主机访问私网中的服务了吗？</p>
+<p>理论上只要完成上述DNAT配置规则即可，但是在测试时，只配置DNAT规则后，并不能正常DNAT，经过测试发现，将相应的SNAT规则同时配置后，即可正常DNAT，于是我们又配置了SNAT</p>
+<p>示例如下。</p>
+<p><img src="D:%5Cassets%5CIptables%E8%AF%A6%E8%A7%A3(4)%E5%A4%84%E7%90%86%E5%8A%A8%E4%BD%9C%5C051517_1411_20.png" alt="img"></p>
+<p>注：理论上只配置DNAT规则即可，但是如果在测试时无法正常DNAT，可以尝试配置对应的SNAT，此处按照配置SNAT的流程进行。</p>
+<p>没错，与刚才定义SNAT时使用的规则完全一样。</p>
+<p>MASQUERADE：</p>
+<p>当我们拨号网上时，每次分配的IP地址往往不同，不会长期分给我们一个固定的IP地址，如果这时，我们想要让内网主机共享公网IP上网，就会很麻烦，因为每次IP地址发生变化以后，我们都要重新配置SNAT规则，这样显示不是很人性化，我们通过MASQUERADE即可解决这个问题，MASQUERADE会动态的将源地址转换为可用的IP地址，其实与SNAT实现的功能完全一致，都是修改源地址，只不过SNAT需要指明将报文的源地址改为哪个IP，而MASQUERADE则不用指定明确的IP，会动态的将报文的源地址修改为指定网卡上可用的IP地址，示例如下：<img src="D:%5Cassets%5CIptables%E8%AF%A6%E8%A7%A3(4)%E5%A4%84%E7%90%86%E5%8A%A8%E4%BD%9C%5C051517_1411_26.png" alt="img"></p>
+<p>如上图所示，我们指定，通过外网网卡出去的报文在经过POSTROUTING链时，会自动将报文的源地址修改为外网网卡上可用的IP地址，这时，即使外网网卡中的公网IP地址发生了改变，也能够正常的、动态的将内部主机的报文的源IP映射为对应的公网IP。</p>
+<p>可以把MASQUERADE理解为动态的、自动化的SNAT，如果没有动态SNAT的需求，没有必要使用MASQUERADE，因为SNAT更加高效。</p>
+<p>REDIRECT：</p>
+<p>使用REDIRECT动作可以在本机上进行端口映射
+比如，将本机的80端口映射到本机的8080端口上
+iptables -t nat -A PREROUTING -p tcp –dport 80 -j REDIRECT –to-ports 8080
+经过上述规则映射后，当别的机器访问本机的80端口时，报文会被重定向到本机的8080端口上。
+REDIRECT规则只能定义在PREROUTING链或者OUTPUT链中。</p>
+<p>SNAT       改写封包来源 IP 为某特定 IP 或 IP 范围，可以指定 port 对应的范围，进行完此处理动作后，将直接跳往下一个规则（mangleostrouting）。</p>
+<p>​        例如：iptables -t nat -A POSTROUTING -p tcp-o eth0 -j SNAT &ndash;to-source 194.236.50.155-194.236.50.160:1024-32000</p>
+<p>DNAT      改写封包目的地 IP 为某特定 IP 或 IP 范围，可以指定 port 对应的范围，进行完此处理动作后，将会直接跳往下一个规炼（filter:input 或 filter:forward）。</p>
+<p>​        例如：iptables -t nat -A PREROUTING -p tcp -d 15.45.23.67 &ndash;dport 80 -j DNAT &ndash;to-destination 192.168.1.1-192.168.1.10:80-100</p>
+<p>MIRROR    镜射封包，也就是将来源 IP 与目的地 IP 对调后，将封包送回，进行完此处理动作后，将会中断过滤程序。</p>
+<p>QUEUE     中断过滤程序，将封包放入队列，交给其它程序处理。透过自行开发的处理程序，可以进行其它应用，</p>
+<p>​           例如：计算联机费&hellip;&hellip;等。</p>
+<p>RETURN    结束在目前规则炼中的过滤程序，返回主规则炼继续过滤，如果把自订规则炼看成是一个子程序，那么这个动作，就相当提早结束子程序并返回到主程序中。</p>
+<p>MARK     将封包标上某个代号，以便提供作为后续过滤的条件判断依据，进行完此处理动作后，将会继续比对其它规则。</p>
+<p>​        例如：iptables -t mangle -A PREROUTING -p tcp &ndash;dport 22 -j MARK &ndash;set-mark 2</p>
+<pre><code>REJECT动作的常用选项为–reject-with
+
+使用–reject-with选项，可以设置提示信息，当对方被拒绝时，会提示对方为什么被拒绝。
+
+可用值如下
+
+icmp-net-unreachable
+
+icmp-host-unreachable
+
+icmp-port-unreachable,
+
+icmp-proto-unreachable
+
+icmp-net-prohibited
+
+icmp-host-pro-hibited
+
+icmp-admin-prohibited
+
+当不设置任何值时，默认值为icmp-port-unreachable。
+
+ 
+</code></pre>
+<h1 id="小结">小结</h1>
+<h3 id="snat相关操作">SNAT相关操作</h3>
+<p>配置SNAT，可以隐藏网内主机的IP地址，也可以共享公网IP，访问互联网，如果只是共享IP的话，只配置如下SNAT规则即可。</p>
+<pre><code>iptables -t nat -A POSTROUTING -s 10.1.0.0/16 -j SNAT --to-source 公网IP
+</code></pre>
+<p>如果公网IP是动态获取的，不是固定的，则可以使用MASQUERADE进行动态的SNAT操作，如下命令表示将10.1网段的报文的源IP修改为eth0网卡中可用的地址。</p>
+<pre><code>iptables -t nat -A POSTROUTING -s 10.1.0.0/16 -o eth0 -j MASQUERADE
+</code></pre>
+<h3 id="dnat相关操作">DNAT相关操作</h3>
+<p>配置DNAT，可以通过公网IP访问局域网内的服务。</p>
+<p>注：理论上来说，只要配置DNAT规则，不需要对应的SNAT规则即可达到DNAT效果。</p>
+<p>但是在测试DNAT时，对应SNAT规则也需要配置，才能正常DNAT，可以先尝试只配置DNAT规则，如果无法正常DNAT，再尝试添加对应的SNAT规则，SNAT规则配置一条即可，DNAT规则需要根据实际情况配置不同的DNAT规则。</p>
+<pre><code>iptables -t nat -I PREROUTING -d 公网IP -p tcp --dport 公网端口 -j DNAT --to-destination 私网IP:端口号
+
+iptables -t nat -I PREROUTING -d 公网IP -p tcp --dport 8080 -j DNAT --to-destination 10.1.0.1:80
+
+iptables -t nat -A POSTROUTING -s 10.1.0.0/16 -j SNAT --to-source 公网IP
+</code></pre>
+<p>在本机进行目标端口映射时可以使用REDIRECT动作。</p>
+<pre><code>iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-ports 8080
+</code></pre>
+<p>配置完成上述规则后，其他机器访问本机的80端口时，会被映射到8080端口。</p>
+
+                    </div>
+                    
+                    <div class="my-4">
+    
+    <a href="/tags/iptables/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#Iptables</a>
+    
+    <a href="/tags/linux%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#Linux网络安全</a>
+    
+</div>
+                    
+                    
+                    <div class="py-2">
+    
+    <div class="flex flex-col md:flex-row items-center my-8">
+        <a href="/authors/songjinfeng/" class="w-24 h-24 md:mr-4">
+            
+            
+            <img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/images/2021.04.22-14:35:19-D-assets-images-sjf.png" class="w-full bg-primary-bg rounded-full" alt="Avatar">
+            
+        </a>
+        <div class="w-full md:w-auto mt-4 md:mt-0">
+            <a href="/authors/songjinfeng/" class="block font-bold text-lg pb-1 mb-2 border-b">宋锦丰</a>
+            <span class="block pb-2">一名运维技术爱好者，专注于 Kubernetes 、 Linux 等技术干货分享。</span>
+            
+            
+            
+            
+            
+            <a href="mailto:GW.songjinfengzc@h3c.com" class="mr-1">
+                <i class="fas fa-envelope"></i>
+            </a>
+            
+            
+            
+            
+            
+            <a href="https://github.com/SJFCS/SJFCS.GITHUB.IO" class="mr-1">
+                <i class="fab fa-github"></i>
+            </a>
+            
+            
+            
+            
+            
+            <a href="/index.xml" class="mr-1">
+                <i class="fas fa-rss"></i>
+            </a>
+            
+        </div>
+    </div>
+    
+</div>
+                    
+
+                    
+
+                    
+<div class="flex flex-col md:flex-row md:justify-between -mx-2 mt-4 px-2 pt-4 border-t">
+    <div>
+        
+        <span class="block font-bold">上一页</span>
+        <a href="/docs/iptables/iptables%E8%AF%A6%E8%A7%A333%E5%AE%89%E5%85%A8%E6%A8%A1%E5%9D%97/" class="block">Iptables详解(3)3安全模块</a>
+        
+    </div>
+    <div class="md:text-right mt-4 md:mt-0">
+        
+        <span class="block font-bold">下一页</span>
+        <a href="/docs/iptables/iptables%E8%AF%A6%E8%A7%A37%E8%87%AA%E5%AE%9A%E4%B9%89%E9%93%BE/" class="block"></a>
+        
+    </div>
+</div>
+
+                    
+                </div>
+                
+                <div class="hidden lg:block lg:w-1/4">
+                    
+                    <div class="sticky top-16 z-10 hidden lg:block px-6 py-4  bg-secondary-bg pt-16 -mt-16 ">
+    <span class="text-lg font-semibold">本页内容</span>
+</div>
+<div class="sticky-toc hidden lg:block px-6 pb-6  pt-10 -mt-10 border-l ">
+    <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#snat相关操作">SNAT相关操作</a></li>
+        <li><a href="#dnat相关操作">DNAT相关操作</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+</div>
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        enableStickyToc();
+    });
+</script>
+                    
+                </div>
+                
+            </div>
+
+        </div>
+
+
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        hljs.initHighlightingOnLoad();
+        changeSidebarHeight();
+        switchDocToc();
+    })
+</script>
+
+
+
+
+
+
+
+
+
+      </div>
+    </div>
+    
+  </main>
+  <footer class="pl-scrollbar">
+    <div class="w-full max-w-screen-xl mx-auto"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 2021 <a href="https://www.songjinfeng.com/">SonJinfeng</a> 
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+  </footer>
+</body>
+
+</html>

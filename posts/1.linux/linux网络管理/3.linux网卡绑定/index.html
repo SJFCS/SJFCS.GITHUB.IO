@@ -1,0 +1,1466 @@
+<!DOCTYPE html>
+<html lang='zh' ><meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+
+
+<title>Linux网卡绑定 | Songjinfeng&#39;s BLOG</title>
+<link rel="stylesheet" href="/css/eureka.min.css">
+<script defer src="/js/eureka.min.js"></script>
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Noto+Serif+SC:wght@400;600;700&display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/styles/solarized-light.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/highlight.min.js"
+   crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/dart.min.js"
+     crossorigin></script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/js/all.min.js"
+   integrity="sha256-uNYoXefWRqv&#43;PsIF/OflNmwtKM4lStn9yrz2gVl6ymo="  crossorigin></script>
+
+
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css"
+   integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3&#43;Aro6EYUG4&#43;cU&#43;KJWu/X"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js" 
+  integrity="sha384-g7c&#43;Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI&#43;sEnkvrMWph2EDg4"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js"
+   integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC&#43;Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.9.2/dist/mermaid.min.js" 
+  integrity="sha256-Zmpaaj&#43;GXFsPF5WdPArSrnW3b30dovldeKsW00xBVwE="  crossorigin></script>
+
+
+<link rel="icon" type="image/png" sizes="32x32" href="/images/icon_hucfa16751ac9c82c06b84c3502c0db793_16378_32x32_fill_box_center_2.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hucfa16751ac9c82c06b84c3502c0db793_16378_180x180_fill_box_center_2.png">
+
+<meta name="description"
+  content="[root@master ~]# uname -r 3.10.0-1160.el7.x86_64 [root@master ~]# cat /etc/redhat-release CentOS Linux release 7.9.2009 (Core)  双网卡绑定各模式配置文件示例 对于各种双网卡绑定配置模式，请参考系统中的示例文件，文件位置：
+/usr/share/doc/teamd-xx/example_configs/
+前言 服务器常有多块网卡，为了提高冗余可靠性和数据传输带宽，引入了两项技术Bond和Team，通过多张网卡绑定为一个逻辑网卡，实现本地网卡的冗余，带宽扩容和负载均衡，提供链路级别的故障保护，在生产场景中是常用的技术。
+网卡Bond是Kernels 2.4.12及以后的版本均供bonding模块，以前的版本可以通过patch实现。
+CentOS6及之前都是使用bond机制来实现多网络绑定同一个IP地址，来对网络提供访问，并按不同的模式来负载均衡或者轮回接替管理处理数据。 而到了ContOS7之后，引入NetworkManager来管理网络，通过命令行工具nmcli进行配置，nmcli会根据命令参数的配置来重新生成特定的配置文件来供网络接口使用，nmcli支持bond技术和新的team机制。在Centos7有这两种技术可供选择。 本文将从技术原理和应用实践两方面对这两项技术展开讲解。
+、、、、、、、、、、、、、、、、、、、、、、
+虚拟交换机xxx
+Bond、Team对比 “Bonding” 和 “nmcli的网络组Network Teaming”二者实现的功能一样，但从某种角度，网络组要比Bonding的技术要好
+Bond详解 bonding的详细帮助
+/usr/share/doc/kernel-doc- version/Documentation/networking/bonding.txt https://www.kernel.org/doc/Documentation/networking/bonding.txt
+Bond模式七模式 https://zhiliao.h3c.com/Theme/details/24694
+交换机多端口和服务器对接时，需要确定是否需要配置聚合或者不配置聚合，并且配置聚合的时候还需要确认是静态聚合还是动态聚合，当然这和当前服务器网卡的bond模式有关。下面我们了解下Linux服务器的7种bond模式，说明如下：
+ ==mod=0 (balance-rr) Round-robin policy（平衡抡循环策略）==   轮询策略：按照顺序轮流使用每个接口来发送和接收数据包，提高了负载均衡和冗余的能力，带宽翻倍。 该模式所有端口的mac地址相同 ==交换机侧做静态链路聚合==  H3C V3平台交换机侧的静态典型配置 [H3C] link-aggregation group 1 mode manual [H3C] interface ethernet2/1/1 [H3C-Ethernet2/1/1] port link-aggregation group 1 H3C V5/V7交换机侧的静态典型配置 [DeviceA] interface Bridge-Aggregation 1 //默认静态 [DeviceA] interface GigabitEthernet 4/0/1 [DeviceA-GigabitEthernet4/0/1] port link-aggregation group 1   ==mod=1 (active-backup) Active-backup policy（主-备份策略）==   冗余性高：只有一个设备处于活动状态，当一个宕掉另一个马上由备份转换为主设备。 链路利用率低：只有一个接口处于工作状态。 bond的MAC地址是唯一的，切换主备时交换机侧会存在MAC漂移的记录 ==交换机无需配置或建议在同一VLAN下==   ==mod=2 (balance-xor) XOR policy（平衡策略）==【load balancing】    XOR Hash负载分担：基于指定的传输HASH策略传输数据包。缺省的策略是：(源MAC地址 XOR 目标MAC地址) % slave数量。其他的传输策略可以通过xmit_hash_policy选项指定，此模式提供负载平衡和容错能力">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"技术专栏",
+      "item":"/posts/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"Linux",
+      "item":"/posts/1.linux/"},{
+      "@type": "ListItem",
+      "position": 3 ,
+      "name":"Linux网卡绑定",
+      "item":"/posts/1.linux/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/3.linux%E7%BD%91%E5%8D%A1%E7%BB%91%E5%AE%9A/"}]
+}
+</script>
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/posts/1.linux/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/3.linux%E7%BD%91%E5%8D%A1%E7%BB%91%E5%AE%9A/"
+    },
+    "headline": "Linux网卡绑定 | Songjinfeng\u0027s BLOG","wordCount":  2402 ,
+    "publisher": {
+        "@type": "Person",
+        "name": "JF. Song",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "/images/icon.png"
+        }
+        },
+    "description": "[root@master ~]# uname -r 3.10.0-1160.el7.x86_64 [root@master ~]# cat \/etc\/redhat-release CentOS Linux release 7.9.2009 (Core)  双网卡绑定各模式配置文件示例 对于各种双网卡绑定配置模式，请参考系统中的示例文件，文件位置：\n\/usr\/share\/doc\/teamd-xx\/example_configs\/\n前言 服务器常有多块网卡，为了提高冗余可靠性和数据传输带宽，引入了两项技术Bond和Team，通过多张网卡绑定为一个逻辑网卡，实现本地网卡的冗余，带宽扩容和负载均衡，提供链路级别的故障保护，在生产场景中是常用的技术。\n网卡Bond是Kernels 2.4.12及以后的版本均供bonding模块，以前的版本可以通过patch实现。\nCentOS6及之前都是使用bond机制来实现多网络绑定同一个IP地址，来对网络提供访问，并按不同的模式来负载均衡或者轮回接替管理处理数据。 而到了ContOS7之后，引入NetworkManager来管理网络，通过命令行工具nmcli进行配置，nmcli会根据命令参数的配置来重新生成特定的配置文件来供网络接口使用，nmcli支持bond技术和新的team机制。在Centos7有这两种技术可供选择。 本文将从技术原理和应用实践两方面对这两项技术展开讲解。\n、、、、、、、、、、、、、、、、、、、、、、\n虚拟交换机xxx\nBond、Team对比 “Bonding” 和 “nmcli的网络组Network Teaming”二者实现的功能一样，但从某种角度，网络组要比Bonding的技术要好\nBond详解 bonding的详细帮助\n\/usr\/share\/doc\/kernel-doc- version\/Documentation\/networking\/bonding.txt https:\/\/www.kernel.org\/doc\/Documentation\/networking\/bonding.txt\nBond模式七模式 https:\/\/zhiliao.h3c.com\/Theme\/details\/24694\n交换机多端口和服务器对接时，需要确定是否需要配置聚合或者不配置聚合，并且配置聚合的时候还需要确认是静态聚合还是动态聚合，当然这和当前服务器网卡的bond模式有关。下面我们了解下Linux服务器的7种bond模式，说明如下：\n ==mod=0 (balance-rr) Round-robin policy（平衡抡循环策略）==   轮询策略：按照顺序轮流使用每个接口来发送和接收数据包，提高了负载均衡和冗余的能力，带宽翻倍。 该模式所有端口的mac地址相同 ==交换机侧做静态链路聚合==  H3C V3平台交换机侧的静态典型配置 [H3C] link-aggregation group 1 mode manual [H3C] interface ethernet2\/1\/1 [H3C-Ethernet2\/1\/1] port link-aggregation group 1 H3C V5\/V7交换机侧的静态典型配置 [DeviceA] interface Bridge-Aggregation 1 \/\/默认静态 [DeviceA] interface GigabitEthernet 4\/0\/1 [DeviceA-GigabitEthernet4\/0\/1] port link-aggregation group 1   ==mod=1 (active-backup) Active-backup policy（主-备份策略）==   冗余性高：只有一个设备处于活动状态，当一个宕掉另一个马上由备份转换为主设备。 链路利用率低：只有一个接口处于工作状态。 bond的MAC地址是唯一的，切换主备时交换机侧会存在MAC漂移的记录 ==交换机无需配置或建议在同一VLAN下==   ==mod=2 (balance-xor) XOR policy（平衡策略）==【load balancing】    XOR Hash负载分担：基于指定的传输HASH策略传输数据包。缺省的策略是：(源MAC地址 XOR 目标MAC地址) % slave数量。其他的传输策略可以通过xmit_hash_policy选项指定，此模式提供负载平衡和容错能力"
+}
+</script><meta property="og:title" content="Linux网卡绑定 | Songjinfeng&#39;s BLOG" />
+<meta property="og:type" content="article" />
+
+
+<meta property="og:image" content="/images/icon.png">
+
+
+<meta property="og:url" content="/posts/1.linux/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/3.linux%E7%BD%91%E5%8D%A1%E7%BB%91%E5%AE%9A/" />
+
+
+
+
+<meta property="og:description" content="[root@master ~]# uname -r 3.10.0-1160.el7.x86_64 [root@master ~]# cat /etc/redhat-release CentOS Linux release 7.9.2009 (Core)  双网卡绑定各模式配置文件示例 对于各种双网卡绑定配置模式，请参考系统中的示例文件，文件位置：
+/usr/share/doc/teamd-xx/example_configs/
+前言 服务器常有多块网卡，为了提高冗余可靠性和数据传输带宽，引入了两项技术Bond和Team，通过多张网卡绑定为一个逻辑网卡，实现本地网卡的冗余，带宽扩容和负载均衡，提供链路级别的故障保护，在生产场景中是常用的技术。
+网卡Bond是Kernels 2.4.12及以后的版本均供bonding模块，以前的版本可以通过patch实现。
+CentOS6及之前都是使用bond机制来实现多网络绑定同一个IP地址，来对网络提供访问，并按不同的模式来负载均衡或者轮回接替管理处理数据。 而到了ContOS7之后，引入NetworkManager来管理网络，通过命令行工具nmcli进行配置，nmcli会根据命令参数的配置来重新生成特定的配置文件来供网络接口使用，nmcli支持bond技术和新的team机制。在Centos7有这两种技术可供选择。 本文将从技术原理和应用实践两方面对这两项技术展开讲解。
+、、、、、、、、、、、、、、、、、、、、、、
+虚拟交换机xxx
+Bond、Team对比 “Bonding” 和 “nmcli的网络组Network Teaming”二者实现的功能一样，但从某种角度，网络组要比Bonding的技术要好
+Bond详解 bonding的详细帮助
+/usr/share/doc/kernel-doc- version/Documentation/networking/bonding.txt https://www.kernel.org/doc/Documentation/networking/bonding.txt
+Bond模式七模式 https://zhiliao.h3c.com/Theme/details/24694
+交换机多端口和服务器对接时，需要确定是否需要配置聚合或者不配置聚合，并且配置聚合的时候还需要确认是静态聚合还是动态聚合，当然这和当前服务器网卡的bond模式有关。下面我们了解下Linux服务器的7种bond模式，说明如下：
+ ==mod=0 (balance-rr) Round-robin policy（平衡抡循环策略）==   轮询策略：按照顺序轮流使用每个接口来发送和接收数据包，提高了负载均衡和冗余的能力，带宽翻倍。 该模式所有端口的mac地址相同 ==交换机侧做静态链路聚合==  H3C V3平台交换机侧的静态典型配置 [H3C] link-aggregation group 1 mode manual [H3C] interface ethernet2/1/1 [H3C-Ethernet2/1/1] port link-aggregation group 1 H3C V5/V7交换机侧的静态典型配置 [DeviceA] interface Bridge-Aggregation 1 //默认静态 [DeviceA] interface GigabitEthernet 4/0/1 [DeviceA-GigabitEthernet4/0/1] port link-aggregation group 1   ==mod=1 (active-backup) Active-backup policy（主-备份策略）==   冗余性高：只有一个设备处于活动状态，当一个宕掉另一个马上由备份转换为主设备。 链路利用率低：只有一个接口处于工作状态。 bond的MAC地址是唯一的，切换主备时交换机侧会存在MAC漂移的记录 ==交换机无需配置或建议在同一VLAN下==   ==mod=2 (balance-xor) XOR policy（平衡策略）==【load balancing】    XOR Hash负载分担：基于指定的传输HASH策略传输数据包。缺省的策略是：(源MAC地址 XOR 目标MAC地址) % slave数量。其他的传输策略可以通过xmit_hash_policy选项指定，此模式提供负载平衡和容错能力" />
+
+
+
+
+<meta property="og:locale" content="zh" />
+
+
+
+
+<meta property="og:site_name" content="Songjinfeng&#39;s BLOG" />
+
+
+
+
+
+
+
+
+
+<meta property="article:section" content="posts" />
+
+
+
+
+<body class="flex flex-col min-h-screen">
+  <header class="fixed flex items-center w-full min-h-16 pl-scrollbar z-50 bg-secondary-bg shadow-sm">
+    <div class="w-full max-w-screen-xl mx-auto"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="mr-6 text-primary-text text-xl font-bold">Songjinfeng&#39;s BLOG</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:flex-grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:flex-grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  mr-4">技术专栏</a>
+            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">文档笔记</a>
+            <a href="/series/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">主题系列</a>
+            <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">标签</a>
+            <a href="/authors/songjinfeng/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">关于</a>
+            <a href="/index.xml" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">RSS</a>
+            <a href="/webstack" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">友链&amp;导航</a>
+        </div>
+
+        <div class="flex">
+            <div class="relative pt-4 md:pt-0">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col left-0 md:left-auto right-auto md:right-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">浅色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">深色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">自动</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            switchMode('Auto')
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+  </header>
+  <main class="flex-grow pt-16">
+    <div class="pl-scrollbar">
+      <div class="w-full max-w-screen-xl lg:px-4 xl:px-8 mx-auto">
+
+
+<div class="grid grid-cols-2 lg:grid-cols-8 gap-4 lg:pt-12">
+    <div
+        class="col-span-2 lg:col-start-2 lg:col-span-6 bg-secondary-bg rounded px-6 py-8">
+        <h1 class="font-bold text-3xl text-primary-text">Linux网卡绑定</h1>
+        <div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>0001-01-01</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>12分钟阅读时长</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="/categories/blog/" class="hover:text-eureka">blog</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/posts/" class="hover:text-eureka">posts</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/linux/" class="hover:text-eureka">Linux</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/" class="hover:text-eureka">Linux网络管理</a>
+        
+    </div>
+    
+
+    
+</div>
+        
+        
+        
+
+        <div class="content">
+            <pre><code class="language-bash">[root@master ~]# uname -r
+3.10.0-1160.el7.x86_64
+[root@master ~]# cat /etc/redhat-release 
+CentOS Linux release 7.9.2009 (Core)
+</code></pre>
+<h2 id="双网卡绑定各模式配置文件示例">双网卡绑定各模式配置文件示例</h2>
+<p>对于各种双网卡绑定配置模式，请参考系统中的示例文件，文件位置：</p>
+<p>/usr/share/doc/teamd-xx/example_configs/</p>
+<h1 id="前言">前言</h1>
+<p>服务器常有多块网卡，为了提高冗余可靠性和数据传输带宽，引入了两项技术Bond和Team，通过多张网卡绑定为一个逻辑网卡，实现本地网卡的冗余，带宽扩容和负载均衡，提供链路级别的故障保护，在生产场景中是常用的技术。</p>
+<p>网卡Bond是Kernels 2.4.12及以后的版本均供bonding模块，以前的版本可以通过patch实现。</p>
+<p>CentOS6及之前都是使用bond机制来实现多网络绑定同一个IP地址，来对网络提供访问，并按不同的模式来负载均衡或者轮回接替管理处理数据。
+而到了ContOS7之后，引入NetworkManager来管理网络，通过命令行工具nmcli进行配置，nmcli会根据命令参数的配置来重新生成特定的配置文件来供网络接口使用，nmcli支持bond技术和新的team机制。在Centos7有这两种技术可供选择。
+本文将从技术原理和应用实践两方面对这两项技术展开讲解。</p>
+<p>、、、、、、、、、、、、、、、、、、、、、、</p>
+<p>虚拟交换机xxx</p>
+<h1 id="bondteam对比">Bond、Team对比</h1>
+<p>“Bonding” 和 “nmcli的网络组Network Teaming”二者实现的功能一样，但从某种角度，网络组要比Bonding的技术要好</p>
+<p><img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/http/www.360docs.net/pic/2021.04.01-11:42:17-http-www.360docs.net-pic-view-ih=792-rn=1-doc_id=4c1c9c900812a21614791711cc7931b764ce7b76-o=jpg_6_0_______-pn=1-iw=618-ix=0-sign=cea2dc996fe74035b29e7c860d70b564-type=1-iy=0-aimw=618-app_ver=2.9.8.2-ua=bd_800_800_IncredibleS_2.9.8.2_2.3.7-bid=1-app_ua=IncredibleS-uid=-cuid=-fr=3-Bdi_bear=WIFI-from=3_10000-bduss=-pid=1-screen=800_800-sys_ver=2.3.jpeg" alt="Centos7双网卡聚合详解及排错"></p>
+<p><img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/http/www.360docs.net/pic/2021.04.01-11:42:23-http-www.360docs.net-pic-view-ih=218-rn=1-doc_id=4c1c9c900812a21614791711cc7931b764ce7b76-o=jpg_6_0_______-pn=2-iw=618-ix=0-sign=6fc1bb921bc37e7f5d3c45814b52cfcd-type=1-iy=0-aimw=618-app_ver=2.9.8.2-ua=bd_800_800_IncredibleS_2.9.8.2_2.3.7-bid=1-app_ua=IncredibleS-uid=-cuid=-fr=3-Bdi_bear=WIFI-from=3_10000-bduss=-pid=1-screen=800_800-sys_ver=2.3.jpeg" alt="Centos7双网卡聚合详解及排错"></p>
+<h1 id="bond详解">Bond详解</h1>
+<p><strong>bonding的详细帮助</strong></p>
+<p>/usr/share/doc/kernel-doc- version/Documentation/networking/bonding.txt
+<a href="https://www.kernel.org/doc/Documentation/networking/bonding.txt">https://www.kernel.org/doc/Documentation/networking/bonding.txt</a></p>
+<h2 id="bond模式七模式">Bond模式七模式</h2>
+<p><a href="https://zhiliao.h3c.com/Theme/details/24694">https://zhiliao.h3c.com/Theme/details/24694</a></p>
+<p>交换机多端口和服务器对接时，需要确定是否需要配置聚合或者不配置聚合，并且配置聚合的时候还需要确认是静态聚合还是动态聚合，当然这和当前服务器网卡的bond模式有关。下面我们了解下Linux服务器的7种bond模式，说明如下：</p>
+<p><img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/Linux%E7%BD%91%E5%8D%A1%E7%BB%91%E5%AE%9A/2021.03.31-11:22:43-D-assets-Linux%E7%BD%91%E5%8D%A1%E7%BB%91%E5%AE%9A-v2-ef498da6cea18522141c14e41ff28c7e_r.jpg" alt="preview"></p>
+<ul>
+<li>==mod=0 (balance-rr) Round-robin policy（平衡抡循环策略）==</li>
+</ul>
+<ol>
+<li>轮询策略：按照顺序轮流使用每个接口来发送和接收数据包，提高了负载均衡和冗余的能力，带宽翻倍。</li>
+<li>该模式所有端口的mac地址相同</li>
+<li>==交换机侧做静态链路聚合==</li>
+</ol>
+<pre><code class="language-bash">H3C V3平台交换机侧的静态典型配置
+[H3C] link-aggregation group 1 mode manual
+[H3C] interface ethernet2/1/1
+[H3C-Ethernet2/1/1] port link-aggregation group 1
+
+H3C V5/V7交换机侧的静态典型配置
+[DeviceA] interface Bridge-Aggregation 1          //默认静态
+[DeviceA] interface GigabitEthernet 4/0/1
+[DeviceA-GigabitEthernet4/0/1] port link-aggregation group 1
+</code></pre>
+<ul>
+<li>==mod=1 (active-backup) Active-backup policy（主-备份策略）==</li>
+</ul>
+<ol>
+<li>冗余性高：只有一个设备处于活动状态，当一个宕掉另一个马上由备份转换为主设备。</li>
+<li>链路利用率低：只有一个接口处于工作状态。</li>
+<li>bond的MAC地址是唯一的，切换主备时交换机侧会存在MAC漂移的记录</li>
+<li>==交换机无需配置或建议在同一VLAN下==</li>
+</ol>
+<ul>
+<li>==mod=2 (balance-xor) XOR policy（平衡策略）==【load balancing】</li>
+</ul>
+<ol>
+<li>
+<p>XOR Hash负载分担：基于指定的传输HASH策略传输数据包。缺省的策略是：(源MAC地址 XOR 目标MAC地址) % slave数量。其他的传输策略可以通过xmit_hash_policy选项指定，此模式提供负载平衡和容错能力</p>
+</li>
+<li>
+<p>指向具体对等接口的模式流量总是使用同一接口发送。因为目标是由 MAC 地址决定，因此这个方法最适合相同链接或本地网络的对等接口流量。如果流量必须通过单一路由器，那么这个流量平衡模式将是次选模式。</p>
+</li>
+<li>
+<p>==交换机侧配置 静态聚合或划入相同VLAN？？？？？？==</p>
+</li>
+</ol>
+<ul>
+<li>==mod=3 broadcast（广播策略）==</li>
+</ul>
+<ol>
+<li>
+<p>在每个slave接口上广播数据包，无负载均衡均衡，只有冗余机制，但过于浪费资源。</p>
+</li>
+<li>
+<p>需要和交换机的聚合强制不协商方式配合。==交换机侧无需配置任何链路模式==  两台交换机不同vlan？？？？</p>
+<p>特点：在每个slave接口上传输每个数据包，此模式提供了容错能力</p>
+</li>
+</ol>
+<ul>
+<li>==mod=4 (802.3ad) IEEE 802.3adDynamic link aggregation（IEEE 802.3ad 动态链接聚合） 【LACP链路聚合模式】==    ==交换机侧需要动态链路聚合配置对接。==</li>
+</ul>
+<ol>
+<li>表示支持802.3ad协议，和交换机的聚合LACP方式配合（需要xmit_hash_policy）.</li>
+<li>根据802.3ad规范将多个slave工作在同一个聚合组下，所有设备要在同样的速率和双工模式。外出流量的slave选举是基于传输hash策略，该策略可以通过xmit_hash_policy选项从缺省的XOR策略改变到其他策略。需要注意的是，并不是所有的传输策略都是802.3ad适应的，尤其考虑到在802.3ad标准43.2.4章节提及的包乱序问题。不同的实现可能会有不同的适应性。</li>
+<li>必要条件：
+<ul>
+<li>ethtool支持获取每个slave的速率和双工设定</li>
+<li>==交换机配置动态链路聚合（IEEE802.3ad Dynamic link aggregation）==</li>
+</ul>
+</li>
+</ol>
+<pre><code class="language-bash">H3C V3交换机的动态聚合典型配置
+[H3C] link-aggregation group 1 mode static
+[H3C] interface ethernet2/1/1
+[H3C-Ethernet2/1/1] port link-aggregation group 1
+
+H3C V5/V7平台交换机的动态聚合典型配置
+[DeviceA] interface Bridge-Aggregation 1
+[DeviceA-Bridge-Aggregation1] link-aggregation mode dynamic
+[DeviceA] interface GigabitEthernet 4/0/1
+[DeviceA-GigabitEthernet4/0/1] port link-aggregation group 1
+</code></pre>
+<ul>
+<li>==mod=5 (balance-tlb) Adaptive transmit load balancing（适配器传输负载均衡）==</li>
+</ul>
+<ol>
+<li>
+<p>在每个slave上根据当前的负载（根据速度计算）分配外出流量。如果正在接受数据的slave出故障了，另一个slave接管失败的slave的MAC地址。所以ARP监控不可用。</p>
+</li>
+<li>
+<p>这个模式只适用于内核绑定模式了解的本地地址，因此无法在桥接后的虚拟机中使用。</p>
+</li>
+<li>
+<p>必要条件：ethtool支持获取每个slave的速率</p>
+</li>
+<li>
+<p>==不需要配置交换机==</p>
+</li>
+</ol>
+<ul>
+<li>==mod=6 (balance-alb) Adaptive load balancing（适配器适应性负载均衡）==</li>
+</ul>
+<ol>
+<li>
+<p>为容错及负载平衡设定自适应负载平衡（ALB）策略，包括用于 IPv4 流量的传输及接收负载平衡。使用 ARP 协商获得接收负载平衡。</p>
+</li>
+<li>
+<p>这个模式只适用于内核 binding 模块了解的本地地址，因此无法在桥接后的虚拟机中使用。</p>
+</li>
+<li>
+<p>该模式包含了balance-tlb模式，同时加上针对IPV4流量的接收负载均衡(receive load balance, rlb)，而且不需要任何switch(交换机)的支持。接收负载均衡是通过ARP协商实现的。bonding驱动截获本机发送的ARP应答，并把源硬件地址改写为bond中某个slave的唯一硬件地址，从而使得不同的对端使用不同的硬件地址进行通信。</p>
+</li>
+<li>
+<p>来自服务器端的接收流量也会被均衡。当本机发送ARP请求时，bonding驱动把对端的IP信息从ARP包中复制并保存下来。当ARP应答从对端到达 时，bonding驱动把它的硬件地址提取出来，并发起一个ARP应答给bond中的某个slave。使用ARP协商进行负载均衡的一个问题是：每次广播ARP请求时都会使用bond的硬件地址，因此对端学习到这个硬件地址后，接收流量将会全部刘翔当前的slave。这个问题通过给所有的对端发送更新 （ARP应答）来解决，应答中包含他们独一无二的硬件地址，从而导致流量重新分布。当新的slave加入到bond中时，或者某个未激活的slave重新 激活时，接收流量也要重新分布。接收的负载被顺序地分布（round robin）在bond中最高速的slave上
+当某个链路被重新接上，或者 一个新的slave加入到bond中，接收流量在所有当前激活的slave中全部重新分配，通过使用指定的MAC地址给每个 client发起ARP应答。下面介绍的updelay参数必须被设置为某个大于等于switch(交换机)转发延时的值，从而保证发往对端的ARP应答 不会被switch(交换机)阻截。</p>
+</li>
+<li>
+<p>必要条件：</p>
+<ul>
+<li>
+<p>ethtool支持获取每个slave的速率；</p>
+</li>
+<li>
+<p>底层驱动支持设置某个设备的硬件地址，从而使得总是有个slave(curr_active_slave)使用bond的硬件地址，同时保证每个bond 中的slave都有一个唯一的硬件地址。如果curr_active_slave出故障，它的硬件地址将会被新选出来的 curr_active_slave接管</p>
+</li>
+</ul>
+</li>
+</ol>
+<p>其实mod=6与mod=0的区别：mod=6，先把eth0流量占满，再占eth1，&hellip;.ethX；而mod=0的话，会发现2个口的流量都很稳定，基本一样的带宽。而mod=6，会发现第一个口流量很高，第2个口只占了小部分流量</p>
+<h2 id="bond参数">Bond参数</h2>
+<p>BONDING_OPTS=&ldquo;bonding parameters separated by spaces&rdquo;
+必须在 ifcfg-bondN 接口文件的 BONDING_OPTS=&ldquo;bonding parameters&rdquo; 指令中，使用以空格分开的列表指定bonding 内核模块。请不要在/etc/modprobe.d/bonding.conf 文件或弃用的/etc/modprobe.conf 文件中为绑定设备指定选项。</p>
+<ol>
+<li>==fail_over_mac=value==
+用于指定 active-backup 模式是下slave接口的 MAC 地址</li>
+</ol>
+<ul>
+<li>
+<p>none 或 0 — 默认设置。bond和所有slave接口使用相同 MAC 地址。</p>
+</li>
+<li>
+<p>active 或 1 —“active” bond的 MAC 地址为目前活动（主）slave的 MAC 地址。</p>
+<p>这个策略对永远无法更改其 MAC 地址的设备，或拒绝使用其自主源 MAC 地址传入多播的设备（影响 ARP 监控）很有帮助。</p>
+<p>这个策略的缺点是该网络中的每个设备必须通过free ARP 更新，这与切换 snoop 传入流量以便更新其 ARP 表的常规方法相反。如果free ARP 链接丢失，则可能破坏通讯。</p>
+<p>使用这个策略同时采用 MII 监控时，在可真正传输并接受数据前就声明链接处于 up 状态的设备很可能会丢失free ARP，并可能需要设置正确的呼叫建立延迟（updelay）。</p>
+</li>
+<li>
+<p>follow 或 2 —“follow” 当前活动的（主）slave设备会修改为bond的MAC地址。</p>
+<p>这个策略对使用同一 MAC 地址编程时变得混乱或发生性能损失的多端口设备有帮助。</p>
+</li>
+</ul>
+<ol start="2">
+<li>
+<p>==miimon=time_in_milliseconds==
+以毫秒为单位指定 MII 链接监控的频率。这在需要高可用性时有用，因为 MII 是用来验证网卡是否激活。</p>
+</li>
+<li>
+<p>==primary=interface_name==
+用于active-backup 模式，指定默认主设备的接口名称。当bond的一个网卡较快并可处理较大负载时，这个设置特别有帮助。</p>
+</li>
+<li>
+<p>arp_interval=time_in_milliseconds
+以毫秒为单位指定 ARP 监控的频繁度。默认将这个数值设定为 0，即禁用该功能。
+注：如果在 mode=0 或者 mode=2（两种负载平衡模式）中使用这个设置，则必须配置网络交换机，以便使用网卡平均发送数据包。</p>
+</li>
+<li>
+<p>arp_ip_target=ip_address[,ip_address_2,…ip_address_16]
+启用 arp_interval 参数后，指定 ARP 请求的目标 IP 地址。在使用逗号分开的列表中最多可指定 16 个 IP 地址。</p>
+</li>
+<li>
+<p>updelay=time_in_milliseconds
+以毫秒为单位指定启用某个链接前要等待的时间。该数值必须是在 miimon 参数值指定值的倍数。默认设定为 0，即禁用该参数。</p>
+</li>
+<li>
+<p>downdelay=time_in_milliseconds
+以毫秒为单位指定从链接失败到禁用该链接前要等待的时间。该值必须是miimon 参数中的倍数。默认将其设定为 0，即禁用该功能。</p>
+</li>
+<li>
+<p>max_bonds 参数不是具体接口的参数，且不应在使用 BONDING_OPTS 指令的ifcfg-bondN 文件中设定，因为这个指令会让网络脚本根据需要创建绑定接口。</p>
+</li>
+</ol>
+<h2 id="bond基础配置">Bond基础配置</h2>
+<h3 id="查看boding模块">查看boding模块</h3>
+<p>首先要看linux是否支持bonding。在Centos 7中，可以使用<code>modinfo bonding</code> 命令查看bonding模块的信息</p>
+<pre><code class="language-bash">[root@localhost ~]# modinfo bonding
+filename:       /lib/modules/3.10.0-1160.el7.x86_64/kernel/drivers/net/bonding/bonding.ko.xz
+author:         Thomas Davis, tadavis@lbl.gov and many others
+description:    Ethernet Channel Bonding Driver, v3.7.1
+version:        3.7.1
+</code></pre>
+<p>bonding模块默认没有被加载，在<code>CentOS Linux release 7.9.2009 (Core)</code>中配置bond后重启网卡服务时会自动加载bonding模块，此后重启开机时也会自动加载。</p>
+<ul>
+<li>手动加载：<code>modprobe --first-time bonding</code></li>
+<li>查看加载情况：<code>lsmod |grep bonding </code></li>
+</ul>
+<h3 id="方法一使用配置文件创建bond">方法一、使用配置文件创建bond</h3>
+<p>:::warning</p>
+<p>bond网卡配置文件与普通网卡配置文件最主要的区别</p>
+<pre><code class="language-bash">DEVICE=bond *
+TYPE=Bond
+BONDING_MASTER=yes
+BONDING_OPTS=&quot;bonding parameters separated by spaces&quot;
+</code></pre>
+<p>必须在 ifcfg-bondN 接口文件的 BONDING_OPTS=&ldquo;bonding parameters&rdquo; 指令中，使用以空格分开的列表指定bonding 内核模块。请不要在/etc/modprobe.d/bonding.conf 文件或弃用的/etc/modprobe.conf 文件中为绑定设备指定选项。</p>
+<p>:::</p>
+<h4 id="1-关闭networkmanager">1. 关闭NetworkManager</h4>
+<pre><code class="language-bash">systemctl disable NetworkManager.service
+systemctl stop  NetworkManager.service
+</code></pre>
+<h4 id="2-编辑网卡配置文件">2. 编辑网卡配置文件</h4>
+<p>进入<code>/etc/sysconfig/network-scripts</code>目录，创建配置文件bond：<code>ifcfg-bond0</code>、slave1：<code>ifcfg-eth1</code>、slave2：<code>ifcfg-eth2</code></p>
+<p>ifcfg-bond0</p>
+<pre><code class="language-bash">[root@master network-scripts]# cat ./ifcfg-bond0 
+DEVICE=bond0
+BOOTPROTO=static
+ONBOOT=yes
+IPADDR=200.0.0.10
+NETMASK=255.255.255.0
+GATEWAY=200.0.0.254
+TYPE=bond
+BONDING_OPTS='mode=1 miimon=100' //BONDING_OPTS=&quot;mode=balance-tlb  miimon=100&quot;
+BONDING_MASTER=yes
+</code></pre>
+<p>ifcfg-eth1、ifcfg-eth2</p>
+<pre><code class="language-bash">TYPE=Ethernet
+NAME=eth1
+DEVICE=eth1
+ONBOOT=yes
+MASTER=bond0
+SLAVE=yes      //可以没有此字段，就需要开机执行ifenslave bond0 eth0 eth1命令了。
+</code></pre>
+<p>:::warning</p>
+<p>注意：</p>
+<p>具体现象：linux网卡bonging的备份模式在vmware workstation虚拟机中测试，bond0能够正常启动也能够正常使用，但是当使用ifdown eth0后，网络出现不通现象，没有起到备份模式的效果。</p>
+<ul>
+<li>
+<p>解决方法1：如果你是使用vmware workstaction虚拟机进行测试，请不要直接执行命令<code>ifdown ens33</code>或<code>ifdown ens36</code>进行测试，这样因为虚拟机的原因测试不到效果，可以在网络适配器里将已连接√给取消掉。</p>
+</li>
+<li>
+<p>解决方法2：内核文档中有说明：bond0获取mac地址有两种方式,一种是从第一个活跃网卡中获取mac地址，然后其余的SLAVE网卡的mac地址都使用该mac地址；另一种是使用fail_over_mac参数，是bond0使用当前活跃网卡的mac地址，mac地址或者活跃网卡的转换而变。<br>
+既然vmware workstation不支持第一种获取mac地址的方式，那么可以使用fail_over_mac=1参数，所以这里我们添加fail_over_mac=1参数。例：<code>mode=0 fail_over_mac=1</code></p>
+<p>:::</p>
+</li>
+</ul>
+<h4 id="3-重启网卡服务">3. 重启网卡服务</h4>
+<pre><code class="language-bash">systemctl restart network
+</code></pre>
+<p>:::info</p>
+<p>重启网卡失败原因：</p>
+<ul>
+<li>udev配置的mac和网卡对应不起来</li>
+<li>缺少网卡配置文件，或配置文件冗余</li>
+<li>:::</li>
+</ul>
+<h3 id="方法二使用nmcli命令创建bond">方法二、使用nmcli命令创建bond</h3>
+<p>CentOS7及之后版本引入NetworkManager管理网络，其命令行管理工具就是nmlic。</p>
+<h4 id="1-创建bond虚拟网卡">1. 创建bond虚拟网卡</h4>
+<pre><code class="language-bash">nmcli connection add type bond ifname bond1 mode 1
+</code></pre>
+<h4 id="2-绑定slave网卡">2. 绑定slave网卡</h4>
+<pre><code class="language-bash">nmcli connection add type bond-slave ifname eth1 master bond1
+nmcli connection add type bond-slave ifname eth2 master bond1
+</code></pre>
+<h4 id="3-为bond1配置静态地址">3. 为bond1配置静态地址</h4>
+<pre><code class="language-bash">nmcli connection modify bond-bond1 connection.autoconnect yes ipv4.method manual ipv4.addresses 200.0.0.10/24  ipv4.gateway 200.0.0.254 ipv4.dns 8.8.8.8
+</code></pre>
+<p>:::info</p>
+<p># connection.autoconnect 配置是否为开机自动启动 yes为是 no为否
+# ipv4.method 配置是否为自动获得ip地址 静态配置为 manual 自动获得配置为 auto
+# ipv4.address 配置ipv4地址和子网掩码
+# ipv4.gateway 配置网关
+# ipv4.dns 配置dns
+# ipv4.ignore-auto-dns 忽略自动获取dns yes为是 no为否
+# PEERDNS=no 表示当IP通过dhcp自动获取时，dns仍是手动设置，不自动获取=ipv4.ignore-auto-dns yes</p>
+<p>:::</p>
+<p>####4. 启动绑定，必须首先启动从属接口</p>
+<pre><code class="language-bash">nmcli connection up bond-slave-eth1
+nmcli connection up bond-slave-eth2
+nmcli connection up bond-bond1
+</code></pre>
+<p>:::info</p>
+<p># nmcli device （dis）connect ens33 //（关闭）启动网卡
+# nmcli connection add con-name ens33 type ethernet ifname ens33 /新建配置文件
+# nmcli connection show ens33 //查看配置
+# nmcli connection reload //重新加载网络配置
+修改配置文件后nmcli 重新up或载入不会更新路由表，ifdown/up可以，用nmcli命令修改后可以自动更新路由表。(NetworkManager载入连接都不会生成路由表？)</p>
+<p>:::</p>
+<h3 id="查看nmcli生成的路由和配置文件bond状态"><strong>查看nmcli生成的路由和配置文件bond状态</strong></h3>
+<pre><code class="language-bash">查看bond0的状态
+cat /proc/net/bonding/bond0
+查看当前有几个bonding：
+cat /sys/class/net/bonding_masters
+[root@master network-scripts]# ip route
+default via 200.0.0.254 dev bond1 proto static metric 300 
+200.0.0.0/24 dev bond1 proto kernel scope link src 200.0.0.10 metric 300 
+[root@master ~]# cd /etc/sysconfig/network-scripts
+=======================================================
+[root@master network-scripts]# cat ifcfg-bond-bond1 
+BONDING_OPTS=mode=active-backup
+TYPE=Bond
+BONDING_MASTER=yes
+PROXY_METHOD=none
+BROWSER_ONLY=no
+BOOTPROTO=static
+DEFROUTE=yes
+IPV4_FAILURE_FATAL=no
+IPV6INIT=yes
+IPV6_AUTOCONF=yes
+IPV6_DEFROUTE=yes
+IPV6_FAILURE_FATAL=no
+IPV6_ADDR_GEN_MODE=stable-privacy
+NAME=bond-bond1
+UUID=0ea6d849-8cab-4914-bbff-848a8d19b471
+DEVICE=bond1
+ONBOOT=yes
+IPADDR=200.0.0.10
+PREFIX=24
+GATEWAY=200.0.0.254
+DNS1=114.114.114.114
+=======================================================
+[root@master network-scripts]# cat ifcfg-bond-slave-eth1
+TYPE=Ethernet
+NAME=bond-slave-eth1
+DEVICE=eth1
+ONBOOT=yes
+MASTER=bond1
+SLAVE=yes
+=======================================================
+[root@master network-scripts]# cat ifcfg-bond-slave-eth2
+TYPE=Ethernet
+NAME=bond-slave-eth2
+DEVICE=eth2
+ONBOOT=yes
+MASTER=bond1
+SLAVE=yes
+</code></pre>
+<h3 id="清除bond配置">清除bond配置</h3>
+<pre><code class="language-bash">删除网卡配置连接
+[root@localhost network-scripts]# nmcli con del &quot;名字&quot;（名称连续可不加&quot;&quot;）
+
+或者
+删除 /etc/sysconfig/network-scripts/ 下面的配置文件
+第一步：禁用bonding
+`ifconfig bond0 down`
+第二步：卸载bonding驱动模块
+`rmmod bonding`
+第三步：删除bonding的配置文件及所属网卡配置文件里bonding的项
+第四步：重启网络服务
+</code></pre>
+<h1 id="team详解">Team详解</h1>
+<ul>
+<li>
+<p>网络组：是将多个网卡聚合在一起方法，从而实现冗错和提高吞吐量</p>
+</li>
+<li>
+<p>网络组不同于旧版中bonding技术，提供更好的性能和扩展性</p>
+</li>
+<li>
+<p>网络组由内核驱动和teamd守护进程实现.</p>
+<h3 id="注意事项">注意事项：</h3>
+<ul>
+<li>启动网络组接口不会自动启动网络组中的port接口</li>
+<li>启动网络组接口中的port接口总会自动启动网络组接口</li>
+<li>禁用网络组接口会自动禁用网络组中的port接口</li>
+<li>没有port接口的网络组接口可以启动静态IP连接</li>
+<li>启用DHCP连接时，没有port接口的网络组会等待port接口的加入</li>
+</ul>
+</li>
+</ul>
+<h2 id="team5种模式">Team5种模式</h2>
+<p>多种方式(模式)runner：</p>
+<ul>
+<li>
+<p>broadcast(广播策略)《===》对应bonding模式mode 3</p>
+</li>
+<li>
+<p>round-robin(轮转策略)《===》对应bonding模式mode 0</p>
+</li>
+<li>
+<p>active-backup(活动-备份(主备)策略)《===》对应bonding模式mode 1</p>
+</li>
+<li>
+<p>loadbalance(限定流量，使用主动 Tx 负载平衡及基于 BPF 的 Tx 端口选择程序)《===》对应bonding模式mode 2</p>
+</li>
+<li>
+<p>lacp(采用 802.3ad 链接合并控制协议)《===》对应bonding模式mode 4
+参考链接：https://www.cnblogs.com/lqynkdcwy/p/9548668.html</p>
+</li>
+</ul>
+<p>此外还可使用以下链接监视程序：</p>
+<p>ethtool（Libteam lib 使用 ethtool 监视链接状态变化）。若没有在配置中指定其他链接监控程序，则默认使用该程序。</p>
+<p>arp_ping（使用 arp_ping 程序监控使用 ARP 数据包的远端硬件地址状态。）nsna_ping（使用 IPv6 邻居发现协议中的的邻居播发和邻居请求给你监控邻居的接口状态。）</p>
+<p>注：使用 lacp 运行程序时，只推荐使用 ethtool 链接监视程序。</p>
+<h2 id="team基础配置">Team基础配置</h2>
+<h3 id="查看当前配置确保要是用的网卡设备没被连接占用">查看当前配置(确保要是用的网卡设备没被连接占用)</h3>
+<pre><code>[root@master ~]# nmcli con 
+NAME             UUID                                  TYPE      DEVICE 
+bond-bond1       0ea6d849-8cab-4914-bbff-848a8d19b471  bond      bond1  
+eth0             5fb06bd0-0bb0-7ffb-45f1-d6edd65f3e03  ethernet  eth0   
+bond-slave-eth1  0b1018c0-5784-bcd0-c6b3-71ac1b889b59  ethernet  eth1   
+bond-slave-eth2  6069acd2-14c2-b5d9-bed9-8bac7390be97  ethernet  eth2   
+</code></pre>
+<h3 id="创建网络组接口team0">创建网络组接口team0</h3>
+<pre><code>nmcli con add type team con-name team0 ifname team0 config '{&quot;runner&quot;:{&quot;name&quot;: &quot;roundrobin&quot;}}'
+</code></pre>
+<p><code>nmcli con add type team con-name CNAME ifname INAME [config JSON]</code></p>
+<ul>
+<li>CNAME表示连接名</li>
+<li>INAME表示接口名</li>
+<li>JSON指定runner方式(模式)，格式如下：
+<ul>
+<li>&lsquo;{&ldquo;runner&rdquo;: {&ldquo;name&rdquo;: &ldquo;METHOD&rdquo;}}'，其中METHOD 可以是：</li>
+<li>broadcast</li>
+<li>roundrobin</li>
+<li>activebackup</li>
+<li>loadbalance</li>
+<li>lacp</li>
+</ul>
+</li>
+</ul>
+<h3 id="创建slave绑定team0">创建slave绑定team0</h3>
+<pre><code>nmcli con add type team-slave con-name team0-port1 ifname ens39 master team0
+nmcli con add type team-slave con-name team0-port2 ifname ens40 master team0
+</code></pre>
+<p><code>nmcli con add type team-slave con-name CNAME ifname INAME master TEAM</code></p>
+<ul>
+<li>con-name 连接名</li>
+<li>ifname 网络接口名</li>
+<li>master  所属主网络组名</li>
+<li>连接名若不指定，默认为team-slave-IFACE</li>
+</ul>
+<h3 id="给接口team0设置ip地址和网关">给接口team0设置ip地址和网关</h3>
+<p>（可以与创建网络组命令合并为一行）</p>
+<pre><code>nmcli connection modify bond-bond1 connection.autoconnect yes ipv4.method manual ipv4.addresses 200.0.0.20/24  ipv4.gateway 200.0.0.254 ipv4.dns 8.8.8.8
+</code></pre>
+<h3 id="启用team0网卡">启用team0网卡</h3>
+<pre><code>[root@localhost ~]# nmcli conn up team0
+</code></pre>
+<h3 id="现在查看team0的状态">现在查看team0的状态</h3>
+<pre><code>[root@localhost ~]# teamdctl team0 state
+setup:
+  runner: roundrobin
+ports:
+  em1
+    link watches:
+      link summary: up
+      instance[link_watch_0]:
+        name: ethtool
+        link: up
+        down count: 0
+  em2
+    link watches:
+      link summary: up
+      instance[link_watch_0]:
+        name: ethtool
+        link: up
+        down count: 0
+</code></pre>
+<pre><code># 查看team0详细配置
+[root@test03 network-scripts]# teamdctl team0 config dump
+</code></pre>
+<pre><code># 单独查看team0子网卡详细配置
+[root@test03 network-scripts]# teamdctl team0 port config dump eno33554992
+</code></pre>
+<pre><code># 查看当前活跃网卡
+[root@test03 network-scripts]# nmcli connection show --active 
+NAME         UUID                                  TYPE            DEVICE      
+team0-p1     4c8901c7-0246-47ce-8d5a-272f23f88d70  802-3-ethernet  eno33554992 
+eno16777736  613db14a-2375-4a89-b55a-d2abd8fc65d5  802-3-ethernet  eno16777736 
+team0        d6e07840-dff8-49e9-a23c-35eb0cc0ec4b  team            team0       
+team0-p2     d898f1f5-bb0f-496e-8cdd-7f3898c2a482  802-3-ethernet  eno50332216 
+
+#查看team0端口状态
+[root@test03 network-scripts]# teamnl team0 ports
+ 4: eno50332216: up 1000Mbit FD 
+ 3: eno33554992: up 1000Mbit FD 
+</code></pre>
+<p>3.1 查看物理网卡信息:</p>
+<pre><code>[root@test03 network-scripts]# nmcli device 
+</code></pre>
+<p>3.2 查看网卡连接信息</p>
+<pre><code>[root@test03 network-scripts]# nmcli connection show 
+</code></pre>
+<p>3.3 删除网卡连接信息</p>
+<pre><code>[root@test03 network-scripts]# nmcli connection delete eno33554992 
+# 网卡连接信息删除成功。
+# 这里删除的其实就是/etc/sysconfig/network-scripts目录下两块网卡的配置文件。
+</code></pre>
+<h3 id="测试">测试</h3>
+<pre><code>[root@shisan ~]*# nmcli device disconnect ens32*    nmcli connection down team0-p1 
+[root@shisan ~]*# teamdctl team0 state       #此时teaming中只有ens34*    
+nmcli dev dis 设备名 
+nmcli con up 网络组接口名或port接口
+</code></pre>
+<h3 id="问题">问题</h3>
+<p>创建team不生效？已有连接把设备占用了？</p>
+<p>nmcli工具定义的机制，同一设备只能绑定在同一个配置中，也就是读取指定配置文件（ifcfg-eth0、ifcfg-eth1）中配置。因此这时，可以断开eth0、eth1原本的链接配置。</p>
+<p><strong>激活team0网络组成员</strong></p>
+<p>#断开原本的eth0链接</p>
+<pre><code>[root@mzf network-scripts]# nmcli device disconnect eth0
+</code></pre>
+<p>#启用team0-eth0网络组设备</p>
+<pre><code>[root@mzf network-scripts]# nmcli connection up  team0-eth0
+</code></pre>
+<h1 id="brovs区别对比">BR、OVS区别对比</h1>
+<p><a href="http://www.fiber-optic-transceiver-module.com/ovs-vs-linux-bridge-who-is-the-winner.html">http://www.fiber-optic-transceiver-module.com/ovs-vs-linux-bridge-who-is-the-winner.html</a></p>
+<p><strong>OVS</strong></p>
+<p>Open vSwitch（OVS）是一个开源多层虚拟交换机，可以作为第2 层或第3层交换机。。它通常作为基于软件的网络交换机或专用交换硬件的控制堆栈运行。OVS旨在通过程序扩展实现有效的网络自动化，还支持标准管理接口和协议，包括NetFlow，sFlow，CLI，IPFIX，RSPAN，LACP，802.1ag。此外，Open vSwitch可以支持跨多个物理服务器的透明分发。此功能类似于VMware vSphere Distributed Switch（vDS）等专有虚拟交换机解决方案。简而言之，OVS与虚拟机管理程序一起使用，以互连主机内的虚拟机和跨网络的不同主机之间的虚拟机。</p>
+<p><strong>优点</strong></p>
+<ul>
+<li>更易于网络管理 - 使用Open vSwitch，管理员可以方便地管理和监控云环境中的网络状态和数据流。
+支持更多隧道协议 - OVS支持GRE，VXLAN，IPsec等。但是，Linux Bridge仅支持GRE隧道。
+结合在SDN中 - Open vSwitch集成在软件定义网络（SDN）中，可以使用OpenStack插件或直接从SDN控制器（如OpenDaylight）驱动。</li>
+</ul>
+<p><strong>缺点</strong></p>
+<ul>
+<li>缺乏稳定性 - Open vSwitch存在一些稳定性问题，例如内核panic，ovs段错误和数据损坏。</li>
+<li>复杂的操作 - Open vSwitch本身是一个复杂的解决方案，拥有如此多的功能。它很难学习，安装和操作。</li>
+</ul>
+<p><strong>Linux Bridge</strong></p>
+<p>Linux网桥的行为类似于第2层交换机。通常，Linux桥接器位于两个彼此通信的独立计算机组之间，但它与其中一个计算机组进行更多通信。它由四个主要组件组成，包括一组网络端口，一个控制平面，一个转发平面和MAS学习数据库。通过这些组件，Linux桥接器可用于在路由器，网关或VM与主机上的网络命名空间之间转发数据包。此外，它还支持STP，VLAN过滤和多播侦听。</p>
+<p><strong>优点</strong></p>
+<p>稳定可靠 - Linux Bridge已使用多年，其稳定性和可靠性得到认可。
+易于安装 - Linux Bridge是标准Linux安装的一部分，无需安装或学习其他软件包。
+方便故障排除 - Linux Bridge本身是一个简单的解决方案，其操作比Open vSwitch简单。方便排除故障。
+但是，有一些限制：</p>
+<p><strong>缺点</strong></p>
+<p>功能较少–Linux Bridge不支持Neutron DVR，更新，更具可扩展性的VXLAN模型以及其他一些功能。
+更少的支持者 - 许多企业希望确保有一个开放模型将其服务集成到OpenStack中。但是，Linux Bridge无法确保需求，因此用户数量少于Open vSwitch。</p>
+<h1 id="br详解">BR详解</h1>
+<p>bridge-utils软件包在RHEL7.7被弃用了，所以后面版本不能使用brctl命令。
+<a href="https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/7.7_release_notes/deprecated_functionality">https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/7.7_release_notes/deprecated_functionality</a></p>
+<p>bridge是一个虚拟网络设备，所以具有网络设备的特征，可以配置IP、MAC地址等；bridge也是一个虚拟交换机，有多个端口，依据MAC地址表进行数据转发。</p>
+<p><a href="https://blog.csdn.net/sld880311/article/details/77840343">https://blog.csdn.net/sld880311/article/details/77840343</a></p>
+<pre><code>   bridge是一个虚拟网络设备，具有网络设备的特性（可以配置IP、MAC地址等）；而且bridge还是一个虚拟交换机，和物理交换机设备功能类似。网桥是一种在链路层实现中继，对帧进行转发的技术，根据MAC分区块，可隔离碰撞，将网络的多个网段在数据链路层连接起来的网络设备。
+   对于普通的物理设备来说，只有两端，从一段进来的数据会从另一端出去，比如物理网卡从外面网络中收到的数据会转发到内核协议栈中，而从协议栈过来的数据会转发到外面的物理网络中。而bridge不同，bridge有多个端口，数据可以从任何端口进来，进来之后从哪个口出去原理与物理交换机类似，需要看mac地址。
+   bridge是建立在从设备上（物理设备、虚拟设备、vlan设备等，即attach一个从设备，类似于现实世界中的交换机和一个用户终端之间连接了一根网线），并且可以为bridge配置一个IP（参考LinuxBridge MAC地址行为），这样该主机就可以通过这个bridge设备与网络中的其他主机进行通信了。另外它的从设备被虚拟化为端口port，它们的IP及MAC都不在可用，且它们被设置为接受任何包，最终由bridge设备来决定数据包的去向：接收到本机、转发、丢弃、广播。
+</code></pre>
+<p><img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/3.Linux%E7%BD%91%E5%8D%A1%E7%BB%91%E5%AE%9A/2021.04.08-15:11:29-D-assets-3.Linux%E7%BD%91%E5%8D%A1%E7%BB%91%E5%AE%9A-image-20210408151127496.png" alt="image-20210408151127496"></p>
+<p>因此，通过Linux bridge来实现打通容器网络是一个非常有效的方法，同步bridge，我们可以做到：</p>
+<ul>
+<li>连接同宿主机内所有容器的虚拟网络</li>
+<li>打通容器内网与外网，通过bridge将数据转发到真实的往里网卡eth0中。</li>
+</ul>
+<h2 id="br模式">BR模式</h2>
+<p>链接：https://www.jianshu.com/p/7eb7ec6364fc</p>
+<p>内核3.8版本以后的 bridge 增加了一个新功能叫 <strong>VLAN filter</strong><br>
+<strong>VLAN filter</strong> 主要有两个功能</p>
+<ol>
+<li>可以给进出的数据打vlan tag ，剥离vlan tag，要看后面跟的参数</li>
+<li>起到过滤功能，比如接口vid设置为100,则只让vlan100的数据通过，直接丢弃其他数据</li>
+</ol>
+<pre><code class="language-ruby">$ ip link set br0 type bridge vlan_filtering 1
+或者
+$ echo 1 &gt; /sys/class/net/brx/bridge/vlan_filtering
+$ bridge vlan add dev veth01 vid 100 pvid untagged master
+</code></pre>
+<h2 id="br基础配置">BR基础配置</h2>
+<h3 id="nmcli">nmcli</h3>
+<pre><code>创建BR
+[root@master bash-4.2.46]# nmcli connection add type bridge con-name br0 ifname br0 ipv4.method manual ipv4.addresses 200.0.0.30/24
+加入子接口
+[root@master bash-4.2.46]# nmcli connection add type bridge-slave ifname ens41 master br0
+[root@master bash-4.2.46]# nmcli connection add type bridge-slave ifname ens42 master br0
+开启
+[root@master bash-4.2.46]# nmcli connection up bridge-slave-ens41
+[root@master bash-4.2.46]# nmcli connection up bridge-slave-ens42
+[root@master bash-4.2.46]# nmcli connection up br0
+查看
+[root@master bash-4.2.46]# nmcli connection 
+NAME                  UUID                                  TYPE      DEVICE 
+bond-bond1            0ea6d849-8cab-4914-bbff-848a8d19b471  bond      bond1  
+eth0                  5fb06bd0-0bb0-7ffb-45f1-d6edd65f3e03  ethernet  eth0   
+team0                 9eeec6a2-c449-4498-b14f-9e7f2d1b6059  team      team0  
+br0                   75e1643c-4b9c-4f40-82b4-4c6abadb8854  bridge    br0    
+bond-slave-eth1       0b1018c0-5784-bcd0-c6b3-71ac1b889b59  ethernet  eth1   
+bond-slave-eth2       6069acd2-14c2-b5d9-bed9-8bac7390be97  ethernet  eth2   
+bridge-slave-ens41    ce2debed-057a-4a16-ac0c-3f998c33da1a  ethernet  ens41  
+bridge-slave-ens42    3441e7f5-fd6d-4728-b89d-fe7cdb6f2c4d  ethernet  ens42  
+team0-port1           fa616598-d64b-412f-a4cd-e537c73af081  ethernet  ens39  
+team0-port2           5be1e07d-1bfa-4081-9935-18c7da7d78aa  ethernet  ens40  
+bridge-slave-ens41-1  a8540b55-22c4-42d3-8897-ab1d54128f2d  ethernet  --     
+bridge-slave-ens42-1  d1797b05-411c-4b95-8f4b-21c58d036c36  ethernet  --     
+</code></pre>
+<h3 id="brctl">brctl</h3>
+<p>详细配置：https://blog.csdn.net/sld880311/article/details/77840343</p>
+<p><a href="https://man7.org/linux/man-pages/man8/bridge.8.html">https://man7.org/linux/man-pages/man8/bridge.8.html</a></p>
+<pre><code>#安装bridge-utils软件包，并加载bridge模块和开启内核转发。
+root@ubuntu:/home/sunld# apt-get install bridge-utils
+root@ubuntu:/home/sunld# modprobe bridge
+root@ubuntu:/home/sunld# echo &quot;1&quot;&gt;/proc/sys/net/ipv4/ip_forward
+</code></pre>
+<pre><code>安装网桥管理工具包：bridge-utile
+yum install bridge-utils -y
+
+使用brctl命令创建网桥br1
+brctl addbr br1
+
+删除网桥br1
+ brctl delbr br1
+
+将eth0端口加入网桥br1
+brctl addif br1 eth0
+
+删除eth0端口加入网桥br1
+brctl delif br1 eth0
+
+查询网桥信息
+brctl show
+brctl show br1
+</code></pre>
+<h3 id="配置文件">配置文件</h3>
+<p>网卡默认配置文件</p>
+<p><img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/3.Linux%E7%BD%91%E5%8D%A1%E7%BB%91%E5%AE%9A/2021.04.08-14:59:07-D-assets-3.Linux%E7%BD%91%E5%8D%A1%E7%BB%91%E5%AE%9A-image-20210408145902391.png" alt="image-20210408145902391"></p>
+<p>创建网桥配置文件</p>
+<p><img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/3.Linux%E7%BD%91%E5%8D%A1%E7%BB%91%E5%AE%9A/2021.04.08-14:59:34-D-assets-3.Linux%E7%BD%91%E5%8D%A1%E7%BB%91%E5%AE%9A-image-20210408145929247.png" alt="image-20210408145929247"></p>
+<p>修改网卡默认配置文件，加入到网桥</p>
+<p><img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/3.Linux%E7%BD%91%E5%8D%A1%E7%BB%91%E5%AE%9A/2021.04.08-14:59:52-D-assets-3.Linux%E7%BD%91%E5%8D%A1%E7%BB%91%E5%AE%9A-image-20210408145950657.png" alt="image-20210408145950657"></p>
+<h1 id="ovs详解">OVS详解</h1>
+<h2 id="ovs模式">OVS模式</h2>
+<p><img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/3.Linux%E7%BD%91%E5%8D%A1%E7%BB%91%E5%AE%9A/2021.04.07-16:53:40-D-assets-3.Linux%E7%BD%91%E5%8D%A1%E7%BB%91%E5%AE%9A-16045936902302.png" alt="img"></p>
+<h2 id="ovs基础配置">OVS基础配置</h2>
+<h1 id="其他">其他</h1>
+<h2 id="centos6配置bond">centos6配置bond</h2>
+<p>==centos7bond==
+TYPE=bond
+BONDING_MASTER=yes
+BOND_OPTS=&ldquo;miimon=200 mode=1&rdquo;</p>
+<p>==centos6 bond==</p>
+<p>/etc/modprobe.d/dist.conf
+alias bondo bonding
+options bondo mode=1 miimon=100</p>
+<p><a href="https://blog.51cto.com/lixin15/1769338">https://blog.51cto.com/lixin15/1769338</a></p>
+<p>Linux Bond的原理及其不足 <a href="http://www.yunweipai.com/1969.html">http://www.yunweipai.com/1969.html</a></p>
+<h2 id="centos6-如何加载bond模块">centos6 如何加载bond模块</h2>
+<p>开机自动加载bound</p>
+<pre><code class="language-bash">#echo 'alias bond0 bonding' &gt;&gt; /etc/modprobe.d/dist.conf
+#echo 'options bonding mode=0 miimon=200' &gt;&gt; /etc/modprobe.d/dist.conf
+#echo 'ifenslave bond0 eth0 eth1' &gt;&gt;/etc/rc.local
+</code></pre>
+<p>miimon=100
+每100毫秒 (即0.1秒) 监测一次路连接状态，如果有一条线路不通就转入另一条线路； Linux的多网卡绑定功能使用的是内核中的&quot;bonding&quot;模块
+如果修改为其它模式，只需要在BONDING_OPTS中指定mode=Number即可。
+USERCTL=no &ndash;是否允许非root用户控制该设备</p>
+<p>查看所有网卡</p>
+<pre><code>$lspci|grep net
+</code></pre>
+<p>查看网卡2的信息，Link detected：yes表示有网线插入</p>
+<pre><code>$ethtool eth2
+</code></pre>
+<p>::: info</p>
+<p>如果Link detected:no 的话，尝试用<a href="https://www.linuxcool.com/">命令</a>ifconfig eth2 up，如果用ethtool查看任然为no的话，才能说明此网卡确实没有网线插入。</p>
+<p>注意如果ifcfg-bond0的配置文件如果是从其他网卡配置文件拷贝过来的，HWADDR地址一定要删除，DEVICE名字要改。UUID不可重复</p>
+<p>:::</p>
+<p><strong>三、扩展</strong></p>
+<p>上边是两个网卡(eth0、eth1)绑定成一个bond0，如果我们要设置多个bond口，比如物理网口eth0和eth1组成bond0，eth2和eth3组成bond1，那么网口设置文件的设置方法和上面
+是一样的，只是**/etc/modprobe.d/dist.conf**文件就不能叠加了。正确的设置方法有两种:
+**1、第一种**</p>
+<pre><code class="language-bash">alias bond0 bonding
+alias bond1 bonding
+options bonding max_bonds=2 miimon=200 mode=1
+</code></pre>
+<p>这样所有的绑定只能使用一个mode了。</p>
+<p><strong>2、第二种</strong></p>
+<pre><code class="language-bash">alias bond0 bonding
+options bond0 miimon=100 mode=1
+install bond1 /sbin/modprobe bonding -o bond1 miimon=100 mode=0
+install bond2 /sbin/modprobe bonding -o bond2 miimon=100 mode=1
+install bond3 /sbin/modprobe bonding -o bond3 miimon=100 mode=0
+</code></pre>
+<p>这种方式不同的bond口可以设定为不同的mode,注意开机自动启动/etc/rc.d/rc.local文件的设置</p>
+<pre><code class="language-bash">ifenslave bond0 eth0 eth1
+ifenslave bond1 eth2 eth3
+ifenslave bond2 eth4 eth5
+ifenslave bond3 eth6 eth7
+</code></pre>
+<p>参考链接： <a href="https://blog.51cto.com/linuxnote/1680315">https://blog.51cto.com/linuxnote/1680315</a></p>
+<pre><code>**查看流量**
+nload='nload -m -s 5 -u m -t 2000 bond0 eth2 eth3
+</code></pre>
+<h2 id="开机模块加载">开机模块加载</h2>
+<pre><code>编辑/etc/modprobe.conf 文件，加入如下一行内容，以使系统在启动时加载bonding模块，对外虚拟网络接口设备为 bond0 
+
+加入下列两行 
+alias bond0 bonding 
+options bond0 miimon=100 mode=0  lacp_rate=1
+注：mode=4，设置为链路负载均衡模式；miimon=100，监控网线链路故障的时间间隔(毫秒)；lacp_rate=1，检测主机网卡是否存活的检测包每30秒（fast）或每秒（slow）发送一次。
+
+4  vi /etc/rc.d/rc.local 
+
+加入以下内容 
+仅在热备模式下,eht0 eth1网卡的工作顺序.
+
+ifenslave bond0 eth0 eth1 
+
+</code></pre>
+<p>参考链接：https://blog.51cto.com/sf1314/2071167</p>
+<pre><code>https://blog.51cto.com/13465487/2374959
+3、装载bond模块驱动
+
+vi /etc/modprobe.d/bond0.conf
+
+alias bond0 bonding
+
+options bond0 miimon=100 mode=1
+
+4、/etc/rc.d/rc.local设置开机自启动
+
+Ifenslave bond0 eth0 eth1
+</code></pre>
+<p>ifcfg-Wired_connection 这几个就是临时配置文件，通过 systemctl restart network重启网络服务，临时连接就会丢失，网卡重启失败原因：centos系列一般原因为：
+/etc/udev/rules.d/70-persistent-net.rules 文件里的MAC地址和 /etc/sysconfig/network-scripts/ifcfg-xxx的MAC地址不一样，或者找不到配置文件</p>
+<ol>
+<li>您可以在<code>/etc/modules-load.d/</code>创建一个文本文件<code>&lt;some name&gt;.conf</code> ，并列出要在此处加载的模块，每行列出一个。 <a href="https://www.systutorials.com/docs/linux/man/8-systemd-modules-load.service/">systemd-modules-load.service</a>守护程序将读取这些<a href="https://www.systutorials.com/tag/files/">文件</a>并加载模块。</li>
+</ol>
+<p>参考链接：
+<a href="https://www.systutorials.com/docs/linux/man/5-modules-load.d/">https://www.systutorials.com/docs/linux/man/5-modules-load.d/</a>
+<a href="https://www.systutorials.com/docs/linux/man/5-modules-load.d/">https://www.systutorials.com/docs/linux/man/5-modules-load.d/</a>
+<a href="https://www.systutorials.com/how-to-make-centos-linux-to-load-a-module-automatically-at-boot-time/">https://www.systutorials.com/how-to-make-centos-linux-to-load-a-module-automatically-at-boot-time/</a></p>
+<ol start="2">
+<li>Linux如何在系统启动时自动加载模块，rc.sysinit中有这样的一段代码：</li>
+</ol>
+<pre><code>
+# Load other user-defined modules
+
+for file in /etc/sysconfig/modules/*.modules ; do
+
+[ -x $file ] &amp;&amp; $file
+
+done
+
+# Load modules (for backward compatibility with VARs)
+
+if [ -f /etc/rc.modules ]; then
+
+/etc/rc.modules
+
+fi
+</code></pre>
+<p>可见只需要配置两个地方的任何一个就可以了(以加载fuse内核模块为例)</p>
+<pre><code>(1) 在/etc/sysconfig/modules/下面创建*.modules文件，参考已经有的*.modules文件，例如我写创建文件my.modules，内容为modprobe fuse
+
+记得最后chmod 755 my.modules
+
+(2) 或者在/etc/rc.modules里面加上modprobe fuse，没有的话创建该文件。
+
+然后reboot，lsmod | grep fuse验证一下就OK了。
+</code></pre>
+<p>Automatically load kernel modules:</p>
+<p>为搞清楚如何在系统启动时自动加载模块，搜索了好久，网上有很多人提出这个问题，但都没有正确的答案，无论是中文社区还是英文社区，大家的回答都没有讲到点子上，无非是围绕modprobe.conf、modprobe讲来讲去的，要不就是针对特定问题尝试不同的方法。有的还建议把modprobe modulename写入rc.local，却不曾想，rc.local的执行被放在整个启动顺序的很后面，而启动init.d下面定义的服务却在rc.local前面，那么如果某个服务要用这个模块，就不行了。</p>
+<p>在测试LVS时，因为我的Fedora7的Kernel(2.6.21-1)缺省没有加载ip_vs模块，而内核中已经包含编译好的IPVS相关的模块了，放在：/lib/modules/2.6.21-1.3194.fc7/kernel/net/ipv4/ipvs/下面，有：</p>
+<p>/lib/modules/2.6.21-1.3194.fc7/kernel/net/ipv4/ipvs/ip_vs.ko</p>
+<p>/lib/modules/2.6.21-1.3194.fc7/kernel/net/ipv4/ipvs/ip_vs_dh.ko</p>
+<p>/lib/modules/2.6.21-1.3194.fc7/kernel/net/ipv4/ipvs/ip_vs_ftp.ko</p>
+<p>/lib/modules/2.6.21-1.3194.fc7/kernel/net/ipv4/ipvs/ip_vs_lblc.ko</p>
+<p>/lib/modules/2.6.21-1.3194.fc7/kernel/net/ipv4/ipvs/ip_vs_lblcr.ko</p>
+<p>/lib/modules/2.6.21-1.3194.fc7/kernel/net/ipv4/ipvs/ip_vs_lc.ko</p>
+<p>/lib/modules/2.6.21-1.3194.fc7/kernel/net/ipv4/ipvs/ip_vs_nq.ko</p>
+<p>/lib/modules/2.6.21-1.3194.fc7/kernel/net/ipv4/ipvs/ip_vs_rr.ko</p>
+<p>/lib/modules/2.6.21-1.3194.fc7/kernel/net/ipv4/ipvs/ip_vs_sed.ko</p>
+<p>/lib/modules/2.6.21-1.3194.fc7/kernel/net/ipv4/ipvs/ip_vs_sh.ko</p>
+<p>/lib/modules/2.6.21-1.3194.fc7/kernel/net/ipv4/ipvs/ip_vs_wlc.ko</p>
+<p>/lib/modules/2.6.21-1.3194.fc7/kernel/net/ipv4/ipvs/ip_vs_wrr.ko</p>
+<p>其中ip_vs.ko是IPVS的基本模块，不加载IPVS就不能工作(运行ipvsadm会报错的)，而其他的都是IPVS的调度算法或特定协议的辅助模块，需要时则须加载。</p>
+<p>如果系统运行时手动加载则需：modprobe ip_vs 和modprobe ip_vs_sh等。</p>
+<p>要了解如何在系统启动时自动加载模块(Automatically load kernel modules)，就得先了解系统是如阿启动的，启动的过程中按什么顺序做了什么，怎么做的，这些启动操作都有那些文件和脚本控制。由于Google和Baidu出来的东西都解决不了问题，而且man modprobe和man modprobe.conf发现并不是需要修改的文件。</p>
+<p>于是温习鸟哥的linux.vbird.org/&quot;&gt;http://linux.vbird.org/“开机关机流程与Loader”：</p>
+<p>\1. 整个开机流程是</p>
+<p>(1) 载入BIOS的硬件信息，并取得第一个开机装置的代号</p>
+<p>(2)读取第一个开机装置的MBR的boot Loader (grub)的开机信息</p>
+<p>(3)载入OS Kernel信息，解压Kernel，尝试驱动硬件</p>
+<p>(4) Kernel执行init程序并获得run-lebel信息(如3或5)</p>
+<p>(5) init执行/etc/rc.d/rc.sysinit</p>
+<p>(6)启动内核外挂模块(/etc/modprobe.conf)</p>
+<p>(7) init执行run-level的各种Scripts，启动服务</p>
+<p>(8) init执行/etc/rc.d/rc.local</p>
+<p>(9)执行/bin/login，等待用户Login</p>
+<p>(10)Login后进入Shell</p>
+<p>看来正确的方式是把需要加载的模块放在(5)或(6)，但正如网络上很多人的尝试，修改modprobe.conf都没有成功(例如在modprobe.conf中增加install ip_vs&hellip;)。于是我修改了/etc/rc.d/rc.sysinit就成功加载了。</p>
+<p>初步尝试在rc.sysinit最后增加 modprobe.conf ip_vs，重启后lsmod | grep ip_vs，发现成功自动加载了。</p>
+<p>于是仿效rc.sysinit中其他模块的加载方法，扩展改脚本文件，在最后增加下来一段：</p>
+<p># load LVS IPVS modules</p>
+<p>if [ -d /lib/modules/$unamer/kernel/net/ipv4/ipvs ]; then</p>
+<p>for module in /lib/modules/$unamer/kernel/net/ipv4/ipvs/* ; do</p>
+<p>module=${module##*/}</p>
+<p>module=${module%.ko}</p>
+<p>modprobe $module &gt;/dev/null 2&gt;&amp;1</p>
+<p>done</p>
+<p>fi</p>
+<p>就把/lib/modules/2.6.21-1.3194.fc7/kernel/net/ipv4/ipvs/下的所有模块都自动加载了。其中：</p>
+<p>if语句检查ipvs模块的目录是否存在</p>
+<p>for循环遍历该目录下面的所有文件</p>
+<p>module=${module##<em>/} ：其中##表示从前面删除字符，</em>/表示删除到最后一个/，如果一个#就表示只删除到第一个/。如果变量后面接##，表示在##后面的字符串取最长的(一直到最后面)，如果接#，表示取最小的一段。</p>
+<p>module=${module%.ko}：表示从后面删除.ko。如果变量后面接%%，表示在%%后面的字符串取最长的(一直到最前面)，如果接%，表示取最小的一段。</p>
+<p>这样多module的两次修改就得到了模块名，就是文件名不带路径和.ko后缀。</p>
+<p>modprobe $module &gt;/dev/null 2&gt;&amp;1：加载模块，输出都指向空设备</p>
+<p>这样重启后lsmod | grep ip_vs就会得到：</p>
+<p>ip_vs_wrr 6977 0</p>
+<p>ip_vs_wlc 6081 0</p>
+<p>ip_vs_sh 6593 0</p>
+<p>ip_vs_sed 6081 0</p>
+<p>ip_vs_rr 6081 0</p>
+<p>ip_vs_nq 5953 0</p>
+<p>ip_vs_lc 5953 0</p>
+<p>ip_vs_lblcr 10565 0</p>
+<p>ip_vs_lblc 9797 0</p>
+<p>ip_vs_ftp 10053 0</p>
+<p>ip_vs_dh 6593 0</p>
+<p>ip_vs 79425 22 ip_vs_wrr,ip_vs_wlc,ip_vs_sh,ip_vs_sed,ip_vs_rr,ip_vs_nq,ip_vs_lc,ip_vs_lblcr,ip_vs_lblc,ip_vs_ftp,ip_vs</p>
+<p>参考链接：https://blog.csdn.net/qq_29350001/article/details/51669582</p>
+<ol start="3">
+<li>貌似 CentOS 6.x 以后的版本已经不使用 /etc/modprobe.conf 这个配置文件了
+所以 只需要把 *.conf 文件 放到 /etc/modprobe.d 目录下就行了</li>
+</ol>
+<pre><code class="language-bash">vi /etc/sysconfig/modules/bonding.modules
+#编辑内容如下
+modprobe bonding
+
+赋予脚本755权限。
+chmod 755 /etc/sysconfig/modules/bonding.modules
+
+重启服务器即可
+reboot
+
+验证加载成功与否
+lsmod | grep bonding
+</code></pre>
+<h2 id="脚本">脚本</h2>
+<p>​```bash
+#加载bonding模块，并确认已经加载
+[root@web01 ~]# modprobe &ndash;first-time bonding
+[root@web01 ~]# lsmod | grep bonding
+bonding               141566  0
+#编辑bond1配置文件
+[root@web01 ~]# cat &gt; /etc/sysconfig/network-scripts/ifcfg-bond1 &laquo; EOF</p>
+<blockquote>
+<p>DEVICE=bond1
+TYPE=Bond
+IPADDR=192.168.171.111
+NETMASK=255.255.255.0
+GATEWAY=192.168.171.2
+DNS1=114.114.114.114
+DNS2=8.8.8.8
+USERCTL=no
+BOOTPROTO=none
+ONBOOT=yes
+EOF
+#修改ens33配置文件
+[root@web01 ~]# cat &gt; /etc/sysconfig/network-scripts/ifcfg-ens33 &laquo; EOF
+DEVICE=ens33
+TYPE=Ethernet
+ONBOOT=yes
+BOOTPROTO=none
+DEFROUTE=yes
+IPV4_FAILURE_FATAL=no
+NMAE=ens33
+MASTER=bond1               # 需要和上面的ifcfg-bond0配置文件中的DEVICE的值一致
+SLAVE=yes
+EOF
+#修改ens36配置文件
+[root@web01 ~]# cat &gt; /etc/sysconfig/network-scripts/ifcfg-ens36 &laquo; EOF
+DEVICE=ens36
+TYPE=Ethernet
+ONBOOT=yes
+BOOTPROTO=none
+DEFROUTE=yes
+IPV4_FAILURE_FATAL=no
+NMAE=ens36
+MASTER=bond1
+SLAVE=yes
+EOF</p>
+</blockquote>
+<h1 id="配置bonding">配置bonding</h1>
+<p>[root@web01 ~]# cat &raquo; /etc/modules-load.d/bonding.conf &laquo; EOF</p>
+<blockquote>
+<p>alias bond1 bonding
+options bonding mode=1 miimon=200           # 加载bonding模块，对外虚拟网络接口设备为 bond1
+EOF</p>
+</blockquote>
+<p>#重启网卡使配置生效
+[root@web01 ~]# systemctl restart network</p>
+<pre><code>
+**注：如果配置完毕后重启网卡服务一直启动失败，而且日志里面也检查不出错误来，可以关闭NetworkManager后再次重启网卡试试** 
+
+查看网卡`ip -o link show up | awk -F': ' '{print $2}'`
+
+bond4以及vlan子接口配置https://blog.csdn.net/weixin_30757793/article/details/98501749
+
+脚本：https://cloud.tencent.com/developer/article/1722786?from=information.detail.linux%E7%BD%91%E5%8D%A1uuid%E4%BD%9C%E7%94%A8
+
+参考链接：http://www.360docs.net/doc/4c1c9c900812a21614791711cc7931b764ce7b76.html
+
+## Team+Bridge问题排查
+
+   问题：配置完成后出现169.254.0.0 的路由说明DHCP地址冲突和默认配置完路由不带metric值，用nmcli cnn reload 后出现重复路由 一个带metric一个不带metric。 
+   解决：用ifdown挨个关闭重启网卡刷新路由
+
+### 千兆网卡，突然变成10Mbps 或者100Mbps https://blog.csdn.net/caoshuming_500/article/details/23171249
+
+(1)  proc/net/bonding/bond0  信息查看
+这个信息是linux启动后加载的硬件网卡信息
+cat /proc/net/bonding/bond0  #查看双网卡信息
+
+</code></pre>
+<p>Ethernet Channel Bonding Driver: v3.6.0 (September 26, 2009)</p>
+<p>Bonding Mode: fault-tolerance (active-backup)
+Primary Slave: eth0 (primary_reselect always)  #默认active 是eth0
+Currently Active Slave: eth1    #现在生效的主网卡是;eth1 可以切换到eth0
+MII Status: up
+MII Polling Interval (ms): 100
+Up Delay (ms): 600000
+Down Delay (ms): 0</p>
+<p>Slave Interface: eth0
+MII Status: up
+Speed: 1000 Mbps   #有时会突然变成10M/s
+Duplex: full
+Link Failure Count: 0
+Permanent HW addr: xxxx
+Slave queue ID: 0</p>
+<p>Slave Interface: eth1
+MII Status: up
+Speed: 10 Mbps     # 为什么突然变成10M/s
+Duplex: full
+Link Failure Count: 2
+Permanent HW addr: xxxxx
+Slave queue ID: 0
+(2).  ethtool 工具来看
+sudo ethtool  eth0<br>
+Settings for eth0:
+Supported ports: [ TP ]
+Supported link modes:   10baseT/Half 10baseT/Full     #支持10M 半全双工<br>
+100baseT/Half 100baseT/Full   #支持100M 半 全双工
+1000baseT/Full  #支持1000M 全双工
+Supports auto-negotiation: Yes
+Advertised link modes:  10baseT/Half 10baseT/Full
+100baseT/Half 100baseT/Full
+1000baseT/Full
+Advertised auto-negotiation: Yes
+Speed: 100Mb/s    #现在是100Mbps   实际网卡支持1000Mbps 所以网卡其实浪费了，有时网卡打满会出问题啊
+Duplex: Full
+Port: Twisted Pair
+PHYAD: 1
+Transceiver: internal
+Auto-negotiation: on
+Supports Wake-on: pumbg
+Wake-on: g
+Current message level: 0x00000007 (7)
+Link detected: yes</p>
+<pre><code>
+(3) . ethtool 修改speed
+
+</code></pre>
+<p>sudo ethtool  -s eth0 speed 1000  #eth0 的speed 修改成1000
+sudo ethtool eth0   #查看修改是否成功，此时/proc/net/bonding/bond0 还是没有修改的
+sudo  /etc/init.d/network restart  #重启网卡
+vim /proc/net/bonding/bond0  #此时 /proc/net/bonding/bond0 就修改成1000 啦</p>
+<pre><code>
+(4).  ifenslave -c bond0 eth* 切换主网卡
+
+</code></pre>
+<p>cat /proc/net/bonding/bond0
+Bonding Mode: fault-tolerance (active-backup)
+Primary Slave: eth0 (primary_reselect always)
+Currently Active Slave: eth0   #现在网卡的master：eth0</p>
+<p>#把网卡的master修改为：eth1
+sudo ifenslave -c bond0 eth1</p>
+<p>cat /proc/net/bonding/bond0</p>
+<p>Bonding Mode: fault-tolerance (active-backup)
+Primary Slave: eth0 (primary_reselect always)
+Currently Active Slave: eth1   #现在主网卡就是：eth1</p>
+<pre><code>
+问题1：服务器到网关不丢包，但服务器之间丢包严重
+
+此种情况，亲身经历的一种原因是，由于采用了直接修改网卡配置文件ifcfg 的方式，不同服务器的UUID冲突，造成服务器之间互ping丢包。
+
+问题2：服务器桥接模式，但服务器上的kvm虚拟机不能用
+
+此种情况，是由于服务器默认未开启网卡的混杂模式，造成物理服务器可以ping 通kvm虚拟机，虚拟机也可以能ping通宿主机，但是虚拟机ping不通网关。同一物理机上的kvm虚拟机相互可以ping通，且在交换机上可以看到虚拟机的arp 表项。
+
+采用如下命令，修改后虚拟机即可上网，即可ping通网关：
+
+ip link set enp175s0f0 promisc on
+
+ip link set enp175s0f1 promisc on
+
+修改为混杂模式后问题解决。
+
+注：需注意此命令需要加入开机自启项，在linux /etc/profile最后追加。
+
+]#vi /etc/profile
+
+\#追加
+
+ip link set enp175s0f0 promisc on
+
+ip link set enp175s0f1 promisc on
+
+wq保存退出，重启生效。
+
+**其他问题**
+
+一开始开机不自动加载bond文件，用nmcli后自动加载了。。。。
+
+nmcli 创建的slave是白色的未激活，源网卡eth1 eth2处于激活，每次重启network uuid会变
+
+存在 Wired connection 1并没有配置文件但有IP信息，手动配置文件后 名称会变正常，删除ethX后名字变为 Wired connection 1，继续删除（有空格的名字要放在“”内成为一个整体）
+
+ifdown/up基于配置文件都会修改路由。ip link set down/up 不基于配置文件 down会删除路由up不会添加路由
+
+# 脚本
+
+https://blog.51cto.com/chuny/1909276
+
+```bash
+#!/bin/bash
+#by:cai
+
+#修改系统语言包，将zh_CN.UTF-8 改成 zh_CN.GB18030
+#输入命令：如vi  /etc/sysconfig/i18n （注意改好之后必须重启一下系统才行）
+sed -i -e 's/^/#/g' -e 1i\LANG=&quot;zh_CN.GB18030&quot; /etc/sysconfig/i18n
+source /etc/sysconfig/i18n
+echo &quot;##########################################################&quot;
+echo &quot;注意：如果在输入的过程中输错，请按ctrl+backspace键删除。&quot;
+echo &quot;##########################################################&quot;
+
+bond_explain () {
+   echo &quot;#########################################################################&quot;
+   echo &quot;
+	mode=0表示load balancing (round-robin)为负载均衡方式，两块网卡都工作。
+	mode=1表示fault-tolerance (active-backup)提供冗余功能，工作方式是主备的工作方式,也就是说默认情况下只有一块网卡工作,另一块做备份.
+	mode=2表示balance-x，提供负载均衡和冗余功能。
+	mode=3表示broadcast，这个模式提供容错性。
+	mode=4表示802.3ad，提供了ethtool的迅速，以及使用了802.3ad模式
+	mode=5表示balance-tlb，自动适应负载均衡，自动切换故障。在此基础上Ethtool支持驱动。
+	mode=6表示在5模式的基础上优化了arp的广播信息。&quot;
+	echo &quot;###########################################################################&quot;
+	read -p &quot;请你输入一种你要的聚合方式(mode=1)：&quot; MODE 
+	read -p &quot;请问你要创建聚合的名称(bond0):&quot; BOND
+	read -p &quot;请输入你要设置的ip(192.168.0.10)：&quot; IP
+	read -p &quot;请输入你要设置的netmask(255.255.255.0)：&quot; NETMASK
+	read -p &quot; 请输入你要设置的gateway(192.168.0.1)：&quot; GATEWAY
+}
+bond_explain
+network_explain () {
+	echo &quot;###############################################&quot;
+	echo &quot;您现阶段可以用的网卡，如下：&quot;
+#	echo `ifconfig -a | grep   -i  link | awk  '{print $1}' `
+	echo `ifconfig -a | grep   -i  &quot;Link encap&quot; | awk '{print $1}' `
+	echo &quot;################################################&quot;
+	read -p   &quot;麻烦你选择你要的网卡做聚合(eth0 eth1)：&quot;  NIC
+	echo $NIC &gt;&gt; .tmp.txt
+	NIC_num=`awk '{print NF }' .tmp.txt`
+
+ 	for i in `seq $NIC_num`
+	do
+		NIC_true=`awk -v  a=$i '{ print $a }' .tmp.txt`
+		DIR_NIC=/etc/sysconfig/network-scripts
+		if [ $NIC_true == $NIC_true ];then
+		cp $DIR_NIC/ifcfg-$NIC_true  $DIR_NIC/ifcfg-$NIC_true.bak
+#		cat /dev/null &gt; $DIR_NIC/ifcfg-$NIC_true
+
+#		cat &gt;&gt; $DIR_NIC/ifcfg-$NIC_true &lt;&lt;EOF
+#			BOOTPROTO=none
+#			TYPE=Ethernet
+#			DEVICE=$NIC_true
+#			ONBOOT=yes
+#			MASTER=$BOND
+#			SLAVE=yes
+#EOF
+####	或者
+	echo &quot;DEVICE=$NIC_true
+			MASTER=$BOND
+			SLAVE=yes&quot; &gt;&gt; $DIR_NIC/ifcfg-$NIC_true
+#			
+	sed -i -e &quot;/^ONBOOT/&quot;d -e /^DEVICE/a\ONBOOT=yes $DIR_NIC/ifcfg-$NIC_true
+	sed -i -e &quot;/^NM_CONTROLLED/&quot;d -e /^DEVICE/a\NM_CONTROLLED=no $DIR_NIC/ifcfg-$NIC_true
+	sed -i -e &quot;/^BOOTPROTO/&quot;d -e /^DEVICE/a\BOOTPROTO=none $DIR_NIC/ifcfg-$NIC_true
+	
+	fi
+done
+	 rm -rf .tmp.txt
+#	 cat &gt;&gt;$DIR_NIC/ifcfg-$BOND&lt;&lt;EOF
+#			
+#				DEVICE=$BOND
+#				ONBOOT=yes
+#				NM_CONTROLLED=no
+#				BOOTPROTO=static
+#               IPADDR=$IP
+#               NETMASK=$NETMASK
+#               GATEWAY=$GATEWAY			
+#EOF
+#或者
+
+		echo    &quot;DEVICE=$BOND
+				ONBOOT=yes
+				NM_CONTROLLED=no
+				BOOTPROTO=static
+                IPADDR=$IP
+                NETMASK=$NETMASK
+                GATEWAY=$GATEWAY&quot; &gt;&gt; $DIR_NIC/ifcfg-$BOND
+
+#
+
+echo &quot; modify modprobe.d/bond.conf&quot;
+echo &quot;##### for bond configure ######&quot; &gt;&gt; /etc/modprobe.d/bond.conf
+echo &quot;alias ${BOND} bonding&quot; &gt;&gt; /etc/modprobe.d/bond.conf
+echo &quot;options ${BOND} miimon=100 ${MODE}&quot; &gt;&gt; /etc/modprobe.d/bond.conf
+}
+network_explain
+echo &quot;全部配置完成，等待重启网卡中。(ok)&quot;
+sleep 3
+service network restart
+</code></pre>
+
+        </div>
+        
+        
+        
+        
+        
+        
+        
+<div class="flex flex-col md:flex-row md:justify-between -mx-2 mt-4 px-2 pt-4 border-t">
+    <div>
+        
+        <span class="block font-bold">上一页</span>
+        <a href="/posts/1.linux/linux%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/%E6%95%85%E9%9A%9C%E5%88%86%E6%9E%90inode/" class="block">Linux索引节点(Inode)用满导致空间不足</a>
+        
+    </div>
+    <div class="md:text-right mt-4 md:mt-0">
+        
+        <span class="block font-bold">下一页</span>
+        <a href="/posts/1.linux/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/1.linux%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80/" class="block">Linux网络基础</a>
+        
+    </div>
+</div>
+
+        
+    </div>
+    
+
+    
+    
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', ()=>{
+        hljs.initHighlightingOnLoad();
+    })
+</script>
+
+      </div>
+    </div>
+    
+  </main>
+  <footer class="pl-scrollbar">
+    <div class="w-full max-w-screen-xl mx-auto"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 2021 <a href="https://www.songjinfeng.com/">SonJinfeng</a> 
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+  </footer>
+</body>
+
+</html>

@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang='zh' ><meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+
+
+<title>Songjinfeng&#39;s BLOG</title>
+<link rel="stylesheet" href="/css/eureka.min.css">
+<script defer src="/js/eureka.min.js"></script>
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Noto+Serif+SC:wght@400;600;700&display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/styles/solarized-light.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/highlight.min.js"
+   crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/dart.min.js"
+     crossorigin></script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/js/all.min.js"
+   integrity="sha256-uNYoXefWRqv&#43;PsIF/OflNmwtKM4lStn9yrz2gVl6ymo="  crossorigin></script>
+
+
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css"
+   integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3&#43;Aro6EYUG4&#43;cU&#43;KJWu/X"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js" 
+  integrity="sha384-g7c&#43;Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI&#43;sEnkvrMWph2EDg4"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js"
+   integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC&#43;Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.9.2/dist/mermaid.min.js" 
+  integrity="sha256-Zmpaaj&#43;GXFsPF5WdPArSrnW3b30dovldeKsW00xBVwE="  crossorigin></script>
+
+
+<link rel="icon" type="image/png" sizes="32x32" href="/images/icon_hucfa16751ac9c82c06b84c3502c0db793_16378_32x32_fill_box_center_2.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hucfa16751ac9c82c06b84c3502c0db793_16378_180x180_fill_box_center_2.png">
+
+<meta name="description"
+  content="https://www.cnblogs.com/oloroso/p/4844907.html https://www.cnblogs.com/xdp-gacl/p/4016524.html https://www.cnblogs.com/smillepro/articles/9948253.html
+​	https://blog.csdn.net/lqy461929569/article/details/79881269
+​	https://www.cnblogs.com/xdp-gacl/p/3978825.html
+​	https://wenku.baidu.com/view/cf0efc335a8102d276a22f6d.html?sxts=1541989059623
+snmp简介 https://www.cnblogs.com/xdp-gacl/p/3978825.html　​	SNMP采用UDP协议在管理端和agent之间传输信息。 ==SNMP采用UDP 161端口接收和发送请求，162端口接收trap==，执行SNMP的设备缺省都必须采用这些端口。SNMP消息全部通过UDP端口161接收，只有Trap信息采用UDP端口162。
+snmp安装与卸载 安装包介绍&hellip;&hellip;
+yum安装 yum install -y net-snmp yum install -y net-snmp-utils yum install -y net-snmp-devel yum install -y net-snmp-libs yum install -y net-snmp-perl yum install -y mrtg 可使用iptables -L -n 查看当前iptables规则,放udp 161端口的访问权限  源码编译安装 https://www.cnblogs.com/xdp-gacl/p/4016524.html
+1.下载 下载Net-SNMP的源代码,选择一个SNMP版本，比如5.7.1，下载地址如下：
+http://www.net-snmp.org/download.html http://sourceforge.net/projects/net-snmp/files/net-snmp/5.7.1/，如下图所示：
+2. 解压编译 tar xzvf net-snmp-5.7.1.tar.gz解压后``cd net-snmp-5.7.1`通过configure来生成编译规则
+ net-snmp-5.7.1目录下的configure是可执行文件，如果想指定程序包的安装路径，那么首先建立相应的文件夹来存放安装信息，可以写成./configure –-prefix=/指定的路径名。参数&ndash;prefix用来告诉系统安装信息存放的路径，如果没有指定路径，直接执行./configure，那么程序包都会安装在系统默认的目录下，通常为：/usr/local下
+ 执行命令
+./configure --prefix=/usr/local/snmp --with-mib-modules=&#39;ucd-snmp/diskio ip-mib/ipv4InterfaceTable&#39;
+::: info 请注意参数：
+–prefix=/usr/local/snmp 选项，选择snmp的安装路径。
+–with-mib-modules=ucd-snmp/diskio 选项，可以让服务器支持磁盘I/O监控。">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"技术专栏",
+      "item":"/posts/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"Linux",
+      "item":"/posts/1.linux/"},{
+      "@type": "ListItem",
+      "position": 3 ,
+      "name":"",
+      "item":"/posts/1.linux/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/snmp/"}]
+}
+</script>
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/posts/1.linux/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/snmp/"
+    },
+    "headline": "Songjinfeng\u0027s BLOG","wordCount":  1040 ,
+    "publisher": {
+        "@type": "Person",
+        "name": "JF. Song",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "/images/icon.png"
+        }
+        },
+    "description": "https:\/\/www.cnblogs.com\/oloroso\/p\/4844907.html https:\/\/www.cnblogs.com\/xdp-gacl\/p\/4016524.html https:\/\/www.cnblogs.com\/smillepro\/articles\/9948253.html\n​\thttps:\/\/blog.csdn.net\/lqy461929569\/article\/details\/79881269\n​\thttps:\/\/www.cnblogs.com\/xdp-gacl\/p\/3978825.html\n​\thttps:\/\/wenku.baidu.com\/view\/cf0efc335a8102d276a22f6d.html?sxts=1541989059623\nsnmp简介 https:\/\/www.cnblogs.com\/xdp-gacl\/p\/3978825.html　​\tSNMP采用UDP协议在管理端和agent之间传输信息。 ==SNMP采用UDP 161端口接收和发送请求，162端口接收trap==，执行SNMP的设备缺省都必须采用这些端口。SNMP消息全部通过UDP端口161接收，只有Trap信息采用UDP端口162。\nsnmp安装与卸载 安装包介绍\u0026hellip;\u0026hellip;\nyum安装 yum install -y net-snmp yum install -y net-snmp-utils yum install -y net-snmp-devel yum install -y net-snmp-libs yum install -y net-snmp-perl yum install -y mrtg 可使用iptables -L -n 查看当前iptables规则,放udp 161端口的访问权限  源码编译安装 https:\/\/www.cnblogs.com\/xdp-gacl\/p\/4016524.html\n1.下载 下载Net-SNMP的源代码,选择一个SNMP版本，比如5.7.1，下载地址如下：\nhttp:\/\/www.net-snmp.org\/download.html http:\/\/sourceforge.net\/projects\/net-snmp\/files\/net-snmp\/5.7.1\/，如下图所示：\n2. 解压编译 tar xzvf net-snmp-5.7.1.tar.gz解压后``cd net-snmp-5.7.1`通过configure来生成编译规则\n net-snmp-5.7.1目录下的configure是可执行文件，如果想指定程序包的安装路径，那么首先建立相应的文件夹来存放安装信息，可以写成.\/configure –-prefix=\/指定的路径名。参数\u0026ndash;prefix用来告诉系统安装信息存放的路径，如果没有指定路径，直接执行.\/configure，那么程序包都会安装在系统默认的目录下，通常为：\/usr\/local下\n 执行命令\n.\/configure --prefix=\/usr\/local\/snmp --with-mib-modules=\u0027ucd-snmp\/diskio ip-mib\/ipv4InterfaceTable\u0027\n::: info 请注意参数：\n–prefix=\/usr\/local\/snmp 选项，选择snmp的安装路径。\n–with-mib-modules=ucd-snmp\/diskio 选项，可以让服务器支持磁盘I\/O监控。"
+}
+</script><meta property="og:title" content="Songjinfeng&#39;s BLOG" />
+<meta property="og:type" content="article" />
+
+
+<meta property="og:image" content="/images/icon.png">
+
+
+<meta property="og:url" content="/posts/1.linux/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/snmp/" />
+
+
+
+
+<meta property="og:description" content="https://www.cnblogs.com/oloroso/p/4844907.html https://www.cnblogs.com/xdp-gacl/p/4016524.html https://www.cnblogs.com/smillepro/articles/9948253.html
+​	https://blog.csdn.net/lqy461929569/article/details/79881269
+​	https://www.cnblogs.com/xdp-gacl/p/3978825.html
+​	https://wenku.baidu.com/view/cf0efc335a8102d276a22f6d.html?sxts=1541989059623
+snmp简介 https://www.cnblogs.com/xdp-gacl/p/3978825.html　​	SNMP采用UDP协议在管理端和agent之间传输信息。 ==SNMP采用UDP 161端口接收和发送请求，162端口接收trap==，执行SNMP的设备缺省都必须采用这些端口。SNMP消息全部通过UDP端口161接收，只有Trap信息采用UDP端口162。
+snmp安装与卸载 安装包介绍&hellip;&hellip;
+yum安装 yum install -y net-snmp yum install -y net-snmp-utils yum install -y net-snmp-devel yum install -y net-snmp-libs yum install -y net-snmp-perl yum install -y mrtg 可使用iptables -L -n 查看当前iptables规则,放udp 161端口的访问权限  源码编译安装 https://www.cnblogs.com/xdp-gacl/p/4016524.html
+1.下载 下载Net-SNMP的源代码,选择一个SNMP版本，比如5.7.1，下载地址如下：
+http://www.net-snmp.org/download.html http://sourceforge.net/projects/net-snmp/files/net-snmp/5.7.1/，如下图所示：
+2. 解压编译 tar xzvf net-snmp-5.7.1.tar.gz解压后``cd net-snmp-5.7.1`通过configure来生成编译规则
+ net-snmp-5.7.1目录下的configure是可执行文件，如果想指定程序包的安装路径，那么首先建立相应的文件夹来存放安装信息，可以写成./configure –-prefix=/指定的路径名。参数&ndash;prefix用来告诉系统安装信息存放的路径，如果没有指定路径，直接执行./configure，那么程序包都会安装在系统默认的目录下，通常为：/usr/local下
+ 执行命令
+./configure --prefix=/usr/local/snmp --with-mib-modules=&#39;ucd-snmp/diskio ip-mib/ipv4InterfaceTable&#39;
+::: info 请注意参数：
+–prefix=/usr/local/snmp 选项，选择snmp的安装路径。
+–with-mib-modules=ucd-snmp/diskio 选项，可以让服务器支持磁盘I/O监控。" />
+
+
+
+
+<meta property="og:locale" content="zh" />
+
+
+
+
+<meta property="og:site_name" content="Songjinfeng&#39;s BLOG" />
+
+
+
+
+
+
+
+
+
+<meta property="article:section" content="posts" />
+
+
+
+
+<body class="flex flex-col min-h-screen">
+  <header class="fixed flex items-center w-full min-h-16 pl-scrollbar z-50 bg-secondary-bg shadow-sm">
+    <div class="w-full max-w-screen-xl mx-auto"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="mr-6 text-primary-text text-xl font-bold">Songjinfeng&#39;s BLOG</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:flex-grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:flex-grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  mr-4">技术专栏</a>
+            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">文档笔记</a>
+            <a href="/series/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">主题系列</a>
+            <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">标签</a>
+            <a href="/authors/songjinfeng/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">关于</a>
+            <a href="/index.xml" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">RSS</a>
+            <a href="/webstack" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">友链&amp;导航</a>
+        </div>
+
+        <div class="flex">
+            <div class="relative pt-4 md:pt-0">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col left-0 md:left-auto right-auto md:right-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">浅色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">深色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">自动</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            switchMode('Auto')
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+  </header>
+  <main class="flex-grow pt-16">
+    <div class="pl-scrollbar">
+      <div class="w-full max-w-screen-xl lg:px-4 xl:px-8 mx-auto">
+
+
+<div class="grid grid-cols-2 lg:grid-cols-8 gap-4 lg:pt-12">
+    <div
+        class="col-span-2 lg:col-start-2 lg:col-span-6 bg-secondary-bg rounded px-6 py-8">
+        <h1 class="font-bold text-3xl text-primary-text"></h1>
+        <div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>0001-01-01</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>5分钟阅读时长</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="/categories/blog/" class="hover:text-eureka">blog</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/posts/" class="hover:text-eureka">posts</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/linux/" class="hover:text-eureka">Linux</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/" class="hover:text-eureka">Linux网络管理</a>
+        
+    </div>
+    
+
+    
+</div>
+        
+        
+        
+
+        <div class="content">
+            <p><a href="https://www.cnblogs.com/oloroso/p/4844907.html">https://www.cnblogs.com/oloroso/p/4844907.html</a>
+<a href="https://www.cnblogs.com/xdp-gacl/p/4016524.html">https://www.cnblogs.com/xdp-gacl/p/4016524.html</a>
+<a href="https://www.cnblogs.com/smillepro/articles/9948253.html">https://www.cnblogs.com/smillepro/articles/9948253.html</a></p>
+<p>​	https://blog.csdn.net/lqy461929569/article/details/79881269</p>
+<p>​	https://www.cnblogs.com/xdp-gacl/p/3978825.html</p>
+<p>​	https://wenku.baidu.com/view/cf0efc335a8102d276a22f6d.html?sxts=1541989059623</p>
+<h1 id="snmp简介">snmp简介</h1>
+<p><a href="https://www.cnblogs.com/xdp-gacl/p/3978825.html">https://www.cnblogs.com/xdp-gacl/p/3978825.html</a>　　</p>
+<p>​	SNMP采用UDP协议在管理端和agent之间传输信息。 ==SNMP采用UDP 161端口接收和发送请求，162端口接收trap==，执行SNMP的设备缺省都必须采用这些端口。SNMP消息全部通过UDP端口161接收，只有Trap信息采用UDP端口162。</p>
+<h1 id="snmp安装与卸载">snmp安装与卸载</h1>
+<p>安装包介绍&hellip;&hellip;</p>
+<h2 id="yum安装">yum安装</h2>
+<pre><code>yum install -y net-snmp
+yum install -y net-snmp-utils
+
+yum install -y net-snmp-devel
+yum install -y net-snmp-libs
+yum install -y net-snmp-perl
+yum install -y mrtg
+可使用iptables -L -n 查看当前iptables规则,放udp 161端口的访问权限
+</code></pre>
+<h2 id="源码编译安装">源码编译安装</h2>
+<p><a href="https://www.cnblogs.com/xdp-gacl/p/4016524.html">https://www.cnblogs.com/xdp-gacl/p/4016524.html</a></p>
+<h3 id="1下载">1.下载</h3>
+<p>下载Net-SNMP的源代码,选择一个SNMP版本，比如5.7.1，下载地址如下：</p>
+<p><a href="http://www.net-snmp.org/download.html">http://www.net-snmp.org/download.html</a>
+<a href="http://sourceforge.net/projects/net-snmp/files/net-snmp/5.7.1/">http://sourceforge.net/projects/net-snmp/files/net-snmp/5.7.1/</a>，如下图所示：</p>
+<p><img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/SNMP/2021.04.06-16:09:19-D-assets-SNMP-image-20210406160502605.png" alt="image-20210406160502605"></p>
+<h3 id="2-解压编译">2. 解压编译</h3>
+<p><code>tar xzvf net-snmp-5.7.1.tar.gz</code>解压后``cd net-snmp-5.7.1`通过configure来生成编译规则</p>
+<blockquote>
+<p>net-snmp-5.7.1目录下的configure是可执行文件，如果想指定程序包的安装路径，那么首先建立相应的文件夹来存放安装信息，可以写成./configure –-prefix=/指定的路径名。参数&ndash;prefix用来告诉系统安装信息存放的路径，如果没有指定路径，直接执行./configure，那么程序包都会安装在系统默认的目录下，通常为：/usr/local下</p>
+</blockquote>
+<p>执行命令</p>
+<p><code>./configure --prefix=/usr/local/snmp --with-mib-modules='ucd-snmp/diskio ip-mib/ipv4InterfaceTable'</code></p>
+<p>::: info
+请注意参数：</p>
+<p>–prefix=/usr/local/snmp
+选项，选择snmp的安装路径。</p>
+<p>–with-mib-modules=ucd-snmp/diskio
+选项，可以让服务器支持磁盘I/O监控。</p>
+<p>–enable-mfd-rewrites
+选项，允许用新的MFD重写mid模块，这样编译的snmp就能支持64位的计数器，能正常采集到流量。</p>
+<p>​	:::</p>
+<blockquote>
+<p>回车出现下面问题，可以直接回车而不用回答，系统会采用默认信息，其中日志文件默认安装在/var/log/snmpd.log.数据存贮目录默认存放在/var/net-snmp下
+　　　　1、default version of-snmp-version(3):
+　　　　2、System Contact Information (@@no.where)（配置该设备的联系信息）:
+　　　　3、System Location (Unknown)(该系统设备的地理位置):
+　　　　4、Location to write logfile (日志文件位置):
+　　　　5、Location to Write persistent(数据存储目录):</p>
+</blockquote>
+<p><img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/SNMP/2021.04.06-16:09:16-D-assets-SNMP-image-20210406160914505.png" alt="image-20210406160914505"></p>
+<p>执行编译并安装<code>make &amp;&amp; make install</code>命令</p>
+<p>如果配置文件目录不存在则可以复制示例&quot;cp EXAMPLE.conf /usr/local/snmp/etc/snmpd.conf&quot;</p>
+<h3 id="3-检查">3. 检查</h3>
+<pre><code>查看端口，默认监听udp的161端口，有的版本是199
+netstat -lunp  
+ss -tnl  //centos7
+
+查端口对应的进程
+lsof -i :199
+
+firewall-cmd --state   # 查看防火墙状态
+vi /etc/firewall/zones/public.xml
+添加一行&lt;port protocol=&quot;udp&quot; port=&quot;161&quot;/&gt;，注意用空格隔开
+
+firewall-cmd --list-all   可以查看到已经添加了的161端口，会包含显示ports:161/udp
+
+放通161端口
+iptables -I INPUT -p udp --dport 161 -j ACCEPT    //-i eth0 -p  -s 220.181.150.98 
+&quot;iptables save&quot;
+iptables -L -n   |grep 161
+
+windows上测试　　&quot;snmputil get 192.168.1.229 public .1.3.6.1.2.1.1.5.0&quot;命令返回192.168.1.229这台Linux服务器的名字，可以看到，Linux服务器的名称已经正常返回输出到命令行窗口了。
+</code></pre>
+<h2 id="卸载">卸载</h2>
+<p>　如果安装后想卸载SNMP，可以执行&quot;make uninstall&quot;命令，卸载步骤如下：</p>
+<p>　　1、使用&quot;netstat -an |grep 161&quot;查看snmp服务是否启动
+　　2、如果已经启动就使用命令&quot;ps aux | grep snmp | grep -v grep |awk &lsquo;{print $2}'| xargs kill&quot;关闭snmp的相关服务
+　　3、进入SNMP源码目录(net-snmp-5.7.1)
+　　4、执行&quot;make uninstall&quot;命令卸载SNMP
+　　5、删除SNMP的安装路径/usr/local下的snmp目录以及snmp目录里面的所有文件
+<code>rm -rf /usr/local/snmp</code></p>
+<h1 id="配置介绍">配置介绍</h1>
+<p>扩展阅读子代理开发
+<a href="https://blog.csdn.net/hepeng597/article/details/8782868">https://blog.csdn.net/hepeng597/article/details/8782868</a>
+<a href="https://www.cnblogs.com/oloroso/p/4708581.html">https://www.cnblogs.com/oloroso/p/4708581.html</a></p>
+<p>参考连接
+<a href="https://www.cnblogs.com/oloroso/p/4844907.html">https://www.cnblogs.com/oloroso/p/4844907.html</a></p>
+<p>net-snmp的配置文件是有一定的层次结构的，在net-snmp的EXAMPLE.conf文件中对齐有详细的描述。</p>
+<p>access
+view
+|
+groupName
+|
+sec.name
+|
+community</p>
+<p>定义完安全组后，需要定义一个视图。视图就是这个安全体的可见范围。</p>
+<p>对于每一个安全体，需要向其授权一些视图，视图确定了可以访问那些节点。</p>
+<h3 id="1-设置snmpd监听的地址端口">1. 设置snmpd监听的地址端口</h3>
+<p>snmpd默认是监听本地所有的IP地址的 UDP 161端口 等待snmp请求。如果不希望使用默认的监听设置，可以使用自定义的选项</p>
+<pre><code>#  Listen for connections from the local system only
+# 只监听本地的连接
+agentAddress  udp:127.0.0.1:161
+
+#  Listen for connections on all interfaces (both IPv4 *and* IPv6)
+# 监听所有接口的连接
+#agentAddress udp:161,udp6:[::1]:161
+</code></pre>
+<h3 id="2-建立community-name-和-security-name-映射关系">2. 建立community name 和 security name 映射关系：</h3>
+<p>//定义安全体名和共同体名称(SNMPv2
+//rocommunity    只读权限共同体名
+//rwcommunity    读写权限共同体名</p>
+<pre><code>#				  sec.name           source        community
+com2sec 	notConfigUser   default       public
+</code></pre>
+<p>:::info</p>
+<ul>
+<li>
+<p>com2sec 是net-snmp中定义安全体名字的关键字，表示这一行定义一个安全体名字。</p>
+</li>
+<li>
+<p>功能： map an SNMPv1 or SNMPv2c community string to a security name</p>
+</li>
+<li>
+<p>命令格式一：com2sec   [-Cn context]   sec.name   source   community</p>
+</li>
+<li>
+<p>参数说明：
+-Cn context：可选的，在v3版本中使用
+sec.name： 安全名，内部映射的名字
+community：团体名，外部使用的名字</p>
+<p>source：可以访问的ip地址范围。</p>
+<ul>
+<li>
+<p>default：默认值，即任何ip都可以访问</p>
+</li>
+<li>
+<p>IP/MASK：10.10.10.0/255.255.255.0</p>
+</li>
+<li>
+<p>IP/BITS ：10.10.10.0/24：只有ip地址在10.10.10.0</p>
+</li>
+</ul>
+</li>
+<li>
+<p>命令格式二：com2sec6  [-Cn context] sec.name source community
+针对ipv6，其他同上</p>
+</li>
+<li>
+<p>命令格式三：com2secunix [-Cn context] sec.name sockpath community
+只限本地socket可以访问，其他同上
+#&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;
+#因为SNMPv3已经使用usm作为安全模型，使用，去掉共同体定义。
+#com2sec 是net-snmp中定义安全体名字的关键字，表示这一行定义一个安全体名字。</p>
+</li>
+</ul>
+<p>:::</p>
+<h3 id="3---security-name-加入-group-name">3.   security name 加入 group name:</h3>
+<pre><code>#      groupName       securityModel     securityName
+group   notConfigGroup       v1         notConfigUser
+</code></pre>
+<p>:::info</p>
+<ul>
+<li>
+<p>group是定义安全组的关键字</p>
+</li>
+<li>
+<p>功能：
+将sec.name映射到一个group中，组中具有相同的权限。</p>
+</li>
+<li>
+<p>命令格式：group   groupName   securityModel   sec.name</p>
+</li>
+<li>
+<p>参数说明：
+groupName：   安全组名称
+securityModel：安全类型，可选值：v1、v2c、usm、tsm、ksm
+securityName： 安全体名称</p>
+</li>
+</ul>
+<p>:::</p>
+<h3 id="4定义视图view供安全组group使用">4.定义视图view，供安全组group使用:</h3>
+<pre><code>#      view.name            incl/excl       subtree              [mask]
+view    systemview           included        .1                  80
+</code></pre>
+<p>:::info</p>
+<p>view.name  视图名
+incl/excl  对下面的MIB子树是包括还是排除(included/excluded)
+subtree    视图中所涉及的mib子树
+mask(optional)  掩码</p>
+<p>此处定义的就是VACM中的视图子树和掩码，配置将出现在VACM相关表中。
+此处对网络接口2定义了一个视图，将来作为一个独立的context,mask参见VACM。
+view 是定义视图的关键字</p>
+<ul>
+<li>
+<p>view是定义试图的关键字</p>
+</li>
+<li>
+<p>命令格式：view viewName type oid[mask]</p>
+</li>
+<li>
+<p>功能：定义一个view，表示整个OID树的子树，同一个子树可以定义多个view</p>
+</li>
+<li>
+<p>参数说明: <br>
+viewName：view名字
+type：有两个值:include 和 exclude
+oid：可以访问的oid
+[mask]：对oid的mask</p>
+</li>
+</ul>
+<p>例如：view all include 1.3.6.1.2.1.4  0xf0
+0xf0：1111 0000，即访问的oid的前4位必须是1.3.6.1，否则不能访问，即可以访问1.3.6.1下所有的子oid</p>
+<p>:::</p>
+<h3 id="5向安全组授权相应的视图">5.向安全组授权相应的视图</h3>
+<pre><code>#       group       context   sec.model   sec.level  prefix   read       write    notif
+access  notConfigGroup    &quot;&quot;      any       noauth    exact   systemview    none     none
+</code></pre>
+<p><img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/SNMP/2021.04.07-10:58:29-D-assets-SNMP-image-20210407105827316.png" alt="image-20210407105827316"></p>
+<p>:::info</p>
+<ul>
+<li>命令格式：access groupName context model level prefx read write notify</li>
+<li>功能：设置访问某一个view的存取权限</li>
+<li>参数说明:</li>
+<li>group：控制存取权限的安全组名</li>
+<li>context：v1和v2c版本，context必须设置为&quot;&quot;</li>
+<li>sec.model：v1、v2c、usm、tsm、ksm 最后3中是v3版本的授权模式，
+<ul>
+<li>usm（User-Based Security Model）是默认授权模式，</li>
+<li>tsm用于SSH or DTLS，</li>
+<li>ksm用于支持Kerberos</li>
+</ul>
+</li>
+<li>sec.level：安全级别  可选值：auth、noauth、priv,      v1,v2c中只能为noauth
+<ul>
+<li>noauth：允许无权限访问（v1，v2c使用）</li>
+<li>auth：必须有权限才能访问，需要身份认证，但是不对通过网络发送的数据进行加密。</li>
+<li>priv：强制加密访问，最可靠模式。需要身份认证而且数据会被加密。</li>
+</ul>
+</li>
+<li>prefx：前缀 指定context如何与PDU中的context匹配，V3使用</li>
+<li>read授权的读视图、write授权的写视图、notify授权的trap视图：指明某一个view的权限是否可以GET*, SET*、TRAP/INFORM，如果该view不能read，则置none</li>
+</ul>
+<p>:::</p>
+<h3 id="6-v3添加用户">6. V3添加用户</h3>
+<p>SNMPv3使用了用户加密鉴权的认证方式，所以需要创建相关的用户。先停止snmpd服务再用net-snmp-config –create-snmpv3-user来实现。</p>
+<p>创建用户使用createUser关键字来进行。后面的参数依次是用户名、验证方式、验证码、加密方式、加密码</p>
+<p>创建的用户需要指明用户的权限，使用关键字rouser（只读）和rwuser（读写）来操作。</p>
+<p>如果后面加上priv来指明需要加密。可以使用auth来指明需要认证。</p>
+<pre><code>#        user    验证方式    验证码        加密方式    加密码
+createUser  user1   MD5       &quot;md5123456&quot;     DES      &quot;des123456&quot;
+createUser  user2   MD5       &quot;md5123456&quot;     DES      &quot;des123456&quot;
+#用户的权限设置
+rwuser　　　user1　　priv　　#读写用户，需要加密
+rouser　　　user2　  auth　　#只读用户，需要认证
+
+#rouser [-s SECMODEL] USER [noauth|auth|priv [OID | -V VIEW [CONTEXT]]]
+#rwuser [-s SECMODEL] USER [noauth|auth|priv [OID | -V VIEW [CONTEXT]]]
+</code></pre>
+<p>::: info
+<a href="http://blog.chinaunix.net/uid-451-id-3337094.html">http://blog.chinaunix.net/uid-451-id-3337094.html</a></p>
+<p><strong>建立用户：</strong></p>
+<ul>
+<li>语法：
+ceateUser username (MD5|SHA) authpassphrase [DES|AES] [privpassphrase]
+authentication是用户密码，加密用MD5或sha加密
+privacy是通讯报文加密，用DES或AES
+除MD5外， SHA,DES和AES需要OpenSSL支持(MD5不算是真正的加密)
+密码必须8位以上</li>
+</ul>
+<p>特别注意：
+1） 处于安全考虑 该配置需放到独立的配置文件中/var/net-snmp/snmpd.conf
+2） snmpd启动后，该配置文件被重写
+3） 要先停掉snmpd后更改改文件，因为该文件随时会被覆盖</p>
+<p><strong>定义权限：</strong>
+rouser USER [noauth|auth|priv]
+rwuser USER [noauth|auth|priv]
+分别是不加密，用户认证和报文加密</p>
+<p><strong>例子</strong></p>
+<pre><code>service snmpd stop
+cat /var/net-snmp/snmpd.conf
+createUser snmp_ro SHA pwd4readonly
+createUser snmp_rw SHA pwd4readwrite DES pwd4content
+
+cat snmpd.conf
+rouser snmp5ro auth
+rwuser snmp5rw priv
+
+service snmpd start
+</code></pre>
+<p><strong>测试</strong></p>
+<pre><code>只读用户
+snmpwalk -v 3 -l authNoPriv -u snmp_ro -a sha -A pwd4readonly 127.0.0.1
+读写用户
+snmpwalk -v 3 -l authPriv -u snmp_rw -a sha -A pwd4readwrite -x DES -X pwd4content localhost
+</code></pre>
+<p>:::</p>
+<h3 id="7-snmp-trap发送目的地设置">7. SNMP Trap发送目的地设置</h3>
+<p>以上都是对SNMP代理程序的外部请求的相关设置。SNMP代理还有一个重要的功能就是主动向网管端发送“通知”。</p>
+<p>对此需要指定网关端的目的地址。</p>
+<p>使用snmpsink来指定发送SNMPv1版本的Trap的目的地址和共同体名称</p>
+<p>使用snmp2sink来指定发送SNMPv2版本的Trap的目的地址和共同体名称</p>
+<p>使用informasink来指定发送INFORMs的目的地址和共同体名称</p>
+<p>使用trappsess来指定发送SNMPv3版本的Trap的相关信息。其中引擎ID和用户名，验证方式，验证码等都必须和接收trap的网关软件端设置的一致。</p>
+<pre><code>#   发送 SNMPv1  traps
+trapsink     localhost public
+#   发送 SNMPv2c traps
+trap2sink    localhost public
+#   发送 SNMPv2c INFORMs
+informsink   localhost public
+#   发送SNMPv3 traps
+trapsess -v 3 -u 用户名 -e  引擎ID       -a 验证方式 -A 验证码  -l  鉴权方式   目的IP
+trapsess -v 3 -u myuser -e  0x010203040506  -a  MD5    -A 111111111 -l authNoPriv 192.168.1.108
+</code></pre>
+<h2 id="v1-v2示例">v1 v2示例</h2>
+<p><a href="https://blog.csdn.net/zqtsx/article/details/25150821">https://blog.csdn.net/zqtsx/article/details/25150821</a></p>
+<p>read write notif 值为all 表允许</p>
+<p><img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/SNMP/2021.04.07-11:04:17-D-assets-SNMP-image-20210407110415051.png" alt="image-20210407110415051"></p>
+<h2 id="v3示例">v3示例</h2>
+<p><a href="https://www.cnblogs.com/oloroso/p/4718207.html">https://www.cnblogs.com/oloroso/p/4718207.html</a></p>
+<p><a href="https://blog.51cto.com/144432/2132687?source=dra">https://blog.51cto.com/144432/2132687?source=dra</a></p>
+<h3 id="增加snmp-v3用户httpswwwcnblogscomolorosop4718207html3101064746">增加snmp v3用户<a href="https://www.cnblogs.com/oloroso/p/4718207.html#3101064746">#</a></h3>
+<h4 id="增加-认证且加密只读账号authprivhttpswwwcnblogscomolorosop4718207html3092007953">增加 认证且加密只读账号(authPriv)<a href="https://www.cnblogs.com/oloroso/p/4718207.html#3092007953">#</a></h4>
+<pre><code>service snmpd stop   #停止snmpd服务
+net-snmp-create-v3-user -ro -A auth123456 -X priv123456 -a MD5 -x DES fx   
+</code></pre>
+<h4 id="增加-认证且加密的读写账户httpswwwcnblogscomolorosop4718207html640442486">增加 认证且加密的读写账户<a href="https://www.cnblogs.com/oloroso/p/4718207.html#640442486">#</a></h4>
+<pre><code>net-snmp-create-v3-user  -A auth123456 -a MD5 -X priv123456 -x DES fxw 
+</code></pre>
+<h4 id="增加-认证但不加密只读账户authnoprivhttpswwwcnblogscomolorosop4718207html1949472223">增加 认证但不加密只读账户(authNoPriv)<a href="https://www.cnblogs.com/oloroso/p/4718207.html#1949472223"></a></h4>
+<pre><code>net-snmp-create-v3-user -ro -A auth123456 -a MD5 fxa
+</code></pre>
+<p>注意，这个操作会修改默认的<code>snmpd.conf</code>文件。</p>
+<h5 id="参数说明httpswwwcnblogscomolorosop4718207html1859871717">参数说明<a href="https://www.cnblogs.com/oloroso/p/4718207.html#1859871717">#</a></h5>
+<ul>
+<li><code>-ro</code>:用户读写权限，表示用户fx为只具有读权限</li>
+<li><code>fx</code>：用户名</li>
+<li><code>-a MD5</code>:认证方式，MD5散列方式</li>
+<li><code>-A auth123456</code>：设置认证密码，密码必须大于8个字符</li>
+<li><code>-x DES</code>:加密方式，这边支持AES、DES两种</li>
+<li><code>priv123456</code>：加密口令，必须大于8位</li>
+</ul>
+<p>备注：增加用户的时候，snmp必须关闭，否则有如下报错</p>
+<pre><code>Apparently at least one snmpd demon is already running.
+ You must stop them in order to use this command.
+Apparently at least one snmpd demon is already running.
+ You must stop them in order to use this command.
+</code></pre>
+<h3 id="重新启动snmpdhttpswwwcnblogscomolorosop4718207html2786241103">重新启动snmpd<a href="https://www.cnblogs.com/oloroso/p/4718207.html#2786241103">#</a></h3>
+<pre><code>service snmpd start
+</code></pre>
+<h3 id="测试一下httpswwwcnblogscomolorosop4718207html4284714539">测试一下<a href="https://www.cnblogs.com/oloroso/p/4718207.html#4284714539">#</a></h3>
+<h3 id="测试认证且加密只读账户fxhttpswwwcnblogscomolorosop4718207html4037048862">测试认证且加密只读账户fx<a href="https://www.cnblogs.com/oloroso/p/4718207.html#4037048862">#</a></h3>
+<pre><code>o@o-pc:~$   snmpwalk  -v3  -u fx -a MD5 -A auth123456 -x DES -X priv123456 -l authPriv 127.0.0.1 sysUpTime
+DISMAN-EVENT-MIB::sysUpTimeInstance = Timeticks: (93687) 0:15:36.87
+</code></pre>
+<h4 id="测试认证且加密读写账户fxwhttpswwwcnblogscomolorosop4718207html3276206656">测试认证且加密读写账户fxw<a href="https://www.cnblogs.com/oloroso/p/4718207.html#3276206656">#</a></h4>
+<p>注意，下面的节点<code>confNewVersion.0</code>是一个自定义的读写节点</p>
+<pre><code>#认证且加密方式set
+​```bash
+$ snmpset -v3 -u fxw -a MD5 -A auth123456 -x DES -X priv123456 -l authPriv 127.0.0.1 confNewVersion.0 s &quot;12345&quot;
+SNMP-VC-MIB::confNewVersion.0 = STRING: &quot;12345&quot;
+#认证但不加密方式set
+​```bash
+$ snmpset -v3 -u fxw -a MD5 -A auth123456  -l authNoPriv 127.0.0.1 confNewVersion.0 s &quot;12345&quot;
+SNMP54-VideoCommand-MIB::confNewVersion.0 = STRING: &quot;12345&quot;
+ 
+</code></pre>
+<h4 id="测试认证不加密只读账户fxahttpswwwcnblogscomolorosop4718207html976221786">测试认证不加密只读账户fxa<a href="https://www.cnblogs.com/oloroso/p/4718207.html#976221786">#</a></h4>
+<pre><code>o@o-pc:~$ snmpwalk  -v 3 -u fxa -a MD5 -A auth123456 -l authNoPriv 127.0.0.1 sysUpTime
+DISMAN-EVENT-MIB::sysUpTimeInstance = Timeticks: (8215) 0:01:22.15
+</code></pre>
+<h4 id="注意事项httpswwwcnblogscomolorosop4718207html3080908863">注意事项<a href="https://www.cnblogs.com/oloroso/p/4718207.html#3080908863">#</a></h4>
+<p>注意，对于<code>snmpget/set</code>操作，代理端配置的账户与管理端使用的时候可以不完全一致。但是对于<code>set</code>操作，不能使用<code>noAuthNoPriv</code>方式，否则报错。</p>
+<ul>
+<li>对于认证且加密的账户，<code>snmpget/walk/get</code>可以使用三种级别的安全方式，分别为<code>noAuthNoPriv</code>（不认证也不加密）、<code>authNoPriv</code>（认证但是不加密）、<code>authPriv</code>（既认证又加密）</li>
+<li>对于认证但不加密的账户，<code>snmpget/walk/get</code>可以使用两种级别的安全方式，分别为noAuthNoPriv（不认证也不加密）、authNoPriv（认证但是不加密）</li>
+</ul>
+<h5 id="snmpwalk权限设置导致的超时httpswwwcnblogscomolorosop4718207html3104360881">snmpwalk权限设置导致的超时<a href="https://www.cnblogs.com/oloroso/p/4718207.html#3104360881">#</a></h5>
+<pre><code>​```bash
+$ snmpwalk  -v 3 -u fxa -a MD5 -A auth123456 -x DES -X priv123456 -l authPriv 127.0.0.1 sysUpTime
+Timeout: No Response from 127.0.0.1
+</code></pre>
+<h5 id="snmpset安全等级设置与认证和加密设置不对等时候的报错httpswwwcnblogscomolorosop4718207html3545326124">snmpset安全等级设置与认证和加密设置不对等时候的报错<a href="https://www.cnblogs.com/oloroso/p/4718207.html#3545326124">#</a></h5>
+<pre><code>​```bash
+$ snmpset -v3 -u fxw -a MD5 -A auth123456  -l authPriv 127.0.0.1 confNewVersion.0 s &quot;12345&quot;snmpset: USM generic error (Sub-id not found: (top) -&gt; confNewVersion)
+</code></pre>
+<h5 id="snmpset使用noauthnopriv不认证不加密方式报错httpswwwcnblogscomolorosop4718207html1011464609">snmpset使用noAuthNoPriv不认证不加密方式报错<a href="https://www.cnblogs.com/oloroso/p/4718207.html#1011464609">#</a></h5>
+<pre><code>$ snmpset -v3 -u fxw  -l noAuthNoPriv 127.0.0.1 confNewVersion.0 s &quot;12345&quot;
+Error in packet.
+Reason: authorizationError (access denied to that object)
+</code></pre>
+<h1 id="我的配最终置">我的配最终置</h1>
+<blockquote>
+<p>user3 配置不生效  默认命令创建后即可访问，没法做限制。。。。</p>
+<p><img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/SNMP/2021.04.07-15:53:18-D-assets-SNMP-image-20210407155316236.png" alt="image-20210407155316236"></p>
+<p>用命令添加user后以下配置文件新增内容</p>
+<p>/var/lib/net-snmp/snmpd.conf</p>
+<p>usmUser 1 3 0x80001f8880729529672bbb6b6000000000 &ldquo;user3&rdquo; &ldquo;user3&rdquo; NULL .1.3.6.1.6.3.10.1.1.2 0x7beaef757a0b30107c2b51b90536b88d .1.3.6.1.6.3.10.1.2.2 0xace1522b4af46c78bf71da442399131a 0x</p>
+<p>/etc/snmp/snmpd.conf</p>
+<p>rwuser user3
+rouser user3</p>
+</blockquote>
+<h1 id="防火墙放行">防火墙放行</h1>
+<p>注意：防火墙默认为DROP策略。如果为ACCEPT策略，只需添加INPUT规则即可。</p>
+<p>Centos 6.x
+iptables -I INPUT -p udp -s 172.16.0.0/16 -d 172.16.0.0/16 &ndash;dport 161 -j ACCEPT
+iptables -I OUTPUT -p udp -s 172.16.0.0/16 -d 172.16.0.0/16 &ndash;sport 161 -j ACCEPT
+service iptables save &amp;&amp;service iptables restart</p>
+<p>Centos7.X
+firewall-cmd &ndash;direct &ndash;add-rule ipv4 filter INPUT_direct 1 -m udp -p udp -m state &ndash;state NEW,ESTABLISHED -s 172.16.0.0/16 -d 172.16.0.0/16 &ndash;dport 161 -j ACCEPT
+firewall-cmd &ndash;direct &ndash;add-rule ipv4 filter OUTPUT_direct 1 -m udp -p udp -m state &ndash;state ESTABLISHED -s 172.16.0.0/16 -d 172.16.0.0/16 &ndash;sport 161 -j ACCEPT</p>
+<p>firewall-cmd &ndash;runtime-to-permanent</p>
+<p>#4检测 Net-SNMPv3账户密码
+snmpwalk -v 3 -u inlinero -a SHA -A &ldquo;账户密码&rdquo; -x DES -X &ldquo;加密密码&rdquo; -l authPriv 172.16.10.56 sysDescr</p>
+
+        </div>
+        
+        
+        
+        
+        
+        
+        
+<div class="flex flex-col md:flex-row md:justify-between -mx-2 mt-4 px-2 pt-4 border-t">
+    <div>
+        
+        <span class="block font-bold">上一页</span>
+        <a href="/posts/1.linux/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/nmcli/" class="block"></a>
+        
+    </div>
+    <div class="md:text-right mt-4 md:mt-0">
+        
+        <span class="block font-bold">下一页</span>
+        <a href="/posts/1.linux/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/wireshark/" class="block"></a>
+        
+    </div>
+</div>
+
+        
+    </div>
+    
+
+    
+    
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', ()=>{
+        hljs.initHighlightingOnLoad();
+    })
+</script>
+
+      </div>
+    </div>
+    
+  </main>
+  <footer class="pl-scrollbar">
+    <div class="w-full max-w-screen-xl mx-auto"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 2021 <a href="https://www.songjinfeng.com/">SonJinfeng</a> 
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+  </footer>
+</body>
+
+</html>

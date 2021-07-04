@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang='zh' ><meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+
+
+<title>ssh原理应用 | Songjinfeng&#39;s BLOG</title>
+<link rel="stylesheet" href="/css/eureka.min.css">
+<script defer src="/js/eureka.min.js"></script>
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Noto+Serif+SC:wght@400;600;700&display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/styles/solarized-light.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/highlight.min.js"
+   crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/dart.min.js"
+     crossorigin></script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/js/all.min.js"
+   integrity="sha256-uNYoXefWRqv&#43;PsIF/OflNmwtKM4lStn9yrz2gVl6ymo="  crossorigin></script>
+
+
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css"
+   integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3&#43;Aro6EYUG4&#43;cU&#43;KJWu/X"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js" 
+  integrity="sha384-g7c&#43;Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI&#43;sEnkvrMWph2EDg4"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js"
+   integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC&#43;Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.9.2/dist/mermaid.min.js" 
+  integrity="sha256-Zmpaaj&#43;GXFsPF5WdPArSrnW3b30dovldeKsW00xBVwE="  crossorigin></script>
+
+
+<link rel="icon" type="image/png" sizes="32x32" href="/images/icon_hucfa16751ac9c82c06b84c3502c0db793_16378_32x32_fill_box_center_2.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hucfa16751ac9c82c06b84c3502c0db793_16378_180x180_fill_box_center_2.png">
+
+<meta name="description"
+  content="本文对SSH连接验证机制进行了非常详细的分析，还详细介绍了&quot;Shell基本功能&quot;和了解&quot;公钥加密&quot;的概念。，相信能让各位对ssh有个全方位较透彻的了解，而不是仅仅只会用它来连接远程主机。">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"技术专栏",
+      "item":"/posts/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"Linux",
+      "item":"/posts/1.linux/"},{
+      "@type": "ListItem",
+      "position": 3 ,
+      "name":"ssh原理应用",
+      "item":"/posts/1.linux/linux%E5%B8%B8%E7%94%A8%E6%9C%8D%E5%8A%A1/ssh/ssh%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/"}]
+}
+</script>
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/posts/1.linux/linux%E5%B8%B8%E7%94%A8%E6%9C%8D%E5%8A%A1/ssh/ssh%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/"
+    },
+    "headline": "ssh原理应用 | Songjinfeng\u0027s BLOG","wordCount":  232 ,
+    "author": {
+        "@type": "Person",
+        "name": "songjinfeng"
+    },
+    "publisher": {
+        "@type": "Person",
+        "name": "JF. Song",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "/images/icon.png"
+        }
+        },
+    "description": "\u003cp\u003e本文对SSH连接验证机制进行了非常详细的分析，还详细介绍了\u0026quot;Shell基本功能\u0026quot;和了解\u0026quot;公钥加密\u0026quot;的概念。，相信能让各位对ssh有个全方位较透彻的了解，而不是仅仅只会用它来连接远程主机。\u003c\/p\u003e"
+}
+</script><meta property="og:title" content="ssh原理应用 | Songjinfeng&#39;s BLOG" />
+<meta property="og:type" content="article" />
+
+
+<meta property="og:image" content="/images/icon.png">
+
+
+<meta property="og:url" content="/posts/1.linux/linux%E5%B8%B8%E7%94%A8%E6%9C%8D%E5%8A%A1/ssh/ssh%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/" />
+
+
+
+
+<meta property="og:description" content="本文对SSH连接验证机制进行了非常详细的分析，还详细介绍了&quot;Shell基本功能&quot;和了解&quot;公钥加密&quot;的概念。，相信能让各位对ssh有个全方位较透彻的了解，而不是仅仅只会用它来连接远程主机。" />
+
+
+
+
+<meta property="og:locale" content="zh" />
+
+
+
+
+<meta property="og:site_name" content="Songjinfeng&#39;s BLOG" />
+
+
+
+
+
+
+
+
+
+<meta property="article:section" content="posts" />
+
+
+
+
+
+
+
+
+
+
+
+
+<body class="flex flex-col min-h-screen">
+  <header class="fixed flex items-center w-full min-h-16 pl-scrollbar z-50 bg-secondary-bg shadow-sm">
+    <div class="w-full max-w-screen-xl mx-auto"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="mr-6 text-primary-text text-xl font-bold">Songjinfeng&#39;s BLOG</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:flex-grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:flex-grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  mr-4">技术专栏</a>
+            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">文档笔记</a>
+            <a href="/series/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">主题系列</a>
+            <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">标签</a>
+            <a href="/authors/songjinfeng/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">关于</a>
+            <a href="/index.xml" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">RSS</a>
+            <a href="/webstack" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">友链&amp;导航</a>
+        </div>
+
+        <div class="flex">
+            <div class="relative pt-4 md:pt-0">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col left-0 md:left-auto right-auto md:right-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">浅色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">深色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">自动</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            switchMode('Auto')
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+  </header>
+  <main class="flex-grow pt-16">
+    <div class="pl-scrollbar">
+      <div class="w-full max-w-screen-xl lg:px-4 xl:px-8 mx-auto">
+
+
+<div class="grid grid-cols-2 lg:grid-cols-8 gap-4 lg:pt-12">
+    <div
+        class="col-span-2  lg:col-span-6 bg-secondary-bg rounded px-6 py-8">
+        <h1 class="font-bold text-3xl text-primary-text">ssh原理应用</h1>
+        <div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>0001-01-01</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>2分钟阅读时长</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="/categories/linux%E5%B8%B8%E7%94%A8%E6%9C%8D%E5%8A%A1/" class="hover:text-eureka">Linux常用服务</a>
+        
+    </div>
+    
+
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-th-list mr-1"></i>
+        
+        <a href="/series/ssh%E8%AF%A6%E8%A7%A3/" class="hover:text-eureka">SSH详解</a>
+        
+    </div>
+    
+</div>
+        
+        
+        
+
+        <div class="content">
+            <p>本文对SSH连接验证机制进行了非常详细的分析，还详细介绍了&quot;Shell基本功能&quot;和了解&quot;公钥加密&quot;的概念。，相信能让各位对ssh有个全方位较透彻的了解，而不是仅仅只会用它来连接远程主机。</p>
+<p>转载&amp;参考文章：</p>
+<blockquote>
+<p><a href="https://www.cnblogs.com/f-ck-need-u/p/7129122.html">第1章 ssh命令和SSH服务详解</a></p>
+<p><a href="https://www.ruanyifeng.com/blog/2011/12/ssh_remote_login.html">SSH原理与运用（一）：远程登录</a></p>
+<p><a href="https://www.ruanyifeng.com/blog/2011/12/ssh_port_forwarding.html">SSH原理与运用（二）：远程操作与端口转发</a></p>
+</blockquote>
+<h2 id="11-非对称加密基础知识">1.1 非对称加密基础知识</h2>
+<ol>
+<li>
+<p>**对称加密：加密和解密使用一样的算法，只要解密时提供与加密时一致的密码就可以完成解密。**例如QQ登录密码，银行卡密码，只要保证密码正确就可以。</p>
+</li>
+<li>
+<p>**非对称加密：**通过公钥(public key)和私钥(private key)来加密、解密。公钥加密的内容可以使用私钥解密，私钥加密的内容可以使用公钥解密。一般使用公钥加密，私钥解密，但并非绝对如此，例如CA签署证书时就是使用自己的私钥加密。在接下来介绍的SSH服务中，虽然一直建议分发公钥，但也可以分发私钥。</p>
+</li>
+</ol>
+<p>所以，如果A生成了(私钥A，公钥A)，B生成了(私钥B，公钥B)，那么A和B之间的非对称加密会话情形包括：</p>
+<ol>
+<li>A将自己的公钥A分发给B，B拿着公钥A将数据进行加密，并将加密的数据发送给A，A将使用自己的私钥A解密数据。</li>
+<li>A将自己的公钥A分发给B，并使用自己的私钥A加密数据，然后B使用公钥A解密数据。</li>
+<li>B将自己的公钥B分发给A，A拿着公钥B将数据进行加密，并将加密的数据发送给B，B将使用自己的私钥B解密数据。</li>
+<li>B将自己的公钥B分发给A，并使用自己的私钥B加密数据，然后A使用公钥B解密数据。</li>
+</ol>
+<p>虽然理论上支持4种情形，但在SSH的**身份验证阶段，SSH只支持服务端保留公钥，客户端保留私钥的方式，**所以方式只有两种：</p>
+<ol>
+<li>客户端生成密钥对，将公钥分发给服务端；</li>
+<li>服务端生成密钥对，将私钥分发给客户端。只不过出于安全性和便利性，一般都是客户端生成密钥对并分发公钥。后文将给出这两种分发方式的示例。</li>
+</ol>
+<h2 id="12-ssh概要">1.2 SSH概要</h2>
+<ol>
+<li>SSH是传输层和应用层上的安全协议，它只能通过加密连接双方会话的方式来保证连接的安全性。当使用ssh连接成功后，将建立客户端和服务端之间的会话，该会话是被加密的，之后客户端和服务端的通信都将通过会话传输。</li>
+<li>SSH服务的守护进程为sshd，默认监听在22端口上。</li>
+<li>所有ssh客户端工具，包括ssh命令，scp，sftp，ssh-copy-id等命令都是借助于ssh连接来完成任务的。也就是说它们都连接服务端的22端口，只不过连接上之后将待执行的相关命令转换传送到远程主机上，由远程主机执行。</li>
+<li>ssh客户端命令(ssh、scp、sftp等)读取两个配置文件：全局配置文件/etc/ssh/ssh_config和用户配置文件~/.ssh/config。实际上命令行上也可以传递配置选项。它们生效的优先级是：命令行配置选项 &gt; ~/.ssh/config &gt; /etc/ssh/ssh_config。</li>
+<li>ssh涉及到两个验证：主机验证和用户身份验证。通过主机验证，再通过该主机上的用户验证，就能唯一确定该用户的身份。一个主机上可以有很多用户，所以每台主机的验证只需一次，但主机上每个用户都需要单独进行用户验证。</li>
+<li>ssh支持多种身份验证，最常用的是密码验证机制和公钥认证机制，其中公钥认证机制在某些场景实现双机互信时几乎是必须的。虽然常用上述两种认证机制，但认证时的顺序默认是<code>gssapi-with-mic,hostbased,publickey,keyboard-interactive,password</code>。注意其中的主机认证机制hostbased不是主机验证，由于主机认证用的非常少(它所读取的认证文件为/etc/hosts.equiv或/etc/shosts.equiv)，所以网络上比较少见到它的相关介绍。总的来说，通过在ssh配置文件(注意不是sshd配置文件)中使用指令PreferredAuthentications改变认证顺序不失为一种验证的效率提升方式。</li>
+<li>ssh客户端其实有不少很强大的功能，如端口转发(隧道模式)、代理认证、连接共享(连接复用)等。</li>
+<li>ssh服务端配置文件为/etc/ssh/sshd_config，注意和客户端的全局配置文件/etc/ssh/ssh_config区分开来。</li>
+<li>很重要却几乎被人忽略的一点，<strong>ssh登录时会请求分配一个伪终端</strong>。但有些身份认证程序如sudo可以禁止这种类型的终端分配，导致ssh连接失败。例如使用ssh执行sudo命令时sudo就会验证是否要分配终端给ssh。</li>
+</ol>
+<h2 id="13--ssh-加密验证方法">1.3  SSH 加密验证方法</h2>
+<p>SSH之所以能够保证安全，原因在于它采用了公钥加密。过程如下：</p>
+<ol>
+<li>远程主机收到用户的登录请求，把自己的公钥发给用户。</li>
+<li>用户使用这个公钥，将登录密码加密后，发送回来。</li>
+<li>远程主机用自己的私钥，解密登录密码，如果密码正确，就同意用户登录。</li>
+</ol>
+<p>这个过程本身是安全的，但是实施的时候存在一个风险：如果有人截获了登录请求，然后冒充远程主机，将伪造的公钥发给用户，那么用户很难辨别真伪。因为不像https协议，SSH协议的公钥是没有证书中心（CA）公证的。</p>
+<p>可以设想，如果攻击者插在用户与远程主机之间（比如在公共的wifi区域），用伪造的公钥，获取用户的登录密码。再用这个密码登录远程主机，那么SSH的安全机制就荡然无存了。这种风险就是著名的<a href="http://en.wikipedia.org/wiki/Man-in-the-middle_attack">&ldquo;中间人攻击&rdquo;</a>（Man-in-the-middle attack）。</p>
+<p><strong>SSH协议是如何应对的呢？</strong></p>
+<h3 id="131-口令登录">1.3.1 口令登录</h3>
+<p>如果你是第一次登录对方主机，系统会出现下面的提示：</p>
+<pre><code class="language-bas">　　$ ssh user@host
+　　The authenticity of host 'host (12.18.429.21)' can't be established.
+　　RSA key fingerprint is 98:2e:d7:e0:de:9f:ac:67:28:c2:42:2d:37:16:58:4d.
+　　Are you sure you want to continue connecting (yes/no)?
+</code></pre>
+<p>这段话的意思是，无法确认host主机的真实性，只知道它的公钥指纹，问你还想继续连接吗？</p>
+<p>所谓&quot;公钥指纹&quot;，是指公钥长度较长（这里采用RSA算法，长达1024位），很难比对，所以对其进行MD5计算，将它变成一个128位的指纹。上例中是98:2e:d7:e0:de:9f:ac:67:28:c2:42:2d:37:16:58:4d，再进行比较，就容易多了。</p>
+<p>很自然的一个问题就是，用户怎么知道远程主机的公钥指纹应该是多少？回答是没有好办法，远程主机必须在自己的网站上贴出公钥指纹，以便用户自行核对。</p>
+<p>假定经过风险衡量以后，用户决定接受这个远程主机的公钥。</p>
+<pre><code class="language-bas">Are you sure you want to continue connecting (yes/no)? yes
+</code></pre>
+<p>系统会出现一句提示，表示host主机已经得到认可。</p>
+<pre><code class="language-bas">Warning: Permanently added 'host,12.18.429.21' (RSA) to the list of known hosts.
+</code></pre>
+<p>然后，会要求输入密码。</p>
+<pre><code class="language-bas">　Password: (enter password)
+</code></pre>
+<p>如果密码正确，就可以登录了。</p>
+<p>当远程主机的公钥被接受以后，它就会被保存在文件<code>~/.ssh/known_hosts</code>之中。</p>
+<p>每个SSH用户都有自己的known_hosts文件，此外系统也有一个这样的文件，通常是<code>/etc/ssh/ssh_known_hosts</code>，保存一些对所有用户都可信赖的远程主机的公钥。</p>
+<p>连接这台主机，会读取<code>~/.ssh/known_hosts</code>文件和<code>/etc/ssh/known_hosts</code>文件，搜索是否有对应的主机信息(host key，表示主机身份标识)。</p>
+<ol>
+<li>没有搜索到对应该地址的host key，则询问是否保存主机B发送过来的host key，</li>
+<li>如果搜索到了该地址的host key，则将此host key和主机B发送过来的host key做比对，
+<ol>
+<li>如果完全相同，则表示主机A曾经保存过主机B的host key，无需再保存，直接进入下一个过程——身份验证，</li>
+<li>如果不完全相同，则提示是否保存主机B当前使用的host key。</li>
+</ol>
+</li>
+</ol>
+<h3 id="132-公钥登录">1.3.2 公钥登录</h3>
+<p>使用密码登录，每次都必须输入密码，非常麻烦。好在SSH还提供了公钥登录，可以省去输入密码的步骤。</p>
+<p>所谓&quot;公钥登录&quot;，原理很简单，就是用户将自己的公钥储存在远程主机上。登录的时候，远程主机会向用户发送一段随机字符串，用户用自己的私钥加密后，再发回来。远程主机用事先储存的公钥进行解密，如果成功，就证明用户是可信的，直接允许登录shell，不再要求密码。</p>
+<p>这种方法要求用户必须提供自己的公钥。如果没有现成的，可以直接用ssh-keygen生成一个：</p>
+<pre><code class="language-bas">　$ ssh-keygen
+</code></pre>
+<p>运行上面的命令以后，系统会出现一系列提示，可以一路回车。其中有一个问题是，要不要对私钥设置口令（passphrase），如果担心私钥的安全，这里可以设置一个。</p>
+<p>运行结束以后，在$HOME/.ssh/目录下，会新生成两个文件：id_rsa.pub和id_rsa。前者是你的公钥，后者是你的私钥。</p>
+<p>这时再输入下面的命令，将公钥传送到远程主机host上面：</p>
+<pre><code class="language-bash">　$ ssh-copy-id user@host
+</code></pre>
+<p>好了，从此你再登录，就不需要输入密码了。</p>
+<p>如果还是不行，就打开远程主机的/etc/ssh/sshd_config这个文件，检查下面几行前面&quot;#&ldquo;注释是否取掉。</p>
+<pre><code class="language-bash">　　RSAAuthentication yes
+　　PubkeyAuthentication yes
+　　AuthorizedKeysFile .ssh/authorized_keys
+</code></pre>
+<p>然后，重启远程主机的ssh服务。</p>
+<h3 id="133-authorized_keys文件">1.3.3 authorized_keys文件</h3>
+<p>远程主机将用户的公钥，保存在登录后的用户主目录的$HOME/.ssh/authorized_keys文件中。公钥就是一段字符串，只要把它追加在authorized_keys文件的末尾就行了。</p>
+<p>这里不使用上面的ssh-copy-id命令，改用下面的命令，解释公钥的保存过程：</p>
+<pre><code class="language-bash">　　$ ssh user@host 'mkdir -p .ssh &amp;&amp; cat &gt;&gt; .ssh/authorized_keys' &lt; ~/.ssh/id_rsa.pub
+</code></pre>
+<p>这条命令由多个语句组成，依次分解开来看：</p>
+<ul>
+<li><code>ssh user@host</code>，表示登录远程主机；</li>
+<li><code>mkdir -p .ssh &amp;&amp; cat &gt;&gt; .ssh/authorized_keys</code>，表示登录后在远程shell上执行的命令：</li>
+<li><code> mkdir -p .ssh</code>的作用是，如果用户主目录中的.ssh目录不存在，就创建一个；</li>
+<li><code>cat &gt;&gt; .ssh/authorized_keys &lt; ~/.ssh/id_rsa.pub</code>的作用是，将本地的公钥文件~/.ssh/id_rsa.pub，重定向追加到远程文件authorized_keys的末尾。</li>
+</ul>
+<p>写入authorized_keys文件后，公钥登录的设置就完成了。</p>
+<h2 id="21本地端口转发">2.1本地端口转发</h2>
+<p>有时，绑定本地端口还不够，还必须指定数据传送的目标主机，从而形成点对点的&quot;端口转发&rdquo;。为了区别后文的&quot;远程端口转发&quot;，我们把这种情况称为&quot;本地端口转发&quot;（Local forwarding）。</p>
+<p>假定host1是本地主机，host2是远程主机。由于种种原因，这两台主机之间无法连通。但是，另外还有一台host3，可以同时连通前面两台主机。因此，很自然的想法就是，通过host3，将host1连上host2。</p>
+<p>我们在host1执行下面的命令：</p>
+<pre><code class="language-bash">　　$ ssh -L 2121:host2:21 host3
+</code></pre>
+<p>命令中的L参数一共接受三个值，分别是&quot;本地端口:目标主机:目标主机端口&quot;，它们之间用冒号分隔。这条命令的意思，就是指定SSH绑定本地端口2121，然后指定host3将所有的数据，转发到目标主机host2的21端口（假定host2运行FTP，默认端口为21）。</p>
+<p>这样一来，我们只要连接host1的2121端口，就等于连上了host2的21端口。</p>
+<pre><code class="language-bash">　　$ ftp localhost:2121
+</code></pre>
+<p>&ldquo;本地端口转发&quot;使得host1和host3之间仿佛形成一个数据传输的秘密隧道，因此又被称为&quot;SSH隧道&rdquo;。</p>
+<p>下面是一个比较有趣的例子。</p>
+<pre><code class="language-bash">　　$ ssh -L 5900:localhost:5900 host3
+</code></pre>
+<p>它表示将本机的5900端口绑定host3的5900端口（这里的localhost指的是host3，因为目标主机是相对host3而言的）。</p>
+<p>另一个例子是通过host3的端口转发，ssh登录host2。</p>
+<pre><code class="language-bash">　　$ ssh -L 9001:host2:22 host3
+</code></pre>
+<p>这时，只要ssh登录本机的9001端口，就相当于登录host2了。</p>
+<pre><code class="language-bash">　　$ ssh -p 9001 localhost
+</code></pre>
+<p>上面的-p参数表示指定登录端口。</p>
+<h2 id="22-远程端口转发">2.2 远程端口转发</h2>
+<p>既然&quot;本地端口转发&quot;是指绑定本地端口的转发，那么&quot;远程端口转发&quot;（remote forwarding）当然是指绑定远程端口的转发。</p>
+<p>还是接着看上面那个例子，host1与host2之间无法连通，必须借助host3转发。但是，特殊情况出现了，host3是一台内网机器，它可以连接外网的host1，但是反过来就不行，外网的host1连不上内网的host3。这时，&ldquo;本地端口转发&quot;就不能用了，怎么办？</p>
+<p>解决办法是，既然host3可以连host1，那么就从host3上建立与host1的SSH连接，然后在host1上使用这条连接就可以了。</p>
+<p>我们在host3执行下面的命令：</p>
+<pre><code class="language-bash">　　$ ssh -R 2121:host2:21 host1
+</code></pre>
+<p>R参数也是接受三个值，分别是&quot;远程主机端口:目标主机:目标主机端口&rdquo;。这条命令的意思，就是让host1监听它自己的2121端口，然后将所有数据经由host3，转发到host2的21端口。由于对于host3来说，host1是远程主机，所以这种情况就被称为&quot;远程端口绑定&quot;。</p>
+<p>绑定之后，我们在host1就可以连接host2了：</p>
+<pre><code class="language-bash">　　$ ftp localhost:2121
+</code></pre>
+<p>这里必须指出，&ldquo;远程端口转发&quot;的前提条件是，host1和host3两台主机都有sshD和ssh客户端。</p>
+        </div>
+        
+        
+        
+        
+        
+        <div class="py-2">
+    
+    <div class="flex flex-col md:flex-row items-center my-8">
+        <a href="/authors/songjinfeng/" class="w-24 h-24 md:mr-4">
+            
+            
+            <img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/images/2021.04.22-14:35:19-D-assets-images-sjf.png" class="w-full bg-primary-bg rounded-full" alt="Avatar">
+            
+        </a>
+        <div class="w-full md:w-auto mt-4 md:mt-0">
+            <a href="/authors/songjinfeng/" class="block font-bold text-lg pb-1 mb-2 border-b">宋锦丰</a>
+            <span class="block pb-2">一名运维技术爱好者，专注于 Kubernetes 、 Linux 等技术干货分享。</span>
+            
+            
+            
+            
+            
+            <a href="mailto:GW.songjinfengzc@h3c.com" class="mr-1">
+                <i class="fas fa-envelope"></i>
+            </a>
+            
+            
+            
+            
+            
+            <a href="https://github.com/SJFCS/SJFCS.GITHUB.IO" class="mr-1">
+                <i class="fab fa-github"></i>
+            </a>
+            
+            
+            
+            
+            
+            <a href="/index.xml" class="mr-1">
+                <i class="fas fa-rss"></i>
+            </a>
+            
+        </div>
+    </div>
+    
+</div>
+        
+        
+        
+<div class="flex flex-col md:flex-row md:justify-between -mx-2 mt-4 px-2 pt-4 border-t">
+    <div>
+        
+        <span class="block font-bold">上一页</span>
+        <a href="/posts/1.linux/linux%E5%B8%B8%E7%94%A8%E6%9C%8D%E5%8A%A1/linux%E6%97%A5%E5%BF%97%E7%AE%A1%E7%90%86%E6%96%87%E4%BB%B6%E5%90%8C%E6%AD%A5/rsyslog/" class="block">rsyslog</a>
+        
+    </div>
+    <div class="md:text-right mt-4 md:mt-0">
+        
+        <span class="block font-bold">下一页</span>
+        <a href="/posts/1.linux/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/tcpdump/" class="block">TCPdump</a>
+        
+    </div>
+</div>
+
+        
+    </div>
+    
+    <div class="col-span-2">
+        
+        
+<div class="bg-secondary-bg rounded p-6">
+    <h3 class="text-lg font-semibold mb-4">系列文章</h3>
+    <div class="content">
+        
+        
+        <a href="/posts/1.linux/linux%E5%B8%B8%E7%94%A8%E6%9C%8D%E5%8A%A1/ssh/ssh%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/">ssh原理应用</a>
+        <br />
+        
+        
+    </div>
+</div>
+        
+        
+        <div class="sticky top-16 z-10 hidden lg:block px-6 py-4  bg-primary-bg ">
+    <span class="text-lg font-semibold">本页内容</span>
+</div>
+<div class="sticky-toc hidden lg:block px-6 pb-6 ">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#11-非对称加密基础知识">1.1 非对称加密基础知识</a></li>
+    <li><a href="#12-ssh概要">1.2 SSH概要</a></li>
+    <li><a href="#13--ssh-加密验证方法">1.3  SSH 加密验证方法</a>
+      <ul>
+        <li><a href="#131-口令登录">1.3.1 口令登录</a></li>
+        <li><a href="#132-公钥登录">1.3.2 公钥登录</a></li>
+        <li><a href="#133-authorized_keys文件">1.3.3 authorized_keys文件</a></li>
+      </ul>
+    </li>
+    <li><a href="#21本地端口转发">2.1本地端口转发</a></li>
+    <li><a href="#22-远程端口转发">2.2 远程端口转发</a></li>
+  </ul>
+</nav>
+</div>
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        enableStickyToc();
+    });
+</script>
+        
+    </div>
+    
+
+    
+    
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', ()=>{
+        hljs.initHighlightingOnLoad();
+    })
+</script>
+
+      </div>
+    </div>
+    
+  </main>
+  <footer class="pl-scrollbar">
+    <div class="w-full max-w-screen-xl mx-auto"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 2021 <a href="https://www.songjinfeng.com/">SonJinfeng</a> 
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+  </footer>
+</body>
+
+</html>

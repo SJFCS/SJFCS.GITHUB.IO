@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang='zh' ><meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+
+
+<title>Nginx | Songjinfeng&#39;s BLOG</title>
+<link rel="stylesheet" href="/css/eureka.min.css">
+<script defer src="/js/eureka.min.js"></script>
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Noto+Serif+SC:wght@400;600;700&display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/styles/solarized-light.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/highlight.min.js"
+   crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/dart.min.js"
+     crossorigin></script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/js/all.min.js"
+   integrity="sha256-uNYoXefWRqv&#43;PsIF/OflNmwtKM4lStn9yrz2gVl6ymo="  crossorigin></script>
+
+
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css"
+   integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3&#43;Aro6EYUG4&#43;cU&#43;KJWu/X"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js" 
+  integrity="sha384-g7c&#43;Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI&#43;sEnkvrMWph2EDg4"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js"
+   integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC&#43;Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.9.2/dist/mermaid.min.js" 
+  integrity="sha256-Zmpaaj&#43;GXFsPF5WdPArSrnW3b30dovldeKsW00xBVwE="  crossorigin></script>
+
+
+<link rel="icon" type="image/png" sizes="32x32" href="/images/icon_hucfa16751ac9c82c06b84c3502c0db793_16378_32x32_fill_box_center_2.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hucfa16751ac9c82c06b84c3502c0db793_16378_180x180_fill_box_center_2.png">
+
+<meta name="description"
+  content="Iptables的模块、匹配规则、拓展动作、防火墙安全攻防配置等">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"技术专栏",
+      "item":"/posts/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"负载均衡",
+      "item":"/posts/4.%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1/"},{
+      "@type": "ListItem",
+      "position": 3 ,
+      "name":"Nginx",
+      "item":"/posts/4.%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1/nginx/"}]
+}
+</script>
+
+
+
+<meta property="og:title" content="Nginx | Songjinfeng&#39;s BLOG" />
+<meta property="og:type" content="website" />
+
+
+<meta property="og:image" content="/images/icon.png">
+
+
+<meta property="og:url" content="/posts/4.%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1/nginx/" />
+
+
+
+
+
+<meta property="og:description" content="Eureka is a elegant and powerful theme for Hugo." />
+
+
+
+
+
+<meta property="og:locale" content="zh" />
+
+
+
+
+<meta property="og:site_name" content="Songjinfeng&#39;s BLOG" />
+
+
+
+
+
+
+<meta property="og:updated_time" content="2020-10-16T00:00:00&#43;00:00" />
+
+
+
+<meta property="article:section" content="posts" />
+
+
+<link rel="alternate" type="application/rss+xml" href="/posts/4.%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1/nginx/index.xml" title="Songjinfeng's BLOG" />
+
+<body class="flex flex-col min-h-screen">
+  <header class="fixed flex items-center w-full min-h-16 pl-scrollbar z-50 bg-secondary-bg shadow-sm">
+    <div class="w-full max-w-screen-xl mx-auto"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="mr-6 text-primary-text text-xl font-bold">Songjinfeng&#39;s BLOG</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:flex-grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:flex-grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  mr-4">技术专栏</a>
+            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">文档笔记</a>
+            <a href="/series/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">主题系列</a>
+            <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">标签</a>
+            <a href="/authors/songjinfeng/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">关于</a>
+            <a href="/index.xml" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">RSS</a>
+            <a href="/webstack" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">友链&amp;导航</a>
+        </div>
+
+        <div class="flex">
+            <div class="relative pt-4 md:pt-0">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col left-0 md:left-auto right-auto md:right-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">浅色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">深色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">自动</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            switchMode('Auto')
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+  </header>
+  <main class="flex-grow pt-16">
+    <div class="pl-scrollbar">
+      <div class="w-full max-w-screen-xl lg:px-4 xl:px-8 mx-auto">
+<article class="mx-6 my-8">
+    <h1 class="font-bold text-3xl text-primary-text">Nginx</h1>
+    
+    <div class="content">
+        <p>Iptables的模块、匹配规则、拓展动作、防火墙安全攻防配置等</p>
+<blockquote>
+<p>如果你的区域存在难以访问GitHub的问题，你可以将所有涉及到GitHub的网址替换为<a href="https://gitee.com/wangchucheng/hugo-eureka/">Gitee镜像</a>。例如将<code>https://github.com/wangchucheng/hugo-eureka/</code>替换为<code>https://gitee.com/wangchucheng/hugo-eureka/</code>即可。</p>
+</blockquote>
+<h2 id="体验eureka">体验Eureka</h2>
+<p>Eureka致力于为<a href="https://gohugo.io/">Hugo</a>提供一个优雅，功能丰富且可高度定制化的主题。</p>
+<h2 id="阅读文档">阅读文档</h2>
+<ul>
+<li><strong><a href="https://www.wangchucheng.com/zh/docs/hugo-eureka/getting-started">入门</a></strong>：在<a href="https://www.wangchucheng.com/zh/docs/hugo-eureka/getting-started">入门</a>中你将了解到如何快速搭建一个Eureka主题的Hugo网站。</li>
+<li><strong><a href="./iptables%E8%AF%A6%E8%A7%A31%E6%A6%82%E5%BF%B5">iptables详解1概念</a></strong>：在<a href="https://www.wangchucheng.com/zh/docs/hugo-eureka/getting-started">入门</a>中，相信你已经成功运行了使用Eureka主题的Hugo网站。在<a href="https://www.wangchucheng.com/zh/docs/hugo-eureka/homepage-configuration">主页配置</a>中你将了解如何自定义网站主页。</li>
+<li><strong><a href="https://www.wangchucheng.com/zh/docs/hugo-eureka/content-management">内容管理</a></strong>：在<a href="https://www.wangchucheng.com/zh/docs/hugo-eureka/homepage-configuration">主页配置</a>中你已经配置好了主页样式。接下来我们将添加一些内容。<a href="https://www.wangchucheng.com/zh/docs/hugo-eureka/content-management">内容管理</a>将带领你了解网站内容结构及编辑技巧。</li>
+<li><strong><a href="https://www.wangchucheng.com/zh/docs/hugo-eureka/customization">定制Eureka</a></strong>：在<a href="https://www.wangchucheng.com/zh/docs/hugo-eureka/content-management">内容管理</a>中，你已经了解了Eureka的各类内容。接下来我们将介绍Eureka的定制化选项。<a href="https://www.wangchucheng.com/zh/docs/hugo-eureka/customization">定制Eureka</a>将带领你了解Eureka的配置方式及其选项。</li>
+<li><strong><a href="https://www.wangchucheng.com/zh/docs/hugo-eureka/multilingual-mode">多语言模式</a></strong>：除了前文的<a href="https://www.wangchucheng.com/zh/docs/hugo-eureka/content-management">内容管理</a>以及<a href="https://www.wangchucheng.com/zh/docs/hugo-eureka/customization">定制Eureka</a>，Eureka也支持<a href="https://www.wangchucheng.com/zh/docs/hugo-eureka/multilingual-mode">多语言模式</a>。<a href="https://www.wangchucheng.com/zh/docs/hugo-eureka/multilingual-mode">多语言模式</a>将带领你了解如何构建一个多语言网站。</li>
+<li><strong><a href="https://www.wangchucheng.com/zh/docs/hugo-eureka/update">更新Eureka</a></strong>：<a href="https://www.wangchucheng.com/zh/docs/hugo-eureka/update">更新Eureka</a>将介绍通过不同方式更新Eureka的方法。</li>
+</ul>
+    </div>
+    
+</article>
+<div class="bg-secondary-bg rounded px-6">
+    <div class="overflow-hidden divide-y">
+  
+</div>
+
+
+</div>
+
+
+
+
+      </div>
+    </div>
+    
+  </main>
+  <footer class="pl-scrollbar">
+    <div class="w-full max-w-screen-xl mx-auto"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 2021 <a href="https://www.songjinfeng.com/">SonJinfeng</a> 
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+  </footer>
+</body>
+
+</html>

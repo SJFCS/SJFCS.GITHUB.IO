@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang='zh' ><meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+
+
+<title>数字签名（digital signature）和数字证书（digital certificate） | Songjinfeng&#39;s BLOG</title>
+<link rel="stylesheet" href="/css/eureka.min.css">
+<script defer src="/js/eureka.min.js"></script>
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Noto+Serif+SC:wght@400;600;700&display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/styles/solarized-light.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/highlight.min.js"
+   crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/dart.min.js"
+     crossorigin></script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/js/all.min.js"
+   integrity="sha256-uNYoXefWRqv&#43;PsIF/OflNmwtKM4lStn9yrz2gVl6ymo="  crossorigin></script>
+
+
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css"
+   integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3&#43;Aro6EYUG4&#43;cU&#43;KJWu/X"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js" 
+  integrity="sha384-g7c&#43;Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI&#43;sEnkvrMWph2EDg4"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js"
+   integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC&#43;Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.9.2/dist/mermaid.min.js" 
+  integrity="sha256-Zmpaaj&#43;GXFsPF5WdPArSrnW3b30dovldeKsW00xBVwE="  crossorigin></script>
+
+
+<link rel="icon" type="image/png" sizes="32x32" href="/images/icon_hucfa16751ac9c82c06b84c3502c0db793_16378_32x32_fill_box_center_2.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hucfa16751ac9c82c06b84c3502c0db793_16378_180x180_fill_box_center_2.png">
+
+<meta name="description"
+  content="本文介绍密码学相关知识，包括证书机构（CA）、证书、数字签名、私钥、公钥、对称加密、非对称加密。">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"技术专栏",
+      "item":"/posts/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"Linux",
+      "item":"/posts/1.linux/"},{
+      "@type": "ListItem",
+      "position": 3 ,
+      "name":"数字签名（digital signature）和数字证书（digital certificate）",
+      "item":"/posts/1.linux/linux%E5%B8%B8%E7%94%A8%E6%9C%8D%E5%8A%A1/%E5%AF%86%E7%A0%81%E5%AD%A6/%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8Ddigital-signature%E5%92%8C%E6%95%B0%E5%AD%97%E8%AF%81%E4%B9%A6digital-certificate/"}]
+}
+</script>
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/posts/1.linux/linux%E5%B8%B8%E7%94%A8%E6%9C%8D%E5%8A%A1/%E5%AF%86%E7%A0%81%E5%AD%A6/%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8Ddigital-signature%E5%92%8C%E6%95%B0%E5%AD%97%E8%AF%81%E4%B9%A6digital-certificate/"
+    },
+    "headline": "数字签名（digital signature）和数字证书（digital certificate） | Songjinfeng\u0027s BLOG","datePublished": "2021-02-06T00:00:00+00:00",
+    "dateModified": "2021-02-06T00:00:00+00:00",
+    "wordCount":  61 ,
+    "author": {
+        "@type": "Person",
+        "name": "songjinfeng"
+    },
+    "publisher": {
+        "@type": "Person",
+        "name": "JF. Song",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "/images/icon.png"
+        }
+        },
+    "description": "\u003cp\u003e本文介绍密码学相关知识，包括证书机构（CA）、证书、数字签名、私钥、公钥、对称加密、非对称加密。\u003c\/p\u003e"
+}
+</script><meta property="og:title" content="数字签名（digital signature）和数字证书（digital certificate） | Songjinfeng&#39;s BLOG" />
+<meta property="og:type" content="article" />
+
+
+<meta property="og:image" content="/images/icon.png">
+
+
+<meta property="og:url" content="/posts/1.linux/linux%E5%B8%B8%E7%94%A8%E6%9C%8D%E5%8A%A1/%E5%AF%86%E7%A0%81%E5%AD%A6/%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8Ddigital-signature%E5%92%8C%E6%95%B0%E5%AD%97%E8%AF%81%E4%B9%A6digital-certificate/" />
+
+
+
+
+<meta property="og:description" content="本文介绍密码学相关知识，包括证书机构（CA）、证书、数字签名、私钥、公钥、对称加密、非对称加密。" />
+
+
+
+
+<meta property="og:locale" content="zh" />
+
+
+
+
+<meta property="og:site_name" content="Songjinfeng&#39;s BLOG" />
+
+
+
+
+
+
+<meta property="article:published_time" content="2021-02-06T00:00:00&#43;00:00" />
+
+
+<meta property="article:modified_time" content="2021-02-06T00:00:00&#43;00:00" />
+
+
+
+<meta property="article:section" content="posts" />
+
+
+
+
+
+
+
+
+
+
+
+
+<body class="flex flex-col min-h-screen">
+  <header class="fixed flex items-center w-full min-h-16 pl-scrollbar z-50 bg-secondary-bg shadow-sm">
+    <div class="w-full max-w-screen-xl mx-auto"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="mr-6 text-primary-text text-xl font-bold">Songjinfeng&#39;s BLOG</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:flex-grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:flex-grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  mr-4">技术专栏</a>
+            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">文档笔记</a>
+            <a href="/series/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">主题系列</a>
+            <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">标签</a>
+            <a href="/authors/songjinfeng/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">关于</a>
+            <a href="/index.xml" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">RSS</a>
+            <a href="/webstack" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">友链&amp;导航</a>
+        </div>
+
+        <div class="flex">
+            <div class="relative pt-4 md:pt-0">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col left-0 md:left-auto right-auto md:right-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">浅色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">深色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">自动</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            switchMode('Auto')
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+  </header>
+  <main class="flex-grow pt-16">
+    <div class="pl-scrollbar">
+      <div class="w-full max-w-screen-xl lg:px-4 xl:px-8 mx-auto">
+
+
+<div class="grid grid-cols-2 lg:grid-cols-8 gap-4 lg:pt-12">
+    <div
+        class="col-span-2  lg:col-span-6 bg-secondary-bg rounded px-6 py-8">
+        <h1 class="font-bold text-3xl text-primary-text">数字签名（digital signature）和数字证书（digital certificate）</h1>
+        <div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>2021-02-06</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>1分钟阅读时长</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="/categories/linux%E5%B8%B8%E7%94%A8%E6%9C%8D%E5%8A%A1/" class="hover:text-eureka">Linux常用服务</a>
+        
+    </div>
+    
+
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-th-list mr-1"></i>
+        
+        <a href="/series/%E5%AF%86%E7%A0%81%E5%AD%A6/" class="hover:text-eureka">密码学</a>
+        
+    </div>
+    
+</div>
+        
+        
+        
+
+        <div class="content">
+            <p>本文介绍密码学相关知识，包括证书机构（CA）、证书、数字签名、私钥、公钥、对称加密、非对称加密。</p>
+<blockquote>
+<p>参考文章：</p>
+<p><a href="http://www.ruanyifeng.com/blog/2006/12/notes_on_cryptography.html">密码学笔记</a></p>
+<p><a href="http://www.youdzone.com/signature.html">What is a Digital Signature?</a></p>
+<p><a href="https://www.jianshu.com/p/29e0ba31fb8d">一文看懂HTTPS、证书机构（CA）、证书、数字签名、私钥、公钥</a></p>
+</blockquote>
+<h2 id="浅谈加密">浅谈加密</h2>
+<p>加密方法可以分为两大类。一类是单钥加密（private key cryptography），还有一类叫做双钥加密（public key cryptography）。前者的加密和解密过程都用同一套密码，后者的加密和解密过程用的是两套密码。</p>
+<h3 id="单钥加密">单钥加密</h3>
+<p>在单钥加密的情况下，密钥只有一把，所以密钥的保存变得很重要。一旦密钥泄漏，密码也就被破解。</p>
+<h3 id="双钥加密">双钥加密</h3>
+<p>在双钥加密的情况下，密钥有两把，一把是公开的公钥，还有一把是不公开的私钥。</p>
+<p><strong>双钥加密的原理如下：</strong></p>
+<ol>
+<li>公钥和私钥是一一对应的关系，有一把公钥就必然有一把与之对应的、独一无二的私钥，反之亦成立。</li>
+<li>所有的（公钥, 私钥）对都是不同的。</li>
+<li>用公钥可以解开私钥加密的信息，反之亦成立。</li>
+<li>同时生成公钥和私钥应该相对比较容易，但是从公钥推算出私钥，应该是很困难或者是不可能的。</li>
+</ol>
+<blockquote>
+<ul>
+<li>部分加密算法通过密文和私钥可以推算出公钥，反之困难，所以私钥要保存好。</li>
+<li>在双钥体系中，公钥用来加密信息，私钥用来数字签名。</li>
+<li>目前，通用的单钥加密算法为DES（Data Encryption Standard），通用的双钥加密算法为RSA（ Rivest-Shamir-Adleman），都产生于上个世纪70年代。</li>
+</ul>
+</blockquote>
+<h4 id="数字签名">数字签名</h4>
+<p>信息传输的途中，我们的信息很有可能被第三方劫持篡改，所以我们需要保证信息的完整性，通用方法是使用散列算法如SHA1，MD5将传输内容hash一次获得hash值，即摘要。客户端使用服务端的公钥对摘要和信息内容进行加密，然后传输给服务端，服务端使用私钥进行解密获得原始内容和摘要值，这时服务端使用相同的hash算法对原始内容进行hash，然后与摘要值比对，如果一致，说明信息是完整的。</p>
+<h3 id="数字证书">数字证书</h3>
+<p>因为任何人都可以生成自己的（公钥，私钥）对，所以为了防止有人散布伪造的公钥骗取信任，就需要一个可靠的第三方CA机构来生成经过认证的（公钥，私钥）对。</p>
+<p>数字证书是由权威的CA（Certificate Authority）机构给服务端进行颁发，CA机构通过服务端提供的相关信息生成证书，证书内容包含了持有人的相关信息，服务器的公钥，签署者签名信息（数字签名）等，最重要的是公钥在数字证书中。</p>
+<h2 id="数字签名数字证书-是什么">数字签名、数字证书 是什么。</h2>
+<ol>
+<li></li>
+</ol>
+<p><img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D%EF%BC%88digital%20signature%EF%BC%89%E5%92%8C%E6%95%B0%E5%AD%97%E8%AF%81%E4%B9%A6%EF%BC%88digital%20certificate%EF%BC%89/2021.06.01-10:46:36-D-assets-%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D%EF%BC%88digital%20signature%EF%BC%89%E5%92%8C%E6%95%B0%E5%AD%97%E8%AF%81%E4%B9%A6%EF%BC%88digital%20certificate%EF%BC%89-bg2011080901.png" alt="img"></p>
+<p>鲍勃有两把钥匙，一把是公钥，另一把是私钥。</p>
+<ol start="2">
+<li></li>
+</ol>
+<p><img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D%EF%BC%88digital%20signature%EF%BC%89%E5%92%8C%E6%95%B0%E5%AD%97%E8%AF%81%E4%B9%A6%EF%BC%88digital%20certificate%EF%BC%89/2021.06.01-10:46:37-D-assets-%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D%EF%BC%88digital%20signature%EF%BC%89%E5%92%8C%E6%95%B0%E5%AD%97%E8%AF%81%E4%B9%A6%EF%BC%88digital%20certificate%EF%BC%89-bg2011080902.png" alt="img"></p>
+<p>鲍勃把公钥送给他的朋友们&mdash;-帕蒂、道格、苏珊&mdash;-每人一把。</p>
+<ol start="3">
+<li></li>
+</ol>
+<p><img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D%EF%BC%88digital%20signature%EF%BC%89%E5%92%8C%E6%95%B0%E5%AD%97%E8%AF%81%E4%B9%A6%EF%BC%88digital%20certificate%EF%BC%89/2021.06.01-10:46:39-D-assets-%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D%EF%BC%88digital%20signature%EF%BC%89%E5%92%8C%E6%95%B0%E5%AD%97%E8%AF%81%E4%B9%A6%EF%BC%88digital%20certificate%EF%BC%89-bg2011080903.png" alt="img"></p>
+<p>苏珊要给鲍勃写一封保密的信。她写完后用鲍勃的公钥加密，就可以达到保密的效果。</p>
+<ol start="4">
+<li></li>
+</ol>
+<p><img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D%EF%BC%88digital%20signature%EF%BC%89%E5%92%8C%E6%95%B0%E5%AD%97%E8%AF%81%E4%B9%A6%EF%BC%88digital%20certificate%EF%BC%89/2021.06.01-10:46:41-D-assets-%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D%EF%BC%88digital%20signature%EF%BC%89%E5%92%8C%E6%95%B0%E5%AD%97%E8%AF%81%E4%B9%A6%EF%BC%88digital%20certificate%EF%BC%89-bg2011080904.png" alt="img"></p>
+<p>鲍勃收信后，用私钥解密，就看到了信件内容。这里要强调的是，只要鲍勃的私钥不泄露，这封信就是安全的，即使落在别人手里，也无法解密。</p>
+<ol start="5">
+<li></li>
+</ol>
+<p><img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D%EF%BC%88digital%20signature%EF%BC%89%E5%92%8C%E6%95%B0%E5%AD%97%E8%AF%81%E4%B9%A6%EF%BC%88digital%20certificate%EF%BC%89/2021.06.01-10:46:43-D-assets-%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D%EF%BC%88digital%20signature%EF%BC%89%E5%92%8C%E6%95%B0%E5%AD%97%E8%AF%81%E4%B9%A6%EF%BC%88digital%20certificate%EF%BC%89-bg2011080905.png" alt="img"></p>
+<p>鲍勃给苏珊回信，决定采用&quot;数字签名&quot;。他写完后先用Hash函数，生成信件的摘要（digest）。</p>
+<ol start="6">
+<li></li>
+</ol>
+<p><img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D%EF%BC%88digital%20signature%EF%BC%89%E5%92%8C%E6%95%B0%E5%AD%97%E8%AF%81%E4%B9%A6%EF%BC%88digital%20certificate%EF%BC%89/2021.06.01-10:46:44-D-assets-%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D%EF%BC%88digital%20signature%EF%BC%89%E5%92%8C%E6%95%B0%E5%AD%97%E8%AF%81%E4%B9%A6%EF%BC%88digital%20certificate%EF%BC%89-bg2011080906.png" alt="img"></p>
+<p>然后，鲍勃使用私钥，对这个摘要加密，生成&quot;数字签名&quot;（signature）。</p>
+<ol start="7">
+<li></li>
+</ol>
+<p><img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D%EF%BC%88digital%20signature%EF%BC%89%E5%92%8C%E6%95%B0%E5%AD%97%E8%AF%81%E4%B9%A6%EF%BC%88digital%20certificate%EF%BC%89/2021.06.01-10:46:46-D-assets-%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D%EF%BC%88digital%20signature%EF%BC%89%E5%92%8C%E6%95%B0%E5%AD%97%E8%AF%81%E4%B9%A6%EF%BC%88digital%20certificate%EF%BC%89-bg2011080907.png" alt="img"></p>
+<p>鲍勃将这个签名，附在信件下面，一起发给苏珊。</p>
+<ol start="8">
+<li></li>
+</ol>
+<p><img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D%EF%BC%88digital%20signature%EF%BC%89%E5%92%8C%E6%95%B0%E5%AD%97%E8%AF%81%E4%B9%A6%EF%BC%88digital%20certificate%EF%BC%89/2021.06.01-10:48:31-D-assets-%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D%EF%BC%88digital%20signature%EF%BC%89%E5%92%8C%E6%95%B0%E5%AD%97%E8%AF%81%E4%B9%A6%EF%BC%88digital%20certificate%EF%BC%89-bg2011080908.png" alt="img"></p>
+<p>苏珊收信后，取下数字签名，用鲍勃的公钥解密，得到信件的摘要。由此证明，这封信确实是鲍勃发出的。</p>
+<ol start="9">
+<li></li>
+</ol>
+<p><img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D%EF%BC%88digital%20signature%EF%BC%89%E5%92%8C%E6%95%B0%E5%AD%97%E8%AF%81%E4%B9%A6%EF%BC%88digital%20certificate%EF%BC%89/2021.06.01-10:46:47-D-assets-%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D%EF%BC%88digital%20signature%EF%BC%89%E5%92%8C%E6%95%B0%E5%AD%97%E8%AF%81%E4%B9%A6%EF%BC%88digital%20certificate%EF%BC%89-bg2011080909.png" alt="img"></p>
+<p>苏珊再对信件本身使用Hash函数，将得到的结果，与上一步得到的摘要进行对比。如果两者一致，就证明这封信未被修改过。</p>
+<ol start="10">
+<li></li>
+</ol>
+<p><img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D%EF%BC%88digital%20signature%EF%BC%89%E5%92%8C%E6%95%B0%E5%AD%97%E8%AF%81%E4%B9%A6%EF%BC%88digital%20certificate%EF%BC%89/2021.06.01-10:46:49-D-assets-%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D%EF%BC%88digital%20signature%EF%BC%89%E5%92%8C%E6%95%B0%E5%AD%97%E8%AF%81%E4%B9%A6%EF%BC%88digital%20certificate%EF%BC%89-bg2011080910.png" alt="img"></p>
+<p>复杂的情况出现了。道格想欺骗苏珊，他偷偷使用了苏珊的电脑，用自己的公钥换走了鲍勃的公钥。此时，苏珊实际拥有的是道格的公钥，但是还以为这是鲍勃的公钥。因此，道格就可以冒充鲍勃，用自己的私钥做成&quot;数字签名&quot;，写信给苏珊，让苏珊用假的鲍勃公钥进行解密。</p>
+<ol start="11">
+<li></li>
+</ol>
+<p><img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D%EF%BC%88digital%20signature%EF%BC%89%E5%92%8C%E6%95%B0%E5%AD%97%E8%AF%81%E4%B9%A6%EF%BC%88digital%20certificate%EF%BC%89/2021.06.01-10:46:51-D-assets-%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D%EF%BC%88digital%20signature%EF%BC%89%E5%92%8C%E6%95%B0%E5%AD%97%E8%AF%81%E4%B9%A6%EF%BC%88digital%20certificate%EF%BC%89-bg2011080911.png" alt="img"></p>
+<p>后来，苏珊感觉不对劲，发现自己无法确定公钥是否真的属于鲍勃。她想到了一个办法，要求鲍勃去找&quot;证书中心&quot;（certificate authority，简称CA），为公钥做认证。证书中心用自己的私钥，对鲍勃的公钥和一些相关信息一起加密，生成&quot;数字证书&quot;（Digital Certificate）。</p>
+<ol start="12">
+<li></li>
+</ol>
+<p><img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D%EF%BC%88digital%20signature%EF%BC%89%E5%92%8C%E6%95%B0%E5%AD%97%E8%AF%81%E4%B9%A6%EF%BC%88digital%20certificate%EF%BC%89/2021.06.01-10:46:53-D-assets-%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D%EF%BC%88digital%20signature%EF%BC%89%E5%92%8C%E6%95%B0%E5%AD%97%E8%AF%81%E4%B9%A6%EF%BC%88digital%20certificate%EF%BC%89-bg2011080912.png" alt="img"></p>
+<p>鲍勃拿到数字证书以后，就可以放心了。以后再给苏珊写信，只要在签名的同时，再附上数字证书就行了。</p>
+<ol start="13">
+<li></li>
+</ol>
+<p><img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D%EF%BC%88digital%20signature%EF%BC%89%E5%92%8C%E6%95%B0%E5%AD%97%E8%AF%81%E4%B9%A6%EF%BC%88digital%20certificate%EF%BC%89/2021.06.01-10:46:55-D-assets-%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D%EF%BC%88digital%20signature%EF%BC%89%E5%92%8C%E6%95%B0%E5%AD%97%E8%AF%81%E4%B9%A6%EF%BC%88digital%20certificate%EF%BC%89-bg2011080913.png" alt="img"></p>
+<p>苏珊收信后，用CA的公钥解开数字证书，就可以拿到鲍勃真实的公钥了，然后就能证明&quot;数字签名&quot;是否真的是鲍勃签的。</p>
+<h2 id="数字证书实例https协议">&ldquo;数字证书&quot;实例：https协议。</h2>
+<ol start="15">
+<li></li>
+</ol>
+<p><img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D%EF%BC%88digital%20signature%EF%BC%89%E5%92%8C%E6%95%B0%E5%AD%97%E8%AF%81%E4%B9%A6%EF%BC%88digital%20certificate%EF%BC%89/2021.06.01-10:47:48-D-assets-%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D%EF%BC%88digital%20signature%EF%BC%89%E5%92%8C%E6%95%B0%E5%AD%97%E8%AF%81%E4%B9%A6%EF%BC%88digital%20certificate%EF%BC%89-bg2011080915.png" alt="img"></p>
+<p>首先，客户端向服务器发出加密请求。</p>
+<ol start="16">
+<li></li>
+</ol>
+<p><img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D%EF%BC%88digital%20signature%EF%BC%89%E5%92%8C%E6%95%B0%E5%AD%97%E8%AF%81%E4%B9%A6%EF%BC%88digital%20certificate%EF%BC%89/2021.06.01-10:47:49-D-assets-%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D%EF%BC%88digital%20signature%EF%BC%89%E5%92%8C%E6%95%B0%E5%AD%97%E8%AF%81%E4%B9%A6%EF%BC%88digital%20certificate%EF%BC%89-bg2011080916.png" alt="img"></p>
+<p>服务器用自己的私钥加密网页以后，连同本身的数字证书，一起发送给客户端。</p>
+<ol start="17">
+<li></li>
+</ol>
+<p><img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D%EF%BC%88digital%20signature%EF%BC%89%E5%92%8C%E6%95%B0%E5%AD%97%E8%AF%81%E4%B9%A6%EF%BC%88digital%20certificate%EF%BC%89/2021.06.01-10:47:51-D-assets-%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D%EF%BC%88digital%20signature%EF%BC%89%E5%92%8C%E6%95%B0%E5%AD%97%E8%AF%81%E4%B9%A6%EF%BC%88digital%20certificate%EF%BC%89-bg2011080917.png" alt="img"></p>
+<p>客户端（浏览器）的&quot;证书管理器&rdquo;，有&quot;受信任的根证书颁发机构&quot;列表。客户端会根据这张列表，查看解开数字证书的公钥是否在列表之内。</p>
+<ol start="18">
+<li></li>
+</ol>
+<p><img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D%EF%BC%88digital%20signature%EF%BC%89%E5%92%8C%E6%95%B0%E5%AD%97%E8%AF%81%E4%B9%A6%EF%BC%88digital%20certificate%EF%BC%89/2021.06.01-10:47:53-D-assets-%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D%EF%BC%88digital%20signature%EF%BC%89%E5%92%8C%E6%95%B0%E5%AD%97%E8%AF%81%E4%B9%A6%EF%BC%88digital%20certificate%EF%BC%89-bg2011080918.png" alt="img"></p>
+<p>如果数字证书记载的网址，与你正在浏览的网址不一致，就说明这张证书可能被冒用，浏览器会发出警告。</p>
+<ol start="19">
+<li></li>
+</ol>
+<p><img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D%EF%BC%88digital%20signature%EF%BC%89%E5%92%8C%E6%95%B0%E5%AD%97%E8%AF%81%E4%B9%A6%EF%BC%88digital%20certificate%EF%BC%89/2021.06.01-10:47:55-D-assets-%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D%EF%BC%88digital%20signature%EF%BC%89%E5%92%8C%E6%95%B0%E5%AD%97%E8%AF%81%E4%B9%A6%EF%BC%88digital%20certificate%EF%BC%89-bg2011080919.jpg" alt="img"></p>
+<p>如果这张数字证书不是由受信任的机构颁发的，浏览器会发出另一种警告。</p>
+<ol start="20">
+<li></li>
+</ol>
+<p><img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/https/image-fusice.oss-cn-hangzhou.aliyuncs.com/image/%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D%EF%BC%88digital%20signature%EF%BC%89%E5%92%8C%E6%95%B0%E5%AD%97%E8%AF%81%E4%B9%A6%EF%BC%88digital%20certificate%EF%BC%89/2021.06.01-10:47:59-https-image-fusice.oss-cn-hangzhou.aliyuncs.com-image-%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D%EF%BC%88digital%20signature%EF%BC%89%E5%92%8C%E6%95%B0%E5%AD%97%E8%AF%81%E4%B9%A6%EF%BC%88digital%20certificate%EF%BC%89-2021.06.01-10-47-56-D-assets-%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D%EF%BC%88digital%20signature%EF%BC%89%E5%92%8C%E6%95%B0%E5%AD%97%E8%AF%81%E4%B9%A6%EF%BC%88digital%20certificate%EF%BC%89-bg2011080920.png" alt="img"></p>
+<p>如果数字证书是可靠的，客户端就可以使用证书中的服务器公钥，对信息进行加密，然后与服务器交换加密信息。</p>
+        </div>
+        
+        
+        
+        
+        
+        <div class="py-2">
+    
+    <div class="flex flex-col md:flex-row items-center my-8">
+        <a href="/authors/songjinfeng/" class="w-24 h-24 md:mr-4">
+            
+            
+            <img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/images/2021.04.22-14:35:19-D-assets-images-sjf.png" class="w-full bg-primary-bg rounded-full" alt="Avatar">
+            
+        </a>
+        <div class="w-full md:w-auto mt-4 md:mt-0">
+            <a href="/authors/songjinfeng/" class="block font-bold text-lg pb-1 mb-2 border-b">宋锦丰</a>
+            <span class="block pb-2">一名运维技术爱好者，专注于 Kubernetes 、 Linux 等技术干货分享。</span>
+            
+            
+            
+            
+            
+            <a href="mailto:GW.songjinfengzc@h3c.com" class="mr-1">
+                <i class="fas fa-envelope"></i>
+            </a>
+            
+            
+            
+            
+            
+            <a href="https://github.com/SJFCS/SJFCS.GITHUB.IO" class="mr-1">
+                <i class="fab fa-github"></i>
+            </a>
+            
+            
+            
+            
+            
+            <a href="/index.xml" class="mr-1">
+                <i class="fas fa-rss"></i>
+            </a>
+            
+        </div>
+    </div>
+    
+</div>
+        
+        
+        
+<div class="flex flex-col md:flex-row md:justify-between -mx-2 mt-4 px-2 pt-4 border-t">
+    <div>
+        
+        <span class="block font-bold">上一页</span>
+        <a href="/posts/1.linux/linux%E5%B8%B8%E7%94%A8%E6%9C%8D%E5%8A%A1/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86ntpchrony%E5%AF%B9%E6%AF%94/" class="block">Linux时间管理(4)：chrony ntp 对比</a>
+        
+    </div>
+    <div class="md:text-right mt-4 md:mt-0">
+        
+        <span class="block font-bold">下一页</span>
+        <a href="/posts/1.linux/linux%E6%80%A7%E8%83%BD%E7%9B%91%E6%8E%A7%E4%BC%98%E5%8C%96/%E7%B3%BB%E7%BB%9F%E5%B9%B3%E5%9D%87%E8%B4%9F%E8%BD%BD/" class="block">load average</a>
+        
+    </div>
+</div>
+
+        
+    </div>
+    
+    <div class="col-span-2">
+        
+        
+<div class="bg-secondary-bg rounded p-6">
+    <h3 class="text-lg font-semibold mb-4">系列文章</h3>
+    <div class="content">
+        
+        
+        <a href="/posts/1.linux/linux%E5%B8%B8%E7%94%A8%E6%9C%8D%E5%8A%A1/%E5%AF%86%E7%A0%81%E5%AD%A6/%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8Ddigital-signature%E5%92%8C%E6%95%B0%E5%AD%97%E8%AF%81%E4%B9%A6digital-certificate/">数字签名（digital signature）和数字证书（digital certificate）</a>
+        <br />
+        
+        
+    </div>
+</div>
+        
+        
+        <div class="sticky top-16 z-10 hidden lg:block px-6 py-4  bg-primary-bg ">
+    <span class="text-lg font-semibold">本页内容</span>
+</div>
+<div class="sticky-toc hidden lg:block px-6 pb-6 ">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#浅谈加密">浅谈加密</a>
+      <ul>
+        <li><a href="#单钥加密">单钥加密</a></li>
+        <li><a href="#双钥加密">双钥加密</a></li>
+        <li><a href="#数字证书">数字证书</a></li>
+      </ul>
+    </li>
+    <li><a href="#数字签名数字证书-是什么">数字签名、数字证书 是什么。</a></li>
+    <li><a href="#数字证书实例https协议">&ldquo;数字证书&quot;实例：https协议。</a></li>
+  </ul>
+</nav>
+</div>
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        enableStickyToc();
+    });
+</script>
+        
+    </div>
+    
+
+    
+    
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', ()=>{
+        hljs.initHighlightingOnLoad();
+    })
+</script>
+
+      </div>
+    </div>
+    
+  </main>
+  <footer class="pl-scrollbar">
+    <div class="w-full max-w-screen-xl mx-auto"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 2021 <a href="https://www.songjinfeng.com/">SonJinfeng</a> 
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+  </footer>
+</body>
+
+</html>

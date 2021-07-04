@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang='zh' ><meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+
+
+<title>Linux索引节点(Inode)用满导致空间不足 | Songjinfeng&#39;s BLOG</title>
+<link rel="stylesheet" href="/css/eureka.min.css">
+<script defer src="/js/eureka.min.js"></script>
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Noto+Serif+SC:wght@400;600;700&display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/styles/solarized-light.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/highlight.min.js"
+   crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/dart.min.js"
+     crossorigin></script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/js/all.min.js"
+   integrity="sha256-uNYoXefWRqv&#43;PsIF/OflNmwtKM4lStn9yrz2gVl6ymo="  crossorigin></script>
+
+
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css"
+   integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3&#43;Aro6EYUG4&#43;cU&#43;KJWu/X"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js" 
+  integrity="sha384-g7c&#43;Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI&#43;sEnkvrMWph2EDg4"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js"
+   integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC&#43;Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.9.2/dist/mermaid.min.js" 
+  integrity="sha256-Zmpaaj&#43;GXFsPF5WdPArSrnW3b30dovldeKsW00xBVwE="  crossorigin></script>
+
+
+<link rel="icon" type="image/png" sizes="32x32" href="/images/icon_hucfa16751ac9c82c06b84c3502c0db793_16378_32x32_fill_box_center_2.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hucfa16751ac9c82c06b84c3502c0db793_16378_180x180_fill_box_center_2.png">
+
+<meta name="description"
+  content="k8s容器调度失败，容器处于创建中，发现提示no space left on device，服务器/var/log分区被占满
+通过du查看/var/log下的日志，发现是有一个gnocchi_wsgi_error.log占用了大量的空间。 查看gnocchi_wsgi_error.log日志，提示/var/lib/gnocchi/tmp下没有空间了。
+这个gnocchi是给ceilometer容器用的，这个容器所使用的共享存储是gnocchi存储卷。
+df -h查看，发现该存储卷还有空间；但是df -i查看发现inode被占满。 因此可以确认，问题是由于gnocchi存储卷的inode被占满，导致ceilometer容器一直打印错误日志，最终导致/var/log被占满。
+这个问题属于一个配置优化问题。需要及时更改gnocchi的inode配置，需要重新格式化存储，增加inode的数目。操作方法如下：
+kubectl scale rc ceilometerrc &ndash;replicas=0 mkfs.ext4 -N 200000000 /dev/mapper/openstack-gnocchi kubectl scale rc ceilometerrc &ndash;replicas=1
+mkfs.ext4 [-I inode-size] 指定inode size大小，默认配置文件在/etc/mke2fs.conf，inode_size = 256 Inode size: 256 [-N number-of-inodes] 指定inode个数，最大创建文件个数 [-i bytes-per-inode] 指定&quot;字节/inode&quot;的比例 增大-i参数，从而减小inode总数，可以减小inode占用的磁盘空间，减少磁盘浪费。   问题原因分析：
+Inode译成中文就是索引节点，每个存储设备（例如硬盘）或存储设备的分区被格式化为文件系统后，应该有两部份，一部份是inode，另一部份是 Block，Block是用来存储数据用的。而inode呢，就是用来存储这些数据的信息，这些信息包括文件大小、属主、归属的用户组、读写权限等。 inode为每个文件进行信息索引，所以就有了inode的数值。操作系统根据指令，能通过inode值最快的找到相对应的文件。 而这台服务器的Block虽然还有剩余，但inode已经用满，因此在创建新目录或文件时，系统提示磁盘空间不足。 Inode的数量是有限制的，每个文件对应一个Inode，df -i可以看到Inode的总量，已经使用的Inode数量，和剩余数量。
+3、解决：
+1）查找满的目录：
+[root@abc sbin]# for i in /*; do echo $i; find $i | wc -l; done  然后找到inode占用最多额目录下，再用上面命令查看。
+2）删除文件占用多的目录：
+进入目录直接rm -rf 可能会卡死，可以使用下面方式：">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"技术专栏",
+      "item":"/posts/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"Linux",
+      "item":"/posts/1.linux/"},{
+      "@type": "ListItem",
+      "position": 3 ,
+      "name":"Linux索引节点(Inode)用满导致空间不足",
+      "item":"/posts/1.linux/linux%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/%E6%95%85%E9%9A%9C%E5%88%86%E6%9E%90inode/"}]
+}
+</script>
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/posts/1.linux/linux%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/%E6%95%85%E9%9A%9C%E5%88%86%E6%9E%90inode/"
+    },
+    "headline": "Linux索引节点(Inode)用满导致空间不足 | Songjinfeng\u0027s BLOG","wordCount":  100 ,
+    "publisher": {
+        "@type": "Person",
+        "name": "JF. Song",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "/images/icon.png"
+        }
+        },
+    "description": "k8s容器调度失败，容器处于创建中，发现提示no space left on device，服务器\/var\/log分区被占满\n通过du查看\/var\/log下的日志，发现是有一个gnocchi_wsgi_error.log占用了大量的空间。 查看gnocchi_wsgi_error.log日志，提示\/var\/lib\/gnocchi\/tmp下没有空间了。\n这个gnocchi是给ceilometer容器用的，这个容器所使用的共享存储是gnocchi存储卷。\ndf -h查看，发现该存储卷还有空间；但是df -i查看发现inode被占满。 因此可以确认，问题是由于gnocchi存储卷的inode被占满，导致ceilometer容器一直打印错误日志，最终导致\/var\/log被占满。\n这个问题属于一个配置优化问题。需要及时更改gnocchi的inode配置，需要重新格式化存储，增加inode的数目。操作方法如下：\nkubectl scale rc ceilometerrc \u0026ndash;replicas=0 mkfs.ext4 -N 200000000 \/dev\/mapper\/openstack-gnocchi kubectl scale rc ceilometerrc \u0026ndash;replicas=1\nmkfs.ext4 [-I inode-size] 指定inode size大小，默认配置文件在\/etc\/mke2fs.conf，inode_size = 256 Inode size: 256 [-N number-of-inodes] 指定inode个数，最大创建文件个数 [-i bytes-per-inode] 指定\u0026quot;字节\/inode\u0026quot;的比例 增大-i参数，从而减小inode总数，可以减小inode占用的磁盘空间，减少磁盘浪费。   问题原因分析：\nInode译成中文就是索引节点，每个存储设备（例如硬盘）或存储设备的分区被格式化为文件系统后，应该有两部份，一部份是inode，另一部份是 Block，Block是用来存储数据用的。而inode呢，就是用来存储这些数据的信息，这些信息包括文件大小、属主、归属的用户组、读写权限等。 inode为每个文件进行信息索引，所以就有了inode的数值。操作系统根据指令，能通过inode值最快的找到相对应的文件。 而这台服务器的Block虽然还有剩余，但inode已经用满，因此在创建新目录或文件时，系统提示磁盘空间不足。 Inode的数量是有限制的，每个文件对应一个Inode，df -i可以看到Inode的总量，已经使用的Inode数量，和剩余数量。\n3、解决：\n1）查找满的目录：\n[root@abc sbin]# for i in \/*; do echo $i; find $i | wc -l; done  然后找到inode占用最多额目录下，再用上面命令查看。\n2）删除文件占用多的目录：\n进入目录直接rm -rf 可能会卡死，可以使用下面方式："
+}
+</script><meta property="og:title" content="Linux索引节点(Inode)用满导致空间不足 | Songjinfeng&#39;s BLOG" />
+<meta property="og:type" content="article" />
+
+
+<meta property="og:image" content="/images/icon.png">
+
+
+<meta property="og:url" content="/posts/1.linux/linux%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/%E6%95%85%E9%9A%9C%E5%88%86%E6%9E%90inode/" />
+
+
+
+
+<meta property="og:description" content="k8s容器调度失败，容器处于创建中，发现提示no space left on device，服务器/var/log分区被占满
+通过du查看/var/log下的日志，发现是有一个gnocchi_wsgi_error.log占用了大量的空间。 查看gnocchi_wsgi_error.log日志，提示/var/lib/gnocchi/tmp下没有空间了。
+这个gnocchi是给ceilometer容器用的，这个容器所使用的共享存储是gnocchi存储卷。
+df -h查看，发现该存储卷还有空间；但是df -i查看发现inode被占满。 因此可以确认，问题是由于gnocchi存储卷的inode被占满，导致ceilometer容器一直打印错误日志，最终导致/var/log被占满。
+这个问题属于一个配置优化问题。需要及时更改gnocchi的inode配置，需要重新格式化存储，增加inode的数目。操作方法如下：
+kubectl scale rc ceilometerrc &ndash;replicas=0 mkfs.ext4 -N 200000000 /dev/mapper/openstack-gnocchi kubectl scale rc ceilometerrc &ndash;replicas=1
+mkfs.ext4 [-I inode-size] 指定inode size大小，默认配置文件在/etc/mke2fs.conf，inode_size = 256 Inode size: 256 [-N number-of-inodes] 指定inode个数，最大创建文件个数 [-i bytes-per-inode] 指定&quot;字节/inode&quot;的比例 增大-i参数，从而减小inode总数，可以减小inode占用的磁盘空间，减少磁盘浪费。   问题原因分析：
+Inode译成中文就是索引节点，每个存储设备（例如硬盘）或存储设备的分区被格式化为文件系统后，应该有两部份，一部份是inode，另一部份是 Block，Block是用来存储数据用的。而inode呢，就是用来存储这些数据的信息，这些信息包括文件大小、属主、归属的用户组、读写权限等。 inode为每个文件进行信息索引，所以就有了inode的数值。操作系统根据指令，能通过inode值最快的找到相对应的文件。 而这台服务器的Block虽然还有剩余，但inode已经用满，因此在创建新目录或文件时，系统提示磁盘空间不足。 Inode的数量是有限制的，每个文件对应一个Inode，df -i可以看到Inode的总量，已经使用的Inode数量，和剩余数量。
+3、解决：
+1）查找满的目录：
+[root@abc sbin]# for i in /*; do echo $i; find $i | wc -l; done  然后找到inode占用最多额目录下，再用上面命令查看。
+2）删除文件占用多的目录：
+进入目录直接rm -rf 可能会卡死，可以使用下面方式：" />
+
+
+
+
+<meta property="og:locale" content="zh" />
+
+
+
+
+<meta property="og:site_name" content="Songjinfeng&#39;s BLOG" />
+
+
+
+
+
+
+
+
+
+<meta property="article:section" content="posts" />
+
+
+
+
+<body class="flex flex-col min-h-screen">
+  <header class="fixed flex items-center w-full min-h-16 pl-scrollbar z-50 bg-secondary-bg shadow-sm">
+    <div class="w-full max-w-screen-xl mx-auto"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="mr-6 text-primary-text text-xl font-bold">Songjinfeng&#39;s BLOG</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:flex-grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:flex-grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  mr-4">技术专栏</a>
+            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">文档笔记</a>
+            <a href="/series/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">主题系列</a>
+            <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">标签</a>
+            <a href="/authors/songjinfeng/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">关于</a>
+            <a href="/index.xml" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">RSS</a>
+            <a href="/webstack" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">友链&amp;导航</a>
+        </div>
+
+        <div class="flex">
+            <div class="relative pt-4 md:pt-0">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col left-0 md:left-auto right-auto md:right-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">浅色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">深色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">自动</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            switchMode('Auto')
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+  </header>
+  <main class="flex-grow pt-16">
+    <div class="pl-scrollbar">
+      <div class="w-full max-w-screen-xl lg:px-4 xl:px-8 mx-auto">
+
+
+<div class="grid grid-cols-2 lg:grid-cols-8 gap-4 lg:pt-12">
+    <div
+        class="col-span-2 lg:col-start-2 lg:col-span-6 bg-secondary-bg rounded px-6 py-8">
+        <h1 class="font-bold text-3xl text-primary-text">Linux索引节点(Inode)用满导致空间不足</h1>
+        <div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>0001-01-01</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>1分钟阅读时长</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="/categories/blog/" class="hover:text-eureka">blog</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/posts/" class="hover:text-eureka">posts</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/linux/" class="hover:text-eureka">Linux</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/linux%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/" class="hover:text-eureka">Linux文件系统</a>
+        
+    </div>
+    
+
+    
+</div>
+        
+        
+        
+
+        <div class="content">
+            <hr>
+<p>k8s容器调度失败，容器处于创建中，发现提示<code>no space left on device</code>，服务器/var/log分区被占满</p>
+<p>通过du查看/var/log下的日志，发现是有一个gnocchi_wsgi_error.log占用了大量的空间。
+查看gnocchi_wsgi_error.log日志，提示/var/lib/gnocchi/tmp下没有空间了。</p>
+<p>这个gnocchi是给ceilometer容器用的，这个容器所使用的共享存储是gnocchi存储卷。</p>
+<p>df -h查看，发现该存储卷还有空间；但是df -i查看发现inode被占满。
+因此可以确认，问题是由于gnocchi存储卷的inode被占满，导致ceilometer容器一直打印错误日志，最终导致/var/log被占满。</p>
+<p>这个问题属于一个配置优化问题。需要及时更改gnocchi的inode配置，需要重新格式化存储，增加inode的数目。操作方法如下：</p>
+<p>kubectl scale rc ceilometerrc &ndash;replicas=0
+mkfs.ext4 -N 200000000 /dev/mapper/openstack-gnocchi
+kubectl scale rc ceilometerrc &ndash;replicas=1</p>
+<pre><code>mkfs.ext4
+
+[-I inode-size] 
+    指定inode size大小，默认配置文件在/etc/mke2fs.conf，inode_size = 256
+    Inode size:              256
+[-N number-of-inodes]
+    指定inode个数，最大创建文件个数
+[-i bytes-per-inode]
+    指定&quot;字节/inode&quot;的比例   
+    增大-i参数，从而减小inode总数，可以减小inode占用的磁盘空间，减少磁盘浪费。
+
+
+</code></pre>
+<hr>
+<p>问题原因分析：</p>
+<p>Inode译成中文就是索引节点，每个存储设备（例如硬盘）或存储设备的分区被格式化为文件系统后，应该有两部份，一部份是inode，另一部份是 Block，Block是用来存储数据用的。而inode呢，就是用来存储这些数据的信息，这些信息包括文件大小、属主、归属的用户组、读写权限等。 inode为每个文件进行信息索引，所以就有了inode的数值。操作系统根据指令，能通过inode值最快的找到相对应的文件。
+而这台服务器的Block虽然还有剩余，但inode已经用满，因此在创建新目录或文件时，系统提示磁盘空间不足。
+Inode的数量是有限制的，每个文件对应一个Inode，<code>df -i</code>可以看到Inode的总量，已经使用的Inode数量，和剩余数量。</p>
+<p>3、解决：</p>
+<p>1）查找满的目录：</p>
+<pre><code>[root@abc sbin]# for i in /*; do echo $i; find $i | wc -l; done
+
+</code></pre>
+<p>然后找到inode占用最多额目录下，再用上面命令查看。</p>
+<p>2）删除文件占用多的目录：</p>
+<p>进入目录直接rm -rf 可能会卡死，可以使用下面方式：</p>
+<pre><code>find dir -type f -name '*'  | xargs rm
+
+# or
+
+cd dir
+ls | xargs rm -f
+</code></pre>
+<p>系统中有用户开启了cron，而cron中执行的程序有输出内容，输出内容会以邮件形式发给cron的用户，而sendmail没有启动所以就产生了这些文件；
+解决办法:
+将crontab里面的命令后面加上 &gt; /dev/null 2&gt;&amp;1 或者crontab里面的命令后面加上 &gt; /dev/null</p>
+
+        </div>
+        
+        
+        
+        
+        
+        
+        
+<div class="flex flex-col md:flex-row md:justify-between -mx-2 mt-4 px-2 pt-4 border-t">
+    <div>
+        
+        <span class="block font-bold">上一页</span>
+        <a href="/posts/1.linux/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/wireshark/" class="block"></a>
+        
+    </div>
+    <div class="md:text-right mt-4 md:mt-0">
+        
+        <span class="block font-bold">下一页</span>
+        <a href="/posts/1.linux/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/3.linux%E7%BD%91%E5%8D%A1%E7%BB%91%E5%AE%9A/" class="block">Linux网卡绑定</a>
+        
+    </div>
+</div>
+
+        
+    </div>
+    
+
+    
+    
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', ()=>{
+        hljs.initHighlightingOnLoad();
+    })
+</script>
+
+      </div>
+    </div>
+    
+  </main>
+  <footer class="pl-scrollbar">
+    <div class="w-full max-w-screen-xl mx-auto"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 2021 <a href="https://www.songjinfeng.com/">SonJinfeng</a> 
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+  </footer>
+</body>
+
+</html>

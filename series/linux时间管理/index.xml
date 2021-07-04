@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Linux时间管理 on Songjinfeng&#39;s BLOG</title>
+    <link>/series/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86/</link>
+    <description>Recent content in Linux时间管理 on Songjinfeng&#39;s BLOG</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language>
+    <copyright>&amp;copy; 2021 &lt;a href=&#34;https://www.songjinfeng.com/&#34;&gt;SonJinfeng&lt;/a&gt; 
+</copyright>
+    <lastBuildDate>Thu, 15 Apr 2021 00:00:00 +0000</lastBuildDate><atom:link href="/series/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Linux时间管理(1)：基本概念&#43;常用工具</title>
+      <link>/posts/1.linux/linux%E5%B8%B8%E7%94%A8%E6%9C%8D%E5%8A%A1/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5&#43;%E5%B7%A5%E5%85%B7/</link>
+      <pubDate>Thu, 15 Apr 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/1.linux/linux%E5%B8%B8%E7%94%A8%E6%9C%8D%E5%8A%A1/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5&#43;%E5%B7%A5%E5%85%B7/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Linux时间管理(2)：Chrony</title>
+      <link>/posts/1.linux/linux%E5%B8%B8%E7%94%A8%E6%9C%8D%E5%8A%A1/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86chrony/</link>
+      <pubDate>Wed, 14 Apr 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/1.linux/linux%E5%B8%B8%E7%94%A8%E6%9C%8D%E5%8A%A1/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86chrony/</guid>
+      <description>&lt;p&gt;再见 NTP，是时候拥抱下一代时间同步服务 Chrony 了&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Linux时间管理(3)：ntpd ntpdate使用</title>
+      <link>/posts/1.linux/linux%E5%B8%B8%E7%94%A8%E6%9C%8D%E5%8A%A1/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86ntpdntpdate/</link>
+      <pubDate>Tue, 13 Apr 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/1.linux/linux%E5%B8%B8%E7%94%A8%E6%9C%8D%E5%8A%A1/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86ntpdntpdate/</guid>
+      <description>&lt;p&gt;为了避免主机时间因为长期运作下所导致的时间偏差，进行时间同步 (synchronize) 的工作是非常必要的。Linux 系统下，一般使用 ntp 服务器来同步不同机器的时间。一台机器，可以同时是 ntp 服务器和 ntp 客户机。在网络中，推荐使用像 DNS 服务器一样分层的时间服务器来同步时间。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Linux时间管理(4)：chrony ntp 对比</title>
+      <link>/posts/1.linux/linux%E5%B8%B8%E7%94%A8%E6%9C%8D%E5%8A%A1/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86ntpchrony%E5%AF%B9%E6%AF%94/</link>
+      <pubDate>Mon, 12 Apr 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/1.linux/linux%E5%B8%B8%E7%94%A8%E6%9C%8D%E5%8A%A1/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86ntpchrony%E5%AF%B9%E6%AF%94/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>

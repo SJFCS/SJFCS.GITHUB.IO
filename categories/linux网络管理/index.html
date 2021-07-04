@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang='zh' ><meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+
+
+<title>Linux网络管理 | Songjinfeng&#39;s BLOG</title>
+<link rel="stylesheet" href="/css/eureka.min.css">
+<script defer src="/js/eureka.min.js"></script>
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Noto+Serif+SC:wght@400;600;700&display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/styles/solarized-light.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/highlight.min.js"
+   crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/dart.min.js"
+     crossorigin></script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/js/all.min.js"
+   integrity="sha256-uNYoXefWRqv&#43;PsIF/OflNmwtKM4lStn9yrz2gVl6ymo="  crossorigin></script>
+
+
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css"
+   integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3&#43;Aro6EYUG4&#43;cU&#43;KJWu/X"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js" 
+  integrity="sha384-g7c&#43;Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI&#43;sEnkvrMWph2EDg4"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js"
+   integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC&#43;Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.9.2/dist/mermaid.min.js" 
+  integrity="sha256-Zmpaaj&#43;GXFsPF5WdPArSrnW3b30dovldeKsW00xBVwE="  crossorigin></script>
+
+
+<link rel="icon" type="image/png" sizes="32x32" href="/images/icon_hucfa16751ac9c82c06b84c3502c0db793_16378_32x32_fill_box_center_2.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hucfa16751ac9c82c06b84c3502c0db793_16378_180x180_fill_box_center_2.png">
+
+<meta name="description"
+  content="Eureka is a elegant and powerful theme for Hugo.">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"Categories",
+      "item":"/categories/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"Linux网络管理",
+      "item":"/categories/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/"}]
+}
+</script>
+
+
+
+
+<script type="application/ld+json">
+{
+    "@context":"https://schema.org",
+    "@type":"ItemList",
+    "itemListElement":[{
+            "@type":"ListItem",
+            "position":  1 ,
+            "name": "",
+            "description": "ethtool http://www.voidcn.com/article/p-reuwslap-brm.html\n命令描述： ethtool 是用于查询及设置网卡参数的命令。\n使用概要：\nethtool ethx //查询ethx网口基本设置，其中 x 是对应网卡的编号，如eth0、eth1等等 ethtool –h //显示ethtool的命令帮助(help) ethtool –i ethX //查询ethX网口的相关信息 ethtool –d ethX //查询ethX网口注册性信息 ethtool –r ethX //重置ethX网口到自适应模式 ethtool –S ethX //查询ethX网口收发包统计 ethtool –s ethX [speed 10|100|1000] [duplex half|full] [autoneg on|off] //设置网口速率10/100/1000M、设置网口半/全双工、设置网口是否自协商  使用举例：\n1）查询eth0网口基本设置（网卡速率是百兆还是千兆等）:\n# ethtool eth0 Settings for eth0: Supported ports: [ TP ] Supported link modes: 10baseT/Half 10baseT/Full 100baseT/Half 100baseT/Full 1000baseT/Full Supported pause frame use: No //是否支持热插拔 Supports auto-negotiation: Yes //是否支持自动协商 Advertised link modes: 10baseT/Half 10baseT/Full 100baseT/Half 100baseT/Full 1000baseT/Full Advertised pause frame use: No Advertised auto-negotiation: Yes Speed: 1000Mb/s //速率 Duplex: Full //全双工 Port: Twisted Pair //电口 PHYAD: 0 Transceiver: internal Auto-negotiation: on MDI-X: Unknown Supports Wake-on: d Wake-on: d Current message level: 0x00000007 (7) drv probe link Link detected: yes  2）查看网卡的驱动信息：",
+            "url": "/posts/1.linux/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/ethtool/"
+        },{
+            "@type":"ListItem",
+            "position":  2 ,
+            "name": "",
+            "description": "CentOS7配置LLDP服务 https://blog.csdn.net/BK_sys/article/details/88554593 https://vincentbernat.github.io/lldpd/usage.html\nlldpad(2010年停更)：https://github.com/jrfastab/lldpad\nlldpd（lldpd可以输出json格式）：https://github.com/vincentbernat/lldpd\n第一种方式：lldpd 1、软件lldpd和lldpcli\nyum install lldpd -y\n2、服务启动后，相关信息可以通过如下命令获取\nlldpcli show neighbors\n将结果处理成json格式，只需要在命令后加上：lldpcli show neighbors -f json\n第二种方式：lldpad 1、安装相关服务软件和工具\n软件lldpad和lldptool\nyum install lldpad -y\n2、配置服务器端口用于接收和发送相关LLDP信息，包括端口，主机名，mac地址和ip地址\n（1）查看系统本地网卡设备：\n##因为网卡设备名称包含eth，eno，em，p1p1 ……，默认都是以e或者p开头\nls /sys/class/net/ |egrep ‘e|p’\n（2）分别配置每个端口，以eno1为例，如下：\nlldptool set-lldp -i eno1 adminStatus=rxtx lldptool -T -i eno1 -V sysName enableTx=yes lldptool -T -i eno1 -V portDesc enableTx=yes lldptool -T -i eno1 -V sysDesc enableTx=yes lldptool -T -i eno1 -V mngAddr enableTx=yes  ##每个端口都配置的原因是防止已经down的端口遗漏掉，新部署服务器可以只配置up状态的接口，具体配置请根据实际需求配置。\n4、完成端口配置后，相关信息可以通过如下命令获取\nlldptool -t -n -i eno1",
+            "url": "/posts/1.linux/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/lldp/"
+        },{
+            "@type":"ListItem",
+            "position":  3 ,
+            "name": "",
+            "description": "https://blog.51cto.com/14012942/2432243\n https://blog.csdn.net/cuichongxin/article/details/106473581\n ",
+            "url": "/posts/1.linux/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/nmcli/"
+        },{
+            "@type":"ListItem",
+            "position":  4 ,
+            "name": "",
+            "description": "https://www.cnblogs.com/oloroso/p/4844907.html https://www.cnblogs.com/xdp-gacl/p/4016524.html https://www.cnblogs.com/smillepro/articles/9948253.html\n​\thttps://blog.csdn.net/lqy461929569/article/details/79881269\n​\thttps://www.cnblogs.com/xdp-gacl/p/3978825.html\n​\thttps://wenku.baidu.com/view/cf0efc335a8102d276a22f6d.html?sxts=1541989059623\nsnmp简介 https://www.cnblogs.com/xdp-gacl/p/3978825.html　​\tSNMP采用UDP协议在管理端和agent之间传输信息。 ==SNMP采用UDP 161端口接收和发送请求，162端口接收trap==，执行SNMP的设备缺省都必须采用这些端口。SNMP消息全部通过UDP端口161接收，只有Trap信息采用UDP端口162。\nsnmp安装与卸载 安装包介绍\u0026hellip;\u0026hellip;\nyum安装 yum install -y net-snmp yum install -y net-snmp-utils yum install -y net-snmp-devel yum install -y net-snmp-libs yum install -y net-snmp-perl yum install -y mrtg 可使用iptables -L -n 查看当前iptables规则,放udp 161端口的访问权限  源码编译安装 https://www.cnblogs.com/xdp-gacl/p/4016524.html\n1.下载 下载Net-SNMP的源代码,选择一个SNMP版本，比如5.7.1，下载地址如下：\nhttp://www.net-snmp.org/download.html http://sourceforge.net/projects/net-snmp/files/net-snmp/5.7.1/，如下图所示：\n2. 解压编译 tar xzvf net-snmp-5.7.1.tar.gz解压后``cd net-snmp-5.7.1`通过configure来生成编译规则\n net-snmp-5.7.1目录下的configure是可执行文件，如果想指定程序包的安装路径，那么首先建立相应的文件夹来存放安装信息，可以写成./configure –-prefix=/指定的路径名。参数\u0026ndash;prefix用来告诉系统安装信息存放的路径，如果没有指定路径，直接执行./configure，那么程序包都会安装在系统默认的目录下，通常为：/usr/local下\n 执行命令\n./configure --prefix=/usr/local/snmp --with-mib-modules='ucd-snmp/diskio ip-mib/ipv4InterfaceTable'\n::: info 请注意参数：\n–prefix=/usr/local/snmp 选项，选择snmp的安装路径。\n–with-mib-modules=ucd-snmp/diskio 选项，可以让服务器支持磁盘I/O监控。",
+            "url": "/posts/1.linux/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/snmp/"
+        },{
+            "@type":"ListItem",
+            "position":  5 ,
+            "name": "",
+            "description": "Eureka is a elegant and powerful theme for Hugo.",
+            "url": "/posts/1.linux/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/wireshark/"
+        },{
+            "@type":"ListItem",
+            "position":  6 ,
+            "name": "Linux网卡绑定",
+            "description": "[root@master ~]# uname -r 3.10.0-1160.el7.x86_64 [root@master ~]# cat /etc/redhat-release CentOS Linux release 7.9.2009 (Core)  双网卡绑定各模式配置文件示例 对于各种双网卡绑定配置模式，请参考系统中的示例文件，文件位置：\n/usr/share/doc/teamd-xx/example_configs/\n前言 服务器常有多块网卡，为了提高冗余可靠性和数据传输带宽，引入了两项技术Bond和Team，通过多张网卡绑定为一个逻辑网卡，实现本地网卡的冗余，带宽扩容和负载均衡，提供链路级别的故障保护，在生产场景中是常用的技术。\n网卡Bond是Kernels 2.4.12及以后的版本均供bonding模块，以前的版本可以通过patch实现。\nCentOS6及之前都是使用bond机制来实现多网络绑定同一个IP地址，来对网络提供访问，并按不同的模式来负载均衡或者轮回接替管理处理数据。 而到了ContOS7之后，引入NetworkManager来管理网络，通过命令行工具nmcli进行配置，nmcli会根据命令参数的配置来重新生成特定的配置文件来供网络接口使用，nmcli支持bond技术和新的team机制。在Centos7有这两种技术可供选择。 本文将从技术原理和应用实践两方面对这两项技术展开讲解。\n、、、、、、、、、、、、、、、、、、、、、、\n虚拟交换机xxx\nBond、Team对比 “Bonding” 和 “nmcli的网络组Network Teaming”二者实现的功能一样，但从某种角度，网络组要比Bonding的技术要好\nBond详解 bonding的详细帮助\n/usr/share/doc/kernel-doc- version/Documentation/networking/bonding.txt https://www.kernel.org/doc/Documentation/networking/bonding.txt\nBond模式七模式 https://zhiliao.h3c.com/Theme/details/24694\n交换机多端口和服务器对接时，需要确定是否需要配置聚合或者不配置聚合，并且配置聚合的时候还需要确认是静态聚合还是动态聚合，当然这和当前服务器网卡的bond模式有关。下面我们了解下Linux服务器的7种bond模式，说明如下：\n ==mod=0 (balance-rr) Round-robin policy（平衡抡循环策略）==   轮询策略：按照顺序轮流使用每个接口来发送和接收数据包，提高了负载均衡和冗余的能力，带宽翻倍。 该模式所有端口的mac地址相同 ==交换机侧做静态链路聚合==  H3C V3平台交换机侧的静态典型配置 [H3C] link-aggregation group 1 mode manual [H3C] interface ethernet2/1/1 [H3C-Ethernet2/1/1] port link-aggregation group 1 H3C V5/V7交换机侧的静态典型配置 [DeviceA] interface Bridge-Aggregation 1 //默认静态 [DeviceA] interface GigabitEthernet 4/0/1 [DeviceA-GigabitEthernet4/0/1] port link-aggregation group 1   ==mod=1 (active-backup) Active-backup policy（主-备份策略）==   冗余性高：只有一个设备处于活动状态，当一个宕掉另一个马上由备份转换为主设备。 链路利用率低：只有一个接口处于工作状态。 bond的MAC地址是唯一的，切换主备时交换机侧会存在MAC漂移的记录 ==交换机无需配置或建议在同一VLAN下==   ==mod=2 (balance-xor) XOR policy（平衡策略）==【load balancing】    XOR Hash负载分担：基于指定的传输HASH策略传输数据包。缺省的策略是：(源MAC地址 XOR 目标MAC地址) % slave数量。其他的传输策略可以通过xmit_hash_policy选项指定，此模式提供负载平衡和容错能力",
+            "url": "/posts/1.linux/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/3.linux%E7%BD%91%E5%8D%A1%E7%BB%91%E5%AE%9A/"
+        },{
+            "@type":"ListItem",
+            "position":  7 ,
+            "name": "Linux网络基础",
+            "description": "https://segmentfault.com/a/1190000015476963\nhttps://segmentfault.com/a/1190000011954814\nbond mode为0,1,2,3,4时，bond口的MAC地址和成员口MAC地址相同；bond mode为5和6时，bond口的MAC地址不同于成员口的MAC地址。\n网卡配置详解 默认网卡配置 /etc/sysconfig/network-scripts/ifcfg-*\nTYPE=Ethernet # 网络类型（通常是Ethemet） PROXY_METHOD=none BROWSR_ONLY=no BOOTPROTO=dhcp # IP的配置方法[none|static|bootp|dhcp]（引导时不使用协议|静态分配IP|BOOTP协议|DHCP协议） DEFROUTE=yes IPV4_FAILURE_FATAL=no IPV6INIT=yes # IPV6是否有效（yes/no） IPV6_AUTOCONF=yes IPV6_DEFROUTE=yes IPV6_FAILURE_FATAL=no IPV6_ADDR_GEN_MODE=stable-privacy NAME=ens33 UUID=ac9b66bf-74fb-4bda-b89f-c66ff84c9571 # 获取新的UUID # uuidgen ens33 将获取的UUID填入配置文件后重启网卡服务 # 验证UUID # nmcli con | sed -n '1,2p' DEVICE=ens33 # 接口名（设备,网卡） ONBOOT=yes #ONBOOT是指明在系统启动时是否激活网卡，只有在激活状态的网卡才能去连接网络，进行网络通讯  永久生效-设置静态地址 上述默认配置文件修改加入如下配置，配置完成后systemctl restart network重启网卡服务生效\nBOOTPROTO=static #静态IP IPADDR= #本机地址 NETMASK= #子网掩码 GATEWAY= #默认网关 # DNS1= # DNS2=  临时生效-详见工具包对比 也可以通过 ip、nmlic、ifconfig管理命令进行配置，后续会展开介绍\nifconfig eth0 192.168.0.2 netmask 255.255.255.0  vi /etc/resolv.",
+            "url": "/posts/1.linux/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/1.linux%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80/"
+        },{
+            "@type":"ListItem",
+            "position":  8 ,
+            "name": "TCPdump",
+            "description": "参考链接： tcpdump命令详解 万字长文 实例参考\n 配合ssh通道传入wireshark  ssh当通道让tcpdump远程抓包，再将数据实时传送到本地，再用wireshark图形化界面实时打开 https://blog.csdn.net/koalazoo/article/details/84958752\n准备工作 本地PC机上得有命令行版的ssh，图形化的SecureCRT应该不行 本地PC机上有wireshark 远程主机上有tcpdump 你有远程主机的root权限（否则你也抓不了包啊） 找到本地PC机上ssh和wireshark的路径（或者加入PATH，用于执行命令） 工作思路 基本的想法就是用ssh登录到远程主机上，发起tcpdump抓包，并将tcpdump抓到的结果输出到stdout，再传回本地PC机，而本地PC机上的wireshark以stdin为输入，两者以管道连接传输。\n命令示例\nssh root@some.host 'tcpdump -i eth0 port 80 -s 0 -l -w -' | wireshark -k -i -  命令执行后会弹出wireshark界面，这时需要切回刚刚的命令行，因为需要输入密码以登录远程主机（已经配置免密另说），连接成功后即开始抓包，并在本地PC的wireshark上实时显示抓包结果。\n参数解释 tcpdump中 ‘-l ’ （这里是小写的字母L）是指line-buffer，即不使用缓存，直接输出，否则就会一段段的输出。’-w -\u0026lsquo;是指写文件，目标文件为标准输出。至于tcpdump另外的参数，想抓什么端口，这个请搜下度娘，一搜一大把。\nwireshark中 ‘-k’ 是指马上开始捕获数据，’-i -’ 是指从指定接口获取，源为标准输入。\n或者可以用plink（putty的命令行版本）\nplink -ssh USER@HOST -pw PASS \u0026quot;tcpdump -s 0 -U -n -i br-lan -w - not port 22\u0026quot; | wireshark -k -i -   前言 tcpdump 的参数非常的多，初学者在没有掌握 tcpdump 时，会对这个命令的众多参数产生很多的疑惑。",
+            "url": "/posts/1.linux/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/tcpdump/"
+        },{
+            "@type":"ListItem",
+            "position":  9 ,
+            "name": "网络服务和工具集",
+            "description": "网络服务和工具集\u0026mdash;\u0026ndash;network\u0026ndash;\u0026raquo;NetworkManager net-tool\u0026ndash;\u0026raquo;iproute\nhttps://ywnz.com/linuxml/4388.html\nhttps://linuxtechlab.com/managing-network-using-ifconfig-nmcli-commands/\nhttps://www.tecmint.com/ifconfig-vs-ip-command-comparing-network-configuration/\n从RHEL/CentOS6开始，NetworkManager服务就是其组成部分； 从RHEL/CentOS7开始，默认开机后就启用NetworkManager服务，非传统的network服务，它不需要重启，从而可以实现动态管理配置； nmcli是一个用于控制NetworkManager和报告网络状态的命令行工具，它用于创建、显示、编辑、删除、激活和停用网络连接以及显示网络状态。\n在CentOS系统上，目前有NetworkManager和network两种网络管理工具。如果两种都配置会引起冲突，而且NetworkManager在网络断开的时候，会清理路由，如果一些自定义的路由，没有加入到NetworkManager的配置文件中，路由就被清理掉，网络连接后需要自定义添加上去。\n常用网络工具的使用： net-tool、route2、nmcli、进行对比总结命令\nethtool、TCPdump、端口lsot\nlldp、 SNMP、Nmap、简单的网卡流量监控、路由\n 如今很多系统管理员依然通过组合使用诸如ifconfig、route、arp和netstat等命令行工具（统称为net-tools）来配置网络功能，解决网络故障。net-tools起源于BSD的TCP/IP工具箱，后来成为老版本Linux内核中配置网络功能的工具。**但自2001年起，Linux社区已经对其停止维护。**同时，一些Linux发行版比如Arch Linux和CentOS/RHEL 7则已经完全抛弃了net-tools，只支持iproute2。\n作为网络配置工具的一份子，iproute2的出现旨在从功能上取代net-tools。net-tools通过procfs(/proc)和ioctl系统调用去访问和改变内核网络配置，而iproute2则通过netlink套接字接口与内核通讯。抛开性能而言，iproute2的用户接口比net-tools显得更加直观。比如，各种网络资源（如link、IP地址、路由和隧道等）均使用合适的对象抽象去定义，使得用户可使用一致的语法去管理不同的对象。更重要的是，到目前为止，iproute2仍处在持续开发中。\n如果你仍在使用net-tools，而且尤其需要跟上新版Linux内核中的最新最重要的网络特性的话，那么是时候转到iproute2的阵营了。原因就在于使用iproute2可以做很多net-tools无法做到的事情。\n对于那些想要转到使用iproute2的用户，有必要了解下面有关net-tools和iproute2的众多对比。\nhttps://blog.csdn.net/leshami/article/details/78021859\nhttps://linux.cn/article-4326-1",
+            "url": "/posts/1.linux/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/2.%E7%BD%91%E7%BB%9C%E6%9C%8D%E5%8A%A1%E5%92%8C%E5%B7%A5%E5%85%B7%E9%9B%86/"
+        }
+    ]
+}
+</script><meta property="og:title" content="Linux网络管理 | Songjinfeng&#39;s BLOG" />
+<meta property="og:type" content="website" />
+
+
+<meta property="og:image" content="/images/icon.png">
+
+
+<meta property="og:url" content="/categories/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/" />
+
+
+
+
+
+<meta property="og:description" content="Eureka is a elegant and powerful theme for Hugo." />
+
+
+
+
+
+<meta property="og:locale" content="zh" />
+
+
+
+
+<meta property="og:site_name" content="Songjinfeng&#39;s BLOG" />
+
+
+
+
+
+
+
+
+<meta property="article:section" content="categories" />
+
+
+<link rel="alternate" type="application/rss+xml" href="/categories/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/index.xml" title="Songjinfeng's BLOG" />
+
+<body class="flex flex-col min-h-screen">
+  <header class="fixed flex items-center w-full min-h-16 pl-scrollbar z-50 bg-secondary-bg shadow-sm">
+    <div class="w-full max-w-screen-xl mx-auto"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="mr-6 text-primary-text text-xl font-bold">Songjinfeng&#39;s BLOG</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:flex-grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:flex-grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">技术专栏</a>
+            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">文档笔记</a>
+            <a href="/series/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">主题系列</a>
+            <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">标签</a>
+            <a href="/authors/songjinfeng/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">关于</a>
+            <a href="/index.xml" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">RSS</a>
+            <a href="/webstack" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">友链&amp;导航</a>
+        </div>
+
+        <div class="flex">
+            <div class="relative pt-4 md:pt-0">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col left-0 md:left-auto right-auto md:right-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">浅色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">深色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">自动</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            switchMode('Auto')
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+  </header>
+  <main class="flex-grow pt-16">
+    <div class="pl-scrollbar">
+      <div class="w-full max-w-screen-xl lg:px-4 xl:px-8 mx-auto">
+<article class="mx-6 my-8">
+    <h1 class="font-bold text-3xl text-primary-text">Linux网络管理</h1>
+    
+</article>
+<div class="bg-secondary-bg rounded px-6">
+    <div class="overflow-hidden divide-y">
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="mb-4">
+  <a href="/posts/1.linux/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/ethtool/" class="font-bold text-xl hover:text-eureka"></a>
+</div>
+<div class="content">
+  ethtool http://www.voidcn.com/article/p-reuwslap-brm.html
+命令描述： ethtool 是用于查询及设置网卡参数的命令。
+使用概要：
+ethtool ethx //查询ethx网口基本设置，其中 x 是对应网卡的编号，如eth0、eth1等等 ethtool –h //显示ethtool的命令帮助(help) ethtool –i ethX //查询ethX网口的相关信息 ethtool –d ethX //查询ethX网口注册性信息 ethtool –r ethX //重置ethX网口到自适应模式 ethtool –S ethX //查询ethX网口收发包统计 ethtool –s ethX [speed 10|100|1000] [duplex half|full] [autoneg on|off] //设置网口速率10/100/1000M、设置网口半/全双工、设置网口是否自协商  使用举例：
+1）查询eth0网口基本设置（网卡速率是百兆还是千兆等）:
+# ethtool eth0 Settings for eth0: Supported ports: [ TP ] Supported link modes: 10baseT/Half 10baseT/Full 100baseT/Half 100baseT/Full 1000baseT/Full Supported pause frame use: No //是否支持热插拔 Supports auto-negotiation: Yes //是否支持自动协商 Advertised link modes: 10baseT/Half 10baseT/Full 100baseT/Half 100baseT/Full 1000baseT/Full Advertised pause frame use: No Advertised auto-negotiation: Yes Speed: 1000Mb/s //速率 Duplex: Full //全双工 Port: Twisted Pair //电口 PHYAD: 0 Transceiver: internal Auto-negotiation: on MDI-X: Unknown Supports Wake-on: d Wake-on: d Current message level: 0x00000007 (7) drv probe link Link detected: yes  2）查看网卡的驱动信息：
+</div>
+
+<div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>0001-01-01</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>2分钟阅读时长</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="/categories/blog/" class="hover:text-eureka">blog</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/posts/" class="hover:text-eureka">posts</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/linux/" class="hover:text-eureka">Linux</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/" class="hover:text-eureka">Linux网络管理</a>
+        
+    </div>
+    
+
+    
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="mb-4">
+  <a href="/posts/1.linux/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/lldp/" class="font-bold text-xl hover:text-eureka"></a>
+</div>
+<div class="content">
+  CentOS7配置LLDP服务 https://blog.csdn.net/BK_sys/article/details/88554593 https://vincentbernat.github.io/lldpd/usage.html
+lldpad(2010年停更)：https://github.com/jrfastab/lldpad
+lldpd（lldpd可以输出json格式）：https://github.com/vincentbernat/lldpd
+第一种方式：lldpd 1、软件lldpd和lldpcli
+yum install lldpd -y
+2、服务启动后，相关信息可以通过如下命令获取
+lldpcli show neighbors
+将结果处理成json格式，只需要在命令后加上：lldpcli show neighbors -f json
+第二种方式：lldpad 1、安装相关服务软件和工具
+软件lldpad和lldptool
+yum install lldpad -y
+2、配置服务器端口用于接收和发送相关LLDP信息，包括端口，主机名，mac地址和ip地址
+（1）查看系统本地网卡设备：
+##因为网卡设备名称包含eth，eno，em，p1p1 ……，默认都是以e或者p开头
+ls /sys/class/net/ |egrep ‘e|p’
+（2）分别配置每个端口，以eno1为例，如下：
+lldptool set-lldp -i eno1 adminStatus=rxtx lldptool -T -i eno1 -V sysName enableTx=yes lldptool -T -i eno1 -V portDesc enableTx=yes lldptool -T -i eno1 -V sysDesc enableTx=yes lldptool -T -i eno1 -V mngAddr enableTx=yes  ##每个端口都配置的原因是防止已经down的端口遗漏掉，新部署服务器可以只配置up状态的接口，具体配置请根据实际需求配置。
+4、完成端口配置后，相关信息可以通过如下命令获取
+lldptool -t -n -i eno1
+</div>
+
+<div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>0001-01-01</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>3分钟阅读时长</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="/categories/blog/" class="hover:text-eureka">blog</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/posts/" class="hover:text-eureka">posts</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/linux/" class="hover:text-eureka">Linux</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/" class="hover:text-eureka">Linux网络管理</a>
+        
+    </div>
+    
+
+    
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="mb-4">
+  <a href="/posts/1.linux/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/nmcli/" class="font-bold text-xl hover:text-eureka"></a>
+</div>
+<div class="content">
+  https://blog.51cto.com/14012942/2432243
+ https://blog.csdn.net/cuichongxin/article/details/106473581
+ 
+</div>
+
+<div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>0001-01-01</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>1分钟阅读时长</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="/categories/blog/" class="hover:text-eureka">blog</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/posts/" class="hover:text-eureka">posts</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/linux/" class="hover:text-eureka">Linux</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/" class="hover:text-eureka">Linux网络管理</a>
+        
+    </div>
+    
+
+    
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="mb-4">
+  <a href="/posts/1.linux/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/snmp/" class="font-bold text-xl hover:text-eureka"></a>
+</div>
+<div class="content">
+  https://www.cnblogs.com/oloroso/p/4844907.html https://www.cnblogs.com/xdp-gacl/p/4016524.html https://www.cnblogs.com/smillepro/articles/9948253.html
+​	https://blog.csdn.net/lqy461929569/article/details/79881269
+​	https://www.cnblogs.com/xdp-gacl/p/3978825.html
+​	https://wenku.baidu.com/view/cf0efc335a8102d276a22f6d.html?sxts=1541989059623
+snmp简介 https://www.cnblogs.com/xdp-gacl/p/3978825.html　​	SNMP采用UDP协议在管理端和agent之间传输信息。 ==SNMP采用UDP 161端口接收和发送请求，162端口接收trap==，执行SNMP的设备缺省都必须采用这些端口。SNMP消息全部通过UDP端口161接收，只有Trap信息采用UDP端口162。
+snmp安装与卸载 安装包介绍&amp;hellip;&amp;hellip;
+yum安装 yum install -y net-snmp yum install -y net-snmp-utils yum install -y net-snmp-devel yum install -y net-snmp-libs yum install -y net-snmp-perl yum install -y mrtg 可使用iptables -L -n 查看当前iptables规则,放udp 161端口的访问权限  源码编译安装 https://www.cnblogs.com/xdp-gacl/p/4016524.html
+1.下载 下载Net-SNMP的源代码,选择一个SNMP版本，比如5.7.1，下载地址如下：
+http://www.net-snmp.org/download.html http://sourceforge.net/projects/net-snmp/files/net-snmp/5.7.1/，如下图所示：
+2. 解压编译 tar xzvf net-snmp-5.7.1.tar.gz解压后``cd net-snmp-5.7.1`通过configure来生成编译规则
+ net-snmp-5.7.1目录下的configure是可执行文件，如果想指定程序包的安装路径，那么首先建立相应的文件夹来存放安装信息，可以写成./configure –-prefix=/指定的路径名。参数&amp;ndash;prefix用来告诉系统安装信息存放的路径，如果没有指定路径，直接执行./configure，那么程序包都会安装在系统默认的目录下，通常为：/usr/local下
+ 执行命令
+./configure --prefix=/usr/local/snmp --with-mib-modules=&#39;ucd-snmp/diskio ip-mib/ipv4InterfaceTable&#39;
+::: info 请注意参数：
+–prefix=/usr/local/snmp 选项，选择snmp的安装路径。
+–with-mib-modules=ucd-snmp/diskio 选项，可以让服务器支持磁盘I/O监控。
+</div>
+
+<div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>0001-01-01</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>5分钟阅读时长</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="/categories/blog/" class="hover:text-eureka">blog</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/posts/" class="hover:text-eureka">posts</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/linux/" class="hover:text-eureka">Linux</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/" class="hover:text-eureka">Linux网络管理</a>
+        
+    </div>
+    
+
+    
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="mb-4">
+  <a href="/posts/1.linux/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/wireshark/" class="font-bold text-xl hover:text-eureka"></a>
+</div>
+<div class="content">
+  
+</div>
+
+<div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>0001-01-01</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>0分钟阅读时长</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="/categories/blog/" class="hover:text-eureka">blog</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/posts/" class="hover:text-eureka">posts</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/linux/" class="hover:text-eureka">Linux</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/" class="hover:text-eureka">Linux网络管理</a>
+        
+    </div>
+    
+
+    
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="mb-4">
+  <a href="/posts/1.linux/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/3.linux%E7%BD%91%E5%8D%A1%E7%BB%91%E5%AE%9A/" class="font-bold text-xl hover:text-eureka">Linux网卡绑定</a>
+</div>
+<div class="content">
+  [root@master ~]# uname -r 3.10.0-1160.el7.x86_64 [root@master ~]# cat /etc/redhat-release CentOS Linux release 7.9.2009 (Core)  双网卡绑定各模式配置文件示例 对于各种双网卡绑定配置模式，请参考系统中的示例文件，文件位置：
+/usr/share/doc/teamd-xx/example_configs/
+前言 服务器常有多块网卡，为了提高冗余可靠性和数据传输带宽，引入了两项技术Bond和Team，通过多张网卡绑定为一个逻辑网卡，实现本地网卡的冗余，带宽扩容和负载均衡，提供链路级别的故障保护，在生产场景中是常用的技术。
+网卡Bond是Kernels 2.4.12及以后的版本均供bonding模块，以前的版本可以通过patch实现。
+CentOS6及之前都是使用bond机制来实现多网络绑定同一个IP地址，来对网络提供访问，并按不同的模式来负载均衡或者轮回接替管理处理数据。 而到了ContOS7之后，引入NetworkManager来管理网络，通过命令行工具nmcli进行配置，nmcli会根据命令参数的配置来重新生成特定的配置文件来供网络接口使用，nmcli支持bond技术和新的team机制。在Centos7有这两种技术可供选择。 本文将从技术原理和应用实践两方面对这两项技术展开讲解。
+、、、、、、、、、、、、、、、、、、、、、、
+虚拟交换机xxx
+Bond、Team对比 “Bonding” 和 “nmcli的网络组Network Teaming”二者实现的功能一样，但从某种角度，网络组要比Bonding的技术要好
+Bond详解 bonding的详细帮助
+/usr/share/doc/kernel-doc- version/Documentation/networking/bonding.txt https://www.kernel.org/doc/Documentation/networking/bonding.txt
+Bond模式七模式 https://zhiliao.h3c.com/Theme/details/24694
+交换机多端口和服务器对接时，需要确定是否需要配置聚合或者不配置聚合，并且配置聚合的时候还需要确认是静态聚合还是动态聚合，当然这和当前服务器网卡的bond模式有关。下面我们了解下Linux服务器的7种bond模式，说明如下：
+ ==mod=0 (balance-rr) Round-robin policy（平衡抡循环策略）==   轮询策略：按照顺序轮流使用每个接口来发送和接收数据包，提高了负载均衡和冗余的能力，带宽翻倍。 该模式所有端口的mac地址相同 ==交换机侧做静态链路聚合==  H3C V3平台交换机侧的静态典型配置 [H3C] link-aggregation group 1 mode manual [H3C] interface ethernet2/1/1 [H3C-Ethernet2/1/1] port link-aggregation group 1 H3C V5/V7交换机侧的静态典型配置 [DeviceA] interface Bridge-Aggregation 1 //默认静态 [DeviceA] interface GigabitEthernet 4/0/1 [DeviceA-GigabitEthernet4/0/1] port link-aggregation group 1   ==mod=1 (active-backup) Active-backup policy（主-备份策略）==   冗余性高：只有一个设备处于活动状态，当一个宕掉另一个马上由备份转换为主设备。 链路利用率低：只有一个接口处于工作状态。 bond的MAC地址是唯一的，切换主备时交换机侧会存在MAC漂移的记录 ==交换机无需配置或建议在同一VLAN下==   ==mod=2 (balance-xor) XOR policy（平衡策略）==【load balancing】    XOR Hash负载分担：基于指定的传输HASH策略传输数据包。缺省的策略是：(源MAC地址 XOR 目标MAC地址) % slave数量。其他的传输策略可以通过xmit_hash_policy选项指定，此模式提供负载平衡和容错能力
+</div>
+
+<div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>0001-01-01</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>12分钟阅读时长</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="/categories/blog/" class="hover:text-eureka">blog</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/posts/" class="hover:text-eureka">posts</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/linux/" class="hover:text-eureka">Linux</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/" class="hover:text-eureka">Linux网络管理</a>
+        
+    </div>
+    
+
+    
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="mb-4">
+  <a href="/posts/1.linux/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/1.linux%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80/" class="font-bold text-xl hover:text-eureka">Linux网络基础</a>
+</div>
+<div class="content">
+  https://segmentfault.com/a/1190000015476963
+https://segmentfault.com/a/1190000011954814
+bond mode为0,1,2,3,4时，bond口的MAC地址和成员口MAC地址相同；bond mode为5和6时，bond口的MAC地址不同于成员口的MAC地址。
+网卡配置详解 默认网卡配置 /etc/sysconfig/network-scripts/ifcfg-*
+TYPE=Ethernet # 网络类型（通常是Ethemet） PROXY_METHOD=none BROWSR_ONLY=no BOOTPROTO=dhcp # IP的配置方法[none|static|bootp|dhcp]（引导时不使用协议|静态分配IP|BOOTP协议|DHCP协议） DEFROUTE=yes IPV4_FAILURE_FATAL=no IPV6INIT=yes # IPV6是否有效（yes/no） IPV6_AUTOCONF=yes IPV6_DEFROUTE=yes IPV6_FAILURE_FATAL=no IPV6_ADDR_GEN_MODE=stable-privacy NAME=ens33 UUID=ac9b66bf-74fb-4bda-b89f-c66ff84c9571 # 获取新的UUID # uuidgen ens33 将获取的UUID填入配置文件后重启网卡服务 # 验证UUID # nmcli con | sed -n &#39;1,2p&#39; DEVICE=ens33 # 接口名（设备,网卡） ONBOOT=yes #ONBOOT是指明在系统启动时是否激活网卡，只有在激活状态的网卡才能去连接网络，进行网络通讯  永久生效-设置静态地址 上述默认配置文件修改加入如下配置，配置完成后systemctl restart network重启网卡服务生效
+BOOTPROTO=static #静态IP IPADDR= #本机地址 NETMASK= #子网掩码 GATEWAY= #默认网关 # DNS1= # DNS2=  临时生效-详见工具包对比 也可以通过 ip、nmlic、ifconfig管理命令进行配置，后续会展开介绍
+ifconfig eth0 192.168.0.2 netmask 255.255.255.0  vi /etc/resolv.
+</div>
+
+<div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>0001-01-01</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>6分钟阅读时长</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="/categories/blog/" class="hover:text-eureka">blog</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/posts/" class="hover:text-eureka">posts</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/linux/" class="hover:text-eureka">Linux</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/" class="hover:text-eureka">Linux网络管理</a>
+        
+    </div>
+    
+
+    
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="mb-4">
+  <a href="/posts/1.linux/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/tcpdump/" class="font-bold text-xl hover:text-eureka">TCPdump</a>
+</div>
+<div class="content">
+  参考链接： tcpdump命令详解 万字长文 实例参考
+ 配合ssh通道传入wireshark  ssh当通道让tcpdump远程抓包，再将数据实时传送到本地，再用wireshark图形化界面实时打开 https://blog.csdn.net/koalazoo/article/details/84958752
+准备工作 本地PC机上得有命令行版的ssh，图形化的SecureCRT应该不行 本地PC机上有wireshark 远程主机上有tcpdump 你有远程主机的root权限（否则你也抓不了包啊） 找到本地PC机上ssh和wireshark的路径（或者加入PATH，用于执行命令） 工作思路 基本的想法就是用ssh登录到远程主机上，发起tcpdump抓包，并将tcpdump抓到的结果输出到stdout，再传回本地PC机，而本地PC机上的wireshark以stdin为输入，两者以管道连接传输。
+命令示例
+ssh root@some.host &#39;tcpdump -i eth0 port 80 -s 0 -l -w -&#39; | wireshark -k -i -  命令执行后会弹出wireshark界面，这时需要切回刚刚的命令行，因为需要输入密码以登录远程主机（已经配置免密另说），连接成功后即开始抓包，并在本地PC的wireshark上实时显示抓包结果。
+参数解释 tcpdump中 ‘-l ’ （这里是小写的字母L）是指line-buffer，即不使用缓存，直接输出，否则就会一段段的输出。’-w -&amp;lsquo;是指写文件，目标文件为标准输出。至于tcpdump另外的参数，想抓什么端口，这个请搜下度娘，一搜一大把。
+wireshark中 ‘-k’ 是指马上开始捕获数据，’-i -’ 是指从指定接口获取，源为标准输入。
+或者可以用plink（putty的命令行版本）
+plink -ssh USER@HOST -pw PASS &amp;quot;tcpdump -s 0 -U -n -i br-lan -w - not port 22&amp;quot; | wireshark -k -i -   前言 tcpdump 的参数非常的多，初学者在没有掌握 tcpdump 时，会对这个命令的众多参数产生很多的疑惑。
+</div>
+
+<div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>0001-01-01</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>9分钟阅读时长</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="/categories/blog/" class="hover:text-eureka">blog</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/posts/" class="hover:text-eureka">posts</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/linux/" class="hover:text-eureka">Linux</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/" class="hover:text-eureka">Linux网络管理</a>
+        
+    </div>
+    
+
+    
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="mb-4">
+  <a href="/posts/1.linux/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/2.%E7%BD%91%E7%BB%9C%E6%9C%8D%E5%8A%A1%E5%92%8C%E5%B7%A5%E5%85%B7%E9%9B%86/" class="font-bold text-xl hover:text-eureka">网络服务和工具集</a>
+</div>
+<div class="content">
+  网络服务和工具集&amp;mdash;&amp;ndash;network&amp;ndash;&amp;raquo;NetworkManager net-tool&amp;ndash;&amp;raquo;iproute
+https://ywnz.com/linuxml/4388.html
+https://linuxtechlab.com/managing-network-using-ifconfig-nmcli-commands/
+https://www.tecmint.com/ifconfig-vs-ip-command-comparing-network-configuration/
+从RHEL/CentOS6开始，NetworkManager服务就是其组成部分； 从RHEL/CentOS7开始，默认开机后就启用NetworkManager服务，非传统的network服务，它不需要重启，从而可以实现动态管理配置； nmcli是一个用于控制NetworkManager和报告网络状态的命令行工具，它用于创建、显示、编辑、删除、激活和停用网络连接以及显示网络状态。
+在CentOS系统上，目前有NetworkManager和network两种网络管理工具。如果两种都配置会引起冲突，而且NetworkManager在网络断开的时候，会清理路由，如果一些自定义的路由，没有加入到NetworkManager的配置文件中，路由就被清理掉，网络连接后需要自定义添加上去。
+常用网络工具的使用： net-tool、route2、nmcli、进行对比总结命令
+ethtool、TCPdump、端口lsot
+lldp、 SNMP、Nmap、简单的网卡流量监控、路由
+ 如今很多系统管理员依然通过组合使用诸如ifconfig、route、arp和netstat等命令行工具（统称为net-tools）来配置网络功能，解决网络故障。net-tools起源于BSD的TCP/IP工具箱，后来成为老版本Linux内核中配置网络功能的工具。**但自2001年起，Linux社区已经对其停止维护。**同时，一些Linux发行版比如Arch Linux和CentOS/RHEL 7则已经完全抛弃了net-tools，只支持iproute2。
+作为网络配置工具的一份子，iproute2的出现旨在从功能上取代net-tools。net-tools通过procfs(/proc)和ioctl系统调用去访问和改变内核网络配置，而iproute2则通过netlink套接字接口与内核通讯。抛开性能而言，iproute2的用户接口比net-tools显得更加直观。比如，各种网络资源（如link、IP地址、路由和隧道等）均使用合适的对象抽象去定义，使得用户可使用一致的语法去管理不同的对象。更重要的是，到目前为止，iproute2仍处在持续开发中。
+如果你仍在使用net-tools，而且尤其需要跟上新版Linux内核中的最新最重要的网络特性的话，那么是时候转到iproute2的阵营了。原因就在于使用iproute2可以做很多net-tools无法做到的事情。
+对于那些想要转到使用iproute2的用户，有必要了解下面有关net-tools和iproute2的众多对比。
+https://blog.csdn.net/leshami/article/details/78021859
+https://linux.cn/article-4326-1
+</div>
+
+<div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>0001-01-01</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>1分钟阅读时长</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="/categories/blog/" class="hover:text-eureka">blog</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/posts/" class="hover:text-eureka">posts</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/linux/" class="hover:text-eureka">Linux</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/" class="hover:text-eureka">Linux网络管理</a>
+        
+    </div>
+    
+
+    
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
+  
+</div>
+
+
+</div>
+
+
+
+
+      </div>
+    </div>
+    
+  </main>
+  <footer class="pl-scrollbar">
+    <div class="w-full max-w-screen-xl mx-auto"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 2021 <a href="https://www.songjinfeng.com/">SonJinfeng</a> 
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+  </footer>
+</body>
+
+</html>

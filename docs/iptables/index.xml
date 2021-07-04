@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Iptables详解 on Songjinfeng&#39;s BLOG</title>
+    <link>/docs/iptables/</link>
+    <description>Recent content in Iptables详解 on Songjinfeng&#39;s BLOG</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language>
+    <copyright>&amp;copy; 2021 &lt;a href=&#34;https://www.songjinfeng.com/&#34;&gt;SonJinfeng&lt;/a&gt; 
+</copyright>
+    <lastBuildDate>Wed, 21 Apr 2021 00:00:00 +0000</lastBuildDate><atom:link href="/docs/iptables/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Iptables详解(1)概念</title>
+      <link>/docs/iptables/iptables%E8%AF%A6%E8%A7%A31%E6%A6%82%E5%BF%B5/</link>
+      <pubDate>Wed, 21 Apr 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/docs/iptables/iptables%E8%AF%A6%E8%A7%A31%E6%A6%82%E5%BF%B5/</guid>
+      <description>&lt;p&gt;iptables/netfilter的关系，五链四表的关系，数据转发流程。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Iptables详解(2)管理</title>
+      <link>/docs/iptables/iptables%E8%AF%A6%E8%A7%A32%E5%9F%BA%E7%A1%80%E7%AE%A1%E7%90%86%E5%91%BD%E4%BB%A4/</link>
+      <pubDate>Wed, 21 Apr 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/docs/iptables/iptables%E8%AF%A6%E8%A7%A32%E5%9F%BA%E7%A1%80%E7%AE%A1%E7%90%86%E5%91%BD%E4%BB%A4/</guid>
+      <description>&lt;p&gt;iptables 增删改查 常用语句&lt;/p&gt;
+&lt;p&gt;iptables -t 表名 -[ A | I | D] 链名 (规则编号) 匹配规则 -j 动作&lt;/p&gt;
+&lt;p&gt;iptables [-t 表名] 选项 [链名] [匹配条件] [-j 控制类型]&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Iptables详解(3)2扩展匹配条件模块</title>
+      <link>/docs/iptables/iptables%E8%AF%A6%E8%A7%A332%E6%89%A9%E5%B1%95%E5%8C%B9%E9%85%8D%E6%9D%A1%E4%BB%B6%E6%A8%A1%E5%9D%97/</link>
+      <pubDate>Wed, 21 Apr 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/docs/iptables/iptables%E8%AF%A6%E8%A7%A332%E6%89%A9%E5%B1%95%E5%8C%B9%E9%85%8D%E6%9D%A1%E4%BB%B6%E6%A8%A1%E5%9D%97/</guid>
+      <description>&lt;p&gt;1&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;基本匹配&lt;/li&gt;
+&lt;li&gt;拓展匹配模块&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;s d p i o&lt;/p&gt;
+&lt;p&gt;tcp udp icmp&lt;/p&gt;
+&lt;p&gt;iprange  multiport mac&lt;/p&gt;
+&lt;p&gt;string time connlimit limit&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Iptables详解(3)3安全模块</title>
+      <link>/docs/iptables/iptables%E8%AF%A6%E8%A7%A333%E5%AE%89%E5%85%A8%E6%A8%A1%E5%9D%97/</link>
+      <pubDate>Wed, 21 Apr 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/docs/iptables/iptables%E8%AF%A6%E8%A7%A333%E5%AE%89%E5%85%A8%E6%A8%A1%E5%9D%97/</guid>
+      <description>&lt;p&gt;未完待续。。。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Iptables详解(4)处理动作</title>
+      <link>/docs/iptables/iptables%E8%AF%A6%E8%A7%A34%E5%A4%84%E7%90%86%E5%8A%A8%E4%BD%9C/</link>
+      <pubDate>Wed, 21 Apr 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/docs/iptables/iptables%E8%AF%A6%E8%A7%A34%E5%A4%84%E7%90%86%E5%8A%A8%E4%BD%9C/</guid>
+      <description>参考链接：http://www.faqs.org/docs/iptables/targets.html
+常用的处理动作： (-j 指定对满足条件包的处理，常用动作有ACCEPT接受报、DROP丢弃报、REJECT丢弃报并通知对方、REDIRECT重定向包等)
+-j 参数用来指定要进行的处理动作，常用的处理动作包括：ACCEPT、REJECT、DROP、REDIRECT、MASQUERADE、LOG、DNAT、SNAT、MIRROR、QUEUE、RETURN、MARK，分别说明如下：
+ACCEPT 将封包放行，进行完此处理动作后，将不再比对其它规则，直接跳往下一个规则链（natostrouting）。
+REJECT 拦阻该封包，并传送封包通知对方，可以传送的封包有几个选择：ICMP port-unreachable、ICMP echo-reply 或是 tcp-reset（这个封包会要求对方关闭联机），进行完此处理动作后，将不再比对其它规则，直接中断过滤程序。
+例如：iptables -A FORWARD -p TCP &amp;ndash;dport 22 -j REJECT &amp;ndash;reject-with tcp-reset
+DROP 丢弃封包不予处理，进行完此处理动作后，将不再比对其它规则，直接中断过滤程序。
+REDIRECT 将封包重新导向到另一个端口（PNAT），进行完此处理动作后，将会继续比对其它规则。
+​ 这个功能可以用来实作通透式porxy 或用来保护 web 服务器。
+​ 例如：iptables -t nat -A PREROUTING -p tcp &amp;ndash;dport 80 -j REDIRECT &amp;ndash;to-ports 8080
+MASQUERADE 改写封包来源 IP 为防火墙 NIC IP，可以指定 port 对应的范围，进行完此处理动作后，直接跳往下一个规则（mangleostrouting）。这个功能与 SNAT 略有不同，当进行 IP 伪装时，不需指定要伪装成哪个 IP，IP 会从网卡直接读，当使用拨接连线时，IP 通常是由 ISP 公司的 DHCP 服务器指派的，这个时候 MASQUERADE 特别有用。
+ 例如：iptables -t nat -A POSTROUTING -p TCP -j MASQUERADE --to-ports 1024-31000  LOG 使用LOG动作，可以将符合条件的报文的相关信息记录到日志中，但当前报文具体是被”接受”，还是被”拒绝”，都由后面的规则控制，换句话说，LOG动作只负责记录匹配到的报文的相关信息，不负责对报文的其他处理，如果想要对报文进行进一步的处理，可以在之后设置具体规则，进行进一步的处理。</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>/docs/iptables/iptables%E8%AF%A6%E8%A7%A37%E8%87%AA%E5%AE%9A%E4%B9%89%E9%93%BE/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/docs/iptables/iptables%E8%AF%A6%E8%A7%A37%E8%87%AA%E5%AE%9A%E4%B9%89%E9%93%BE/</guid>
+      <description>黑白名单 在配置IPTABLES白名单时，往往会将链的默认策略设置为ACCEPT，通过在链的最后设置REJECT规则实现白名单机制，而不是将链的默认策略设置为DROP，如果将链的默认策略设置为DROP，当链中的规则被清空时，管理员的请求也将会被DROP掉。
+首先我们来复习一下一个概念：报文在经过iptables的链时，会匹配链中的规则，遇到匹配的规则时，就执行对应的动作，如果当前链accept了则进入下一个链继续匹配，当链中的规则都无法匹配到当前报文，则使用链的默认策略（默认动作），链的默认策略通常设置为ACCEPT或者DROP。
+所以，当链的默认策略为ACCEPT时，链中的规则对应的动作应该为DROP或者REJECT，表示只有匹配到规则的报文才会被拒绝，没有被规则匹配到的报文都会被默认接受，这就是”黑名单”机制。
+同理，当链的默认策略为DROP时，链中的规则对应的动作应该为ACCEPT，表示只有匹配到规则的报文才会被放行，没有被规则匹配到的报文都会被默认拒绝，这就是”白名单”机制。
+自定义链 想象一下，如果INPUT链中存放了200条规则，这200条规则有针对httpd服务的，有针对sshd服务的，有针对私网IP的，有针对公网IP的，假如，我们突然想要修改针对httpd服务的相关规则，难道我们还要从头看一遍这200条规则，找出哪些规则是针对httpd的吗？这显然不合理。
+创建自定义链 所以，iptables中，可以自定义链，通过自定义链即可解决上述问题。
+如上图所示，”-t filter”表示操作的表为filter表，与之前的示例相同，省略-t选项时，缺省操作的就是filter表。
+“-N IN_WEB”表示创建一个自定义链，自定义链的名称为”IN_WEB”
+自定义链创建完成后，查看filter表中的链，如上图所示，自定义链已经被创建，而且可以看到，这条自定义链的引用计数为0 (0 references)，也就是说，这条自定义链还没有被任何默认链所引用，所以，即使IN_WEB中配置了规则，也不会生效，我们现在不用在意它，继续聊我们的自定义链。
+在我们就可以直接在自定义链中配置规则了，如下图所示，我们配置一些规则用于举例。
+引用自定义链 自定义链在哪里创建，应该被哪条默认链引用，取决于实际的工作场景，因为此处示例的规则是匹配入站报文，所以在INPUT链中引用自定义链。示例如下。
+当”-j”对应的值为一个自定义链时，就表示被当前规则匹配到的报文将交由对应的自定义链处理，具体怎样处理，取决于自定义链中的规则，当IN_WEB自定义链被INPUT链引用以后，可以发现，IN_WEB链的引用计数已经变为1，表示这条自定义链已经被引用了1次，自定义链还可以引用其他的自定义链。
+在之前的文章中，我们说过，”动作”在iptables中被称为”target”，这样描述并不准确，因为target为目标之意，报文被规则匹配到以后，target能是一个”动作”，target也能是一个”自定义链”，当target为一个动作时，表示报文按照指定的动作处理，当target为自定义链时，表示报文由自定义链中的规则处理，现在回过头再理解之前的术语，似乎更加明了了。
+改名自定义链 过了一段时间，我们发现IN_WEB这个名字不太合适，我们想要将这条自定义链重命名，把名字改成WEB，可以吗？必须能啊，示例如下
+如上图所示，使用”-E”选项可以修改自定义链名，如上图所示，引用自定义链处的名称会自动发生改变。
+删除自定义链 使用”-X”选项可以删除自定义链，但是删除自定义链时，需要满足两个条件：
+1、自定义链没有被任何默认链引用，即自定义链的引用计数为0。
+删除提示：Too many links，是因为WEB链已经被默认链所引用，不满足上述条件1，所以，我们需要删除对应的引用规则，iptables -D INPUTE 1
+2、自定义链中没有任何规则，即自定义链为空。
+删除提示：Directory not empty，是因为WEB链中存在规则，不满足上述条件2，所以，我们需要清空对应的自定义链，iptables -t fillter -F WEB
+防火墙 主机防火墙：针对于单个主机进行防护。
+网络防火墙： 往往处于网络入口或边缘，针对于网络入口进行防护，服务于防火墙背后的本地局域网。
+前文的举例中，iptables都是作为主机防火墙的角色出现的，那么，iptables怎样作为网络防火墙呢？这就是我们今天要聊的话题。
+当外部网络中的主机与网络内部主机通讯时，不管是由外部主机发往内部主机的报文，还是由内部主机发往外部主机的报文，都需要经过iptables所在的主机，由iptables所在的主机进行”过滤并转发”，所以，防火墙主机的主要工作就是”过滤并转发”，那么，说到这里，我们则不得不再次回顾之前的iptables报文流程图了，如下：
+前文中，iptables都是作为”主机防火墙”的角色出现的，所以我们举例时，只用到了上图中的INPUT链与OUTPUT链，因为拥有”过滤功能”的链只有3条，INPUT、OUTPUT、FORWARD，当报文发往本机时，如果想要过滤，只能在INPUT链与OUTPUT链中实现，而此时，iptables的角色发生了转变，我们想要将iptables所在的主机打造成”网络防火墙”，而刚才已经说过，网络防火墙的职责就是”过滤并转发”，要想”过滤”，只能在INPUT、OUTPUT、FORWARD三条链中实现，要想”转发”，报文则只会经过FORWARD链（发往本机的报文才会经过INPUT链），所以，综上所述，iptables的角色变为”网络防火墙”时，规则只能定义在FORWARD链中。
+实验 A 可ping通 b：10.1.0.3
+B开启内核转发后 A才能ping通C
+不管是由内而外，还是由外而内，只要是”响应报文”，我们统统放行，配置如下，配置完上述规则后，我们只要考虑请求报文的方向就行了，而回应报文，
+#如果想要iptables作为网络防火墙，iptables所在主机开启核心转发功能，以便能够转发报文。 #使用如下命令查看当前主机是否已经开启了核心转发，0表示为开启，1表示已开启 cat /proc/sys/net/ipv4/ip_forward #使用如下两种方法均可临时开启核心转发，立即生效，但是重启网络配置后会失效。 方法一：echo 1 &amp;gt; /proc/sys/net/ipv4/ip_forward 方法二：sysctl -w net.ipv4.ip_forward=1 #使用如下方法开启核心转发功能，重启网络服务后永久生效。 配置/etc/sysctl.conf文件（centos7中配置/usr/lib/sysctl.d/00-system.conf文件），在配置文件中将 net.ipv4.ip_forward设置为1 #由于iptables此时的角色为&amp;quot;网络防火墙&amp;quot;，所以需要在filter表中的FORWARD链中设置规则。 #可以使用&amp;quot;白名单机制&amp;quot;，先添加一条默认拒绝的规则，然后再为需要放行的报文设置规则。 #配置规则时需要考虑&amp;quot;方向问题&amp;quot;，针对请求报文与回应报文，考虑报文的源地址与目标地址，源端口与目标端口等。 #示例为允许网络内主机访问网络外主机的web服务与sshd服务。 iptables -A FORWARD -j REJECT iptables -I FORWARD -s 10.</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>/docs/iptables/iptables%E8%AF%A6%E8%A7%A3%E5%85%B6%E4%BB%96/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/docs/iptables/iptables%E8%AF%A6%E8%A7%A3%E5%85%B6%E4%BB%96/</guid>
+      <description>title: limit hashlimit https://blog.51cto.com/lvsheat/142567
+利用hashlimit来限速需要包括两个步骤。 1.对符合hashlimit匹配规则包放行 2.丢弃/拒绝未放行的包 下面是一个简单的例子： iptables -A INPUT -p tcp --dport 22 -m hashlimit --hashlimit-name ssh --hashlimit 5/sec --hashlimit-burst 10 --hashlimit-mode srcip --hashlimit-htable-expire 90000 -j ACCEPT iptables -A INPUT -p tcp --dport 22 -j DROP  hashlimit的匹配是基于令牌桶(Token bucket）模型的。
+只要令牌桶中的令牌数量少于n，它就会以速率s来产生新的令牌，直到令牌数量到达n为止。
+通过令牌桶机制，即可以有效的控制单位时间内通过（匹配）的数据包数量，又可以容许短时间内突发的大量数据包的通过（只要数据包数量不超过令牌桶n）。
+hashlimit模块提供了两个参数&amp;ndash;hashlimit和&amp;ndash;hashlimit-burst，分别对应于令牌产生速率和令牌桶容量。
+除了令牌桶模型外，hashlimit匹配的另外一个重要概念是匹配项。 在hashlimit中，每个匹配项拥有一个单独的令牌桶，执行独立的匹配计算。 通过hashlimit的&amp;ndash;hashlimit-mode参数，你可以指定四种匹配项及其组合
+ srcip（每个源地址IP为一个匹配项） dstip(每个目的地址IP为一个匹配项） srcport(每个源端口为一个匹配项） dstport（每个目的端口为一个匹配项）  除了前面介绍的三个参数外，hashlimit还有一个必须要用的参数，即&amp;ndash;hashlimit-name。
+hashlimit会在/proc/net/ipt_hashlimit目录中，为每个调用了hashlimit模块的iptables命令建立一个文件，其中保存着各匹配项的信息。&amp;ndash;hashlimit-name参数即用来指定该文件的文件名。
+再来我们看一个复杂点的限速。假设我们现在在一台NAT网关上，想限制内部网某个网段 192.168.1.2/24对外的访问频率。（这个的主要作用是限制内部中毒主机对外的flood攻击 ） 那我们可以这么做： iptables -N DEFLOOD iptables -A FORWARD -s 192.168.1.2/24 -m state --state NEW -j DEFLOOD iptables -A DEFLOOD -m hashlimit --hashlimit-name deflood --hashlimit 10/sec --hashlimit-burst 10 --hashlimit-mode srcip -j ACCEPT iptables -P DEFLOOD -j DROP 第一条命令建立了一个自定义的处理链 第二条命令，所有来自192.</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>/docs/iptables/%E5%88%A9%E7%94%A8-iptables-%E5%8A%A0%E4%B8%8A-recent-%E6%A8%A1%E5%9D%97%E9%98%BB%E6%8C%A1%E5%A4%A7%E9%87%8F%E7%9A%84%E8%AF%B7%E6%B1%82/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/docs/iptables/%E5%88%A9%E7%94%A8-iptables-%E5%8A%A0%E4%B8%8A-recent-%E6%A8%A1%E5%9D%97%E9%98%BB%E6%8C%A1%E5%A4%A7%E9%87%8F%E7%9A%84%E8%AF%B7%E6%B1%82/</guid>
+      <description>利用 iptables 加上 recent 模块，阻挡大量的请求 https://blog.51cto.com/lvsheat/142530
+新版的 iptables 有个好用简单又有效率的功能，可以设定它阻止瞬间联机太多的来源 IP。这种阻挡功能在某些很受欢迎的，特别像是大型讨论区网站，每个网页都遭到「无知却故意」的人士。一瞬间太多的链接访问，导致服务器呈现呆滞状态。 这时，就需要下列的三行指令： iptables -I INPUT -p tcp &amp;ndash;dport 80 -d SERVER_IP -m state &amp;ndash;state NEW -m recent &amp;ndash;name httpuser &amp;ndash;set
+iptables -A INPUT -m recent &amp;ndash;update &amp;ndash;name httpuser &amp;ndash;seconds 60 &amp;ndash;hitcount 9 -j LOG &amp;ndash;log-prefix &amp;lsquo;HTTP attack: &#39;
+iptables -A INPUT -m recent &amp;ndash;update &amp;ndash;name httpuser &amp;ndash;seconds 60 &amp;ndash;hitcount 9 -j DROP 其中 SERVER_IP 换上被攻击的服务器 IP。 \1. 第一行的意思是：-I，将本规则插入到 INPUT 链里头的最上头。什么样的规则呢？只要是 TCP 性质的联机，目标端口是80，目标 IP 是我们机器的IP，刚刚新被建立起来时，我们就将这个联机列入 httpuser 这分清单中。 \2.</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>/docs/iptables/%E6%80%BB%E7%BB%93%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/docs/iptables/%E6%80%BB%E7%BB%93%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/</guid>
+      <description>用法 https://blog.csdn.net/qq_41816540/article/details/83339175 https://www.cnblogs.com/mangood/p/6001661.html https://www.cnblogs.com/fengzhongzhuzu/p/9075935.html
+各种MARK 功能的用法 https://blog.csdn.net/wsclinux/article/details/53084904
+排错问题 https://bbs.csdn.net/topics/380162266 https://www.it1352.com/2084786.html
+3.还可以按数据包速率和状态匹配 -m limit &amp;ndash;limit 匹配速率 如： -m limit &amp;ndash;limit 50/s -j ACCEPT -m state &amp;ndash;state 状态 如： -m state &amp;ndash;state INVALID,RELATED -j ACCEPT
+4.还可以限制链接数
+-m connlimit &amp;ndash;connlimit-above n 限制为多少个
+​ 例如：
+​ iptables -I FORWARD -p tcp -m connlimit &amp;ndash;connlimit-above 9 -j DROP //表示限制链接数最大为9个
+5、模拟随机丢包率
+​ iptables -A FORWARD -p icmp -m statistic &amp;ndash;mode random &amp;ndash;probability 0.31 -j REJECT //表示31%的丢包率
+​ 或者
+​ -m random &amp;ndash;average 5 -j DROP 表示模拟丢掉5%比例的包</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>/docs/iptables/%E6%9C%AA%E5%8F%91%E5%B8%83/iptables-or-nftables/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/docs/iptables/%E6%9C%AA%E5%8F%91%E5%B8%83/iptables-or-nftables/</guid>
+      <description>&lt;h1 id=&#34;centos-8-都上生产了你还在用-iptables-吗是时候拥抱下一代防火墙-nftables-了&#34;&gt;CentOS 8 都上生产了，你还在用 iptables 吗，是时候拥抱下一代防火墙 nftables 了！&lt;/h1&gt;
+&lt;p&gt;&lt;a href=&#34;https://blog.csdn.net/easylife206/article/details/103142273&#34;&gt;https://blog.csdn.net/easylife206/article/details/103142273&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/iptables%E8%A2%AB%E6%8A%9B%E5%BC%83/2021.04.14-16:53:11-D-assets-iptables%E8%A2%AB%E6%8A%9B%E5%BC%83-image-20210414165310006.png&#34; alt=&#34;image-20210414165310006&#34;&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>iptables CLUSTERIP模块 负载均衡</title>
+      <link>/docs/iptables/cluster%E6%A8%A1%E5%9D%97/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/docs/iptables/cluster%E6%A8%A1%E5%9D%97/</guid>
+      <description>本章只涉及部分参数讲解，完整参数可查看man手册或Iptables Tutorial
+ 参考链接：
+iptables CLUSTERIP构建独特的负载均衡集群
+CLUSTERIP for load-balancing and HA
+Iptables Tutorial 1.2.2 Prev——Chapter 11. Iptables targets and jumps
+  请记住，CLUSTERIP可能会破坏SSH等协议。可能连接到集群内部任意一台主机上，因此，这在某些协议中不能很好地工作，建议添加单独的ip地址以用于维护和管理。
+ 基本概念 一般负载均衡器会决策将数据发往集群内的某一个节点进行处理，与之不同的是CLUSTERIP负载均衡模式会将数据包发往所有服务器，由服务器决定是否处理。
+具体过程：
+  服务节点具有相同的IP，使用组播MAC
+  收到上游L2/L3对服务IP地址的ARP请求时，集群中的机器便回复相同的组播MAC地址，使上游L3/L2设备，在每个连接服务器的端口泛洪发送相同数据包。
+  服务器收到数据包后，采用相同Hash算法计算数据包的哈希值，如果该哈希值与本地节点标识符匹配，则该数据包将被传递，否则该数据包将被丢弃。
+最简单的算法就是源IP地址对集群机器数量取模*，集群中的n台机器按照从0开始到n−1编号，每台机器*认领自己编号的运算结果*即可。最终的结果只要能保证同一个请求有且只有一台集群中的服务器处理***即可！
+  hashmode 介绍 &amp;ndash;hashmode关键字可以使用三种哈希模式对集群进行负载均衡。
+  第一个是仅源IP（sourceip）， 将在连接之间提供更好的性能和保持连接状态，但在机器之间的负载平衡方面却不那么好。 例如，一个带有购物车的Web服务器在连接之间保持状态，这种负载平衡可能会变得有些不平衡-不同的机器可能会承受更高的负载比其他情况更重要-因为来自同一源IP的连接将到达同一服务器
+  第二个是源IP和源端口（sourceip-sourceport）， 散列速度会稍慢一些，不能很好地维持连接之间的状态，但是会提供更均匀的负载平衡属性。 例如，一个大型的信息网页，也许带有一个简单的搜索引擎，在这里可能是个好主意。
+  第三个是源IP，源端口和目标端口（sourceip-sourceport-destport） 可能会创建非常慢的散列，从而消耗大量内存，但另一方面，也会创建非常好的负载平衡属性。 其中您的主机运行着多个服务，不需要在连接之间保留任何状态。例如，这可能是同一主机上的简单ntp，dns和www服务器。
+  iptables实验 基本配置 # 服务器1上的配置 iptables -I INPUT -d 192.168.44.3 -i eth0 -p tcp --dport 80 -j CLUSTERIP --new --hashmode sourceip --clustermac 01:00:9A:1E:40:0A --total-nodes 3 --local-node 1 # 服务器2上的配置 iptables -I INPUT -d 192.</description>
+    </item>
+    
+  </channel>
+</rss>

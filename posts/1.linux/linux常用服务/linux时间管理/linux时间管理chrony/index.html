@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang='zh' ><meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+
+
+<title>Linux时间管理(2)：Chrony | Songjinfeng&#39;s BLOG</title>
+<link rel="stylesheet" href="/css/eureka.min.css">
+<script defer src="/js/eureka.min.js"></script>
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Noto+Serif+SC:wght@400;600;700&display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/styles/solarized-light.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/highlight.min.js"
+   crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/dart.min.js"
+     crossorigin></script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/js/all.min.js"
+   integrity="sha256-uNYoXefWRqv&#43;PsIF/OflNmwtKM4lStn9yrz2gVl6ymo="  crossorigin></script>
+
+
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css"
+   integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3&#43;Aro6EYUG4&#43;cU&#43;KJWu/X"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js" 
+  integrity="sha384-g7c&#43;Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI&#43;sEnkvrMWph2EDg4"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js"
+   integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC&#43;Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.9.2/dist/mermaid.min.js" 
+  integrity="sha256-Zmpaaj&#43;GXFsPF5WdPArSrnW3b30dovldeKsW00xBVwE="  crossorigin></script>
+
+
+<link rel="icon" type="image/png" sizes="32x32" href="/images/icon_hucfa16751ac9c82c06b84c3502c0db793_16378_32x32_fill_box_center_2.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hucfa16751ac9c82c06b84c3502c0db793_16378_180x180_fill_box_center_2.png">
+
+<meta name="description"
+  content="再见 NTP，是时候拥抱下一代时间同步服务 Chrony 了">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"技术专栏",
+      "item":"/posts/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"Linux",
+      "item":"/posts/1.linux/"},{
+      "@type": "ListItem",
+      "position": 3 ,
+      "name":"Linux时间管理(2)：Chrony",
+      "item":"/posts/1.linux/linux%E5%B8%B8%E7%94%A8%E6%9C%8D%E5%8A%A1/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86chrony/"}]
+}
+</script>
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/posts/1.linux/linux%E5%B8%B8%E7%94%A8%E6%9C%8D%E5%8A%A1/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86chrony/"
+    },
+    "headline": "Linux时间管理(2)：Chrony | Songjinfeng\u0027s BLOG","datePublished": "2021-04-14T00:00:00+00:00",
+    "dateModified": "2021-04-14T00:00:00+00:00",
+    "wordCount":  796 ,
+    "author": {
+        "@type": "Person",
+        "name": "songjinfeng"
+    },
+    "publisher": {
+        "@type": "Person",
+        "name": "JF. Song",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "/images/icon.png"
+        }
+        },
+    "description": "\u003cp\u003e再见 NTP，是时候拥抱下一代时间同步服务 Chrony 了\u003c\/p\u003e"
+}
+</script><meta property="og:title" content="Linux时间管理(2)：Chrony | Songjinfeng&#39;s BLOG" />
+<meta property="og:type" content="article" />
+
+
+<meta property="og:image" content="/images/icon.png">
+
+
+<meta property="og:url" content="/posts/1.linux/linux%E5%B8%B8%E7%94%A8%E6%9C%8D%E5%8A%A1/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86chrony/" />
+
+
+
+
+<meta property="og:description" content="再见 NTP，是时候拥抱下一代时间同步服务 Chrony 了" />
+
+
+
+
+<meta property="og:locale" content="zh" />
+
+
+
+
+<meta property="og:site_name" content="Songjinfeng&#39;s BLOG" />
+
+
+
+
+
+
+<meta property="article:published_time" content="2021-04-14T00:00:00&#43;00:00" />
+
+
+<meta property="article:modified_time" content="2021-04-14T00:00:00&#43;00:00" />
+
+
+
+<meta property="article:section" content="posts" />
+
+
+
+
+
+
+
+
+<meta property="og:see_also" content="/posts/1.linux/linux%E5%B8%B8%E7%94%A8%E6%9C%8D%E5%8A%A1/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5&#43;%E5%B7%A5%E5%85%B7/" />
+
+
+
+
+
+<meta property="og:see_also" content="/posts/1.linux/linux%E5%B8%B8%E7%94%A8%E6%9C%8D%E5%8A%A1/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86ntpdntpdate/" />
+
+
+
+<meta property="og:see_also" content="/posts/1.linux/linux%E5%B8%B8%E7%94%A8%E6%9C%8D%E5%8A%A1/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86ntpchrony%E5%AF%B9%E6%AF%94/" />
+
+
+
+
+
+<body class="flex flex-col min-h-screen">
+  <header class="fixed flex items-center w-full min-h-16 pl-scrollbar z-50 bg-secondary-bg shadow-sm">
+    <div class="w-full max-w-screen-xl mx-auto"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="mr-6 text-primary-text text-xl font-bold">Songjinfeng&#39;s BLOG</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:flex-grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:flex-grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  mr-4">技术专栏</a>
+            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">文档笔记</a>
+            <a href="/series/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">主题系列</a>
+            <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">标签</a>
+            <a href="/authors/songjinfeng/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">关于</a>
+            <a href="/index.xml" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">RSS</a>
+            <a href="/webstack" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">友链&amp;导航</a>
+        </div>
+
+        <div class="flex">
+            <div class="relative pt-4 md:pt-0">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col left-0 md:left-auto right-auto md:right-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">浅色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">深色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">自动</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            switchMode('Auto')
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+  </header>
+  <main class="flex-grow pt-16">
+    <div class="pl-scrollbar">
+      <div class="w-full max-w-screen-xl lg:px-4 xl:px-8 mx-auto">
+
+
+<div class="grid grid-cols-2 lg:grid-cols-8 gap-4 lg:pt-12">
+    <div
+        class="col-span-2  lg:col-span-6 bg-secondary-bg rounded px-6 py-8">
+        <h1 class="font-bold text-3xl text-primary-text">Linux时间管理(2)：Chrony</h1>
+        <div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>2021-04-14</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>4分钟阅读时长</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="/categories/linux%E5%B8%B8%E7%94%A8%E6%9C%8D%E5%8A%A1/" class="hover:text-eureka">Linux常用服务</a>
+        
+    </div>
+    
+
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-th-list mr-1"></i>
+        
+        <a href="/series/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86/" class="hover:text-eureka">Linux时间管理</a>
+        
+    </div>
+    
+</div>
+        
+        
+        
+
+        <div class="content">
+            <p>再见 NTP，是时候拥抱下一代时间同步服务 Chrony 了</p>
+<p><a href="https://www.cnblogs.com/pipci/p/12871993.html">https://www.cnblogs.com/pipci/p/12871993.html</a></p>
+<p><a href="https://cloud.tencent.com/developer/article/1546322">https://cloud.tencent.com/developer/article/1546322</a></p>
+<p>chrony官网：https://chrony.tuxfamily.org
+chrony官方文档：https://chrony.tuxfamily.org/documentation.html</p>
+<h1 id="简介">简介</h1>
+<p><code>Chrony</code> 是一个多功能的 <code>NTP (Network Time Protocol)</code> 实现，类 <code>Unix</code> 系统上 <code>NTP</code> 客户端和服务器的替代品。它可以通过 <code>NTP</code> 服务或者类似 <code>GPS</code> 时钟接收器的硬件级参考时钟来同步系统时钟，具有更好的时钟准确度，并且对于那些间歇性互联网连接的系统很有帮助。<code>Chrony</code> 是免费开源的，并且支持 <code>GNU/Linux</code> 和 <code>BSD</code> 衍生版（比如：<code>FreeBSD</code>、<code>NetBSD</code>）、<code>macOS</code> 和 <code>Solaris</code> 等。</p>
+<p><code>Chrony</code> 有两个核心组件：一个是 <code>chronyd</code> 守护进程，主要用于调整内核中运行的系统时间和时间服务器同步。它确定计算机增减时间的比率，并对此进行调整补偿。另一个是 <code>chronyc</code>，它提供一个用户界面，用于监控性能并进行多样化的配置。<code>chronyc</code> 可以在 <code>chronyd</code> 实例控制的计算机上工作，也可以在一台不同的远程计算机上工作。</p>
+<h1 id="chrony对比ntp优势">Chrony对比NTP优势</h1>
+<p>**18.1.1。ntpd和chronyd之间的区别：**<a href="https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/system_administrators_guide/ch-configuring_ntp_using_the_chrony_suite">https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/system_administrators_guide/ch-configuring_ntp_using_the_chrony_suite</a></p>
+<p><a href="https://www.thegeekdiary.com/centos-rhel-7-chrony-vs-ntp-differences-between-ntpd-and-chronyd/">https://www.thegeekdiary.com/centos-rhel-7-chrony-vs-ntp-differences-between-ntpd-and-chronyd/</a></p>
+<p><a href="https://cloud.tencent.com/developer/article/1546322">https://cloud.tencent.com/developer/article/1546322</a></p>
+<ol>
+<li>
+<p>Chrony实现NTP协议的的自由软件。可使系统时钟与NTP服务器，参考时钟（例如GPS接收器）以及使用手表和键盘的手动输入进行同步。还可以作为NTPv4（RFC 5905）服务器和对等体运行，为网络中的计算机提供时间服务。设计用于在各种条件下良好运行，包括间歇性和高度拥挤的网络连接，温度变化（计算机时钟对温度敏感），以及不能连续运行或在虚拟机上运行的系统。
+Chrony通过Internet同步的两台机器之间的典型精度在几毫秒之内，在LAN上，精度通常为几十微秒。利用硬件时间戳或硬件参考时钟，可实现亚微秒的精度。
+NTP精度在局域网内可达0.1ms，在互联网上绝大多数的地方精度可以达到1-50ms。</p>
+</li>
+<li>
+<p><strong>ntpdate</strong>强制同步。如果cpu tick有问题，只是治标不治本，一般配合crontab做定时任务。
+使用chronyd、ntpd服务，要好于ntpdate加cron的组合。因为，ntpdate同步时间，会造成时间的跳跃，对一些依赖时间的程序和服务会造成影响。比如sleep，timer等。而且，chronyd、ntpd服务可以在修正时间的同时，修正cpu tick。</p>
+</li>
+<li>
+<p>与 <code>ntpd</code> 或者 <code>ntpdate</code> 最大的区别就是，<code>Chrony</code> 的修正是连续的，通过减慢时钟或者加快时钟的方式连续的修正。而 <code>ntpd</code> 或者 <code>ntpdate</code> 搭配 <code>Crontab</code> 的校时工具是直接调整时间，会出现间断，并且相同时间可能会出现两次。因此，请放弃使用 <code>ntpd</code>、<code>ntpdate</code> 来校时。</p>
+</li>
+</ol>
+<p>2、3？？</p>
+<ol start="2">
+<li>更快的同步，从而最大程度减少了时间和频率误差，对于并非全天 24 小时运行的虚拟计算机而言非常有用，能够更好地响应时钟频率的快速变化，对于具备不稳定时钟的虚拟机或导致时钟频率发生变化的节能技术而言非常有用</li>
+<li>在初始同步后，它不会停止时钟，以防对需要系统时间保持单调的应用程序造成影响</li>
+<li>在应对临时非对称延迟时（例如，在大规模下载造成链接饱和时）提供了更好的稳定性</li>
+<li>无需对服务器进行定期轮询，因此具备间歇性网络连接的系统仍然可以快速同步时</li>
+</ol>
+<h1 id="安装">安装</h1>
+<p>从 <code>Centos 7.x</code> 开始的最小发行版中都已经预装并开启了 <code>Chrony</code>。如果你的系统上没有安装 <code>Chrony</code>，你也可以使用<code>$ yum -y install chrony </code>命令轻松安装它。</p>
+<p>服务unit文件： /usr/lib/systemd/system/chronyd.service
+监听端口： 323/udp，123/udp
+（chrony并且兼容ntpd监听在udp123端口上，自己则监听在udp的323端口上。）
+配置文件： /etc/chrony.conf</p>
+<h1 id="配置">配置</h1>
+<p>如果在chrony配置文件中指定了ntp服务器的地址，那么chrony就是一台客户端，会去同步ntp服务器的时间，如果在chrony配置了允许某些客户端来向自己同步时间，则chrony也充当了一台服务器，chrony即可同时充当客户端和服务端。</p>
+<p><strong>命令</strong></p>
+<ol>
+<li>显示所有 NTP 源服务器的信息</li>
+</ol>
+<p>这里需要注意的是第二个参数，<code>*</code> 代表当前同步的源，<code>-</code> 代表通过组合算法计算后排除的源。</p>
+<pre><code class="language-javascript">$ chronyc sources -v
+</code></pre>
+<ol>
+<li>查看 NTP 服务器的在线和离线状态</li>
+</ol>
+<pre><code class="language-javascript">$ chronyc activity
+</code></pre>
+<ol>
+<li>查看 Chrony 服务的日志</li>
+</ol>
+<pre><code class="language-javascript">$ journalctl -u chronyd
+</code></pre>
+<ol>
+<li>检查 NTP 访问是否对特定主机可用</li>
+</ol>
+<pre><code class="language-javascript">$ chronyc accheck
+</code></pre>
+<ol>
+<li>该命令会显示有多少 NTP 源在线/离线</li>
+</ol>
+<pre><code class="language-javascript">$ chronyc activity
+</code></pre>
+<ol>
+<li>手动添加一台新的 NTP 服务器</li>
+</ol>
+<pre><code class="language-javascript">$ chronyc add server
+</code></pre>
+<ol>
+<li>在客户端报告已访问到服务器</li>
+</ol>
+<pre><code class="language-javascript">$ chronyc clients
+</code></pre>
+<ol>
+<li>手动移除 NTP 服务器或对等服务器</li>
+</ol>
+<pre><code class="language-javascript">$ chronyc delete
+</code></pre>
+<ol>
+<li>手动设置守护进程时间</li>
+</ol>
+<pre><code class="language-javascript">$ chronyc settime
+</code></pre>
+<ol>
+<li>校准时间服务器，显示系统时间信息</li>
+</ol>
+<pre><code class="language-javascript">$ chronyc tracking
+</code></pre>
+<ol>
+<li>检查 NTP 访问是否对特定主机可用</li>
+</ol>
+<pre><code class="language-javascript">$ chronyc accheck
+</code></pre>
+<ol>
+<li>查看时间同步源</li>
+</ol>
+<pre><code class="language-javascript">$ chronyc sources -v
+</code></pre>
+<ol>
+<li>查看时间同步源状态</li>
+</ol>
+<pre><code class="language-javascript">$ chronyc sourcestats -v
+</code></pre>
+<p><code>Chrony</code> 客户端程序的功能非常强大，远不止上面介绍这些。不但支持命令行模式，而且还支持交互模式。如果你想了解更多 <code>Chrony</code> 客户端程序的使用方法，可以使用 <code>man chronyc</code> 命令获取更多帮助。</p>
+<p>说明：chronyd和chronyc的详细使用方法可以使用命令# man chronyd和# man chronyc查看</p>
+<p>chronyc命令有两种模式，一种是交互式模式，一种是命令行模式。输入chronyc回车就进入交互式模式，进入交互式模式可以使用help命令查看帮助列表</p>
+<pre><code>accheck	检查是否对特定主机可访问当前服务器
+activity	显示有多少NTP源在线/离线
+sources [-v]	显示当前时间源的同步信息
+sourcestats [-v]	显示当前时间源的同步统计信息
+add server	手动添加一台新的NTP服务器
+clients	报告已访问本服务器的客户端列表
+delete	手动移除NTP服务器或对等服务器
+settime	手动设置守护进程时间
+tracking	显示系统时间信息
+</code></pre>
+<p><strong>服务端配置举例</strong>
+1、安装chrony
+2、设置chrony服务开机启动
+3、防火墙开放UDP端口号123和323
+5、配置chrony主配置文件chrony.conf</p>
+<ul>
+<li>端口 <code>123/udp</code> 为标准的 <code>NTP</code> 监听端口，如果要对外提供 <code>NTP Server</code> 功能，必须开启防火墙和监听地址为外部可访问地址。如需修改，你可以通过配置 <code>port</code> 参数来修改。</li>
+<li>端口 <code>323/udp</code> 为默认的管理端口。如需修改，你可以通过配置 <code>cmdport</code> 参数来修改。</li>
+</ul>
+<p>修改防火墙设置，以放行对 <code>123/udp</code> 的请求，这里以 <code>CentOS 7</code> 的 <code>Firewalld</code> 为例。</p>
+<pre><code class="language-javascript">$ firewall-cmd --zone=public --add-port=123/udp --permanent$ firewall-cmd --reload
+</code></pre>
+<p><strong>/etc/chrony.conf 增加如下内容，其它保持默认即可</strong></p>
+<p>备注：详细指令参数可以使用命令# man chrony.conf查看</p>
+<pre><code class="language-bash"># 配置外部时间服务器，将配置文件中默认的全部注释掉
+# 配置外部时间服务器，将配置文件中默认的全部注释掉
+# server - 可用于时钟服务器，prefer 表示优先主机、iburst 选项当服务器可达时，头四次 NTP 请求，发送一个八个数据包而不是通常的一个数据包， 包间隔通常为2秒,而不是以 minpoll x 指定的最小间隔，可加快初始同步速度。
+# 其他的参数有 minpoll x 默认值是 6，代表 64s。maxpoll x 默认值是 9，代表 512s。
+server ntp.ntsc.ac.cn prefer 　　　　 ##中国国家授时中心
+server ntp1.aliyun.com 　　　　　　 ##中国授时
+
+#只允许192.168.0网段的客户端进行时间同步,(allow 0.0.0.0/0代表允许所以任意设备)
+# allow/deny - 指定一台主机、子网，或者网络以允许或拒绝访问本服务器
+allow 192.168.0.0/24
+
+#启用内核时间与 RTC 时间同步 (自动写回硬件)，系统时间每11分钟会拷贝到实时时钟（RTC）
+rtcsync
+
+#server不可用时，允许将本地时间作为标准时间授时给其它客户端，如果服务器本身也不能同步时间，那么就用本地时间替代，层级为 10
+local stratum 10
+=======================================================可选
+# 记录系统时钟获得/丢失时间的速率，根据实际时间计算出计算机增减时间的比率，将它记录到至drift文件中，会在重启后为系统时钟作出补偿
+driftfile /var/lib/chrony/drift
+# makestep根据需要通过加速或减慢时钟来逐渐校正任何时间偏移。
+# 如果系统时钟的偏移量大于10秒，则允许在前三次更新中步进调整系统时钟
+makestep 10 3
+# 指定包含NTP验证密钥的文件
+keyfile /etc/chrony.keys
+# 指定存放日志文件的目录
+logdir /var/log/chrony
+# stratumweight 该参数用于设置当 chronyd 从可用源中选择同步源时，每个层应该添加多少距离到同步距离。默认情况下设置为 0，让 chronyd 在选择源时忽略源的层级。
+stratumweight 0.05
+# 禁用客户端访问的日志记录
+noclientlog
+# 如果时钟调整大于0.5秒，则向系统日志发送消息
+logchange 0.5
+
+
+cmdallow / cmddeny - 可以指定哪台主机可以通过chronyd使用控制命令
+bindcmdaddress - 允许chronyd监听哪个接口来接收由chronyc执行的命令
+bindcmdaddress 127.0.0.1
+bindcmdaddress ::1
+makestep - 通常chronyd将根据需求通过减慢或加速时钟，使得系统逐步纠正所有时间偏差。在某些特定情况下，系统时钟可能会漂移过快，导致该调整过程消耗很长的时间来纠正系统时钟。该指令强制chronyd在调整期大于某个域值时调整系统时钟
+</code></pre>
+<h1 id="实验集群采用chrony对接外部ntp-server配置">实验：集群采用Chrony对接外部NTP Server配置</h1>
+<p>集群环境对接NTP Server配置时，建议主节点对接NTP Server，从节点对接主节点。</p>
+<h4 id="1----每个节点检查是否安装chrony服务">1.    每个节点检查是否安装Chrony服务</h4>
+<p>ansible all -m shell -a &lsquo;rpm -q chrony&rsquo;</p>
+<h4 id="1----停止所有节点的ntpd服务">1.    停止所有节点的NTPD服务</h4>
+<p>ansible all -m shell -a &lsquo;systemctl stop ntpd&rsquo;</p>
+<p>ansible all -m shell -a &lsquo;systemctl disable ntpd&rsquo;</p>
+<h4 id="1----手动同步主节点时间与ntp-server时间基本一致">1.    手动同步主节点时间与NTP Server时间基本一致</h4>
+<p>ntpdate –s x.x.x.x 其中x.x.x.x为NTP Server的IP地址</p>
+<h4 id="1----cloudos主节点修改chronyconf配置文件">1.    CloudOS主节点修改Chrony.conf配置文件</h4>
+<p>修改主节点的/etc/chrony.conf文件（CloudOS主节点执行）：</p>
+<p>修改内容：</p>
+<p>A、 注释掉配置文件中的所有server；</p>
+<p>B、 新增NTP Serve的配置</p>
+<p>C、 新增本地时间同步配置</p>
+<p>D、 配置允许连接的集群和本地地址</p>
+<p>E、 取消注释，允许同步本地时间</p>
+<p>修改内容如下文所示：</p>
+<pre><code class="language-bash"># Use public servers from the pool.ntp.org project.
+# Please consider joining the pool (http://www.pool.ntp.org/join.html).
+#server 0.centos.pool.ntp.org iburst      #注释原有所有server
+#server 1.centos.pool.ntp.org iburst
+#server 2.centos.pool.ntp.org iburst
+#server 3.centos.pool.ntp.org iburst
+server x.x.x.x iburst minpoll 4 maxpoll 4  #有外部server时添加，x.x.x.x为外部NTP Server的地址。
+server 127.127.1.0   #本地server 同步本地时间，必选。
+# Record the rate at which the system clock gains/losses time.
+driftfile /var/lib/chrony/drift
+# Allow the system clock to be stepped in the first three updates
+# if its offset is larger than 1 second.
+makestep 1.0 3
+# Enable kernel synchronization of the real-time clock (RTC).
+rtcsync
+# Enable hardware timestamping on all interfaces that support it.
+#hwtimestamp *
+# Increase the minimum number of selectable sources required to adjust
+# the system clock.
+#minsources 2
+# Allow NTP client access from local network.
+#allow 192.168.0.0/16 
+allow 127.0.0.1/8   #新增允许本地客户端访问
+allow x.x.0.0/16    #新增允许集群网网段访问，这里按照要求替换为CloudOS集群的管理网段。
+# Serve time even if not synchronized to a time source.
+local stratum 10  #取消注释，允许同步本地时间
+# Specify file containing keys for NTP authentication.
+#keyfile /etc/chrony.keys
+# Specify directory for log files.
+logdir /var/log/chrony
+# Select which information is logged.
+#log measurements statistics tracking
+
+</code></pre>
+<h4 id="1----手动同步从节点时间与主节点时间基本一致">1.    手动同步从节点时间与主节点时间基本一致</h4>
+<p>ntpdate –s x.x.x.x 其中x.x.x.x为CloudOS的主节点IP地址</p>
+<h4 id="1----cloudos从节点修改chronyconf配置文件">1.    CloudOS从节点修改Chrony.conf配置文件</h4>
+<p>修改/etc/chrony.conf文件（CloudOS主节点执行），所有从节点与主节点的chrony.conf配置文件相同。</p>
+<p>修改内容：</p>
+<p>A、 注释掉配置文件中的所有server；</p>
+<p>B、 新增NTP Serve的配置</p>
+<p>修改内容如下文的标#部分所示：</p>
+<pre><code class="language-bash"># Use public servers from the pool.ntp.org project.
+# Please consider joining the pool (http://www.pool.ntp.org/join.html).
+#server 0.centos.pool.ntp.org iburst         #注释原有所有server
+#server 1.centos.pool.ntp.org iburst
+#server 2.centos.pool.ntp.org iburst
+#server 3.centos.pool.ntp.org iburst
+server x.x.x.x iburst minpoll 4 maxpoll 4       #新增同步主节点，x.x.x.x为主节点IP地址
+# Record the rate at which the system clock gains/losses time.
+driftfile /var/lib/chrony/drift
+# Allow the system clock to be stepped in the first three updates
+# if its offset is larger than 1 second.
+makestep 1.0 3
+# Enable kernel synchronization of the real-time clock (RTC).
+rtcsync
+# Enable hardware timestamping on all interfaces that support it.
+#hwtimestamp *
+# Increase the minimum number of selectable sources required to adjust
+# the system clock.
+#minsources 2
+# Allow NTP client access from local network.
+#allow 192.168.0.0/16
+# Serve time even if not synchronized to a time source.
+#local stratum 10
+# Specify file containing keys for NTP authentication.
+#keyfile /etc/chrony.keys
+# Specify directory for log files.
+logdir /var/log/chrony
+# Select which information is logged.
+#log measurements statistics tracking
+
+</code></pre>
+<p>所有节点启动chrony</p>
+<p>ansible all -m shell -a &lsquo;systemctl start chronyd&rsquo;</p>
+<p>ansible all -m shell -a &lsquo;systemctl enable chronyd&rsquo;</p>
+<p>所有节点检查时间状态</p>
+<p>ansible all -m shell -a &lsquo;chronyc sources -v&rsquo;</p>
+<p>ansible all -m shell -a &lsquo;timedatectl&rsquo;</p>
+        </div>
+        
+        
+        
+        
+        
+        <div class="py-2">
+    
+    <div class="flex flex-col md:flex-row items-center my-8">
+        <a href="/authors/songjinfeng/" class="w-24 h-24 md:mr-4">
+            
+            
+            <img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/images/2021.04.22-14:35:19-D-assets-images-sjf.png" class="w-full bg-primary-bg rounded-full" alt="Avatar">
+            
+        </a>
+        <div class="w-full md:w-auto mt-4 md:mt-0">
+            <a href="/authors/songjinfeng/" class="block font-bold text-lg pb-1 mb-2 border-b">宋锦丰</a>
+            <span class="block pb-2">一名运维技术爱好者，专注于 Kubernetes 、 Linux 等技术干货分享。</span>
+            
+            
+            
+            
+            
+            <a href="mailto:GW.songjinfengzc@h3c.com" class="mr-1">
+                <i class="fas fa-envelope"></i>
+            </a>
+            
+            
+            
+            
+            
+            <a href="https://github.com/SJFCS/SJFCS.GITHUB.IO" class="mr-1">
+                <i class="fab fa-github"></i>
+            </a>
+            
+            
+            
+            
+            
+            <a href="/index.xml" class="mr-1">
+                <i class="fas fa-rss"></i>
+            </a>
+            
+        </div>
+    </div>
+    
+</div>
+        
+        
+        
+<div class="flex flex-col md:flex-row md:justify-between -mx-2 mt-4 px-2 pt-4 border-t">
+    <div>
+        
+        <span class="block font-bold">上一页</span>
+        <a href="/posts/1.linux/linux%E5%B8%B8%E7%94%A8%E6%9C%8D%E5%8A%A1/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5&#43;%E5%B7%A5%E5%85%B7/" class="block">Linux时间管理(1)：基本概念&#43;常用工具</a>
+        
+    </div>
+    <div class="md:text-right mt-4 md:mt-0">
+        
+        <span class="block font-bold">下一页</span>
+        <a href="/posts/1.linux/linux%E5%B8%B8%E7%94%A8%E6%9C%8D%E5%8A%A1/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86ntpdntpdate/" class="block">Linux时间管理(3)：ntpd ntpdate使用</a>
+        
+    </div>
+</div>
+
+        
+    </div>
+    
+    <div class="col-span-2">
+        
+        
+<div class="bg-secondary-bg rounded p-6">
+    <h3 class="text-lg font-semibold mb-4">系列文章</h3>
+    <div class="content">
+        
+        
+        <a href="/posts/1.linux/linux%E5%B8%B8%E7%94%A8%E6%9C%8D%E5%8A%A1/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5&#43;%E5%B7%A5%E5%85%B7/">Linux时间管理(1)：基本概念&#43;常用工具</a>
+        <br />
+        
+        <a href="/posts/1.linux/linux%E5%B8%B8%E7%94%A8%E6%9C%8D%E5%8A%A1/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86chrony/">Linux时间管理(2)：Chrony</a>
+        <br />
+        
+        <a href="/posts/1.linux/linux%E5%B8%B8%E7%94%A8%E6%9C%8D%E5%8A%A1/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86ntpdntpdate/">Linux时间管理(3)：ntpd ntpdate使用</a>
+        <br />
+        
+        <a href="/posts/1.linux/linux%E5%B8%B8%E7%94%A8%E6%9C%8D%E5%8A%A1/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86ntpchrony%E5%AF%B9%E6%AF%94/">Linux时间管理(4)：chrony ntp 对比</a>
+        <br />
+        
+        
+    </div>
+</div>
+        
+        
+        <div class="sticky top-16 z-10 hidden lg:block px-6 py-4  bg-primary-bg ">
+    <span class="text-lg font-semibold">本页内容</span>
+</div>
+<div class="sticky-toc hidden lg:block px-6 pb-6 ">
+    <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+</div>
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        enableStickyToc();
+    });
+</script>
+        
+    </div>
+    
+
+    
+    
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', ()=>{
+        hljs.initHighlightingOnLoad();
+    })
+</script>
+
+      </div>
+    </div>
+    
+  </main>
+  <footer class="pl-scrollbar">
+    <div class="w-full max-w-screen-xl mx-auto"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 2021 <a href="https://www.songjinfeng.com/">SonJinfeng</a> 
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+  </footer>
+</body>
+
+</html>

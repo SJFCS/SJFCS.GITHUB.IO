@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang='zh' ><meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+
+
+<title>证书 | Songjinfeng&#39;s BLOG</title>
+<link rel="stylesheet" href="/css/eureka.min.css">
+<script defer src="/js/eureka.min.js"></script>
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Noto+Serif+SC:wght@400;600;700&display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/styles/solarized-light.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/highlight.min.js"
+   crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/dart.min.js"
+     crossorigin></script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/js/all.min.js"
+   integrity="sha256-uNYoXefWRqv&#43;PsIF/OflNmwtKM4lStn9yrz2gVl6ymo="  crossorigin></script>
+
+
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css"
+   integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3&#43;Aro6EYUG4&#43;cU&#43;KJWu/X"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js" 
+  integrity="sha384-g7c&#43;Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI&#43;sEnkvrMWph2EDg4"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js"
+   integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC&#43;Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.9.2/dist/mermaid.min.js" 
+  integrity="sha256-Zmpaaj&#43;GXFsPF5WdPArSrnW3b30dovldeKsW00xBVwE="  crossorigin></script>
+
+
+<link rel="icon" type="image/png" sizes="32x32" href="/images/icon_hucfa16751ac9c82c06b84c3502c0db793_16378_32x32_fill_box_center_2.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hucfa16751ac9c82c06b84c3502c0db793_16378_180x180_fill_box_center_2.png">
+
+<meta name="description"
+  content="为确保安全，kubernetes 系统各组件需要使用 x509 证书对通信进行加密和认证。
+CA (Certificate Authority) 是自签名的根证书，用来签名后续创建的其它证书。
+CA 证书是集群所有节点共享的，只需要创建一次，后续用它签名其它所有证书。
+本文档使用 CloudFlare&#39;s 的 PKI 工具集 cfssl 来配置 PKI Infrastructure，然后使用它去创建 Certificate Authority（CA）， 并为 各服务 创建 TLS 证书。
+签发证书即可使用cfssl也可openssl生成证书 。关于openssl 请阅读：
+https://www.cnblogs.com/centos-python/articles/11043570.html
+安装cfssl # 安装cfssl、cfssl-json、cfssl-certinfo wget https://pkg.cfssl.org/R1.2/cfssl_linux-amd64 -O /usr/bin/cfssl wget https://pkg.cfssl.org/R1.2/cfssljson_linux-amd64 -O /usr/bin/cfssl-json wget https://pkg.cfssl.org/R1.2/cfssl-certinfo_linux-amd64 -O /usr/bin/cfssl-certinfo chmod &#43;x /usr/local/bin/cfssl* # 检查 which cfssl cfssl-json cfssl-certinfo ## 正常返回结果如下 /usr/local/bin/cfssl /usr/local/bin/cfssl-json /usr/local/bin/cfssl-certinfo   工作目录 mkdir /opt/k8s-deploy/certs  创建根证书 (CA)和密钥 CA 证书是集群所有节点共享的，只需要创建一个 CA 证书，后续创建的所有证书都由它签名。
+创建证书签名请求文件 #[/opt/k8s-deploy/certs]# cat &gt; ca-csr.">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"技术专栏",
+      "item":"/posts/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"容器虚拟化",
+      "item":"/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/"},{
+      "@type": "ListItem",
+      "position": 3 ,
+      "name":"证书",
+      "item":"/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/2.-%E7%AD%BE%E5%8F%91%E8%AF%81%E4%B9%A6/"}]
+}
+</script>
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/2.-%E7%AD%BE%E5%8F%91%E8%AF%81%E4%B9%A6/"
+    },
+    "headline": "证书 | Songjinfeng\u0027s BLOG","wordCount":  514 ,
+    "publisher": {
+        "@type": "Person",
+        "name": "JF. Song",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "/images/icon.png"
+        }
+        },
+    "description": "为确保安全，kubernetes 系统各组件需要使用 x509 证书对通信进行加密和认证。\nCA (Certificate Authority) 是自签名的根证书，用来签名后续创建的其它证书。\nCA 证书是集群所有节点共享的，只需要创建一次，后续用它签名其它所有证书。\n本文档使用 CloudFlare\u0027s 的 PKI 工具集 cfssl 来配置 PKI Infrastructure，然后使用它去创建 Certificate Authority（CA）， 并为 各服务 创建 TLS 证书。\n签发证书即可使用cfssl也可openssl生成证书 。关于openssl 请阅读：\nhttps:\/\/www.cnblogs.com\/centos-python\/articles\/11043570.html\n安装cfssl # 安装cfssl、cfssl-json、cfssl-certinfo wget https:\/\/pkg.cfssl.org\/R1.2\/cfssl_linux-amd64 -O \/usr\/bin\/cfssl wget https:\/\/pkg.cfssl.org\/R1.2\/cfssljson_linux-amd64 -O \/usr\/bin\/cfssl-json wget https:\/\/pkg.cfssl.org\/R1.2\/cfssl-certinfo_linux-amd64 -O \/usr\/bin\/cfssl-certinfo chmod \u002bx \/usr\/local\/bin\/cfssl* # 检查 which cfssl cfssl-json cfssl-certinfo ## 正常返回结果如下 \/usr\/local\/bin\/cfssl \/usr\/local\/bin\/cfssl-json \/usr\/local\/bin\/cfssl-certinfo   工作目录 mkdir \/opt\/k8s-deploy\/certs  创建根证书 (CA)和密钥 CA 证书是集群所有节点共享的，只需要创建一个 CA 证书，后续创建的所有证书都由它签名。\n创建证书签名请求文件 #[\/opt\/k8s-deploy\/certs]# cat \u0026gt; ca-csr."
+}
+</script><meta property="og:title" content="证书 | Songjinfeng&#39;s BLOG" />
+<meta property="og:type" content="article" />
+
+
+<meta property="og:image" content="/images/icon.png">
+
+
+<meta property="og:url" content="/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/2.-%E7%AD%BE%E5%8F%91%E8%AF%81%E4%B9%A6/" />
+
+
+
+
+<meta property="og:description" content="为确保安全，kubernetes 系统各组件需要使用 x509 证书对通信进行加密和认证。
+CA (Certificate Authority) 是自签名的根证书，用来签名后续创建的其它证书。
+CA 证书是集群所有节点共享的，只需要创建一次，后续用它签名其它所有证书。
+本文档使用 CloudFlare&#39;s 的 PKI 工具集 cfssl 来配置 PKI Infrastructure，然后使用它去创建 Certificate Authority（CA）， 并为 各服务 创建 TLS 证书。
+签发证书即可使用cfssl也可openssl生成证书 。关于openssl 请阅读：
+https://www.cnblogs.com/centos-python/articles/11043570.html
+安装cfssl # 安装cfssl、cfssl-json、cfssl-certinfo wget https://pkg.cfssl.org/R1.2/cfssl_linux-amd64 -O /usr/bin/cfssl wget https://pkg.cfssl.org/R1.2/cfssljson_linux-amd64 -O /usr/bin/cfssl-json wget https://pkg.cfssl.org/R1.2/cfssl-certinfo_linux-amd64 -O /usr/bin/cfssl-certinfo chmod &#43;x /usr/local/bin/cfssl* # 检查 which cfssl cfssl-json cfssl-certinfo ## 正常返回结果如下 /usr/local/bin/cfssl /usr/local/bin/cfssl-json /usr/local/bin/cfssl-certinfo   工作目录 mkdir /opt/k8s-deploy/certs  创建根证书 (CA)和密钥 CA 证书是集群所有节点共享的，只需要创建一个 CA 证书，后续创建的所有证书都由它签名。
+创建证书签名请求文件 #[/opt/k8s-deploy/certs]# cat &gt; ca-csr." />
+
+
+
+
+<meta property="og:locale" content="zh" />
+
+
+
+
+<meta property="og:site_name" content="Songjinfeng&#39;s BLOG" />
+
+
+
+
+
+
+
+
+
+<meta property="article:section" content="posts" />
+
+
+
+
+<body class="flex flex-col min-h-screen">
+  <header class="fixed flex items-center w-full min-h-16 pl-scrollbar z-50 bg-secondary-bg shadow-sm">
+    <div class="w-full max-w-screen-xl mx-auto"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="mr-6 text-primary-text text-xl font-bold">Songjinfeng&#39;s BLOG</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:flex-grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:flex-grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  mr-4">技术专栏</a>
+            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">文档笔记</a>
+            <a href="/series/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">主题系列</a>
+            <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">标签</a>
+            <a href="/authors/songjinfeng/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">关于</a>
+            <a href="/index.xml" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">RSS</a>
+            <a href="/webstack" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">友链&amp;导航</a>
+        </div>
+
+        <div class="flex">
+            <div class="relative pt-4 md:pt-0">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col left-0 md:left-auto right-auto md:right-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">浅色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">深色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">自动</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            switchMode('Auto')
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+  </header>
+  <main class="flex-grow pt-16">
+    <div class="pl-scrollbar">
+      <div class="w-full max-w-screen-xl lg:px-4 xl:px-8 mx-auto">
+
+
+<div class="grid grid-cols-2 lg:grid-cols-8 gap-4 lg:pt-12">
+    <div
+        class="col-span-2 lg:col-start-2 lg:col-span-6 bg-secondary-bg rounded px-6 py-8">
+        <h1 class="font-bold text-3xl text-primary-text">证书</h1>
+        <div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>0001-01-01</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>3分钟阅读时长</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="/categories/blog/" class="hover:text-eureka">blog</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/posts/" class="hover:text-eureka">posts</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/%E4%BA%91%E8%AE%A1%E7%AE%97/" class="hover:text-eureka">云计算</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/kubernetes/" class="hover:text-eureka">Kubernetes</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/" class="hover:text-eureka">K8S二进制部署</a>
+        
+    </div>
+    
+
+    
+</div>
+        
+        
+        
+
+        <div class="content">
+            <p>为确保安全，<code>kubernetes</code> 系统各组件需要使用 <code>x509</code> 证书对通信进行加密和认证。</p>
+<p>CA (Certificate Authority) 是自签名的根证书，用来签名后续创建的其它证书。</p>
+<p>CA 证书是集群所有节点共享的，<strong>只需要创建一次</strong>，后续用它签名其它所有证书。</p>
+<p>本文档使用 <code>CloudFlare's</code> 的 PKI 工具集  <a href="https://github.com/cloudflare/cfssl">cfssl</a>  来配置 PKI Infrastructure，然后使用它去创建 Certificate Authority（CA）， 并为 各服务 创建 TLS 证书。</p>
+<p>签发证书即可使用cfssl也可openssl生成证书 。关于openssl 请阅读：</p>
+<p><a href="https://www.cnblogs.com/centos-python/articles/11043570.html">https://www.cnblogs.com/centos-python/articles/11043570.html</a></p>
+<h2 id="安装cfssl">安装cfssl</h2>
+<pre><code class="language-bash"># 安装cfssl、cfssl-json、cfssl-certinfo
+wget https://pkg.cfssl.org/R1.2/cfssl_linux-amd64 -O /usr/bin/cfssl
+wget https://pkg.cfssl.org/R1.2/cfssljson_linux-amd64 -O /usr/bin/cfssl-json
+wget https://pkg.cfssl.org/R1.2/cfssl-certinfo_linux-amd64 -O /usr/bin/cfssl-certinfo
+chmod +x /usr/local/bin/cfssl*
+# 检查
+which cfssl cfssl-json cfssl-certinfo
+## 正常返回结果如下
+/usr/local/bin/cfssl
+/usr/local/bin/cfssl-json
+/usr/local/bin/cfssl-certinfo
+</code></pre>
+<blockquote>
+<h1 id="工作目录-mkdir-optk8s-deploycerts">工作目录 mkdir /opt/k8s-deploy/certs</h1>
+</blockquote>
+<h2 id="创建根证书-ca和密钥">创建根证书 (CA)和密钥</h2>
+<p>CA 证书是集群所有节点共享的，<strong>只需要创建一个 CA 证书</strong>，后续创建的所有证书都由它签名。</p>
+<h3 id="创建证书签名请求文件">创建证书签名请求文件</h3>
+<pre><code class="language-bash">#[/opt/k8s-deploy/certs]#
+cat &gt;  ca-csr.json &lt;&lt;EOF
+{
+    &quot;CN&quot;:&quot;kubernetes-ca&quot;,
+    &quot;key&quot;:{
+        &quot;algo&quot;:&quot;rsa&quot;,
+        &quot;size&quot;: 2048
+    },
+    &quot;names&quot;:[
+        {
+            &quot;C&quot;:&quot;CN&quot;,
+            &quot;ST&quot;:&quot;beijing&quot;,
+            &quot;L&quot;:&quot;beijing&quot;,
+            &quot;O&quot;:&quot;k8s&quot;,
+            &quot;OU&quot;:&quot;opsnull&quot;
+        }
+    ],
+    &quot;ca&quot;:{
+        &quot;expiry&quot;:&quot;175200h&quot;
+    }
+}
+EOF
+</code></pre>
+<ul>
+<li><code>CN:Common Name</code>: 浏览器使用该字段验证网站是否合法，一般写的是域名。浏览器使用该字段验证网站是否合法</li>
+<li><code>C:Country</code>: 国家</li>
+<li><code>ST:State</code>: 州，省</li>
+<li><code>L:Locality</code>: 地区，城市</li>
+<li><code>O:Organization Name</code>: 组织名称，公司名称</li>
+<li><code>OU:Organization Unit Name</code>: 组织单位名称，公司部门</li>
+<li><code>expiry</code>为证书有效时间，使用kubeadmin 安装k8s集群的证书默认一年</li>
+</ul>
+<p>注意：</p>
+<ol>
+<li>不同证书 csr 文件的 CN、C、ST、L、O、OU 组合必须不同，否则可能出现 <code>PEER'S CERTIFICATE HAS AN INVALID SIGNATURE</code> 错误；</li>
+<li>后续创建证书的 csr 文件时，CN 都不相同（C、ST、L、O、OU 相同），以达到区分的目的；</li>
+</ol>
+<ul>
+<li><code>CN：Common Name</code>: kube-apiserver 从证书中提取该字段作为请求的<strong>用户名 (User Name)</strong>，浏览器使用该字段验证网站是否合法；</li>
+<li><code>O：Organization</code>: kube-apiserver 从证书中提取该字段作为请求<strong>用户所属的组 (Group)</strong>；</li>
+<li>kube-apiserver 将提取的 User、Group 作为 RBAC 授权的用户标识；</li>
+</ul>
+<h3 id="生成ca证书文件">生成ca证书文件</h3>
+<pre><code class="language-bash">#[/opt/k8s-deploy/certs]#
+cfssl gencert -initca ca-csr.json | cfssl-json -bare ca
+# 生成的公钥和私钥如下
+ll ca*
+-rw-r--r--. 1 root root  993 11月  2 10:57 ca.csr
+-rw-r--r--. 1 root root  328 11月  2 10:49 ca-csr.json
+-rw-------. 1 root root 1679 11月  2 10:57 ca-key.pem
+-rw-r--r--. 1 root root 1346 11月  2 10:57 ca.pem
+</code></pre>
+<ul>
+<li>CSR 即证书签名申请（Certificate Signing Request），CSR 包含了公钥和标识名称（Distinguished Name），生成 CSR 同时创建加解密的公钥私钥对。</li>
+<li>*.pem:公钥</li>
+<li>*.key.pem:私钥</li>
+</ul>
+<h3 id="创建ca配置文件">创建CA配置文件</h3>
+<p>CA 配置文件用于配置根证书的使用场景 (profile) 和具体参数 (usage，过期时间、服务端认证、客户端认证、加密等)，后续在签名其它证书时需要指定特定场景。</p>
+<pre><code class="language-bash">#[/opt/k8s-deploy/certs]#
+cat &gt; ca-config.json &lt;&lt;EOF
+{
+    &quot;signing&quot;: {
+        &quot;default&quot;: {
+            &quot;expiry&quot;: &quot;175200h&quot;
+        },
+        &quot;profiles&quot;: {
+            &quot;server&quot;: {
+                &quot;expiry&quot;: &quot;175200h&quot;,
+                &quot;usages&quot;: [
+                    &quot;signing&quot;,
+                    &quot;key encipherment&quot;,
+                    &quot;server auth&quot;
+                ]
+            },
+            &quot;client&quot;: {
+                &quot;expiry&quot;: &quot;175200h&quot;,
+                &quot;usages&quot;: [
+                    &quot;signing&quot;,
+                    &quot;key encipherment&quot;,
+                    &quot;client auth&quot;
+                ]
+            },
+            &quot;peer&quot;: {
+                &quot;expiry&quot;: &quot;175200h&quot;,
+                &quot;usages&quot;: [
+                    &quot;signing&quot;,
+                    &quot;key encipherment&quot;,
+                    &quot;server auth&quot;,
+                    &quot;client auth&quot;
+                ]
+            }
+        }
+    }
+} 
+EOF
+</code></pre>
+<ul>
+<li>
+<p><code>signing</code>：表示该证书可用于签名其它证书（生成的 <code>ca.pem</code> 证书中 <code>CA=TRUE</code>）；</p>
+</li>
+<li>
+<p><code>server auth</code>：表示 client 可以用该该证书对 server 提供的证书进行验证；</p>
+<p>​	服务端使用，客户端以此验证服务端身份,例如docker服务端、kube-apiserver</p>
+</li>
+<li>
+<p><code>client auth</code>：表示 server 可以用该该证书对 client 提供的证书进行验证；</p>
+<p>​	客户端使用，用于服务端认证客户端，例如etcdctl、etcd proxy、fleetctl、docker客户端</p>
+</li>
+<li>
+<p><code>peer</code> : 双向证书，用于etcd集群成员间通信</p>
+</li>
+<li>
+<p><code>&quot;expiry&quot;: &quot;876000h&quot;</code>：证书有效期设置为 100 年；</p>
+</li>
+</ul>
+<h2 id="创建-kubectl-的-admin-证书">创建 kubectl 的 admin 证书</h2>
+<p>kubectl 使用 https 协议与 kube-apiserver 进行安全通信，kube-apiserver 对 kubectl 请求包含的证书进行认证和授权。</p>
+<p>kubectl 后续用于集群管理，所以这里创建具有<strong>最高权限</strong>的 admin 证书。</p>
+<h3 id="创建证书签名请求">创建证书签名请求：</h3>
+<pre><code class="language-bash">#[/opt/k8s-deploy/certs]#
+cat &gt; admin-csr.json &lt;&lt;EOF
+{
+  &quot;CN&quot;: &quot;admin&quot;,
+  &quot;hosts&quot;: [],
+  &quot;key&quot;: {
+    &quot;algo&quot;: &quot;rsa&quot;,
+    &quot;size&quot;: 2048
+  },
+  &quot;names&quot;: [
+    {
+      &quot;C&quot;: &quot;CN&quot;,
+      &quot;ST&quot;: &quot;BeiJing&quot;,
+      &quot;L&quot;: &quot;BeiJing&quot;,
+      &quot;O&quot;: &quot;system:masters&quot;,
+      &quot;OU&quot;: &quot;opsnull&quot;
+    }
+  ]
+}
+EOF
+</code></pre>
+<ul>
+<li><code>O: system:masters</code>：kube-apiserver 收到使用该证书的客户端请求后，为请求添加组（Group）认证标识 <code>system:masters</code>；</li>
+<li>预定义的 ClusterRoleBinding <code>cluster-admin</code> 将 Group <code>system:masters</code> 与 Role <code>cluster-admin</code> 绑定，该 Role 授予操作集群所需的<strong>最高</strong>权限；</li>
+<li>该证书只会被 kubectl 当做 client 证书使用，所以 <code>hosts</code> 字段为空；</li>
+</ul>
+<h3 id="生成证书和私钥">生成证书和私钥：</h3>
+<pre><code class="language-bash">#[/opt/k8s-deploy/certs]#
+cfssl gencert -ca=/opt/k8s-deploy/certs/ca.pem \
+  -ca-key=/opt/k8s-deploy/certs/ca-key.pem \
+  -config=/opt/k8s-deploy/certs/ca-config.json \
+  -profile=client admin-csr.json | cfssl-json -bare admin-client
+  ## 测试clint 用例peer
+cfssl gencert -ca=/opt/k8s-deploy/certs/ca.pem \
+   -ca-key=/opt/k8s-deploy/certs/ca-key.pem \
+   -config=/opt/k8s-deploy/certs/ca-config.json \
+   -profile=peer admin-csr.json | cfssl-json -bare admin-peer
+
+</code></pre>
+<ul>
+<li>忽略警告消息 <code>[WARNING] This certificate lacks a &quot;hosts&quot; field.</code>；</li>
+<li><a href="https://github.com/cloudflare/cfssl/issues/717">https://github.com/cloudflare/cfssl/issues/717</a></li>
+</ul>
+<h2 id="签发etcd证书">签发ETCD证书</h2>
+<h3 id="创建etcd证书请求文件">创建etcd证书请求文件</h3>
+<pre><code class="language-bash">#[/opt/k8s-deploy/certs]#
+cat &gt; etcd-csr.json &lt;&lt;EOF
+{
+  &quot;CN&quot;: &quot;etcd&quot;,
+  &quot;hosts&quot;: [
+    &quot;127.0.0.1&quot;,
+    &quot;10.4.7.101&quot;,
+    &quot;10.4.7.102&quot;,
+    &quot;10.4.7.103&quot;
+  ],
+  &quot;key&quot;: {
+    &quot;algo&quot;: &quot;rsa&quot;,
+    &quot;size&quot;: 2048
+  },
+  &quot;names&quot;: [
+    {
+      &quot;C&quot;: &quot;CN&quot;,
+      &quot;ST&quot;: &quot;BeiJing&quot;,
+      &quot;L&quot;: &quot;BeiJing&quot;,
+      &quot;O&quot;: &quot;k8s&quot;,
+      &quot;OU&quot;: &quot;opsnull&quot;
+    }
+  ]
+}
+EOF
+</code></pre>
+<ul>
+<li>hosts`：指定授权使用该证书的 etcd 节点 IP 列表，<strong>需要将 etcd 集群所有节点 IP 都列在其中</strong>；</li>
+</ul>
+<h3 id="生成etcd证书文件">生成etcd证书文件</h3>
+<pre><code class="language-bash">cfssl gencert -ca=ca.pem \
+    -ca-key=ca-key.pem \
+    -config=ca-config.json \
+    -profile=peer etcd-csr.json | cfssl-json -bare etcd-peer
+# gencert：generate生成，certificate证书
+</code></pre>
+<h3 id="证书分发到每个节点">证书分发到每个节点</h3>
+<pre><code class="language-bash">source /opt/k8s/bin/environment.sh
+for node_ip in ${NODE_IPS[@]}
+  do
+    echo &quot;&gt;&gt;&gt; ${node_ip}&quot;
+    ssh root@${node_ip} &quot;mkdir -p /etc/etcd/certs&quot;
+    scp etcd*.pem root@${node_ip}:/etc/etcd/certs/
+    scp ca*.pem   root@${node_ip}:/etc/etcd/certs/
+  done
+</code></pre>
+<h2 id="分发到各节点">分发到各节点</h2>
+<h2 id="参考">参考</h2>
+<ol>
+<li><a href="https://github.com/kubernetes-incubator/apiserver-builder/blob/master/docs/concepts/auth.md">各种 CA 证书类型</a></li>
+</ol>
+
+        </div>
+        
+        
+        
+        
+        
+        
+        
+<div class="flex flex-col md:flex-row md:justify-between -mx-2 mt-4 px-2 pt-4 border-t">
+    <div>
+        
+        <span class="block font-bold">上一页</span>
+        <a href="/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/kubernetes1.16.2-%E5%AE%89%E8%A3%85/" class="block">kubernetes1.16.2部署</a>
+        
+    </div>
+    <div class="md:text-right mt-4 md:mt-0">
+        
+    </div>
+</div>
+
+        
+    </div>
+    
+
+    
+    
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', ()=>{
+        hljs.initHighlightingOnLoad();
+    })
+</script>
+
+      </div>
+    </div>
+    
+  </main>
+  <footer class="pl-scrollbar">
+    <div class="w-full max-w-screen-xl mx-auto"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 2021 <a href="https://www.songjinfeng.com/">SonJinfeng</a> 
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+  </footer>
+</body>
+
+</html>

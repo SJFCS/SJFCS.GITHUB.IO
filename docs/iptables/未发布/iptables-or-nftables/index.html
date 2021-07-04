@@ -1,0 +1,1649 @@
+<!DOCTYPE html>
+<html lang='zh' ><meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+
+
+<title>Songjinfeng&#39;s BLOG</title>
+<link rel="stylesheet" href="/css/eureka.min.css">
+<script defer src="/js/eureka.min.js"></script>
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Noto+Serif+SC:wght@400;600;700&display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/styles/solarized-light.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/highlight.min.js"
+   crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/dart.min.js"
+     crossorigin></script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/js/all.min.js"
+   integrity="sha256-uNYoXefWRqv&#43;PsIF/OflNmwtKM4lStn9yrz2gVl6ymo="  crossorigin></script>
+
+
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css"
+   integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3&#43;Aro6EYUG4&#43;cU&#43;KJWu/X"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js" 
+  integrity="sha384-g7c&#43;Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI&#43;sEnkvrMWph2EDg4"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js"
+   integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC&#43;Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.9.2/dist/mermaid.min.js" 
+  integrity="sha256-Zmpaaj&#43;GXFsPF5WdPArSrnW3b30dovldeKsW00xBVwE="  crossorigin></script>
+
+
+<link rel="icon" type="image/png" sizes="32x32" href="/images/icon_hucfa16751ac9c82c06b84c3502c0db793_16378_32x32_fill_box_center_2.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hucfa16751ac9c82c06b84c3502c0db793_16378_180x180_fill_box_center_2.png">
+
+<meta name="description"
+  content="CentOS 8 都上生产了，你还在用 iptables 吗，是时候拥抱下一代防火墙 nftables 了！
+https://blog.csdn.net/easylife206/article/details/103142273
+">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"文档笔记",
+      "item":"/docs/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"Iptables详解",
+      "item":"/docs/iptables/"},{
+      "@type": "ListItem",
+      "position": 3 ,
+      "name":"",
+      "item":"/docs/iptables/%E6%9C%AA%E5%8F%91%E5%B8%83/iptables-or-nftables/"}]
+}
+</script>
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/docs/iptables/%E6%9C%AA%E5%8F%91%E5%B8%83/iptables-or-nftables/"
+    },
+    "headline": "Songjinfeng\u0027s BLOG","wordCount":  1801 ,
+    "publisher": {
+        "@type": "Person",
+        "name": "JF. Song",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "/images/icon.png"
+        }
+        },
+    "description": "\u003ch1 id=\u0022centos-8-都上生产了你还在用-iptables-吗是时候拥抱下一代防火墙-nftables-了\u0022\u003eCentOS 8 都上生产了，你还在用 iptables 吗，是时候拥抱下一代防火墙 nftables 了！\u003c\/h1\u003e\n\u003cp\u003e\u003ca href=\u0022https:\/\/blog.csdn.net\/easylife206\/article\/details\/103142273\u0022\u003ehttps:\/\/blog.csdn.net\/easylife206\/article\/details\/103142273\u003c\/a\u003e\u003c\/p\u003e\n\u003cp\u003e\u003cimg src=\u0022https:\/\/image-fusice.oss-cn-hangzhou.aliyuncs.com\/image\/iptables%E8%A2%AB%E6%8A%9B%E5%BC%83\/2021.04.14-16:53:11-D-assets-iptables%E8%A2%AB%E6%8A%9B%E5%BC%83-image-20210414165310006.png\u0022 alt=\u0022image-20210414165310006\u0022\u003e\u003c\/p\u003e"
+}
+</script><meta property="og:title" content="Songjinfeng&#39;s BLOG" />
+<meta property="og:type" content="article" />
+
+
+<meta property="og:image" content="/images/icon.png">
+
+
+<meta property="og:url" content="/docs/iptables/%E6%9C%AA%E5%8F%91%E5%B8%83/iptables-or-nftables/" />
+
+
+
+
+<meta property="og:description" content="CentOS 8 都上生产了，你还在用 iptables 吗，是时候拥抱下一代防火墙 nftables 了！
+https://blog.csdn.net/easylife206/article/details/103142273
+" />
+
+
+
+
+<meta property="og:locale" content="zh" />
+
+
+
+
+<meta property="og:site_name" content="Songjinfeng&#39;s BLOG" />
+
+
+
+
+
+
+
+
+
+<meta property="article:section" content="docs" />
+
+
+
+
+<body class="flex flex-col min-h-screen">
+  <header class="fixed flex items-center w-full min-h-16 pl-scrollbar z-50 bg-secondary-bg shadow-sm">
+    <div class="w-full max-w-screen-xl mx-auto"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="mr-6 text-primary-text text-xl font-bold">Songjinfeng&#39;s BLOG</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:flex-grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:flex-grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">技术专栏</a>
+            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  mr-4">文档笔记</a>
+            <a href="/series/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">主题系列</a>
+            <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">标签</a>
+            <a href="/authors/songjinfeng/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">关于</a>
+            <a href="/index.xml" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">RSS</a>
+            <a href="/webstack" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">友链&amp;导航</a>
+        </div>
+
+        <div class="flex">
+            <div class="relative pt-4 md:pt-0">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col left-0 md:left-auto right-auto md:right-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">浅色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">深色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">自动</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            switchMode('Auto')
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+  </header>
+  <main class="flex-grow pt-16">
+    <div class="pl-scrollbar">
+      <div class="w-full max-w-screen-xl lg:px-4 xl:px-8 mx-auto">
+
+
+<div class="lg:pt-12">
+    <div class="flex flex-col md:flex-row bg-secondary-bg rounded">
+        <div class="md:w-1/4 lg:w-1/5 border-r">
+            <div class="sticky top-16 pt-6">
+                
+
+
+
+
+
+
+
+
+
+
+<div id="sidebar-title" class="md:hidden mx-4 px-2 pt-4 pb-2 md:border-b text-tertiary-text md:text-primary-text">
+    <span class="font-semibold">目录</span>
+    <i class="fas fa-caret-right ml-1"></i>
+</div>
+
+<div id="sidebar-toc"
+    class="hidden md:block overflow-y-auto mx-6 md:mx-0 pr-6 pt-2 md:max-h-doc-sidebar bg-primary-bg md:bg-transparent">
+    <div class="flex flex-wrap ml-4 -mr-2 p-2 bg-secondary-bg md:bg-primary-bg rounded">
+        <a class=" hover:text-eureka"
+            href="/docs/iptables/">Iptables详解</a>
+        
+        
+        
+
+
+    </div>
+    
+<ul class="pl-6">
+    
+    
+    
+    <li class="py-2">
+        <div class="">
+            <a class=" hover:text-eureka"
+                href="/docs/iptables/iptables%E8%AF%A6%E8%A7%A31%E6%A6%82%E5%BF%B5/">Iptables详解(1)概念</a>
+        </div>
+        
+    </li>
+    
+    
+    
+    
+    <li class="py-2">
+        <div class="">
+            <a class=" hover:text-eureka"
+                href="/docs/iptables/iptables%E8%AF%A6%E8%A7%A32%E5%9F%BA%E7%A1%80%E7%AE%A1%E7%90%86%E5%91%BD%E4%BB%A4/">Iptables详解(2)管理</a>
+        </div>
+        
+    </li>
+    
+    
+    
+    
+    <li class="py-2">
+        <div class="">
+            <a class=" hover:text-eureka"
+                href="/docs/iptables/iptables%E8%AF%A6%E8%A7%A332%E6%89%A9%E5%B1%95%E5%8C%B9%E9%85%8D%E6%9D%A1%E4%BB%B6%E6%A8%A1%E5%9D%97/">Iptables详解(3)2扩展匹配条件模块</a>
+        </div>
+        
+    </li>
+    
+    
+    
+    
+    <li class="py-2">
+        <div class="">
+            <a class=" hover:text-eureka"
+                href="/docs/iptables/iptables%E8%AF%A6%E8%A7%A333%E5%AE%89%E5%85%A8%E6%A8%A1%E5%9D%97/">Iptables详解(3)3安全模块</a>
+        </div>
+        
+    </li>
+    
+    
+    
+    
+    <li class="py-2">
+        <div class="">
+            <a class=" hover:text-eureka"
+                href="/docs/iptables/iptables%E8%AF%A6%E8%A7%A34%E5%A4%84%E7%90%86%E5%8A%A8%E4%BD%9C/">Iptables详解(4)处理动作</a>
+        </div>
+        
+    </li>
+    
+    
+    
+    
+    <li class="py-2">
+        <div class="">
+            <a class=" hover:text-eureka"
+                href="/docs/iptables/iptables%E8%AF%A6%E8%A7%A37%E8%87%AA%E5%AE%9A%E4%B9%89%E9%93%BE/"></a>
+        </div>
+        
+    </li>
+    
+    
+    
+    
+    <li class="py-2">
+        <div class="">
+            <a class=" hover:text-eureka"
+                href="/docs/iptables/iptables%E8%AF%A6%E8%A7%A3%E5%85%B6%E4%BB%96/"></a>
+        </div>
+        
+    </li>
+    
+    
+    
+    
+    <li class="py-2">
+        <div class="">
+            <a class=" hover:text-eureka"
+                href="/docs/iptables/%E5%88%A9%E7%94%A8-iptables-%E5%8A%A0%E4%B8%8A-recent-%E6%A8%A1%E5%9D%97%E9%98%BB%E6%8C%A1%E5%A4%A7%E9%87%8F%E7%9A%84%E8%AF%B7%E6%B1%82/"></a>
+        </div>
+        
+    </li>
+    
+    
+    
+    
+    <li class="py-2">
+        <div class="">
+            <a class=" hover:text-eureka"
+                href="/docs/iptables/%E6%80%BB%E7%BB%93%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/"></a>
+        </div>
+        
+    </li>
+    
+    
+    
+    
+    <li class="py-2">
+        <div class="">
+            <a class=" text-eureka  hover:text-eureka"
+                href="/docs/iptables/%E6%9C%AA%E5%8F%91%E5%B8%83/iptables-or-nftables/"></a>
+        </div>
+        
+    </li>
+    
+    
+    
+    
+    <li class="py-2">
+        <div class="">
+            <a class=" hover:text-eureka"
+                href="/docs/iptables/cluster%E6%A8%A1%E5%9D%97/">iptables CLUSTERIP模块 负载均衡</a>
+        </div>
+        
+    </li>
+    
+    
+</ul>
+
+</div>
+
+
+
+
+
+            </div>
+
+        </div>
+        <div class="w-full md:w-3/4 lg:w-4/5 pb-8 pt-2 md:pt-8">
+            <div class="w-full lg:w-3/4 pl-6 ml-0 mr-auto">
+                <h1 class="font-bold text-3xl text-primary-text"></h1>
+                <div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>0001-01-01</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>9分钟阅读时长</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="/categories/blog/" class="hover:text-eureka">blog</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/docs/" class="hover:text-eureka">docs</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/iptables/" class="hover:text-eureka">iptables</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/%E6%9C%AA%E5%8F%91%E5%B8%83/" class="hover:text-eureka">未发布</a>
+        
+    </div>
+    
+
+    
+</div>
+            </div>
+            <div class="flex">
+                <div class="w-full lg:w-3/4 px-6">
+                    
+                    
+                    <div class="content">
+                        <h1 id="centos-8-都上生产了你还在用-iptables-吗是时候拥抱下一代防火墙-nftables-了">CentOS 8 都上生产了，你还在用 iptables 吗，是时候拥抱下一代防火墙 nftables 了！</h1>
+<p><a href="https://blog.csdn.net/easylife206/article/details/103142273">https://blog.csdn.net/easylife206/article/details/103142273</a></p>
+<p><img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/iptables%E8%A2%AB%E6%8A%9B%E5%BC%83/2021.04.14-16:53:11-D-assets-iptables%E8%A2%AB%E6%8A%9B%E5%BC%83-image-20210414165310006.png" alt="image-20210414165310006"></p>
+<h2 id="什么是-nftables">什么是 nftables？</h2>
+<p><code>nftables</code> 是一个新式的数据包过滤框架，旨在替代现用的 <code>iptables</code> 的新的包过滤框架。<code>nftables</code> 诞生于 2008 年，2013 年底合并到 <code>Linux 内核</code>，从 <code>Linux</code> 内核 <code>3.13</code> 版本开始大多数场景下 <code>nftables</code> 已经可以使用，但是完整的支持（即：<code>nftables</code> 优先级高于 <code>iptables</code>）应该是在 Linux 内核 <code>3.15</code> 版本。</p>
+<p><code>nftables</code> 旨在解决现有 <code>{ip/ip6}tables</code> 工具存在的诸多限制。相对于旧的 <code>iptables</code>，<code>nftables</code> 最引人注目的功能包括：改进性能、支持查询表、事务型规则更新、所有规则自动应用等等。</p>
+<p><code>nftables</code> 主要由三个组件组成：内核实现、<code>libnl netlink</code> 通信和 <code>nftables</code> 用户空间。其中内核提供了一个 <code>netlink</code> 配置接口以及运行时规则集评估，<code>libnl</code> 包含了与内核通信的基本函数，用户空间可以通过新引入的命令行工具 <code>nft</code> 和用户进行交互。</p>
+<p><code>nft</code> 可以通过在寄存器中储存和加载来交换数据。也就是说，它的语法与 <code>iptables</code> 不同。但 <code>nft</code> 可以利用内核提供的表达式去模拟旧的 <code>iptables</code> 命令，维持兼容性的同时获得更大的灵活性。简单来说，<code>nft</code> 是 <code>iptables</code> 及其衍生指令（<code>ip6tables</code> 和 <code>arptables</code> ）的超集。</p>
+<h3 id="nftables-的特点">nftables 的特点</h3>
+<ol>
+<li><code>nftables</code> 拥有一些高级的类似编程语言的能力，例如：定义变量和包含外部文件，即拥有使用额外脚本的能力。<code>nftables</code> 也可以用于多种地址簇的过滤和处理。</li>
+<li>不同于 <code>iptables</code>, <code>nftables</code> 并不包含任何的内置表，需要哪些表并在这些表中添加什么处理规则一切由管理员决定。</li>
+<li>表包含规则链，规则链包含规则。</li>
+</ol>
+<h3 id="nftables-相较于-iptables-的优点">nftables 相较于 iptables 的优点</h3>
+<ol>
+<li>更新速度更快</li>
+</ol>
+<p>在 <code>iptables</code> 中添加一条规则，会随着规则数量增多而变得非常慢。这种状况对 <code>nftables</code> 而言就不存在了，因为 <code>nftables</code> 使用原子的快速操作来更新规则集合。</p>
+<ol>
+<li>内核更新更少。</li>
+</ol>
+<p>使用 <code>iptables</code> 时，每一个匹配或投递都需要内核模块的支持。因此，如果你忘记一些东西或者要添加新的功能时都需要重新编译内核。而在 <code>nftables</code> 中就不存在这种情况了， 因为在 <code>nftables</code> 中，大部分工作是在用户态完成的，内核只知道一些基本指令（过滤是用伪状态机实现的）。例如，<code>icmpv6</code> 支持是通过 <code>nft</code> 工具的一个简单的补丁实现的，而在 <code>iptables</code> 中这种类型的更改需要内核和 <code>iptables</code> 都升级才可以。</p>
+<h2 id="nftables-基础操作">nftables 基础操作</h2>
+<p><code>nftables</code> 和 <code>iptables</code> 一样，由表（table）、链（chain）和规则（rule）组成，其中表包含链，链包含规则，规则是真正的动作。</p>
+<p>在 <code>nftables</code> 中，表是链的容器。所以开始使用 <code>nftables</code> 时你首先需要做的是添加至少一个表。然后，你可以向你的表里添加链，然后往链里添加规则。</p>
+<h3 id="nftables-的表管理">nftables 的表管理</h3>
+<p>与 <code>iptables</code> 中的表不同，<code>nftables</code> 中没有内置表。表的数量和名称由用户决定。但是，每个表只有一个地址簇，并且只适用于该簇的数据包。<code>nftables</code> 表可以指定为以下五个簇中的一个：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">nftables 簇</th>
+<th style="text-align:left">对应 iptables 的命令行工具</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">ip</td>
+<td style="text-align:left">iptables</td>
+</tr>
+<tr>
+<td style="text-align:left">ip6</td>
+<td style="text-align:left">ip6tables</td>
+</tr>
+<tr>
+<td style="text-align:left">inet</td>
+<td style="text-align:left">iptables 和 ip6tables</td>
+</tr>
+<tr>
+<td style="text-align:left">arp</td>
+<td style="text-align:left">arptables</td>
+</tr>
+<tr>
+<td style="text-align:left">bridge</td>
+<td style="text-align:left">ebtables</td>
+</tr>
+</tbody>
+</table>
+<p><code>ip</code>（即 IPv4）是默认簇，如果未指定簇，则使用该簇。如果要创建同时适用于 <code>IPv4</code> 和 <code>IPv6</code> 的规则，请使用 <code>inet</code> 簇 。<code>inet</code> 允许统一 <code>ip</code> 和 <code>ip6</code> 簇，以便更容易地定义规则。</p>
+<blockquote>
+<p>注意: <code>inet</code> 不能用于 <code>nat</code> 类型的链，只能用于 <code>filter</code> 类型的链。</p>
+</blockquote>
+<p>下面我们来看看 <code>nftables</code> 是如何进行表管理操作的，以下为 <code>nftables</code> 创建表的基本命令语法。</p>
+<pre><code class="language-javascript">nft list tables [&lt;family&gt;]	
+
+
+
+nft list table [&lt;family&gt;] &lt;name&gt; [-n] [-a]	
+
+
+
+nft (add | delete | flush) table [&lt;family&gt;] &lt;name&gt;
+</code></pre>
+<p>这里我们以创建一个 <code>inet</code> 簇的表为例，演示如何创建和管理一个新的表。</p>
+<ol>
+<li>创建表</li>
+</ol>
+<pre><code class="language-javascript"># 创建一个新的表	
+
+
+
+$ nft add table inet mytable
+</code></pre>
+<ol>
+<li>列出表</li>
+</ol>
+<pre><code class="language-javascript"># 列出所有表	
+$ nft list tables	
+# 列出指定族的所有表	
+$ nft list tables inet	
+# 列出 inet 簇中 mytable 表中的所有规则	
+$ nft list table inet mytable
+</code></pre>
+<ol>
+<li>删除表</li>
+</ol>
+<pre><code class="language-javascript"># 删除一个表	
+$ nft delete table inet mytable
+</code></pre>
+<blockquote>
+<p>注意：只能删除不包含链的表。</p>
+</blockquote>
+<ol>
+<li>清空表</li>
+</ol>
+<pre><code class="language-javascript"># 清空一个表中的所有规则	
+$ nft flush table inet mytable
+</code></pre>
+<h3 id="nftables-的链管理">nftables 的链管理</h3>
+<p>链是用来保存规则的，与 <code>iptables</code> 中的链不同，<code>nftables</code> 没有内置链。这意味着和表一样，链也需要被显示创建。链有以下两种类型：</p>
+<ul>
+<li>常规链 : 主要用来做跳转，不需要指定钩子类型和优先级。从逻辑上对规则进行分类，支持所有的 <code>nftables</code> 簇。</li>
+<li>基本链 : 来自网络栈数据包的入口点，需要指定钩子类型和优先级，支持 <code>ip</code> 和 <code>ip6</code> 簇。</li>
+</ul>
+<p><strong>nftables 链支持钩子的类型</strong></p>
+<p><code>nftables</code> 和 <code>iptables</code> 类似，依然使用 <code>netfiler</code> 中的 5 个 钩子。</p>
+<p><img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/iptables%E8%A2%AB%E6%8A%9B%E5%BC%83/2021.04.14-16:53:30-D-assets-iptables%E8%A2%AB%E6%8A%9B%E5%BC%83-image-20210414165329064.png" alt="image-20210414165329064"></p>
+<p>不同的是 <code>nftables</code> 在 <code>Linux Kernel 4.2</code> 中新增了 <code>ingress</code> 钩子。</p>
+<p><img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/iptables%E8%A2%AB%E6%8A%9B%E5%BC%83/2021.04.14-16:53:41-D-assets-iptables%E8%A2%AB%E6%8A%9B%E5%BC%83-image-20210414165340077.png" alt="image-20210414165340077"></p>
+<p>‍<strong>nftables 链支持钩子的作用</strong></p>
+<ul>
+<li><code>prerouting</code>：刚到达并未被 <code>nftables</code> 的其他部分所路由或处理的数据包。</li>
+<li><code>input</code>：已经被接收并且已经经过 <code>prerouting</code> 钩子的传入数据包。</li>
+<li><code>forward</code>：如果数据报将被发送到另一个设备，它将会通过 <code>forward</code> 钩子。</li>
+<li><code>output</code>：从本地传出的数据包。</li>
+<li><code>postrouting</code>：仅仅在离开系统之前，可以对数据包进行进一步处理。</li>
+</ul>
+<p><strong>nftables 链支持钩子的适用范围</strong></p>
+<ul>
+<li><code>ip</code>、<code>ip6</code> 和 <code>inet</code> 簇支持的钩子有：<code>prerouting</code>、 <code>input</code>、<code>forward</code>、 <code>output</code>、<code>postrouting</code> 。</li>
+<li><code>arp</code> 簇支持的钩子有：<code>input</code>、<code>output</code> 。</li>
+</ul>
+<p><strong>nftables 链支持的优先级</strong></p>
+<p>优先级采用整数值表示，数字较小的链优先处理，并且可以是负数。可以使用的值有：</p>
+<ul>
+<li>NF_IP_PRI_CONNTRACK_DEFRAG (-400)</li>
+<li>NF_IP_PRI_RAW (-300)</li>
+<li>NF_IP_PRI_SELINUX_FIRST (-225)</li>
+<li>NF_IP_PRI_CONNTRACK (-200)</li>
+<li>NF_IP_PRI_MANGLE (-150)</li>
+<li>NF_IP_PRI_NAT_DST (-100)</li>
+<li>NF_IP_PRI_FILTER (0)</li>
+<li>NF_IP_PRI_SECURITY (50)</li>
+<li>NF_IP_PRI_NAT_SRC (100)</li>
+<li>NF_IP_PRI_SELINUX_LAST (225)</li>
+<li>NF_IP_PRI_CONNTRACK_HELPER (300)</li>
+</ul>
+<p><strong>nftables 链对报文数据支持采取的动作</strong></p>
+<ul>
+<li>accept</li>
+<li>drop</li>
+<li>queue</li>
+<li>continue</li>
+<li>return</li>
+</ul>
+<p><strong>nftables 创建链的基本命令语法</strong></p>
+<pre><code class="language-javascript">nft (add | create) chain [&lt;family&gt;] &lt;table&gt; &lt;name&gt; [ { type &lt;type&gt; hook &lt;hook&gt; [device &lt;device&gt;] priority &lt;priority&gt; \; [policy &lt;policy&gt; \;] } ]	
+
+
+
+nft (delete | list | flush) chain [&lt;family&gt;] &lt;table&gt; &lt;name&gt;	
+
+
+
+nft rename chain [&lt;family&gt;] &lt;table&gt; &lt;name&gt; &lt;newname&gt;
+</code></pre>
+<p><strong>nftables 创建链的基本操作</strong></p>
+<ol>
+<li>创建链</li>
+</ol>
+<ul>
+<li>创建一个常规链</li>
+</ul>
+<pre><code class="language-javascript"># 将名为 tcpchain 的常规链添加到 inet 簇中名为 mytable 的表中	
+
+
+
+$ nft add chain inet mytable tcpchain
+</code></pre>
+<ul>
+<li>创建一个基本链</li>
+</ul>
+<p>添加一个基本链，你必需指定钩子和优先级。基本链的类型可以是 <code>filter</code>、<code>route</code> 或者 <code>nat</code>。</p>
+<pre><code class="language-javascript"># 添加一个筛选输入数据包的基本链	
+
+
+
+$ nft add chain inet mytable input { type filter hook input priority 0\; }
+</code></pre>
+<blockquote>
+<p>注意：命令中的反斜线 <code>（\）</code> 用来转义，这样 <code>Shell</code> 就不会将分号解释为命令的结尾。</p>
+</blockquote>
+<ol>
+<li>列出规则</li>
+</ol>
+<p>列出一个链中的所有规则。</p>
+<pre><code class="language-javascript"># 列出 inet 筛中 filter 表的 input 链中的所有的规则	
+
+
+
+$ nft list chain inet filter input
+</code></pre>
+<ol>
+<li>编辑链</li>
+</ol>
+<p>要编辑一个链，只需按名称调用并重新定义要更改的规则即可。</p>
+<pre><code class="language-javascript"># 将默认表中的 input 链策略从 accept 更改为 drop	
+
+
+
+$ nft chain inet mytable input { policy drop \; }
+</code></pre>
+<ol>
+<li>清空链中的规则</li>
+</ol>
+<pre><code class="language-javascript"># 清空指定链中的规则，这里为 input	
+
+
+
+$ nft flush chain inet mytable input
+</code></pre>
+<ol>
+<li>删除链</li>
+</ol>
+<pre><code class="language-javascript"># 删除指定的链，这里为 input	
+
+
+
+$ nft delete chain inet mytable input
+</code></pre>
+<blockquote>
+<p>注意：要删除的链中不能包含任何规则或者跳转目标。</p>
+</blockquote>
+<h3 id="nftables-的规则管理">nftables 的规则管理</h3>
+<p><code>nftables</code> 规则由语句或表达式构成，包含在链中。以下为创建 <code>nftables</code> 规则的基本命令语法：</p>
+<pre><code class="language-javascript">nft add rule [&lt;family&gt;] &lt;table&gt; &lt;chain&gt; &lt;matches&gt; &lt;statements&gt;	
+
+
+
+nft insert rule [&lt;family&gt;] &lt;table&gt; &lt;chain&gt; [position &lt;position&gt;] &lt;matches&gt; &lt;statements&gt;	
+
+
+
+nft replace rule [&lt;family&gt;] &lt;table&gt; &lt;chain&gt; [handle &lt;handle&gt;] &lt;matches&gt; &lt;statements&gt;	
+
+
+
+nft delete rule [&lt;family&gt;] &lt;table&gt; &lt;chain&gt; [handle &lt;handle&gt;]
+</code></pre>
+<p>其中 <code>matches</code> 是报文需要满足的条件。<code>matches</code> 的内容非常多，可以识别以下多种类型的报文。</p>
+<pre><code class="language-javascript">ip          :  ipv4 协议字段	
+
+
+
+ip6         :  ipv6 协议字段	
+
+
+
+tcp         :  tcp 协议字段	
+
+
+
+udp         :  udp 协议字段	
+
+
+
+udplite     :  udp-lite 协议	
+
+
+
+sctp        :  sctp 协议 	
+
+
+
+dccp	
+
+
+
+ah	
+
+
+
+esp	
+
+
+
+comp	
+
+
+
+icmp	
+
+
+
+icmpv6	
+
+
+
+ether       :  以太头	
+
+
+
+dst	
+
+
+
+frag        :	
+
+
+
+hbh	
+
+
+
+mh	
+
+
+
+rt            	
+
+
+
+vlan        :  vlan	
+
+
+
+arp         :  arp协议	
+
+
+
+ct          :  连接状态	
+
+
+
+meta        :  报文的基本信息
+</code></pre>
+<p>对每一种类型的报文，你又可以同时检查多个字段，例如：</p>
+<pre><code class="language-javascript">ip dscp cs1	
+
+
+
+ip dscp != cs1	
+
+
+
+ip dscp 0x38	
+
+
+
+ip dscp != 0x20	
+
+
+
+ip dscp {cs0, cs1, cs2, cs3, cs4, cs5, cs6, cs7, af11, af12, af13, af21, 	
+
+
+
+af22, af23, af31, af32, af33, af41, af42, af43, ef}	
+
+
+
+ 
+
+
+
+	
+
+
+
+ip length 232	
+
+
+
+ip length != 233	
+
+
+
+ip length 333-435	
+
+
+
+ip length != 333-453	
+
+
+
+ip length { 333, 553, 673, 838}	
+
+
+
+ 
+
+
+
+	
+
+
+
+ip6 flowlabel 22	
+
+
+
+ip6 flowlabel != 233	
+
+
+
+ip6 flowlabel { 33, 55, 67, 88 }	
+
+
+
+ip6 flowlabel { 33-55 }
+</code></pre>
+<p>而 <code>statement</code> 是报文匹配规则时触发的操作，大致有以下几种：</p>
+<pre><code class="language-javascript">Verdict statements :   动作	
+
+
+
+Log                :   记录日志并继续处理请求	
+
+
+
+Reject             :   停止处理并拒绝请求	
+
+
+
+Counter            :   计数	
+
+
+
+Limit              :   如果达到了接收数据包的匹配限制，则根据规则处理数据包	
+
+
+
+Nat                :   NAT	
+
+
+
+Queuea             :   停止处理并发送数据包到用户空间程序
+</code></pre>
+<p>其中 <code>Verdict Statements</code> 是一组动作，大致有以下几种：</p>
+<ul>
+<li>accept：接受数据包并停止剩余规则评估。</li>
+<li>drop：丢弃数据包并停止剩余规则评估。</li>
+<li>queue：将数据包排队到用户空间并停止剩余规则评估。</li>
+<li>continue：使用下一条规则继续进行规则评估。</li>
+<li>return：从当前链返回并继续执行最后一条链的下一条规则。</li>
+<li>jump：跳转到指定的规则链，当执行完成或者返回时，返回到调用的规则链。</li>
+<li>goto：类似于跳转，发送到指定规则链但不返回。</li>
+</ul>
+<p>下面将以添加一条允许 <code>SSH</code> 登录的规则为例，给大家介绍下如何增加或插入一条新的规则。</p>
+<ol>
+<li>增加规则</li>
+</ol>
+<pre><code class="language-javascript">$ nft add rule inet mytable input tcp dport ssh accept
+</code></pre>
+<p>默认情况下，<code>add</code> 表示将规则添加到链的末尾。如果你想从链的开头增加规则，可以使用 <code>insert</code> 来实现。</p>
+<pre><code class="language-javascript">$ nft insert rule inet mytable input tcp dport http accept
+</code></pre>
+<ol>
+<li>列出规则</li>
+</ol>
+<ul>
+<li>列出目前链中所有的规则</li>
+</ul>
+<pre><code class="language-javascript">$ nft list ruleset	
+
+
+
+table inet mytable {	
+
+
+
+        chain input {	
+
+
+
+                type filter hook input priority 0; policy accept;	
+
+
+
+                tcp dport http accept	
+
+
+
+                tcp dport ssh accept	
+
+
+
+        }	
+
+
+
+}
+</code></pre>
+<ul>
+<li>列出某个表中的所有规则</li>
+</ul>
+<pre><code class="language-javascript">$ nft list table inet mytable
+</code></pre>
+<ul>
+<li>列出某条链中的所有规则</li>
+</ul>
+<pre><code class="language-javascript">$ nft list chain inet mytable input
+</code></pre>
+<ol>
+<li>按指定位置增加规则</li>
+</ol>
+<p>无论你是使用 <code>add</code> 或者 <code>insert</code> 来增加规则，你都可以通过 <code>index</code> 或者 <code>handle</code> 来指定添加的位置。</p>
+<ul>
+<li>使用 index 来指定规则的索引</li>
+</ul>
+<p><code>index</code> 类似于 <code>iptables</code> 的 <code>-I</code> 选项， <code>add</code> 表示新规则添加在索引位置的规则后面，<code>inser</code> 表示新规则添加在索引位置的规则前面。</p>
+<pre><code class="language-javascript"># 在 input 链中已有规则中的第二条规则前插入一条新的规则	
+
+
+
+$ nft insert rule inet mytable input index 1 tcp dport nfs accept	
+
+
+
+$ nft list ruleset	
+
+
+
+table inet my_table {	
+
+
+
+     chain my_filter_chain {	
+
+
+
+             type filter hook input priority 0; policy accept;	
+
+
+
+             tcp dport http accept	
+
+
+
+             tcp dport nfs accept	
+
+
+
+             tcp dport ssh accept	
+
+
+
+     }	
+
+
+
+}	
+
+
+
+ 
+
+
+
+	
+
+
+
+# 在 input 链中已有规则中的第一条规则后插入一条新的规则	
+
+
+
+$ nft add rule inet mytable input index 0 tcp dport 1234 accept	
+
+
+
+$ nft list ruleset	
+
+
+
+table inet my_table {	
+
+
+
+     chain my_filter_chain {	
+
+
+
+             type filter hook input priority 0; policy accept;	
+
+
+
+             tcp dport http accept	
+
+
+
+             tcp dport 1234 accept	
+
+
+
+             tcp dport nfs accept	
+
+
+
+             tcp dport ssh accept	
+
+
+
+     }	
+
+
+
+}
+</code></pre>
+<blockquote>
+<p>注意：<code>index</code> 的值是从 <code>0</code> 开始的，<code>index</code> 必须指向一个已存在的规则的索引。</p>
+</blockquote>
+<ul>
+<li>使用 handle 来指定规则的句柄</li>
+</ul>
+<p>通过 <code>handle</code> 的值来指定规则添加的位置，必须先知道现有规则的句柄位置。你可以通过参数 <code>--handle</code> 来获取当前规则的句柄位置。</p>
+<pre><code class="language-javascript">$ nft --handle list ruleset	
+
+
+
+table inet mytable { # handle 10	
+
+
+
+     chain input { # handle 2	
+
+
+
+             type filter hook input priority 0; policy accept;	
+
+
+
+             tcp dport http accept # handle 4	
+
+
+
+             tcp dport 1234 accept # handle 6	
+
+
+
+             tcp dport nfs accept # handle 5	
+
+
+
+             tcp dport ssh accept # handle 3	
+
+
+
+     }	
+
+
+
+}
+</code></pre>
+<p>获取到当前规则的句柄位置后，我们就可以在指定句柄位置添加规则。下面我们以在句柄位置 4 后面和句柄位置 5 前面分别增加一条新的规则为例：</p>
+<pre><code class="language-javascript">$ nft add rule inet mytable input handle 4 tcp dport 2345 accept	
+
+
+
+$ nft insert rule inet mytable input handle 5 tcp dport 3456 accept	
+
+
+
+$ nft --handle list ruleset	
+
+
+
+table inet my_table { # handle 10	
+
+
+
+     chain my_filter_chain { # handle 2	
+
+
+
+             type filter hook input priority 0; policy accept;	
+
+
+
+             tcp dport http accept # handle 4	
+
+
+
+             tcp dport 2345 accept # handle 8	
+
+
+
+             tcp dport 1234 accept # handle 6	
+
+
+
+             tcp dport 3456 accept # handle 9	
+
+
+
+             tcp dport nfs accept # handle 5	
+
+
+
+             tcp dport ssh accept # handle 3	
+
+
+
+     }	
+
+
+
+}
+</code></pre>
+<p>在 <code>nftables</code> 中，句柄值是固定不变的，除非规则被删除。而 <code>index</code> 的值是可变的，只要有新规则插入，就有可能发生变化。一般建议使用 <code>handle</code> 来插入新规则。</p>
+<p>你也可以在创建规则时就获取到规则的句柄值，只需要在创建规则时同时加上参数 <code>--echo</code> 和 <code>--handle</code>。</p>
+<pre><code class="language-javascript">$ nft --echo --handle add rule inet mytable input udp dport 3333 accept	
+
+
+
+add rule inet mytable input udp dport 3333 accept # handle 10
+</code></pre>
+<ol>
+<li>删除规则</li>
+</ol>
+<p>单个规则只能通过句柄值删除，每个规则的句柄值可通过 <code>nft --handle list ruleset</code> 命令查看。</p>
+<pre><code class="language-javascript"># 删除指定句柄值对应的规则	
+
+
+
+$ nft delete rule inet mytable input handle 8
+</code></pre>
+<blockquote>
+<p>小技巧：你可以使用 <code>iptables-translate</code> 实用程序将 <code>iptables</code> 规则转换成 <code>nftables</code> 格式</p>
+</blockquote>
+<h2 id="nftables-高级功能进阶">nftables 高级功能进阶</h2>
+<p><code>nftables</code> 除了上面的基础功能外，还给我们额外提供了一些非常实用且功能强大的高级功能。</p>
+<h3 id="集合">集合</h3>
+<p><code>nftables</code> 的语法原生支持集合，可以用来匹配多个 <code>IP</code> 地址、端口号、网卡或其他任何条件。<code>nftables</code> 的集合可分为匿名集合与命名集合，相对 <code>iptables</code> 来说，<code>nftables</code> 是原生支持集合，并不需要借助 <code>ipset</code> 来实现。</p>
+<ol>
+<li>匿名集合</li>
+</ol>
+<p>匿名集合比较适合用于将来不需要更改的规则。</p>
+<pre><code class="language-javascript"># 允许来自源 IP 处于 10.10.10.123 ~ 10.10.10.231 这个区间内的主机的流量。	
+
+
+
+$ nft add rule inet mytable input ip saddr { 10.10.10.123, 10.10.10.231 } accept	
+
+
+
+ 
+
+
+
+	
+
+
+
+# 允许指定协义的流量通过	
+
+
+
+$ nft add rule inet mytable input tcp dport { http, nfs, ssh } accept
+</code></pre>
+<p>匿名集合的缺点是需要修改集合规则时，就得替换原规则。如果需要频繁修改的集合，推荐使用命名集合。</p>
+<ol>
+<li>命名集合</li>
+</ol>
+<p><code>nftables</code> 的命名集合是可以修改的。创建命名集合时需要指定其元素的类型，当前支持的数据类型有：</p>
+<ul>
+<li><code>ipv4_addr</code> : <code>IPv4</code> 地址</li>
+<li><code>ipv6_addr</code> : <code>IPv6</code> 地址</li>
+<li><code>ether_addr</code> : 以太网（Ethernet）地址</li>
+<li><code>inet_proto</code> : 网络协议</li>
+<li><code>inet_service</code> : 网络服务</li>
+<li><code>mark</code> : 标记类型</li>
+</ul>
+<p>这里，我们来看一个实例。首先，创建一个空的命名集合。</p>
+<pre><code class="language-javascript"># 创建一个空的命名集合	
+
+
+
+$ nft add set inet mytable myset { type ipv4_addr \; }	
+
+
+
+$ nft list sets	
+
+
+
+table inet mytable {	
+
+
+
+        set myset {	
+
+
+
+                type ipv4_addr	
+
+
+
+        }	
+
+
+
+}
+</code></pre>
+<p>接着，我们向集合中添加一些元素。</p>
+<pre><code class="language-javascript">$ nft add element inet mytable myset { 10.10.10.22, 10.10.10.33 }	
+
+
+
+$ nft list set inet mytable myset	
+
+
+
+table inet mytable {	
+
+
+
+        set myset {	
+
+
+
+                type ipv4_addr	
+
+
+
+                elements = { 10.10.10.22, 10.10.10.33 }	
+
+
+
+        }	
+
+
+
+}
+</code></pre>
+<p>然后，在添加规则时引用集合，你可以使用 <code>@</code> 符号跟上集合的名字来引用命名集合。</p>
+<pre><code class="language-javascript"># 将来源为集合 myset 中的 IP 地址的请求阻止掉	
+
+
+
+$ nft insert rule inet mytable input ip saddr @myset drop	
+
+
+
+$ nft list chain inet mytable input	
+
+
+
+table inet mytable {	
+
+
+
+        chain input {	
+
+
+
+                type filter hook input priority 0; policy accept;	
+
+
+
+                ip saddr @my_set drop	
+
+
+
+                tcp dport http accept	
+
+
+
+                tcp dport nfs accept	
+
+
+
+                tcp dport ssh accept	
+
+
+
+                ip saddr { 10.10.10.123, 10.10.10.231 } accept	
+
+
+
+        }	
+
+
+
+}
+</code></pre>
+<ol>
+<li>支持区间</li>
+</ol>
+<p>从上面的例子中，我们可以看到填加元素时是使用的两个独立的 <code>IP</code> 地址，并没有直接使用 <code>10.10.10.0-10.10.10.255</code> 这样的区间段来表示。这是因为直接使用区间段会报以下类似错误：</p>
+<pre><code class="language-javascript">$ nft add element inet mytable myset { 10.10.10.0-10.10.10.255 }	
+
+
+
+ 
+
+
+
+	
+
+
+
+Error: Set member cannot be range, missing interval flag on declaration	
+
+
+
+add element inet my_table my_set { 10.10.10.0-10.10.10.255 }	
+
+
+
+                                   ^^^^^^^^^^^^^^^^^^^^^^^
+</code></pre>
+<p>如果你想在集合中使用区间，需要加上一个 <code>flag interval</code>，因为内核必须提前确认该集合存储的数据类型，以便采用适当的数据结构。我们来看一个实例吧：</p>
+<pre><code class="language-javascript"># 创建一个支持区间的命名集合	
+
+
+
+$ nft add set inet mytable my_rangeset { type ipv4_addr \; flags interval	
+
+
+
+$ nft add element inet mytable my_rangeset { 10.10.10.0/24 }	
+
+
+
+$ nft list set inet mytable my_rangeset	
+
+
+
+table inet mytable {	
+
+
+
+        set my_rangeset {	
+
+
+
+                type ipv4_addr	
+
+
+
+                flags interval	
+
+
+
+                elements = { 10.10.10.0/24 }	
+
+
+
+        }	
+
+
+
+}
+</code></pre>
+<p>上面的例子中直接使用了子网掩码来表示 <code>IP</code> 地址段，它会被隐式转换为 <code>IP</code> 地址的区间，你也可以直接使用区间 <code>10.10.10.0-10.10.10.255</code> 来获得相同的效果。</p>
+<ol>
+<li>级联不同类型</li>
+</ol>
+<p>命名集合不仅支持同一类型元素，也可以支持对不同类型的元素进行级联。例如，下面的规则可以一次性匹配 <code>IP</code> 地址、协议和端口号。</p>
+<p>首先，我们创建一个级联类型的集合。</p>
+<pre><code class="language-javascript">$ nft add set inet mytable my_concatset  { type ipv4_addr . inet_proto . inet_service \; }	
+
+
+
+ 
+
+
+
+	
+
+
+
+# 不同类型的元素可以通过级联操作符 . 来分隔。	
+
+
+
+$ nft list set inet mytable my_concatset	
+
+
+
+table inet my_table {	
+
+
+
+        set my_concatset {	
+
+
+
+                type ipv4_addr . inet_proto . inet_service	
+
+
+
+        }	
+
+
+
+}
+</code></pre>
+<p>接着，向集合中添加元素。</p>
+<pre><code class="language-javascript">$ nft add element inet mytable my_concatset { 10.30.30.30 . tcp . telnet }
+</code></pre>
+<p>最后，我们在规则中对级联类型的集合进行引用。</p>
+<pre><code class="language-javascript"># 如果数据包的源 IP、协议类型、目标端口匹配 10.30.30.30、tcp、telnet 时，就会允许该数据包通过	
+
+
+
+$ nft add rule inet mytable input ip saddr . meta l4proto . tcp dport @my_concatset accept
+</code></pre>
+<p>除了命名集合，匿名集合也是可以使用级联元素，例如：</p>
+<pre><code class="language-javascript">$ nft add rule inet mytable input ip saddr . meta l4proto . udp dport { 10.30.30.30 . udp . bootps } accept
+</code></pre>
+<p>在规则中引用级联类型的集合和一般类型集合的主要不同之处：主要在于需要标明集合中每个元素对应到规则中的哪个位置，这类似于 ipset 的聚合类型，例如 <code>hash:ip,port</code> 。</p>
+<h3 id="字典">字典</h3>
+<p>字典是 <code>nftables</code> 的又一个高级特性，它同样可以支持在一条规则上面使用不同类型的数据。</p>
+<p>首先，我们创建一个命名字典。</p>
+<pre><code class="language-javascript">$ nft add map inet mytable my_vmap { type inet_proto : verdict \; }
+</code></pre>
+<p>接着，我们向字典中添加一些元素。</p>
+<pre><code class="language-javascript">$ nft add element inet mytable my_vmap { 192.168.0.10 : drop, 192.168.0.11 : accept }
+</code></pre>
+<p>最后，我们就可以在规则中引用字典中的元素。</p>
+<pre><code class="language-javascript">$ nft add rule inet my_table input ip saddr vmap @my_vmap
+</code></pre>
+<p>和集合一样，除了命名字典，你也可以创建匿名字典。例如，为了从逻辑上对 <code>TCP</code> 和 <code>UDP</code> 的数据包拆分开来用两条不同链来处理，你就可以通过使用字典来实现。</p>
+<pre><code class="language-javascript">$ nft add chain inet mytable my_tcpchain	
+
+
+
+$ nft add chain inet mytable my_udpchain	
+
+
+
+$ nft add rule inet mytable input meta l4proto vmap { tcp : jump my_tcpchain, udp : jump my_udpchain }	
+
+
+
+$ nft list chain inet mytable input	
+
+
+
+table inet mytable {	
+
+
+
+    chain input {	
+
+
+
+    ...	
+
+
+
+    meta nfproto ipv4 ip saddr . meta l4proto . udp dport { 10.30.30.30 . udp . bootps } accept	
+
+
+
+    meta l4proto vmap { tcp : jump my_tcpchain, udp : jump my_udpchain }	
+
+
+
+    }	
+
+
+
+}
+</code></pre>
+<h3 id="表与命名空间">表与命名空间</h3>
+<p>在 <code>nftables</code> 中，每个表都是一个独立的命名空间，这就意味着不同的表中的链、集合、字典等名字可以相同。例如：</p>
+<pre><code class="language-javascript">$ nft add table inet table_one	
+
+
+
+$ nft add chain inet table_one mychain	
+
+
+
+$ nft add table inet table_two	
+
+
+
+$ nft add chain inet table_two mychain	
+
+
+
+$ nft list ruleset	
+
+
+
+...	
+
+
+
+table inet table_one {	
+
+
+
+    chain mychain {	
+
+
+
+    }	
+
+
+
+}	
+
+
+
+table inet table_two {	
+
+
+
+    chain mychain {	
+
+
+
+    }	
+
+
+
+}
+</code></pre>
+<p>有了这个特性后，不同的应用就可以在相互不影响的情况下管理自己的表中的规则。不过使用这个特性前，你需要注意的一点是：由于 <code>nftables</code> 将每个表都被视为独立的防火墙，一个数据包必须被所有表中的规则放行才能真正通过。如果，出现两条链的优先级相同，就会进入竞争状态。</p>
+<p>当然，你可以使用 <code>nftables</code> 优先级特性来解决这个问题。优先级值越高的链优先级越低，所以优先级值低的链会比优先级值高的链先执行。</p>
+<h3 id="备份与恢复">备份与恢复</h3>
+<p>默认情况下，通过 <code>nftables</code> 用户态工具 <code>nft</code> 直接在终端中加入的规则都是临时的。如果要想永久生效，我们可以将规则备份后并在开机自动加载时进行恢复。</p>
+<ol>
+<li>备份规则</li>
+</ol>
+<pre><code class="language-javascript">$ nft list ruleset &gt; /root/nftables.conf
+</code></pre>
+<ol>
+<li>恢复规则</li>
+</ol>
+<pre><code class="language-javascript">$ nft -f /root/nftables.conf
+</code></pre>
+<p>在 <code>CentOS 8</code> 中，<code>nftables</code> 是以 <code>Systemd</code> 服务形式进行工作的。<code>nftables.service</code> 的规则被存储在 <code>/etc/nftables.conf</code> 中，其中包含了一些其他的示例规则，一般会位于 <code>/etc/sysconfig/nftables.conf</code> 文件中。</p>
+<p>如果你想开机自加载 <code>nftables</code> 规则，只需将备份规则放到 <code>/etc/sysconfig/nftables.conf</code> 文件即可。</p>
+<h2 id="总结">总结</h2>
+<p>至此，本文对 <code>nftables</code> 的基本功能和用法就讲解完了，更高级的用法可以在以下文档中做进一步探索。</p>
+<blockquote>
+<ol>
+<li>Archlinux Wiki：https://wiki.archlinux.org/index.php/Nftables</li>
+<li>nftables HOWTO：https://farkasity.gitbooks.io/nftables-howto-zh/</li>
+<li>nftables Wiki：https://wiki.nftables.org/wiki-nftables/index.php/Main_Page</li>
+</ol>
+</blockquote>
+<h2 id="参考文档">参考文档</h2>
+<ol>
+<li><a href="https://www.google.com">https://www.google.com</a></li>
+<li><a href="https://url.cn/56tJkD8">https://url.cn/56tJkD8</a></li>
+<li><a href="http://www.freecls.com/a/2712/fc">http://www.freecls.com/a/2712/fc</a></li>
+<li><a href="https://blog.51cto.com/babyshen/2065749">https://blog.51cto.com/babyshen/2065749</a></li>
+<li><a href="https://adoyle.me/Today-I-Learned/linux/iptables.html">https://adoyle.me/Today-I-Learned/linux/iptables.html</a></li>
+<li><a href="https://blog.csdn.net/dog250/article/details/54170683">https://blog.csdn.net/dog250/article/details/54170683</a></li>
+<li><a href="https://www.yangcs.net/posts/using-nftables/">https://www.yangcs.net/posts/using-nftables/</a></li>
+<li><a href="https://wiki.archlinux.org/index.php/Nftables">https://wiki.archlinux.org/index.php/Nftables</a></li>
+<li><a href="https://farkasity.gitbooks.io/nftables-howto-zh/content/">https://farkasity.gitbooks.io/nftables-howto-zh/content/</a></li>
+<li><a href="https://blog.omicron3069.com/post/nftablesfornode/">https://blog.omicron3069.com/post/nftablesfornode/</a></li>
+</ol>
+                    </div>
+                    
+                    
+
+                    
+
+                    
+<div class="flex flex-col md:flex-row md:justify-between -mx-2 mt-4 px-2 pt-4 border-t">
+    <div>
+        
+        <span class="block font-bold">上一页</span>
+        <a href="/docs/iptables/%E6%80%BB%E7%BB%93%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/" class="block"></a>
+        
+    </div>
+    <div class="md:text-right mt-4 md:mt-0">
+        
+        <span class="block font-bold">下一页</span>
+        <a href="/docs/iptables/cluster%E6%A8%A1%E5%9D%97/" class="block">iptables CLUSTERIP模块 负载均衡</a>
+        
+    </div>
+</div>
+
+                    
+                </div>
+                
+            </div>
+
+        </div>
+
+
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        hljs.initHighlightingOnLoad();
+        changeSidebarHeight();
+        switchDocToc();
+    })
+</script>
+
+
+
+
+
+
+
+
+
+      </div>
+    </div>
+    
+  </main>
+  <footer class="pl-scrollbar">
+    <div class="w-full max-w-screen-xl mx-auto"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 2021 <a href="https://www.songjinfeng.com/">SonJinfeng</a> 
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+  </footer>
+</body>
+
+</html>

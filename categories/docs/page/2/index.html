@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang='zh' ><meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+
+
+<title>docs | Songjinfeng&#39;s BLOG</title>
+<link rel="stylesheet" href="/css/eureka.min.css">
+<script defer src="/js/eureka.min.js"></script>
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Noto+Serif+SC:wght@400;600;700&display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/styles/solarized-light.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/highlight.min.js"
+   crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/dart.min.js"
+     crossorigin></script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/js/all.min.js"
+   integrity="sha256-uNYoXefWRqv&#43;PsIF/OflNmwtKM4lStn9yrz2gVl6ymo="  crossorigin></script>
+
+
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css"
+   integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3&#43;Aro6EYUG4&#43;cU&#43;KJWu/X"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js" 
+  integrity="sha384-g7c&#43;Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI&#43;sEnkvrMWph2EDg4"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js"
+   integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC&#43;Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.9.2/dist/mermaid.min.js" 
+  integrity="sha256-Zmpaaj&#43;GXFsPF5WdPArSrnW3b30dovldeKsW00xBVwE="  crossorigin></script>
+
+
+<link rel="icon" type="image/png" sizes="32x32" href="/images/icon_hucfa16751ac9c82c06b84c3502c0db793_16378_32x32_fill_box_center_2.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hucfa16751ac9c82c06b84c3502c0db793_16378_180x180_fill_box_center_2.png">
+
+<meta name="description"
+  content="Eureka is a elegant and powerful theme for Hugo.">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"Categories",
+      "item":"/categories/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"docs",
+      "item":"/categories/docs/"}]
+}
+</script>
+
+
+
+
+<script type="application/ld+json">
+{
+    "@context":"https://schema.org",
+    "@type":"ItemList",
+    "itemListElement":[{
+            "@type":"ListItem",
+            "position":  1 ,
+            "name": "iptables CLUSTERIP模块 负载均衡",
+            "description": "本章只涉及部分参数讲解，完整参数可查看man手册或Iptables Tutorial\n 参考链接：\niptables CLUSTERIP构建独特的负载均衡集群\nCLUSTERIP for load-balancing and HA\nIptables Tutorial 1.2.2 Prev——Chapter 11. Iptables targets and jumps\n  请记住，CLUSTERIP可能会破坏SSH等协议。可能连接到集群内部任意一台主机上，因此，这在某些协议中不能很好地工作，建议添加单独的ip地址以用于维护和管理。\n 基本概念 一般负载均衡器会决策将数据发往集群内的某一个节点进行处理，与之不同的是CLUSTERIP负载均衡模式会将数据包发往所有服务器，由服务器决定是否处理。\n具体过程：\n  服务节点具有相同的IP，使用组播MAC\n  收到上游L2/L3对服务IP地址的ARP请求时，集群中的机器便回复相同的组播MAC地址，使上游L3/L2设备，在每个连接服务器的端口泛洪发送相同数据包。\n  服务器收到数据包后，采用相同Hash算法计算数据包的哈希值，如果该哈希值与本地节点标识符匹配，则该数据包将被传递，否则该数据包将被丢弃。\n最简单的算法就是源IP地址对集群机器数量取模*，集群中的n台机器按照从0开始到n−1编号，每台机器*认领自己编号的运算结果*即可。最终的结果只要能保证同一个请求有且只有一台集群中的服务器处理***即可！\n  hashmode 介绍 \u0026ndash;hashmode关键字可以使用三种哈希模式对集群进行负载均衡。\n  第一个是仅源IP（sourceip）， 将在连接之间提供更好的性能和保持连接状态，但在机器之间的负载平衡方面却不那么好。 例如，一个带有购物车的Web服务器在连接之间保持状态，这种负载平衡可能会变得有些不平衡-不同的机器可能会承受更高的负载比其他情况更重要-因为来自同一源IP的连接将到达同一服务器\n  第二个是源IP和源端口（sourceip-sourceport）， 散列速度会稍慢一些，不能很好地维持连接之间的状态，但是会提供更均匀的负载平衡属性。 例如，一个大型的信息网页，也许带有一个简单的搜索引擎，在这里可能是个好主意。\n  第三个是源IP，源端口和目标端口（sourceip-sourceport-destport） 可能会创建非常慢的散列，从而消耗大量内存，但另一方面，也会创建非常好的负载平衡属性。 其中您的主机运行着多个服务，不需要在连接之间保留任何状态。例如，这可能是同一主机上的简单ntp，dns和www服务器。\n  iptables实验 基本配置 # 服务器1上的配置 iptables -I INPUT -d 192.168.44.3 -i eth0 -p tcp --dport 80 -j CLUSTERIP --new --hashmode sourceip --clustermac 01:00:9A:1E:40:0A --total-nodes 3 --local-node 1 # 服务器2上的配置 iptables -I INPUT -d 192.",
+            "url": "/docs/iptables/cluster%E6%A8%A1%E5%9D%97/"
+        }
+    ]
+}
+</script><meta property="og:title" content="docs | Songjinfeng&#39;s BLOG" />
+<meta property="og:type" content="website" />
+
+
+<meta property="og:image" content="/images/icon.png">
+
+
+<meta property="og:url" content="/categories/docs/" />
+
+
+
+
+
+<meta property="og:description" content="Eureka is a elegant and powerful theme for Hugo." />
+
+
+
+
+
+<meta property="og:locale" content="zh" />
+
+
+
+
+<meta property="og:site_name" content="Songjinfeng&#39;s BLOG" />
+
+
+
+
+
+
+<meta property="og:updated_time" content="2021-04-21T00:00:00&#43;00:00" />
+
+
+
+<meta property="article:section" content="categories" />
+
+
+<link rel="alternate" type="application/rss+xml" href="/categories/docs/index.xml" title="Songjinfeng's BLOG" />
+
+<body class="flex flex-col min-h-screen">
+  <header class="fixed flex items-center w-full min-h-16 pl-scrollbar z-50 bg-secondary-bg shadow-sm">
+    <div class="w-full max-w-screen-xl mx-auto"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="mr-6 text-primary-text text-xl font-bold">Songjinfeng&#39;s BLOG</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:flex-grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:flex-grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">技术专栏</a>
+            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">文档笔记</a>
+            <a href="/series/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">主题系列</a>
+            <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">标签</a>
+            <a href="/authors/songjinfeng/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">关于</a>
+            <a href="/index.xml" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">RSS</a>
+            <a href="/webstack" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">友链&amp;导航</a>
+        </div>
+
+        <div class="flex">
+            <div class="relative pt-4 md:pt-0">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col left-0 md:left-auto right-auto md:right-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">浅色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">深色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">自动</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            switchMode('Auto')
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+  </header>
+  <main class="flex-grow pt-16">
+    <div class="pl-scrollbar">
+      <div class="w-full max-w-screen-xl lg:px-4 xl:px-8 mx-auto">
+<article class="mx-6 my-8">
+    <h1 class="font-bold text-3xl text-primary-text">docs</h1>
+    
+</article>
+<div class="bg-secondary-bg rounded px-6">
+    <div class="overflow-hidden divide-y">
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="mb-4">
+  <a href="/docs/iptables/cluster%E6%A8%A1%E5%9D%97/" class="font-bold text-xl hover:text-eureka">iptables CLUSTERIP模块 负载均衡</a>
+</div>
+<div class="content">
+  本章只涉及部分参数讲解，完整参数可查看man手册或Iptables Tutorial
+ 参考链接：
+iptables CLUSTERIP构建独特的负载均衡集群
+CLUSTERIP for load-balancing and HA
+Iptables Tutorial 1.2.2 Prev——Chapter 11. Iptables targets and jumps
+  请记住，CLUSTERIP可能会破坏SSH等协议。可能连接到集群内部任意一台主机上，因此，这在某些协议中不能很好地工作，建议添加单独的ip地址以用于维护和管理。
+ 基本概念 一般负载均衡器会决策将数据发往集群内的某一个节点进行处理，与之不同的是CLUSTERIP负载均衡模式会将数据包发往所有服务器，由服务器决定是否处理。
+具体过程：
+  服务节点具有相同的IP，使用组播MAC
+  收到上游L2/L3对服务IP地址的ARP请求时，集群中的机器便回复相同的组播MAC地址，使上游L3/L2设备，在每个连接服务器的端口泛洪发送相同数据包。
+  服务器收到数据包后，采用相同Hash算法计算数据包的哈希值，如果该哈希值与本地节点标识符匹配，则该数据包将被传递，否则该数据包将被丢弃。
+最简单的算法就是源IP地址对集群机器数量取模*，集群中的n台机器按照从0开始到n−1编号，每台机器*认领自己编号的运算结果*即可。最终的结果只要能保证同一个请求有且只有一台集群中的服务器处理***即可！
+  hashmode 介绍 &amp;ndash;hashmode关键字可以使用三种哈希模式对集群进行负载均衡。
+  第一个是仅源IP（sourceip）， 将在连接之间提供更好的性能和保持连接状态，但在机器之间的负载平衡方面却不那么好。 例如，一个带有购物车的Web服务器在连接之间保持状态，这种负载平衡可能会变得有些不平衡-不同的机器可能会承受更高的负载比其他情况更重要-因为来自同一源IP的连接将到达同一服务器
+  第二个是源IP和源端口（sourceip-sourceport）， 散列速度会稍慢一些，不能很好地维持连接之间的状态，但是会提供更均匀的负载平衡属性。 例如，一个大型的信息网页，也许带有一个简单的搜索引擎，在这里可能是个好主意。
+  第三个是源IP，源端口和目标端口（sourceip-sourceport-destport） 可能会创建非常慢的散列，从而消耗大量内存，但另一方面，也会创建非常好的负载平衡属性。 其中您的主机运行着多个服务，不需要在连接之间保留任何状态。例如，这可能是同一主机上的简单ntp，dns和www服务器。
+  iptables实验 基本配置 # 服务器1上的配置 iptables -I INPUT -d 192.168.44.3 -i eth0 -p tcp --dport 80 -j CLUSTERIP --new --hashmode sourceip --clustermac 01:00:9A:1E:40:0A --total-nodes 3 --local-node 1 # 服务器2上的配置 iptables -I INPUT -d 192.
+</div>
+
+<div class="px-6 pt-4">
+  
+  <div class="pt-6 hover:text-eureka">
+      <a href="/docs/iptables/cluster%E6%A8%A1%E5%9D%97/" class="font-semibold">阅读更多</a>
+      <i class="fas fa-caret-right ml-1"></i>
+  </div>
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
+  
+</div>
+
+
+</div>
+
+<ul class="pagination">
+  <li class="page-item">
+    <a href="/categories/docs/" class="page-link" aria-label="First"><span aria-hidden="true">&laquo;&laquo;</span></a>
+  </li>
+  <li class="page-item">
+    <a href="/categories/docs/" class="page-link" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
+  </li>
+  <li class="page-item">
+    <a class="page-link" href="/categories/docs/">1</a>
+  </li>
+  <li class="page-item active">
+    <a class="page-link" href="/categories/docs/page/2/">2</a>
+  </li>
+  <li class="page-item disabled">
+    <a  class="page-link" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
+  </li>
+  <li class="page-item">
+    <a href="/categories/docs/page/2/" class="page-link" aria-label="Last"><span aria-hidden="true">&raquo;&raquo;</span></a>
+  </li>
+</ul>
+
+
+
+      </div>
+    </div>
+    
+  </main>
+  <footer class="pl-scrollbar">
+    <div class="w-full max-w-screen-xl mx-auto"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 2021 <a href="https://www.songjinfeng.com/">SonJinfeng</a> 
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+  </footer>
+</body>
+
+</html>

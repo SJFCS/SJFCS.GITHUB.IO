@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Docker on Songjinfeng&#39;s BLOG</title>
+    <link>/categories/docker/</link>
+    <description>Recent content in Docker on Songjinfeng&#39;s BLOG</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language>
+    <copyright>&amp;copy; 2021 &lt;a href=&#34;https://www.songjinfeng.com/&#34;&gt;SonJinfeng&lt;/a&gt; 
+</copyright><atom:link href="/categories/docker/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title></title>
+      <link>/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_docker/docker%E7%AC%94%E8%AE%B0/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_docker/docker%E7%AC%94%E8%AE%B0/</guid>
+      <description>docker daemon 内核
+docker login docker.io 之后用户密码保存目录
+login
+search
+pull
+push
+tag
+rmi -f
+ps -a
+run
+-i
+-t
+-d
+&amp;ndash;rm
+&amp;ndash;name
+image
+command
+exec -it /bin/sh
+strat restart stop
+rm -f
+-f bujia
+docker commit -p text1 xx/xx/xx:v1
+export xx &amp;gt; xx.tar
+save xx &amp;gt; xx.tar
+load -i
+import
+logs -f
+  docker save保存的是镜像（image），docker export保存的是容器（container）；
+  docker load用来载入镜像包，docker import用来载入容器包，但两者都会恢复为镜像；
+  docker load不能对载入的镜像重命名，而docker import可以为镜像指定新名称。
+ -p 容器外端口：内
+-v 容器外目录：内
+-e 环境变量 key=value</description>
+    </item>
+    
+    <item>
+      <title>Docker 部署</title>
+      <link>/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_docker/docker%E9%83%A8%E7%BD%B2/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_docker/docker%E9%83%A8%E7%BD%B2/</guid>
+      <description>在CentOS上安装Docker Engine   安装所需的软件包。
+sudo yum install -y yum-utils  yum-utils 提供了 yum-config-manager
+device mapper 存储驱动程序需要 device-mapper-persistent-data 和 lvm2。（现在默认overlay2驱动，不需要额外安装此选项）
+  添加软件源信息
+或者 yum install epel-release -y sudo yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
+更新并安装Docker-CE sudo yum makecache fast sudo yum -y install docker-ce sudo yum install docker-ce docker-ce-cli containerd.io
+  开启Docker服务 sudo systemctl start docker 注意： 要安装特定版本的Docker Engine，请在存储库中列出可用版本，然后选择并安装： 列出并排序您存储库中可用的版本。本示例按版本号（从高到低）对结果进行排序:
+yum list docker-ce --showduplicates | sort -r docker-ce.x86_64 3:20.10.6-3.el7 docker-ce-stable docker-ce.x86_64 3:20.10.6-3.el7 docker-ce-stable docker-ce.x86_64 3:20.10.5-3.el7 docker-ce-stable docker-ce.</description>
+    </item>
+    
+    <item>
+      <title>Docker时间宿主机同步</title>
+      <link>/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_docker/docker%E6%97%B6%E9%97%B4%E5%AE%BF%E4%B8%BB%E5%90%8C%E6%AD%A5/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_docker/docker%E6%97%B6%E9%97%B4%E5%AE%BF%E4%B8%BB%E5%90%8C%E6%AD%A5/</guid>
+      <description>在Docker容器创建好之后，可能会发现容器时间跟宿主机时间不一致，此时需要同步它们的时间，让容器时间跟宿主机时间保持一致。 一、分析时间不一致的原因 宿主机采用了CST时区，CST应该是指（China Shanghai Time，东八区时间）
+容器采用了UTC时区，UTC应该是指（Coordinated Universal Time，标准时间）
+此时，容器与宿主机之间采用的时区不一致，两个时区之间相隔8小时。
+二、同步时间的方法 方案1：共享主机localtime 在创建容器的时候指定启动参数，挂载宿主机的localtime文件到容器内，以此来保证宿主机和容器的时区一致。
+docker run --privileged --name=qinjiaxi --net=host -it -v ~:/share /etc/localtime:/etc/localtime:ro docker.xxx.xxx.com.cn/robotframework:2.7.14 bash  方案2：复制宿主机localtime到容器中 docker cp /etc/localtime &amp;lt;container_id&amp;gt;:/etc/  方案3：在创建dockerfile时自定义镜像的时间格式与时区 在dockerfile创建初期增加一行内容，内容规定了该镜像的时间格式以及时区。
+#设置时区 RUN /bin/cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime &amp;amp;&amp;amp; echo &#39;Asia/Shanghai&#39; &amp;gt;/etc/timezone  </description>
+    </item>
+    
+    <item>
+      <title>Docker跨主机通信</title>
+      <link>/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_docker/docker%E5%AE%B9%E5%99%A8%E8%B7%A8%E4%B8%BB%E6%9C%BA%E9%80%9A%E4%BF%A1overlay%E7%BD%91%E7%BB%9C/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_docker/docker%E5%AE%B9%E5%99%A8%E8%B7%A8%E4%B8%BB%E6%9C%BA%E9%80%9A%E4%BF%A1overlay%E7%BD%91%E7%BB%9C/</guid>
+      <description>一、Docker主机间容器通信的解决方案 　Docker网络驱动
+  Overlay: 基于VXLAN封装实现Docker原生Overlay网络
+  Macvlan: Docker主机网卡接口逻辑上分为多个子接口，每个子接口标识一个VLAN。容器接口直接连接Docker主机
+  网卡接口: 通过路由策略转发到另一台Docker主机
+　第三方网络项目
+  　隧道方案
+　&amp;ndash; Flannel: 支持UDP和VLAN封装传输方式
+​ &amp;ndash; Weave: 支持UDP（sleeve模式）和 VXLAN（优先fastdb模式）
+​ &amp;ndash; OpenvSwitch: 支持VXLAN和GRE协议
+​ 路由方案
+​ Calico: 支持BGP协议和IPIP隧道。每台宿主机作为虚拟路由，通过BGP协议实现不同主机容器间通信　二、Docker Overlay Network 　Overlay网络是指在不改变现有网络基础设施的前提下，通过某种约定通信协议，把二层报文封装在IP报文之上的新的数据格式。这样不但能够充分利用成熟的IP路由协议进程数据分发；而且在Overlay技术中采用扩展的隔离标识位数，能够突破VLAN的4000数量限制支持高达16M的用户，并在必要时可将广播流量转化为组播流量，避免广播数据泛滥。
+　因此，Overlay网络实际上是目前最主流的容器跨节点数据传输和路由方案。
+　要想使用Docker原生Overlay网络，需要满足下列任意条件
+ Docker 运行在Swarm 使用键值存储的Docker主机集群  三、使用键值存储搭建Docker主机集群 　需满足下列条件：
+ 集群中主机连接到键值存储，Docker支持 Consul、Etcd和Zookeeper 集群中主机运行一个Docker守护进程 集群中主机必须具有唯一的主机名，因为键值存储使用主机名来标识集群成员 集群中linux主机内核版本在3.12+,支持VXLAN数据包处理，否则可能无法通行  四、部署 　4.1 系统环境
+　　4.2 安装Consul
+# wget https://releases.hashicorp.com/consul/0.9.2/consul_0.9.2_linux_386.zip # unzip consul_1.</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Authors on Songjinfeng&#39;s BLOG</title>
+    <link>/authors/</link>
+    <description>Recent content in Authors on Songjinfeng&#39;s BLOG</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language>
+    <copyright>&amp;copy; 2021 &lt;a href=&#34;https://www.songjinfeng.com/&#34;&gt;SonJinfeng&lt;/a&gt; 
+</copyright>
+    <lastBuildDate>Sat, 15 May 2021 00:00:00 +0000</lastBuildDate><atom:link href="/authors/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>宋锦丰</title>
+      <link>/authors/songjinfeng/</link>
+      <pubDate>Sat, 15 May 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/authors/songjinfeng/</guid>
+      <description>欢迎! 欢迎来到Songjinfeng&#39;s Blog，此博客系统仅用于知识、生活积累与分享，仅代表个人观点及知识水平；若有不足之处，请联系纠正，谢谢。
+关于  初衷：网络上IT资源很多，大多数时候我们也能从网上找到答案，但不可否认，资源太分散，而且绝大多数文章都是浅尝辄止，想找到一些优秀的、比较原理性的文章真的没那么容易。所以，我想写点知识体系还要足够完整且易懂的文章。同时锻炼自己的独立思考和写作能力。   内容：本博客常用于记录IT相关的各类技术，来自互联网转载和作者原创各类IT知识文档的整理分享，包括系统运维、中间件技术、容器及微服务技术、自动化、公有云私有云技术等IT相关的知识和经验。   添加友链：请将你的站点名和URL发送至我的邮箱，待我验证完毕即会完成添加。   本博客由Hugo驱动，基于 Eureka 主题修改而来，部署在GitHub上。
+ </description>
+    </item>
+    
+  </channel>
+</rss>

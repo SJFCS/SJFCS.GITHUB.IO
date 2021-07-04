@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang='zh' ><meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+
+
+<title>Songjinfeng&#39;s BLOG</title>
+<link rel="stylesheet" href="/css/eureka.min.css">
+<script defer src="/js/eureka.min.js"></script>
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Noto+Serif+SC:wght@400;600;700&display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/styles/solarized-light.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/highlight.min.js"
+   crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/dart.min.js"
+     crossorigin></script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/js/all.min.js"
+   integrity="sha256-uNYoXefWRqv&#43;PsIF/OflNmwtKM4lStn9yrz2gVl6ymo="  crossorigin></script>
+
+
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css"
+   integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3&#43;Aro6EYUG4&#43;cU&#43;KJWu/X"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js" 
+  integrity="sha384-g7c&#43;Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI&#43;sEnkvrMWph2EDg4"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js"
+   integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC&#43;Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.9.2/dist/mermaid.min.js" 
+  integrity="sha256-Zmpaaj&#43;GXFsPF5WdPArSrnW3b30dovldeKsW00xBVwE="  crossorigin></script>
+
+
+<link rel="icon" type="image/png" sizes="32x32" href="/images/icon_hucfa16751ac9c82c06b84c3502c0db793_16378_32x32_fill_box_center_2.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hucfa16751ac9c82c06b84c3502c0db793_16378_180x180_fill_box_center_2.png">
+
+<meta name="description"
+  content="黑白名单 在配置IPTABLES白名单时，往往会将链的默认策略设置为ACCEPT，通过在链的最后设置REJECT规则实现白名单机制，而不是将链的默认策略设置为DROP，如果将链的默认策略设置为DROP，当链中的规则被清空时，管理员的请求也将会被DROP掉。
+首先我们来复习一下一个概念：报文在经过iptables的链时，会匹配链中的规则，遇到匹配的规则时，就执行对应的动作，如果当前链accept了则进入下一个链继续匹配，当链中的规则都无法匹配到当前报文，则使用链的默认策略（默认动作），链的默认策略通常设置为ACCEPT或者DROP。
+所以，当链的默认策略为ACCEPT时，链中的规则对应的动作应该为DROP或者REJECT，表示只有匹配到规则的报文才会被拒绝，没有被规则匹配到的报文都会被默认接受，这就是”黑名单”机制。
+同理，当链的默认策略为DROP时，链中的规则对应的动作应该为ACCEPT，表示只有匹配到规则的报文才会被放行，没有被规则匹配到的报文都会被默认拒绝，这就是”白名单”机制。
+自定义链 想象一下，如果INPUT链中存放了200条规则，这200条规则有针对httpd服务的，有针对sshd服务的，有针对私网IP的，有针对公网IP的，假如，我们突然想要修改针对httpd服务的相关规则，难道我们还要从头看一遍这200条规则，找出哪些规则是针对httpd的吗？这显然不合理。
+创建自定义链 所以，iptables中，可以自定义链，通过自定义链即可解决上述问题。
+如上图所示，”-t filter”表示操作的表为filter表，与之前的示例相同，省略-t选项时，缺省操作的就是filter表。
+“-N IN_WEB”表示创建一个自定义链，自定义链的名称为”IN_WEB”
+自定义链创建完成后，查看filter表中的链，如上图所示，自定义链已经被创建，而且可以看到，这条自定义链的引用计数为0 (0 references)，也就是说，这条自定义链还没有被任何默认链所引用，所以，即使IN_WEB中配置了规则，也不会生效，我们现在不用在意它，继续聊我们的自定义链。
+在我们就可以直接在自定义链中配置规则了，如下图所示，我们配置一些规则用于举例。
+引用自定义链 自定义链在哪里创建，应该被哪条默认链引用，取决于实际的工作场景，因为此处示例的规则是匹配入站报文，所以在INPUT链中引用自定义链。示例如下。
+当”-j”对应的值为一个自定义链时，就表示被当前规则匹配到的报文将交由对应的自定义链处理，具体怎样处理，取决于自定义链中的规则，当IN_WEB自定义链被INPUT链引用以后，可以发现，IN_WEB链的引用计数已经变为1，表示这条自定义链已经被引用了1次，自定义链还可以引用其他的自定义链。
+在之前的文章中，我们说过，”动作”在iptables中被称为”target”，这样描述并不准确，因为target为目标之意，报文被规则匹配到以后，target能是一个”动作”，target也能是一个”自定义链”，当target为一个动作时，表示报文按照指定的动作处理，当target为自定义链时，表示报文由自定义链中的规则处理，现在回过头再理解之前的术语，似乎更加明了了。
+改名自定义链 过了一段时间，我们发现IN_WEB这个名字不太合适，我们想要将这条自定义链重命名，把名字改成WEB，可以吗？必须能啊，示例如下
+如上图所示，使用”-E”选项可以修改自定义链名，如上图所示，引用自定义链处的名称会自动发生改变。
+删除自定义链 使用”-X”选项可以删除自定义链，但是删除自定义链时，需要满足两个条件：
+1、自定义链没有被任何默认链引用，即自定义链的引用计数为0。
+删除提示：Too many links，是因为WEB链已经被默认链所引用，不满足上述条件1，所以，我们需要删除对应的引用规则，iptables -D INPUTE 1
+2、自定义链中没有任何规则，即自定义链为空。
+删除提示：Directory not empty，是因为WEB链中存在规则，不满足上述条件2，所以，我们需要清空对应的自定义链，iptables -t fillter -F WEB
+防火墙 主机防火墙：针对于单个主机进行防护。
+网络防火墙： 往往处于网络入口或边缘，针对于网络入口进行防护，服务于防火墙背后的本地局域网。
+前文的举例中，iptables都是作为主机防火墙的角色出现的，那么，iptables怎样作为网络防火墙呢？这就是我们今天要聊的话题。
+当外部网络中的主机与网络内部主机通讯时，不管是由外部主机发往内部主机的报文，还是由内部主机发往外部主机的报文，都需要经过iptables所在的主机，由iptables所在的主机进行”过滤并转发”，所以，防火墙主机的主要工作就是”过滤并转发”，那么，说到这里，我们则不得不再次回顾之前的iptables报文流程图了，如下：
+前文中，iptables都是作为”主机防火墙”的角色出现的，所以我们举例时，只用到了上图中的INPUT链与OUTPUT链，因为拥有”过滤功能”的链只有3条，INPUT、OUTPUT、FORWARD，当报文发往本机时，如果想要过滤，只能在INPUT链与OUTPUT链中实现，而此时，iptables的角色发生了转变，我们想要将iptables所在的主机打造成”网络防火墙”，而刚才已经说过，网络防火墙的职责就是”过滤并转发”，要想”过滤”，只能在INPUT、OUTPUT、FORWARD三条链中实现，要想”转发”，报文则只会经过FORWARD链（发往本机的报文才会经过INPUT链），所以，综上所述，iptables的角色变为”网络防火墙”时，规则只能定义在FORWARD链中。
+实验 A 可ping通 b：10.1.0.3
+B开启内核转发后 A才能ping通C
+不管是由内而外，还是由外而内，只要是”响应报文”，我们统统放行，配置如下，配置完上述规则后，我们只要考虑请求报文的方向就行了，而回应报文，
+#如果想要iptables作为网络防火墙，iptables所在主机开启核心转发功能，以便能够转发报文。 #使用如下命令查看当前主机是否已经开启了核心转发，0表示为开启，1表示已开启 cat /proc/sys/net/ipv4/ip_forward #使用如下两种方法均可临时开启核心转发，立即生效，但是重启网络配置后会失效。 方法一：echo 1 &gt; /proc/sys/net/ipv4/ip_forward 方法二：sysctl -w net.ipv4.ip_forward=1 #使用如下方法开启核心转发功能，重启网络服务后永久生效。 配置/etc/sysctl.conf文件（centos7中配置/usr/lib/sysctl.d/00-system.conf文件），在配置文件中将 net.ipv4.ip_forward设置为1 #由于iptables此时的角色为&quot;网络防火墙&quot;，所以需要在filter表中的FORWARD链中设置规则。 #可以使用&quot;白名单机制&quot;，先添加一条默认拒绝的规则，然后再为需要放行的报文设置规则。 #配置规则时需要考虑&quot;方向问题&quot;，针对请求报文与回应报文，考虑报文的源地址与目标地址，源端口与目标端口等。 #示例为允许网络内主机访问网络外主机的web服务与sshd服务。 iptables -A FORWARD -j REJECT iptables -I FORWARD -s 10.">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"文档笔记",
+      "item":"/docs/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"Iptables详解",
+      "item":"/docs/iptables/"},{
+      "@type": "ListItem",
+      "position": 3 ,
+      "name":"",
+      "item":"/docs/iptables/iptables%E8%AF%A6%E8%A7%A37%E8%87%AA%E5%AE%9A%E4%B9%89%E9%93%BE/"}]
+}
+</script>
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/docs/iptables/iptables%E8%AF%A6%E8%A7%A37%E8%87%AA%E5%AE%9A%E4%B9%89%E9%93%BE/"
+    },
+    "headline": "Songjinfeng\u0027s BLOG","wordCount":  160 ,
+    "publisher": {
+        "@type": "Person",
+        "name": "JF. Song",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "/images/icon.png"
+        }
+        },
+    "description": "黑白名单 在配置IPTABLES白名单时，往往会将链的默认策略设置为ACCEPT，通过在链的最后设置REJECT规则实现白名单机制，而不是将链的默认策略设置为DROP，如果将链的默认策略设置为DROP，当链中的规则被清空时，管理员的请求也将会被DROP掉。\n首先我们来复习一下一个概念：报文在经过iptables的链时，会匹配链中的规则，遇到匹配的规则时，就执行对应的动作，如果当前链accept了则进入下一个链继续匹配，当链中的规则都无法匹配到当前报文，则使用链的默认策略（默认动作），链的默认策略通常设置为ACCEPT或者DROP。\n所以，当链的默认策略为ACCEPT时，链中的规则对应的动作应该为DROP或者REJECT，表示只有匹配到规则的报文才会被拒绝，没有被规则匹配到的报文都会被默认接受，这就是”黑名单”机制。\n同理，当链的默认策略为DROP时，链中的规则对应的动作应该为ACCEPT，表示只有匹配到规则的报文才会被放行，没有被规则匹配到的报文都会被默认拒绝，这就是”白名单”机制。\n自定义链 想象一下，如果INPUT链中存放了200条规则，这200条规则有针对httpd服务的，有针对sshd服务的，有针对私网IP的，有针对公网IP的，假如，我们突然想要修改针对httpd服务的相关规则，难道我们还要从头看一遍这200条规则，找出哪些规则是针对httpd的吗？这显然不合理。\n创建自定义链 所以，iptables中，可以自定义链，通过自定义链即可解决上述问题。\n如上图所示，”-t filter”表示操作的表为filter表，与之前的示例相同，省略-t选项时，缺省操作的就是filter表。\n“-N IN_WEB”表示创建一个自定义链，自定义链的名称为”IN_WEB”\n自定义链创建完成后，查看filter表中的链，如上图所示，自定义链已经被创建，而且可以看到，这条自定义链的引用计数为0 (0 references)，也就是说，这条自定义链还没有被任何默认链所引用，所以，即使IN_WEB中配置了规则，也不会生效，我们现在不用在意它，继续聊我们的自定义链。\n在我们就可以直接在自定义链中配置规则了，如下图所示，我们配置一些规则用于举例。\n引用自定义链 自定义链在哪里创建，应该被哪条默认链引用，取决于实际的工作场景，因为此处示例的规则是匹配入站报文，所以在INPUT链中引用自定义链。示例如下。\n当”-j”对应的值为一个自定义链时，就表示被当前规则匹配到的报文将交由对应的自定义链处理，具体怎样处理，取决于自定义链中的规则，当IN_WEB自定义链被INPUT链引用以后，可以发现，IN_WEB链的引用计数已经变为1，表示这条自定义链已经被引用了1次，自定义链还可以引用其他的自定义链。\n在之前的文章中，我们说过，”动作”在iptables中被称为”target”，这样描述并不准确，因为target为目标之意，报文被规则匹配到以后，target能是一个”动作”，target也能是一个”自定义链”，当target为一个动作时，表示报文按照指定的动作处理，当target为自定义链时，表示报文由自定义链中的规则处理，现在回过头再理解之前的术语，似乎更加明了了。\n改名自定义链 过了一段时间，我们发现IN_WEB这个名字不太合适，我们想要将这条自定义链重命名，把名字改成WEB，可以吗？必须能啊，示例如下\n如上图所示，使用”-E”选项可以修改自定义链名，如上图所示，引用自定义链处的名称会自动发生改变。\n删除自定义链 使用”-X”选项可以删除自定义链，但是删除自定义链时，需要满足两个条件：\n1、自定义链没有被任何默认链引用，即自定义链的引用计数为0。\n删除提示：Too many links，是因为WEB链已经被默认链所引用，不满足上述条件1，所以，我们需要删除对应的引用规则，iptables -D INPUTE 1\n2、自定义链中没有任何规则，即自定义链为空。\n删除提示：Directory not empty，是因为WEB链中存在规则，不满足上述条件2，所以，我们需要清空对应的自定义链，iptables -t fillter -F WEB\n防火墙 主机防火墙：针对于单个主机进行防护。\n网络防火墙： 往往处于网络入口或边缘，针对于网络入口进行防护，服务于防火墙背后的本地局域网。\n前文的举例中，iptables都是作为主机防火墙的角色出现的，那么，iptables怎样作为网络防火墙呢？这就是我们今天要聊的话题。\n当外部网络中的主机与网络内部主机通讯时，不管是由外部主机发往内部主机的报文，还是由内部主机发往外部主机的报文，都需要经过iptables所在的主机，由iptables所在的主机进行”过滤并转发”，所以，防火墙主机的主要工作就是”过滤并转发”，那么，说到这里，我们则不得不再次回顾之前的iptables报文流程图了，如下：\n前文中，iptables都是作为”主机防火墙”的角色出现的，所以我们举例时，只用到了上图中的INPUT链与OUTPUT链，因为拥有”过滤功能”的链只有3条，INPUT、OUTPUT、FORWARD，当报文发往本机时，如果想要过滤，只能在INPUT链与OUTPUT链中实现，而此时，iptables的角色发生了转变，我们想要将iptables所在的主机打造成”网络防火墙”，而刚才已经说过，网络防火墙的职责就是”过滤并转发”，要想”过滤”，只能在INPUT、OUTPUT、FORWARD三条链中实现，要想”转发”，报文则只会经过FORWARD链（发往本机的报文才会经过INPUT链），所以，综上所述，iptables的角色变为”网络防火墙”时，规则只能定义在FORWARD链中。\n实验 A 可ping通 b：10.1.0.3\nB开启内核转发后 A才能ping通C\n不管是由内而外，还是由外而内，只要是”响应报文”，我们统统放行，配置如下，配置完上述规则后，我们只要考虑请求报文的方向就行了，而回应报文，\n#如果想要iptables作为网络防火墙，iptables所在主机开启核心转发功能，以便能够转发报文。 #使用如下命令查看当前主机是否已经开启了核心转发，0表示为开启，1表示已开启 cat \/proc\/sys\/net\/ipv4\/ip_forward #使用如下两种方法均可临时开启核心转发，立即生效，但是重启网络配置后会失效。 方法一：echo 1 \u0026gt; \/proc\/sys\/net\/ipv4\/ip_forward 方法二：sysctl -w net.ipv4.ip_forward=1 #使用如下方法开启核心转发功能，重启网络服务后永久生效。 配置\/etc\/sysctl.conf文件（centos7中配置\/usr\/lib\/sysctl.d\/00-system.conf文件），在配置文件中将 net.ipv4.ip_forward设置为1 #由于iptables此时的角色为\u0026quot;网络防火墙\u0026quot;，所以需要在filter表中的FORWARD链中设置规则。 #可以使用\u0026quot;白名单机制\u0026quot;，先添加一条默认拒绝的规则，然后再为需要放行的报文设置规则。 #配置规则时需要考虑\u0026quot;方向问题\u0026quot;，针对请求报文与回应报文，考虑报文的源地址与目标地址，源端口与目标端口等。 #示例为允许网络内主机访问网络外主机的web服务与sshd服务。 iptables -A FORWARD -j REJECT iptables -I FORWARD -s 10."
+}
+</script><meta property="og:title" content="Songjinfeng&#39;s BLOG" />
+<meta property="og:type" content="article" />
+
+
+<meta property="og:image" content="/images/icon.png">
+
+
+<meta property="og:url" content="/docs/iptables/iptables%E8%AF%A6%E8%A7%A37%E8%87%AA%E5%AE%9A%E4%B9%89%E9%93%BE/" />
+
+
+
+
+<meta property="og:description" content="黑白名单 在配置IPTABLES白名单时，往往会将链的默认策略设置为ACCEPT，通过在链的最后设置REJECT规则实现白名单机制，而不是将链的默认策略设置为DROP，如果将链的默认策略设置为DROP，当链中的规则被清空时，管理员的请求也将会被DROP掉。
+首先我们来复习一下一个概念：报文在经过iptables的链时，会匹配链中的规则，遇到匹配的规则时，就执行对应的动作，如果当前链accept了则进入下一个链继续匹配，当链中的规则都无法匹配到当前报文，则使用链的默认策略（默认动作），链的默认策略通常设置为ACCEPT或者DROP。
+所以，当链的默认策略为ACCEPT时，链中的规则对应的动作应该为DROP或者REJECT，表示只有匹配到规则的报文才会被拒绝，没有被规则匹配到的报文都会被默认接受，这就是”黑名单”机制。
+同理，当链的默认策略为DROP时，链中的规则对应的动作应该为ACCEPT，表示只有匹配到规则的报文才会被放行，没有被规则匹配到的报文都会被默认拒绝，这就是”白名单”机制。
+自定义链 想象一下，如果INPUT链中存放了200条规则，这200条规则有针对httpd服务的，有针对sshd服务的，有针对私网IP的，有针对公网IP的，假如，我们突然想要修改针对httpd服务的相关规则，难道我们还要从头看一遍这200条规则，找出哪些规则是针对httpd的吗？这显然不合理。
+创建自定义链 所以，iptables中，可以自定义链，通过自定义链即可解决上述问题。
+如上图所示，”-t filter”表示操作的表为filter表，与之前的示例相同，省略-t选项时，缺省操作的就是filter表。
+“-N IN_WEB”表示创建一个自定义链，自定义链的名称为”IN_WEB”
+自定义链创建完成后，查看filter表中的链，如上图所示，自定义链已经被创建，而且可以看到，这条自定义链的引用计数为0 (0 references)，也就是说，这条自定义链还没有被任何默认链所引用，所以，即使IN_WEB中配置了规则，也不会生效，我们现在不用在意它，继续聊我们的自定义链。
+在我们就可以直接在自定义链中配置规则了，如下图所示，我们配置一些规则用于举例。
+引用自定义链 自定义链在哪里创建，应该被哪条默认链引用，取决于实际的工作场景，因为此处示例的规则是匹配入站报文，所以在INPUT链中引用自定义链。示例如下。
+当”-j”对应的值为一个自定义链时，就表示被当前规则匹配到的报文将交由对应的自定义链处理，具体怎样处理，取决于自定义链中的规则，当IN_WEB自定义链被INPUT链引用以后，可以发现，IN_WEB链的引用计数已经变为1，表示这条自定义链已经被引用了1次，自定义链还可以引用其他的自定义链。
+在之前的文章中，我们说过，”动作”在iptables中被称为”target”，这样描述并不准确，因为target为目标之意，报文被规则匹配到以后，target能是一个”动作”，target也能是一个”自定义链”，当target为一个动作时，表示报文按照指定的动作处理，当target为自定义链时，表示报文由自定义链中的规则处理，现在回过头再理解之前的术语，似乎更加明了了。
+改名自定义链 过了一段时间，我们发现IN_WEB这个名字不太合适，我们想要将这条自定义链重命名，把名字改成WEB，可以吗？必须能啊，示例如下
+如上图所示，使用”-E”选项可以修改自定义链名，如上图所示，引用自定义链处的名称会自动发生改变。
+删除自定义链 使用”-X”选项可以删除自定义链，但是删除自定义链时，需要满足两个条件：
+1、自定义链没有被任何默认链引用，即自定义链的引用计数为0。
+删除提示：Too many links，是因为WEB链已经被默认链所引用，不满足上述条件1，所以，我们需要删除对应的引用规则，iptables -D INPUTE 1
+2、自定义链中没有任何规则，即自定义链为空。
+删除提示：Directory not empty，是因为WEB链中存在规则，不满足上述条件2，所以，我们需要清空对应的自定义链，iptables -t fillter -F WEB
+防火墙 主机防火墙：针对于单个主机进行防护。
+网络防火墙： 往往处于网络入口或边缘，针对于网络入口进行防护，服务于防火墙背后的本地局域网。
+前文的举例中，iptables都是作为主机防火墙的角色出现的，那么，iptables怎样作为网络防火墙呢？这就是我们今天要聊的话题。
+当外部网络中的主机与网络内部主机通讯时，不管是由外部主机发往内部主机的报文，还是由内部主机发往外部主机的报文，都需要经过iptables所在的主机，由iptables所在的主机进行”过滤并转发”，所以，防火墙主机的主要工作就是”过滤并转发”，那么，说到这里，我们则不得不再次回顾之前的iptables报文流程图了，如下：
+前文中，iptables都是作为”主机防火墙”的角色出现的，所以我们举例时，只用到了上图中的INPUT链与OUTPUT链，因为拥有”过滤功能”的链只有3条，INPUT、OUTPUT、FORWARD，当报文发往本机时，如果想要过滤，只能在INPUT链与OUTPUT链中实现，而此时，iptables的角色发生了转变，我们想要将iptables所在的主机打造成”网络防火墙”，而刚才已经说过，网络防火墙的职责就是”过滤并转发”，要想”过滤”，只能在INPUT、OUTPUT、FORWARD三条链中实现，要想”转发”，报文则只会经过FORWARD链（发往本机的报文才会经过INPUT链），所以，综上所述，iptables的角色变为”网络防火墙”时，规则只能定义在FORWARD链中。
+实验 A 可ping通 b：10.1.0.3
+B开启内核转发后 A才能ping通C
+不管是由内而外，还是由外而内，只要是”响应报文”，我们统统放行，配置如下，配置完上述规则后，我们只要考虑请求报文的方向就行了，而回应报文，
+#如果想要iptables作为网络防火墙，iptables所在主机开启核心转发功能，以便能够转发报文。 #使用如下命令查看当前主机是否已经开启了核心转发，0表示为开启，1表示已开启 cat /proc/sys/net/ipv4/ip_forward #使用如下两种方法均可临时开启核心转发，立即生效，但是重启网络配置后会失效。 方法一：echo 1 &gt; /proc/sys/net/ipv4/ip_forward 方法二：sysctl -w net.ipv4.ip_forward=1 #使用如下方法开启核心转发功能，重启网络服务后永久生效。 配置/etc/sysctl.conf文件（centos7中配置/usr/lib/sysctl.d/00-system.conf文件），在配置文件中将 net.ipv4.ip_forward设置为1 #由于iptables此时的角色为&quot;网络防火墙&quot;，所以需要在filter表中的FORWARD链中设置规则。 #可以使用&quot;白名单机制&quot;，先添加一条默认拒绝的规则，然后再为需要放行的报文设置规则。 #配置规则时需要考虑&quot;方向问题&quot;，针对请求报文与回应报文，考虑报文的源地址与目标地址，源端口与目标端口等。 #示例为允许网络内主机访问网络外主机的web服务与sshd服务。 iptables -A FORWARD -j REJECT iptables -I FORWARD -s 10." />
+
+
+
+
+<meta property="og:locale" content="zh" />
+
+
+
+
+<meta property="og:site_name" content="Songjinfeng&#39;s BLOG" />
+
+
+
+
+
+
+
+
+
+<meta property="article:section" content="docs" />
+
+
+
+
+<body class="flex flex-col min-h-screen">
+  <header class="fixed flex items-center w-full min-h-16 pl-scrollbar z-50 bg-secondary-bg shadow-sm">
+    <div class="w-full max-w-screen-xl mx-auto"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="mr-6 text-primary-text text-xl font-bold">Songjinfeng&#39;s BLOG</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:flex-grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:flex-grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">技术专栏</a>
+            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  mr-4">文档笔记</a>
+            <a href="/series/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">主题系列</a>
+            <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">标签</a>
+            <a href="/authors/songjinfeng/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">关于</a>
+            <a href="/index.xml" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">RSS</a>
+            <a href="/webstack" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">友链&amp;导航</a>
+        </div>
+
+        <div class="flex">
+            <div class="relative pt-4 md:pt-0">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col left-0 md:left-auto right-auto md:right-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">浅色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">深色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">自动</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            switchMode('Auto')
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+  </header>
+  <main class="flex-grow pt-16">
+    <div class="pl-scrollbar">
+      <div class="w-full max-w-screen-xl lg:px-4 xl:px-8 mx-auto">
+
+
+<div class="lg:pt-12">
+    <div class="flex flex-col md:flex-row bg-secondary-bg rounded">
+        <div class="md:w-1/4 lg:w-1/5 border-r">
+            <div class="sticky top-16 pt-6">
+                
+
+
+
+
+
+
+
+
+
+
+<div id="sidebar-title" class="md:hidden mx-4 px-2 pt-4 pb-2 md:border-b text-tertiary-text md:text-primary-text">
+    <span class="font-semibold">目录</span>
+    <i class="fas fa-caret-right ml-1"></i>
+</div>
+
+<div id="sidebar-toc"
+    class="hidden md:block overflow-y-auto mx-6 md:mx-0 pr-6 pt-2 md:max-h-doc-sidebar bg-primary-bg md:bg-transparent">
+    <div class="flex flex-wrap ml-4 -mr-2 p-2 bg-secondary-bg md:bg-primary-bg rounded">
+        <a class=" hover:text-eureka"
+            href="/docs/iptables/">Iptables详解</a>
+        
+        
+        
+
+
+    </div>
+    
+<ul class="pl-6">
+    
+    
+    
+    <li class="py-2">
+        <div class="">
+            <a class=" hover:text-eureka"
+                href="/docs/iptables/iptables%E8%AF%A6%E8%A7%A31%E6%A6%82%E5%BF%B5/">Iptables详解(1)概念</a>
+        </div>
+        
+    </li>
+    
+    
+    
+    
+    <li class="py-2">
+        <div class="">
+            <a class=" hover:text-eureka"
+                href="/docs/iptables/iptables%E8%AF%A6%E8%A7%A32%E5%9F%BA%E7%A1%80%E7%AE%A1%E7%90%86%E5%91%BD%E4%BB%A4/">Iptables详解(2)管理</a>
+        </div>
+        
+    </li>
+    
+    
+    
+    
+    <li class="py-2">
+        <div class="">
+            <a class=" hover:text-eureka"
+                href="/docs/iptables/iptables%E8%AF%A6%E8%A7%A332%E6%89%A9%E5%B1%95%E5%8C%B9%E9%85%8D%E6%9D%A1%E4%BB%B6%E6%A8%A1%E5%9D%97/">Iptables详解(3)2扩展匹配条件模块</a>
+        </div>
+        
+    </li>
+    
+    
+    
+    
+    <li class="py-2">
+        <div class="">
+            <a class=" hover:text-eureka"
+                href="/docs/iptables/iptables%E8%AF%A6%E8%A7%A333%E5%AE%89%E5%85%A8%E6%A8%A1%E5%9D%97/">Iptables详解(3)3安全模块</a>
+        </div>
+        
+    </li>
+    
+    
+    
+    
+    <li class="py-2">
+        <div class="">
+            <a class=" hover:text-eureka"
+                href="/docs/iptables/iptables%E8%AF%A6%E8%A7%A34%E5%A4%84%E7%90%86%E5%8A%A8%E4%BD%9C/">Iptables详解(4)处理动作</a>
+        </div>
+        
+    </li>
+    
+    
+    
+    
+    <li class="py-2">
+        <div class="">
+            <a class=" text-eureka  hover:text-eureka"
+                href="/docs/iptables/iptables%E8%AF%A6%E8%A7%A37%E8%87%AA%E5%AE%9A%E4%B9%89%E9%93%BE/"></a>
+        </div>
+        
+    </li>
+    
+    
+    
+    
+    <li class="py-2">
+        <div class="">
+            <a class=" hover:text-eureka"
+                href="/docs/iptables/iptables%E8%AF%A6%E8%A7%A3%E5%85%B6%E4%BB%96/"></a>
+        </div>
+        
+    </li>
+    
+    
+    
+    
+    <li class="py-2">
+        <div class="">
+            <a class=" hover:text-eureka"
+                href="/docs/iptables/%E5%88%A9%E7%94%A8-iptables-%E5%8A%A0%E4%B8%8A-recent-%E6%A8%A1%E5%9D%97%E9%98%BB%E6%8C%A1%E5%A4%A7%E9%87%8F%E7%9A%84%E8%AF%B7%E6%B1%82/"></a>
+        </div>
+        
+    </li>
+    
+    
+    
+    
+    <li class="py-2">
+        <div class="">
+            <a class=" hover:text-eureka"
+                href="/docs/iptables/%E6%80%BB%E7%BB%93%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/"></a>
+        </div>
+        
+    </li>
+    
+    
+    
+    
+    <li class="py-2">
+        <div class="">
+            <a class=" hover:text-eureka"
+                href="/docs/iptables/%E6%9C%AA%E5%8F%91%E5%B8%83/iptables-or-nftables/"></a>
+        </div>
+        
+    </li>
+    
+    
+    
+    
+    <li class="py-2">
+        <div class="">
+            <a class=" hover:text-eureka"
+                href="/docs/iptables/cluster%E6%A8%A1%E5%9D%97/">iptables CLUSTERIP模块 负载均衡</a>
+        </div>
+        
+    </li>
+    
+    
+</ul>
+
+</div>
+
+
+
+
+
+            </div>
+
+        </div>
+        <div class="w-full md:w-3/4 lg:w-4/5 pb-8 pt-2 md:pt-8">
+            <div class="w-full lg:w-3/4 pl-6 ml-0 mr-auto">
+                <h1 class="font-bold text-3xl text-primary-text"></h1>
+                <div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>0001-01-01</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>1分钟阅读时长</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="/categories/blog/" class="hover:text-eureka">blog</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/docs/" class="hover:text-eureka">docs</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/iptables/" class="hover:text-eureka">iptables</a>
+        
+    </div>
+    
+
+    
+</div>
+            </div>
+            <div class="flex">
+                <div class="w-full lg:w-3/4 px-6">
+                    
+                    
+                    <div class="content">
+                        <h1 id="黑白名单">黑白名单</h1>
+<p>在配置IPTABLES白名单时，往往会将链的默认策略设置为ACCEPT，通过在链的最后设置REJECT规则实现白名单机制，而不是将链的默认策略设置为DROP，如果将链的默认策略设置为DROP，当链中的规则被清空时，管理员的请求也将会被DROP掉。</p>
+<p>首先我们来复习一下一个概念：报文在经过iptables的链时，会匹配链中的规则，遇到匹配的规则时，就执行对应的动作，如果当前链accept了则进入下一个链继续匹配，当链中的规则都无法匹配到当前报文，则使用链的默认策略（默认动作），链的默认策略通常设置为ACCEPT或者DROP。</p>
+<p>所以，当链的默认策略为ACCEPT时，链中的规则对应的动作应该为DROP或者REJECT，表示只有匹配到规则的报文才会被拒绝，没有被规则匹配到的报文都会被默认接受，这就是”黑名单”机制。</p>
+<p>同理，当链的默认策略为DROP时，链中的规则对应的动作应该为ACCEPT，表示只有匹配到规则的报文才会被放行，没有被规则匹配到的报文都会被默认拒绝，这就是”白名单”机制。</p>
+<h1 id="自定义链">自定义链</h1>
+<p>想象一下，如果INPUT链中存放了200条规则，这200条规则有针对httpd服务的，有针对sshd服务的，有针对私网IP的，有针对公网IP的，假如，我们突然想要修改针对httpd服务的相关规则，难道我们还要从头看一遍这200条规则，找出哪些规则是针对httpd的吗？这显然不合理。</p>
+<h3 id="创建自定义链">创建自定义链</h3>
+<p>所以，iptables中，可以自定义链，通过自定义链即可解决上述问题。</p>
+<p><img src="D:%5Cassets%5CIptables%E8%AF%A6%E8%A7%A3(7)%E9%BB%91%E7%99%BD%E5%90%8D%E5%8D%95%5C050717_1352_1.png" alt="img"></p>
+<p>如上图所示，”-t filter”表示操作的表为filter表，与之前的示例相同，省略-t选项时，缺省操作的就是filter表。</p>
+<p>“-N IN_WEB”表示创建一个自定义链，自定义链的名称为”IN_WEB”</p>
+<p>自定义链创建完成后，查看filter表中的链，如上图所示，自定义链已经被创建，而且可以看到，这条自定义链的引用计数为0 (0 references)，也就是说，这条自定义链还没有被任何默认链所引用，所以，即使IN_WEB中配置了规则，也不会生效，我们现在不用在意它，继续聊我们的自定义链。</p>
+<p>在我们就可以直接在自定义链中配置规则了，如下图所示，我们配置一些规则用于举例。</p>
+<p><img src="D:%5Cassets%5CIptables%E8%AF%A6%E8%A7%A3(7)%E9%BB%91%E7%99%BD%E5%90%8D%E5%8D%95%5C050717_1352_2.png" alt="img"></p>
+<h3 id="引用自定义链">引用自定义链</h3>
+<p>自定义链在哪里创建，应该被哪条默认链引用，取决于实际的工作场景，因为此处示例的规则是匹配入站报文，所以在INPUT链中引用自定义链。示例如下。</p>
+<p><img src="D:%5Cassets%5CIptables%E8%AF%A6%E8%A7%A3(7)%E9%BB%91%E7%99%BD%E5%90%8D%E5%8D%95%5C050717_1352_3.png" alt="img"></p>
+<p>当”-j”对应的值为一个自定义链时，就表示被当前规则匹配到的报文将交由对应的自定义链处理，具体怎样处理，取决于自定义链中的规则，当IN_WEB自定义链被INPUT链引用以后，可以发现，IN_WEB链的引用计数已经变为1，表示这条自定义链已经被引用了1次，自定义链还可以引用其他的自定义链。</p>
+<p>在之前的文章中，我们说过，”动作”在iptables中被称为”target”，这样描述并不准确，因为target为目标之意，报文被规则匹配到以后，target能是一个”动作”，target也能是一个”自定义链”，当target为一个动作时，表示报文按照指定的动作处理，当target为自定义链时，表示报文由自定义链中的规则处理，现在回过头再理解之前的术语，似乎更加明了了。</p>
+<h3 id="改名自定义链">改名自定义链</h3>
+<p>过了一段时间，我们发现IN_WEB这个名字不太合适，我们想要将这条自定义链重命名，把名字改成WEB，可以吗？必须能啊，示例如下</p>
+<p><img src="D:%5Cassets%5CIptables%E8%AF%A6%E8%A7%A3(7)%E9%BB%91%E7%99%BD%E5%90%8D%E5%8D%95%5C050717_1352_5.png" alt="img"></p>
+<p>如上图所示，使用”-E”选项可以修改自定义链名，如上图所示，引用自定义链处的名称会自动发生改变。</p>
+<h3 id="删除自定义链">删除自定义链</h3>
+<p>使用”-X”选项可以删除自定义链，但是删除自定义链时，需要满足两个条件：</p>
+<p>1、自定义链没有被任何默认链引用，即自定义链的引用计数为0。</p>
+<p>删除提示：Too many links，是因为WEB链已经被默认链所引用，不满足上述条件1，所以，我们需要删除对应的引用规则，iptables -D INPUTE 1</p>
+<p>2、自定义链中没有任何规则，即自定义链为空。</p>
+<p>删除提示：Directory not empty，是因为WEB链中存在规则，不满足上述条件2，所以，我们需要清空对应的自定义链，iptables -t fillter -F WEB</p>
+<h1 id="防火墙">防火墙</h1>
+<p>主机防火墙：针对于单个主机进行防护。</p>
+<p>网络防火墙： 往往处于网络入口或边缘，针对于网络入口进行防护，服务于防火墙背后的本地局域网。</p>
+<p>前文的举例中，iptables都是作为主机防火墙的角色出现的，那么，iptables怎样作为网络防火墙呢？这就是我们今天要聊的话题。</p>
+<p>当外部网络中的主机与网络内部主机通讯时，不管是由外部主机发往内部主机的报文，还是由内部主机发往外部主机的报文，都需要经过iptables所在的主机，由iptables所在的主机进行”过滤并转发”，所以，防火墙主机的主要工作就是”过滤并转发”，那么，说到这里，我们则不得不再次回顾之前的iptables报文流程图了，如下：</p>
+<p><img src="D:%5Cassets%5CIptables%E8%AF%A6%E8%A7%A3(7)%E9%BB%91%E7%99%BD%E5%90%8D%E5%8D%95%5C021217_0051_6.png" alt="img"></p>
+<p>前文中，iptables都是作为”主机防火墙”的角色出现的，所以我们举例时，只用到了上图中的INPUT链与OUTPUT链，因为拥有”过滤功能”的链只有3条，INPUT、OUTPUT、FORWARD，当报文发往本机时，如果想要过滤，只能在INPUT链与OUTPUT链中实现，而此时，iptables的角色发生了转变，我们想要将iptables所在的主机打造成”网络防火墙”，而刚才已经说过，网络防火墙的职责就是”过滤并转发”，要想”过滤”，只能在INPUT、OUTPUT、FORWARD三条链中实现，要想”转发”，报文则只会经过FORWARD链（发往本机的报文才会经过INPUT链），所以，综上所述，iptables的角色变为”网络防火墙”时，规则只能定义在FORWARD链中。</p>
+<h2 id="实验">实验</h2>
+<p><img src="D:%5Cassets%5CIptables%E8%AF%A6%E8%A7%A3(7)%E9%BB%91%E7%99%BD%E5%90%8D%E5%8D%95%5C051017_0955_2.png" alt="img"></p>
+<p>A 可ping通 b：10.1.0.3</p>
+<p>B开启内核转发后 A才能ping通C</p>
+<p><img src="D:%5Cassets%5CIptables%E8%AF%A6%E8%A7%A3(7)%E9%98%B2%E7%81%AB%E5%A2%99%5C051517_1411_8.png" alt="img"></p>
+<p><img src="D:%5Cassets%5CIptables%E8%AF%A6%E8%A7%A3(7)%E9%BB%91%E7%99%BD%E5%90%8D%E5%8D%95%5C051017_0955_22.png" alt="img"></p>
+<p>不管是由内而外，还是由外而内，只要是”响应报文”，我们统统放行，配置如下，配置完上述规则后，我们只要考虑请求报文的方向就行了，而回应报文，</p>
+<pre><code>#如果想要iptables作为网络防火墙，iptables所在主机开启核心转发功能，以便能够转发报文。
+#使用如下命令查看当前主机是否已经开启了核心转发，0表示为开启，1表示已开启
+cat /proc/sys/net/ipv4/ip_forward
+#使用如下两种方法均可临时开启核心转发，立即生效，但是重启网络配置后会失效。
+方法一：echo 1 &gt; /proc/sys/net/ipv4/ip_forward
+方法二：sysctl -w net.ipv4.ip_forward=1
+#使用如下方法开启核心转发功能，重启网络服务后永久生效。
+配置/etc/sysctl.conf文件（centos7中配置/usr/lib/sysctl.d/00-system.conf文件），在配置文件中将 net.ipv4.ip_forward设置为1
+ 
+#由于iptables此时的角色为&quot;网络防火墙&quot;，所以需要在filter表中的FORWARD链中设置规则。
+#可以使用&quot;白名单机制&quot;，先添加一条默认拒绝的规则，然后再为需要放行的报文设置规则。
+#配置规则时需要考虑&quot;方向问题&quot;，针对请求报文与回应报文，考虑报文的源地址与目标地址，源端口与目标端口等。
+#示例为允许网络内主机访问网络外主机的web服务与sshd服务。
+iptables -A FORWARD -j REJECT
+iptables -I FORWARD -s 10.1.0.0/16 -p tcp --dport 80 -j ACCEPT
+iptables -I FORWARD -d 10.1.0.0/16 -p tcp --sport 80 -j ACCEPT
+iptables -I FORWARD -s 10.1.0.0/16 -p tcp --dport 22 -j ACCEPT
+iptables -I FORWARD -d 10.1.0.0/16 -p tcp --sport 22 -j ACCEPT
+ 
+#可以使用state扩展模块，对上述规则进行优化，使用如下配置可以省略许多&quot;回应报文放行规则&quot;。
+iptables -A FORWARD -j REJECT
+iptables -I FORWARD -s 10.1.0.0/16 -p tcp --dport 80 -j ACCEPT
+iptables -I FORWARD -s 10.1.0.0/16 -p tcp --dport 22 -j ACCEPT
+iptables -I FORWARD -m state --state ESTABISHED,RELATED -j ACCEPT
+</code></pre>
+
+                    </div>
+                    
+                    
+
+                    
+
+                    
+<div class="flex flex-col md:flex-row md:justify-between -mx-2 mt-4 px-2 pt-4 border-t">
+    <div>
+        
+        <span class="block font-bold">上一页</span>
+        <a href="/docs/iptables/iptables%E8%AF%A6%E8%A7%A34%E5%A4%84%E7%90%86%E5%8A%A8%E4%BD%9C/" class="block">Iptables详解(4)处理动作</a>
+        
+    </div>
+    <div class="md:text-right mt-4 md:mt-0">
+        
+        <span class="block font-bold">下一页</span>
+        <a href="/docs/iptables/iptables%E8%AF%A6%E8%A7%A3%E5%85%B6%E4%BB%96/" class="block"></a>
+        
+    </div>
+</div>
+
+                    
+                </div>
+                
+            </div>
+
+        </div>
+
+
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        hljs.initHighlightingOnLoad();
+        changeSidebarHeight();
+        switchDocToc();
+    })
+</script>
+
+
+
+
+
+
+
+
+
+      </div>
+    </div>
+    
+  </main>
+  <footer class="pl-scrollbar">
+    <div class="w-full max-w-screen-xl mx-auto"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 2021 <a href="https://www.songjinfeng.com/">SonJinfeng</a> 
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+  </footer>
+</body>
+
+</html>

@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang='zh' ><meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+
+
+<title>Linux文件系统 | Songjinfeng&#39;s BLOG</title>
+<link rel="stylesheet" href="/css/eureka.min.css">
+<script defer src="/js/eureka.min.js"></script>
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Noto+Serif+SC:wght@400;600;700&display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/styles/solarized-light.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/highlight.min.js"
+   crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/dart.min.js"
+     crossorigin></script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/js/all.min.js"
+   integrity="sha256-uNYoXefWRqv&#43;PsIF/OflNmwtKM4lStn9yrz2gVl6ymo="  crossorigin></script>
+
+
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css"
+   integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3&#43;Aro6EYUG4&#43;cU&#43;KJWu/X"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js" 
+  integrity="sha384-g7c&#43;Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI&#43;sEnkvrMWph2EDg4"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js"
+   integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC&#43;Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.9.2/dist/mermaid.min.js" 
+  integrity="sha256-Zmpaaj&#43;GXFsPF5WdPArSrnW3b30dovldeKsW00xBVwE="  crossorigin></script>
+
+
+<link rel="icon" type="image/png" sizes="32x32" href="/images/icon_hucfa16751ac9c82c06b84c3502c0db793_16378_32x32_fill_box_center_2.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hucfa16751ac9c82c06b84c3502c0db793_16378_180x180_fill_box_center_2.png">
+
+<meta name="description"
+  content="Eureka is a elegant and powerful theme for Hugo.">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"Categories",
+      "item":"/categories/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"Linux文件系统",
+      "item":"/categories/linux%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/"}]
+}
+</script>
+
+
+
+
+<script type="application/ld+json">
+{
+    "@context":"https://schema.org",
+    "@type":"ItemList",
+    "itemListElement":[{
+            "@type":"ListItem",
+            "position":  1 ,
+            "name": "",
+            "description": "转载：http://www.ruanyifeng.com/blog/2011/12/inode.html\n作者： 阮一峰\n一、inode是什么？ 理解inode，要从文件储存说起。\n文件储存在硬盘上，硬盘的最小存储单位叫做\u0026quot;扇区\u0026quot;（Sector）。每个扇区储存512字节（相当于0.5KB）。\n操作系统读取硬盘的时候，不会一个个扇区地读取，这样效率太低，而是一次性连续读取多个扇区，即一次性读取一个\u0026quot;块\u0026quot;（block）。这种由多个扇区组成的\u0026quot;块\u0026quot;，是文件存取的最小单位。\u0026ldquo;块\u0026quot;的大小，最常见的是4KB，即连续八个 sector组成一个 block。\n文件数据都储存在\u0026quot;块\u0026quot;中，那么很显然，我们还必须找到一个地方储存文件的元信息，比如文件的创建者、文件的创建日期、文件的大小等等。这种储存文件元信息的区域就叫做inode，中文译名为\u0026quot;索引节点\u0026rdquo;。\n每一个文件都有对应的inode，里面包含了与该文件有关的一些信息。\n二、inode的内容 inode包含文件的元信息，具体来说有以下内容：\n 　* 文件的字节数\n　* 文件拥有者的User ID\n　* 文件的Group ID\n　* 文件的读、写、执行权限\n　* 文件的时间戳，共有三个：ctime指inode上一次变动的时间，mtime指文件内容上一次变动的时间，atime指文件上一次打开的时间。\n　* 链接数，即有多少文件名指向这个inode\n　* 文件数据block的位置\n 可以用stat命令，查看某个文件的inode信息：\n 　stat example.txt\n 总之，除了文件名以外的所有文件信息，都存在inode之中。至于为什么没有文件名，下文会有详细解释。\n三、inode的大小 inode也会消耗硬盘空间，所以硬盘格式化的时候，操作系统自动将硬盘分成两个区域。一个是数据区，存放文件数据；另一个是inode区（inode table），存放inode所包含的信息。\n每个inode节点的大小，一般是128字节或256字节。inode节点的总数，在格式化时就给定，一般是每1KB或每2KB就设置一个inode。假定在一块1GB的硬盘中，每个inode节点的大小为128字节，每1KB就设置一个inode，那么inode table的大小就会达到128MB，占整块硬盘的12.8%。\n查看每个硬盘分区的inode总数和已经使用的数量，可以使用df命令。\n 　df -i\n 查看每个inode节点的大小，可以用如下命令：\n 　sudo dumpe2fs -h /dev/hda | grep \u0026ldquo;Inode size\u0026rdquo;\n 由于每个文件都必须有一个inode，因此有可能发生inode已经用光，但是硬盘还未存满的情况。这时，就无法在硬盘上创建新文件。\n四、inode号码 每个inode都有一个号码，操作系统用inode号码来识别不同的文件。\n这里值得重复一遍，Unix/Linux系统内部不使用文件名，而使用inode号码来识别文件。对于系统来说，文件名只是inode号码便于识别的别称或者绰号。\n表面上，用户通过文件名，打开文件。实际上，系统内部这个过程分成三步：首先，系统找到这个文件名对应的inode号码；其次，通过inode号码，获取inode信息；最后，根据inode信息，找到文件数据所在的block，读出数据。\n使用ls -i命令，可以看到文件名对应的inode号码：",
+            "url": "/posts/1.linux/linux%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/inode/"
+        },{
+            "@type":"ListItem",
+            "position":  2 ,
+            "name": "Linux索引节点(Inode)用满导致空间不足",
+            "description": "k8s容器调度失败，容器处于创建中，发现提示no space left on device，服务器/var/log分区被占满\n通过du查看/var/log下的日志，发现是有一个gnocchi_wsgi_error.log占用了大量的空间。 查看gnocchi_wsgi_error.log日志，提示/var/lib/gnocchi/tmp下没有空间了。\n这个gnocchi是给ceilometer容器用的，这个容器所使用的共享存储是gnocchi存储卷。\ndf -h查看，发现该存储卷还有空间；但是df -i查看发现inode被占满。 因此可以确认，问题是由于gnocchi存储卷的inode被占满，导致ceilometer容器一直打印错误日志，最终导致/var/log被占满。\n这个问题属于一个配置优化问题。需要及时更改gnocchi的inode配置，需要重新格式化存储，增加inode的数目。操作方法如下：\nkubectl scale rc ceilometerrc \u0026ndash;replicas=0 mkfs.ext4 -N 200000000 /dev/mapper/openstack-gnocchi kubectl scale rc ceilometerrc \u0026ndash;replicas=1\nmkfs.ext4 [-I inode-size] 指定inode size大小，默认配置文件在/etc/mke2fs.conf，inode_size = 256 Inode size: 256 [-N number-of-inodes] 指定inode个数，最大创建文件个数 [-i bytes-per-inode] 指定\u0026quot;字节/inode\u0026quot;的比例 增大-i参数，从而减小inode总数，可以减小inode占用的磁盘空间，减少磁盘浪费。   问题原因分析：\nInode译成中文就是索引节点，每个存储设备（例如硬盘）或存储设备的分区被格式化为文件系统后，应该有两部份，一部份是inode，另一部份是 Block，Block是用来存储数据用的。而inode呢，就是用来存储这些数据的信息，这些信息包括文件大小、属主、归属的用户组、读写权限等。 inode为每个文件进行信息索引，所以就有了inode的数值。操作系统根据指令，能通过inode值最快的找到相对应的文件。 而这台服务器的Block虽然还有剩余，但inode已经用满，因此在创建新目录或文件时，系统提示磁盘空间不足。 Inode的数量是有限制的，每个文件对应一个Inode，df -i可以看到Inode的总量，已经使用的Inode数量，和剩余数量。\n3、解决：\n1）查找满的目录：\n[root@abc sbin]# for i in /*; do echo $i; find $i | wc -l; done  然后找到inode占用最多额目录下，再用上面命令查看。\n2）删除文件占用多的目录：\n进入目录直接rm -rf 可能会卡死，可以使用下面方式：",
+            "url": "/posts/1.linux/linux%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/%E6%95%85%E9%9A%9C%E5%88%86%E6%9E%90inode/"
+        },{
+            "@type":"ListItem",
+            "position":  3 ,
+            "name": "LVM管理",
+            "description": "参考链接：https://www.cnblogs.com/diantong/p/10554831.html\n LVM的工作原理 　LVM（Logical Volume Manager）逻辑卷管理，是在硬盘分区和文件系统之间添加的一个逻辑层，为文件系统屏蔽下层硬盘分区布局，并提供一个抽象的盘卷，在盘卷上建立文件系统。管理员利用LVM可以在硬盘不用重新分区的情况下动态调整文件系统的大小，并且利用LVM管理的文件系统可以跨越物理硬盘。当服务器添加了新的硬盘后，管理员不必将原有的文件移动到新的硬盘上，而是通过LVM直接扩展文件系统来跨越物理硬盘。\n　LVM就是通过将底层的物理硬盘封装，然后以逻辑卷的方式呈现给上层应用。当我们对底层的物理硬盘进行操作时，不再是针对分区进行操作，而是通过逻辑卷对底层硬盘进行管理操作。\n基础术语   物理存储介质（The physical media）： LVM存储介质，可以是硬盘分区、整个硬盘、raid阵列或SAN硬盘。设备必须初始化为LVM物理卷，才能与LVM结合使用。\n  物理卷PV（physical volume）： 物理卷就是LVM的基本存储逻辑块，但和基本的物理存储介质比较却包含与LVM相关的管理参数，创建物理卷可以用硬盘分区，也可以用硬盘本身。\n  卷组VG（Volume Group）： LVM卷组类似于非LVM系统中的物理硬盘，一个卷组VG由一个或多个物理卷PV组成。可以在卷组VG上建立逻辑卷LV。\n  逻辑卷LV（logical volume）： 类似于非LVM系统中的硬盘分区，逻辑卷LV建立在卷组VG之上。在逻辑卷LV之上建立文件系统。\n  物理块PE（physical Extent）： 物理卷PV中可以分配的最小存储单元，PE的大小可以指定，默认为4MB\n  逻辑块LE（Logical Extent）：逻辑卷LV中可以分配的最小存储单元，在同一卷组VG中LE的大小和PE是相同的，并且一一相对。\n   总结：多个磁盘/分区/raid\u0026ndash;\u0026gt;多个物理卷PV\u0026ndash;\u0026gt;合成卷组VG\u0026ndash;\u0026gt;从VG划分出逻辑卷LV\u0026ndash;\u0026gt;格式化LV，挂载使用。\n注意：老的Linux在创建PV时，需要将分区类型改为Linux LVM（8e）。但新的系统已经非常智能，即使默认的Linux分区（83），也可以创建PV。\n LVM的优点   卷组VG可以使多个硬盘空间看起来像是一个大硬盘。\n  逻辑卷LV可以创建跨多个硬盘空间的分区。\n  在使用逻辑卷LV时，可以在空间不足时动态调整大小，不需要考虑逻辑卷LV在硬盘上的位置，不用担心没有可用的连续的空间。\n  可以在线对卷组VG、逻辑卷LV进行创建、删除、调整大小等操作。但LVM上的文件系统也需要重新调整大小。\n  LVM允许创建快照，用来保存文件系统的备份。\n   注意：LVM是软件的卷管理方式，RAID是磁盘管理的方法。对于重要的数据使，用RAID保护物理硬盘不会因为故障而中断业务，再用LVM来实现对卷的良性管理，更好的利用硬盘资源。\nLVM有两种写入机制：线性（写完一个PV再写下一个PV，默认）、条带（平均）\n LVM常用的管理命令    功能 PV管理命令 VG管理命令 LV管理命令     scan 扫描 pvscan vgscan lvscan   create 创建 pvcreate vgcreate lvcreate   display 显示 pvdisplay vgdisplay lvdisplay   remove 移除 pvremove vgremove lvremove   extend 扩展  vgextend lvextend   reduce 减少  vgreduce lvreduce     注意：查看命令有scan、display和s（pvs、vgs、lvs）。s是简单查看对应卷信息，display是详细查看对应卷信息。而scan是扫描所有的相关的对应卷。",
+            "url": "/posts/1.linux/linux%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/lvm%E7%AE%A1%E7%90%86/"
+        }
+    ]
+}
+</script><meta property="og:title" content="Linux文件系统 | Songjinfeng&#39;s BLOG" />
+<meta property="og:type" content="website" />
+
+
+<meta property="og:image" content="/images/icon.png">
+
+
+<meta property="og:url" content="/categories/linux%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/" />
+
+
+
+
+
+<meta property="og:description" content="Eureka is a elegant and powerful theme for Hugo." />
+
+
+
+
+
+<meta property="og:locale" content="zh" />
+
+
+
+
+<meta property="og:site_name" content="Songjinfeng&#39;s BLOG" />
+
+
+
+
+
+
+
+
+<meta property="article:section" content="categories" />
+
+
+<link rel="alternate" type="application/rss+xml" href="/categories/linux%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/index.xml" title="Songjinfeng's BLOG" />
+
+<body class="flex flex-col min-h-screen">
+  <header class="fixed flex items-center w-full min-h-16 pl-scrollbar z-50 bg-secondary-bg shadow-sm">
+    <div class="w-full max-w-screen-xl mx-auto"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="mr-6 text-primary-text text-xl font-bold">Songjinfeng&#39;s BLOG</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:flex-grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:flex-grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">技术专栏</a>
+            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">文档笔记</a>
+            <a href="/series/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">主题系列</a>
+            <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">标签</a>
+            <a href="/authors/songjinfeng/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">关于</a>
+            <a href="/index.xml" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">RSS</a>
+            <a href="/webstack" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">友链&amp;导航</a>
+        </div>
+
+        <div class="flex">
+            <div class="relative pt-4 md:pt-0">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col left-0 md:left-auto right-auto md:right-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">浅色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">深色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">自动</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            switchMode('Auto')
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+  </header>
+  <main class="flex-grow pt-16">
+    <div class="pl-scrollbar">
+      <div class="w-full max-w-screen-xl lg:px-4 xl:px-8 mx-auto">
+<article class="mx-6 my-8">
+    <h1 class="font-bold text-3xl text-primary-text">Linux文件系统</h1>
+    
+</article>
+<div class="bg-secondary-bg rounded px-6">
+    <div class="overflow-hidden divide-y">
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="mb-4">
+  <a href="/posts/1.linux/linux%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/inode/" class="font-bold text-xl hover:text-eureka"></a>
+</div>
+<div class="content">
+  转载：http://www.ruanyifeng.com/blog/2011/12/inode.html
+作者： 阮一峰
+一、inode是什么？ 理解inode，要从文件储存说起。
+文件储存在硬盘上，硬盘的最小存储单位叫做&amp;quot;扇区&amp;quot;（Sector）。每个扇区储存512字节（相当于0.5KB）。
+操作系统读取硬盘的时候，不会一个个扇区地读取，这样效率太低，而是一次性连续读取多个扇区，即一次性读取一个&amp;quot;块&amp;quot;（block）。这种由多个扇区组成的&amp;quot;块&amp;quot;，是文件存取的最小单位。&amp;ldquo;块&amp;quot;的大小，最常见的是4KB，即连续八个 sector组成一个 block。
+文件数据都储存在&amp;quot;块&amp;quot;中，那么很显然，我们还必须找到一个地方储存文件的元信息，比如文件的创建者、文件的创建日期、文件的大小等等。这种储存文件元信息的区域就叫做inode，中文译名为&amp;quot;索引节点&amp;rdquo;。
+每一个文件都有对应的inode，里面包含了与该文件有关的一些信息。
+二、inode的内容 inode包含文件的元信息，具体来说有以下内容：
+ 　* 文件的字节数
+　* 文件拥有者的User ID
+　* 文件的Group ID
+　* 文件的读、写、执行权限
+　* 文件的时间戳，共有三个：ctime指inode上一次变动的时间，mtime指文件内容上一次变动的时间，atime指文件上一次打开的时间。
+　* 链接数，即有多少文件名指向这个inode
+　* 文件数据block的位置
+ 可以用stat命令，查看某个文件的inode信息：
+ 　stat example.txt
+ 总之，除了文件名以外的所有文件信息，都存在inode之中。至于为什么没有文件名，下文会有详细解释。
+三、inode的大小 inode也会消耗硬盘空间，所以硬盘格式化的时候，操作系统自动将硬盘分成两个区域。一个是数据区，存放文件数据；另一个是inode区（inode table），存放inode所包含的信息。
+每个inode节点的大小，一般是128字节或256字节。inode节点的总数，在格式化时就给定，一般是每1KB或每2KB就设置一个inode。假定在一块1GB的硬盘中，每个inode节点的大小为128字节，每1KB就设置一个inode，那么inode table的大小就会达到128MB，占整块硬盘的12.8%。
+查看每个硬盘分区的inode总数和已经使用的数量，可以使用df命令。
+ 　df -i
+ 查看每个inode节点的大小，可以用如下命令：
+ 　sudo dumpe2fs -h /dev/hda | grep &amp;ldquo;Inode size&amp;rdquo;
+ 由于每个文件都必须有一个inode，因此有可能发生inode已经用光，但是硬盘还未存满的情况。这时，就无法在硬盘上创建新文件。
+四、inode号码 每个inode都有一个号码，操作系统用inode号码来识别不同的文件。
+这里值得重复一遍，Unix/Linux系统内部不使用文件名，而使用inode号码来识别文件。对于系统来说，文件名只是inode号码便于识别的别称或者绰号。
+表面上，用户通过文件名，打开文件。实际上，系统内部这个过程分成三步：首先，系统找到这个文件名对应的inode号码；其次，通过inode号码，获取inode信息；最后，根据inode信息，找到文件数据所在的block，读出数据。
+使用ls -i命令，可以看到文件名对应的inode号码：
+</div>
+
+<div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>0001-01-01</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>1分钟阅读时长</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="/categories/blog/" class="hover:text-eureka">blog</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/posts/" class="hover:text-eureka">posts</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/linux/" class="hover:text-eureka">Linux</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/linux%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/" class="hover:text-eureka">Linux文件系统</a>
+        
+    </div>
+    
+
+    
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="mb-4">
+  <a href="/posts/1.linux/linux%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/%E6%95%85%E9%9A%9C%E5%88%86%E6%9E%90inode/" class="font-bold text-xl hover:text-eureka">Linux索引节点(Inode)用满导致空间不足</a>
+</div>
+<div class="content">
+  k8s容器调度失败，容器处于创建中，发现提示no space left on device，服务器/var/log分区被占满
+通过du查看/var/log下的日志，发现是有一个gnocchi_wsgi_error.log占用了大量的空间。 查看gnocchi_wsgi_error.log日志，提示/var/lib/gnocchi/tmp下没有空间了。
+这个gnocchi是给ceilometer容器用的，这个容器所使用的共享存储是gnocchi存储卷。
+df -h查看，发现该存储卷还有空间；但是df -i查看发现inode被占满。 因此可以确认，问题是由于gnocchi存储卷的inode被占满，导致ceilometer容器一直打印错误日志，最终导致/var/log被占满。
+这个问题属于一个配置优化问题。需要及时更改gnocchi的inode配置，需要重新格式化存储，增加inode的数目。操作方法如下：
+kubectl scale rc ceilometerrc &amp;ndash;replicas=0 mkfs.ext4 -N 200000000 /dev/mapper/openstack-gnocchi kubectl scale rc ceilometerrc &amp;ndash;replicas=1
+mkfs.ext4 [-I inode-size] 指定inode size大小，默认配置文件在/etc/mke2fs.conf，inode_size = 256 Inode size: 256 [-N number-of-inodes] 指定inode个数，最大创建文件个数 [-i bytes-per-inode] 指定&amp;quot;字节/inode&amp;quot;的比例 增大-i参数，从而减小inode总数，可以减小inode占用的磁盘空间，减少磁盘浪费。   问题原因分析：
+Inode译成中文就是索引节点，每个存储设备（例如硬盘）或存储设备的分区被格式化为文件系统后，应该有两部份，一部份是inode，另一部份是 Block，Block是用来存储数据用的。而inode呢，就是用来存储这些数据的信息，这些信息包括文件大小、属主、归属的用户组、读写权限等。 inode为每个文件进行信息索引，所以就有了inode的数值。操作系统根据指令，能通过inode值最快的找到相对应的文件。 而这台服务器的Block虽然还有剩余，但inode已经用满，因此在创建新目录或文件时，系统提示磁盘空间不足。 Inode的数量是有限制的，每个文件对应一个Inode，df -i可以看到Inode的总量，已经使用的Inode数量，和剩余数量。
+3、解决：
+1）查找满的目录：
+[root@abc sbin]# for i in /*; do echo $i; find $i | wc -l; done  然后找到inode占用最多额目录下，再用上面命令查看。
+2）删除文件占用多的目录：
+进入目录直接rm -rf 可能会卡死，可以使用下面方式：
+</div>
+
+<div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>0001-01-01</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>1分钟阅读时长</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="/categories/blog/" class="hover:text-eureka">blog</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/posts/" class="hover:text-eureka">posts</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/linux/" class="hover:text-eureka">Linux</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/linux%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/" class="hover:text-eureka">Linux文件系统</a>
+        
+    </div>
+    
+
+    
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="mb-4">
+  <a href="/posts/1.linux/linux%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/lvm%E7%AE%A1%E7%90%86/" class="font-bold text-xl hover:text-eureka">LVM管理</a>
+</div>
+<div class="content">
+  参考链接：https://www.cnblogs.com/diantong/p/10554831.html
+ LVM的工作原理 　LVM（Logical Volume Manager）逻辑卷管理，是在硬盘分区和文件系统之间添加的一个逻辑层，为文件系统屏蔽下层硬盘分区布局，并提供一个抽象的盘卷，在盘卷上建立文件系统。管理员利用LVM可以在硬盘不用重新分区的情况下动态调整文件系统的大小，并且利用LVM管理的文件系统可以跨越物理硬盘。当服务器添加了新的硬盘后，管理员不必将原有的文件移动到新的硬盘上，而是通过LVM直接扩展文件系统来跨越物理硬盘。
+　LVM就是通过将底层的物理硬盘封装，然后以逻辑卷的方式呈现给上层应用。当我们对底层的物理硬盘进行操作时，不再是针对分区进行操作，而是通过逻辑卷对底层硬盘进行管理操作。
+基础术语   物理存储介质（The physical media）： LVM存储介质，可以是硬盘分区、整个硬盘、raid阵列或SAN硬盘。设备必须初始化为LVM物理卷，才能与LVM结合使用。
+  物理卷PV（physical volume）： 物理卷就是LVM的基本存储逻辑块，但和基本的物理存储介质比较却包含与LVM相关的管理参数，创建物理卷可以用硬盘分区，也可以用硬盘本身。
+  卷组VG（Volume Group）： LVM卷组类似于非LVM系统中的物理硬盘，一个卷组VG由一个或多个物理卷PV组成。可以在卷组VG上建立逻辑卷LV。
+  逻辑卷LV（logical volume）： 类似于非LVM系统中的硬盘分区，逻辑卷LV建立在卷组VG之上。在逻辑卷LV之上建立文件系统。
+  物理块PE（physical Extent）： 物理卷PV中可以分配的最小存储单元，PE的大小可以指定，默认为4MB
+  逻辑块LE（Logical Extent）：逻辑卷LV中可以分配的最小存储单元，在同一卷组VG中LE的大小和PE是相同的，并且一一相对。
+   总结：多个磁盘/分区/raid&amp;ndash;&amp;gt;多个物理卷PV&amp;ndash;&amp;gt;合成卷组VG&amp;ndash;&amp;gt;从VG划分出逻辑卷LV&amp;ndash;&amp;gt;格式化LV，挂载使用。
+注意：老的Linux在创建PV时，需要将分区类型改为Linux LVM（8e）。但新的系统已经非常智能，即使默认的Linux分区（83），也可以创建PV。
+ LVM的优点   卷组VG可以使多个硬盘空间看起来像是一个大硬盘。
+  逻辑卷LV可以创建跨多个硬盘空间的分区。
+  在使用逻辑卷LV时，可以在空间不足时动态调整大小，不需要考虑逻辑卷LV在硬盘上的位置，不用担心没有可用的连续的空间。
+  可以在线对卷组VG、逻辑卷LV进行创建、删除、调整大小等操作。但LVM上的文件系统也需要重新调整大小。
+  LVM允许创建快照，用来保存文件系统的备份。
+   注意：LVM是软件的卷管理方式，RAID是磁盘管理的方法。对于重要的数据使，用RAID保护物理硬盘不会因为故障而中断业务，再用LVM来实现对卷的良性管理，更好的利用硬盘资源。
+LVM有两种写入机制：线性（写完一个PV再写下一个PV，默认）、条带（平均）
+ LVM常用的管理命令    功能 PV管理命令 VG管理命令 LV管理命令     scan 扫描 pvscan vgscan lvscan   create 创建 pvcreate vgcreate lvcreate   display 显示 pvdisplay vgdisplay lvdisplay   remove 移除 pvremove vgremove lvremove   extend 扩展  vgextend lvextend   reduce 减少  vgreduce lvreduce     注意：查看命令有scan、display和s（pvs、vgs、lvs）。s是简单查看对应卷信息，display是详细查看对应卷信息。而scan是扫描所有的相关的对应卷。
+</div>
+
+<div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>0001-01-01</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>9分钟阅读时长</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="/categories/blog/" class="hover:text-eureka">blog</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/posts/" class="hover:text-eureka">posts</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/linux/" class="hover:text-eureka">Linux</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/linux%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/" class="hover:text-eureka">Linux文件系统</a>
+        
+    </div>
+    
+
+    
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
+  
+</div>
+
+
+</div>
+
+
+
+
+      </div>
+    </div>
+    
+  </main>
+  <footer class="pl-scrollbar">
+    <div class="w-full max-w-screen-xl mx-auto"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 2021 <a href="https://www.songjinfeng.com/">SonJinfeng</a> 
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+  </footer>
+</body>
+
+</html>

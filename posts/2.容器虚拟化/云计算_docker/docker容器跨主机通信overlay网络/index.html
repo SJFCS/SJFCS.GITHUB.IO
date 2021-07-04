@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang='zh' ><meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+
+
+<title>Docker跨主机通信 | Songjinfeng&#39;s BLOG</title>
+<link rel="stylesheet" href="/css/eureka.min.css">
+<script defer src="/js/eureka.min.js"></script>
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Noto+Serif+SC:wght@400;600;700&display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/styles/solarized-light.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/highlight.min.js"
+   crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/dart.min.js"
+     crossorigin></script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/js/all.min.js"
+   integrity="sha256-uNYoXefWRqv&#43;PsIF/OflNmwtKM4lStn9yrz2gVl6ymo="  crossorigin></script>
+
+
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css"
+   integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3&#43;Aro6EYUG4&#43;cU&#43;KJWu/X"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js" 
+  integrity="sha384-g7c&#43;Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI&#43;sEnkvrMWph2EDg4"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js"
+   integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC&#43;Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.9.2/dist/mermaid.min.js" 
+  integrity="sha256-Zmpaaj&#43;GXFsPF5WdPArSrnW3b30dovldeKsW00xBVwE="  crossorigin></script>
+
+
+<link rel="icon" type="image/png" sizes="32x32" href="/images/icon_hucfa16751ac9c82c06b84c3502c0db793_16378_32x32_fill_box_center_2.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hucfa16751ac9c82c06b84c3502c0db793_16378_180x180_fill_box_center_2.png">
+
+<meta name="description"
+  content="一、Docker主机间容器通信的解决方案 　Docker网络驱动
+  Overlay: 基于VXLAN封装实现Docker原生Overlay网络
+  Macvlan: Docker主机网卡接口逻辑上分为多个子接口，每个子接口标识一个VLAN。容器接口直接连接Docker主机
+  网卡接口: 通过路由策略转发到另一台Docker主机
+　第三方网络项目
+  　隧道方案
+　&ndash; Flannel: 支持UDP和VLAN封装传输方式
+​ &ndash; Weave: 支持UDP（sleeve模式）和 VXLAN（优先fastdb模式）
+​ &ndash; OpenvSwitch: 支持VXLAN和GRE协议
+​ 路由方案
+​ Calico: 支持BGP协议和IPIP隧道。每台宿主机作为虚拟路由，通过BGP协议实现不同主机容器间通信　二、Docker Overlay Network 　Overlay网络是指在不改变现有网络基础设施的前提下，通过某种约定通信协议，把二层报文封装在IP报文之上的新的数据格式。这样不但能够充分利用成熟的IP路由协议进程数据分发；而且在Overlay技术中采用扩展的隔离标识位数，能够突破VLAN的4000数量限制支持高达16M的用户，并在必要时可将广播流量转化为组播流量，避免广播数据泛滥。
+　因此，Overlay网络实际上是目前最主流的容器跨节点数据传输和路由方案。
+　要想使用Docker原生Overlay网络，需要满足下列任意条件
+ Docker 运行在Swarm 使用键值存储的Docker主机集群  三、使用键值存储搭建Docker主机集群 　需满足下列条件：
+ 集群中主机连接到键值存储，Docker支持 Consul、Etcd和Zookeeper 集群中主机运行一个Docker守护进程 集群中主机必须具有唯一的主机名，因为键值存储使用主机名来标识集群成员 集群中linux主机内核版本在3.12&#43;,支持VXLAN数据包处理，否则可能无法通行  四、部署 　4.1 系统环境
+　　4.2 安装Consul
+# wget https://releases.hashicorp.com/consul/0.9.2/consul_0.9.2_linux_386.zip # unzip consul_1.">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"技术专栏",
+      "item":"/posts/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"容器虚拟化",
+      "item":"/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/"},{
+      "@type": "ListItem",
+      "position": 3 ,
+      "name":"Docker跨主机通信",
+      "item":"/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_docker/docker%E5%AE%B9%E5%99%A8%E8%B7%A8%E4%B8%BB%E6%9C%BA%E9%80%9A%E4%BF%A1overlay%E7%BD%91%E7%BB%9C/"}]
+}
+</script>
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_docker/docker%E5%AE%B9%E5%99%A8%E8%B7%A8%E4%B8%BB%E6%9C%BA%E9%80%9A%E4%BF%A1overlay%E7%BD%91%E7%BB%9C/"
+    },
+    "headline": "Docker跨主机通信 | Songjinfeng\u0027s BLOG","wordCount":  356 ,
+    "publisher": {
+        "@type": "Person",
+        "name": "JF. Song",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "/images/icon.png"
+        }
+        },
+    "description": "一、Docker主机间容器通信的解决方案 　Docker网络驱动\n  Overlay: 基于VXLAN封装实现Docker原生Overlay网络\n  Macvlan: Docker主机网卡接口逻辑上分为多个子接口，每个子接口标识一个VLAN。容器接口直接连接Docker主机\n  网卡接口: 通过路由策略转发到另一台Docker主机\n　第三方网络项目\n  　隧道方案\n　\u0026ndash; Flannel: 支持UDP和VLAN封装传输方式\n​ \u0026ndash; Weave: 支持UDP（sleeve模式）和 VXLAN（优先fastdb模式）\n​ \u0026ndash; OpenvSwitch: 支持VXLAN和GRE协议\n​ 路由方案\n​ Calico: 支持BGP协议和IPIP隧道。每台宿主机作为虚拟路由，通过BGP协议实现不同主机容器间通信　二、Docker Overlay Network 　Overlay网络是指在不改变现有网络基础设施的前提下，通过某种约定通信协议，把二层报文封装在IP报文之上的新的数据格式。这样不但能够充分利用成熟的IP路由协议进程数据分发；而且在Overlay技术中采用扩展的隔离标识位数，能够突破VLAN的4000数量限制支持高达16M的用户，并在必要时可将广播流量转化为组播流量，避免广播数据泛滥。\n　因此，Overlay网络实际上是目前最主流的容器跨节点数据传输和路由方案。\n　要想使用Docker原生Overlay网络，需要满足下列任意条件\n Docker 运行在Swarm 使用键值存储的Docker主机集群  三、使用键值存储搭建Docker主机集群 　需满足下列条件：\n 集群中主机连接到键值存储，Docker支持 Consul、Etcd和Zookeeper 集群中主机运行一个Docker守护进程 集群中主机必须具有唯一的主机名，因为键值存储使用主机名来标识集群成员 集群中linux主机内核版本在3.12\u002b,支持VXLAN数据包处理，否则可能无法通行  四、部署 　4.1 系统环境\n　　4.2 安装Consul\n# wget https:\/\/releases.hashicorp.com\/consul\/0.9.2\/consul_0.9.2_linux_386.zip # unzip consul_1."
+}
+</script><meta property="og:title" content="Docker跨主机通信 | Songjinfeng&#39;s BLOG" />
+<meta property="og:type" content="article" />
+
+
+<meta property="og:image" content="/images/icon.png">
+
+
+<meta property="og:url" content="/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_docker/docker%E5%AE%B9%E5%99%A8%E8%B7%A8%E4%B8%BB%E6%9C%BA%E9%80%9A%E4%BF%A1overlay%E7%BD%91%E7%BB%9C/" />
+
+
+
+
+<meta property="og:description" content="一、Docker主机间容器通信的解决方案 　Docker网络驱动
+  Overlay: 基于VXLAN封装实现Docker原生Overlay网络
+  Macvlan: Docker主机网卡接口逻辑上分为多个子接口，每个子接口标识一个VLAN。容器接口直接连接Docker主机
+  网卡接口: 通过路由策略转发到另一台Docker主机
+　第三方网络项目
+  　隧道方案
+　&ndash; Flannel: 支持UDP和VLAN封装传输方式
+​ &ndash; Weave: 支持UDP（sleeve模式）和 VXLAN（优先fastdb模式）
+​ &ndash; OpenvSwitch: 支持VXLAN和GRE协议
+​ 路由方案
+​ Calico: 支持BGP协议和IPIP隧道。每台宿主机作为虚拟路由，通过BGP协议实现不同主机容器间通信　二、Docker Overlay Network 　Overlay网络是指在不改变现有网络基础设施的前提下，通过某种约定通信协议，把二层报文封装在IP报文之上的新的数据格式。这样不但能够充分利用成熟的IP路由协议进程数据分发；而且在Overlay技术中采用扩展的隔离标识位数，能够突破VLAN的4000数量限制支持高达16M的用户，并在必要时可将广播流量转化为组播流量，避免广播数据泛滥。
+　因此，Overlay网络实际上是目前最主流的容器跨节点数据传输和路由方案。
+　要想使用Docker原生Overlay网络，需要满足下列任意条件
+ Docker 运行在Swarm 使用键值存储的Docker主机集群  三、使用键值存储搭建Docker主机集群 　需满足下列条件：
+ 集群中主机连接到键值存储，Docker支持 Consul、Etcd和Zookeeper 集群中主机运行一个Docker守护进程 集群中主机必须具有唯一的主机名，因为键值存储使用主机名来标识集群成员 集群中linux主机内核版本在3.12&#43;,支持VXLAN数据包处理，否则可能无法通行  四、部署 　4.1 系统环境
+　　4.2 安装Consul
+# wget https://releases.hashicorp.com/consul/0.9.2/consul_0.9.2_linux_386.zip # unzip consul_1." />
+
+
+
+
+<meta property="og:locale" content="zh" />
+
+
+
+
+<meta property="og:site_name" content="Songjinfeng&#39;s BLOG" />
+
+
+
+
+
+
+
+
+
+<meta property="article:section" content="posts" />
+
+
+
+
+<body class="flex flex-col min-h-screen">
+  <header class="fixed flex items-center w-full min-h-16 pl-scrollbar z-50 bg-secondary-bg shadow-sm">
+    <div class="w-full max-w-screen-xl mx-auto"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="mr-6 text-primary-text text-xl font-bold">Songjinfeng&#39;s BLOG</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:flex-grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:flex-grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  mr-4">技术专栏</a>
+            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">文档笔记</a>
+            <a href="/series/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">主题系列</a>
+            <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">标签</a>
+            <a href="/authors/songjinfeng/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">关于</a>
+            <a href="/index.xml" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">RSS</a>
+            <a href="/webstack" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">友链&amp;导航</a>
+        </div>
+
+        <div class="flex">
+            <div class="relative pt-4 md:pt-0">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col left-0 md:left-auto right-auto md:right-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">浅色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">深色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">自动</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            switchMode('Auto')
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+  </header>
+  <main class="flex-grow pt-16">
+    <div class="pl-scrollbar">
+      <div class="w-full max-w-screen-xl lg:px-4 xl:px-8 mx-auto">
+
+
+<div class="grid grid-cols-2 lg:grid-cols-8 gap-4 lg:pt-12">
+    <div
+        class="col-span-2 lg:col-start-2 lg:col-span-6 bg-secondary-bg rounded px-6 py-8">
+        <h1 class="font-bold text-3xl text-primary-text">Docker跨主机通信</h1>
+        <div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>0001-01-01</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>2分钟阅读时长</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="/categories/linux/" class="hover:text-eureka">Linux</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/docker/" class="hover:text-eureka">Docker</a>
+        
+    </div>
+    
+
+    
+</div>
+        
+        
+        
+
+        <div class="content">
+            <h2 id="一docker主机间容器通信的解决方案">一、Docker主机间容器通信的解决方案</h2>
+<p>　　<strong>Docker网络驱动</strong></p>
+<ol>
+<li>
+<p>Overlay: 基于VXLAN封装实现Docker原生Overlay网络</p>
+</li>
+<li>
+<p>Macvlan: Docker主机网卡接口逻辑上分为多个子接口，每个子接口标识一个VLAN。容器接口直接连接<u>Docker</u>主机</p>
+</li>
+<li>
+<p>网卡接口: 通过路由策略转发到另一台Docker主机</p>
+<p>　<strong>第三方网络项目</strong></p>
+</li>
+</ol>
+<p>　　   隧道方案</p>
+<p>　　　　&ndash; Flannel: 支持UDP和VLAN封装传输方式</p>
+<p>​        &ndash; Weave: 支持UDP（sleeve模式）和 VXLAN（优先fastdb模式）</p>
+<p>​        &ndash; OpenvSwitch: 支持VXLAN和GRE协议</p>
+<p>​       路由方案</p>
+<p>​        Calico: 支持BGP协议和IPIP隧道。每台宿主机作为虚拟路由，通过BGP协议实现不同主机容器间通信　</p>
+<h2 id="二docker-overlay-network">二、Docker Overlay Network</h2>
+<p>　　Overlay网络是指在不改变现有网络基础设施的前提下，通过某种约定通信协议，把二层报文封装在IP报文之上的新的数据格式。这样不但能够充分利用成熟的IP路由协议进程数据分发；而且在Overlay技术中采用扩展的隔离标识位数，能够突破VLAN的4000数量限制支持高达16M的用户，并在必要时可将广播流量转化为组播流量，避免广播数据泛滥。</p>
+<p>　　因此，Overlay网络实际上是目前最主流的容器跨节点数据传输和路由方案。</p>
+<p>　　<strong>要想使用Docker原生Overlay网络，需要满足下列任意条件</strong></p>
+<ul>
+<li>Docker 运行在Swarm</li>
+<li>使用键值存储的Docker主机集群</li>
+</ul>
+<h2 id="三使用键值存储搭建docker主机集群">三、使用键值存储搭建Docker主机集群</h2>
+<p>　　需满足下列条件：</p>
+<ul>
+<li>集群中主机连接到键值存储，Docker支持 Consul、Etcd和Zookeeper</li>
+<li>集群中主机运行一个Docker守护进程</li>
+<li>集群中主机必须具有唯一的主机名，因为键值存储使用主机名来标识集群成员</li>
+<li>集群中linux主机内核版本在3.12+,支持VXLAN数据包处理，否则可能无法通行</li>
+</ul>
+<h2 id="四部署">四、部署</h2>
+<p>　　<strong>4.1 系统环境</strong></p>
+<p>　　<img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/Untitled.assets/2021.03.09-17:31:40-1594534003607-9359406c-c31b-43e4-9187-dd99561009d8.png" alt="image"></p>
+<p>　　<strong>4.2 安装Consul</strong></p>
+<pre><code># wget https://releases.hashicorp.com/consul/0.9.2/consul_0.9.2_linux_386.zip
+
+# unzip consul_1.0.6_linux_amd64.zip
+
+# mv consul /usr/bin/ &amp;&amp; chmod a+x /usr/bin/consul
+
+# 启动
+nohup consul agent -server -bootstrap -ui -data-dir /data/docker/consul \
+&gt; -client=172.16.200.208 -bind=172.16.200.208 &amp;&gt; /var/log/consul.log &amp;
+
+#-ui : consul 的管理界面
+#-data-dir : 数据存储
+</code></pre>
+<p>　　<strong>4.3 节点配置Dockre守护进程连接Consul</strong></p>
+<p>　　在两台机器上都要修改</p>
+<p>​    docker2</p>
+<pre><code># vim /lib/systemd/system/docker.service
+
+ExecStart=/usr/bin/dockerd  -H tcp://0.0.0.0:2375 -H unix:///var/run/docker.sock --cluster-store consul://172.16.200.208:8500 --cluster-advertise 172.16.200.208:2375
+
+# systemctl daemon-reload
+
+# systemctl restart docker
+</code></pre>
+<p>　　docker3</p>
+<pre><code># vim /lib/systemd/system/docker.service
+
+ExecStart=/usr/bin/dockerd  -H tcp://0.0.0.0:2375 -H unix:///var/run/docker.sock --cluster-store consul://172.16.200.208:8500 --cluster-advertise 172.16.200.223:2375
+
+# systemctl daemon-reload
+
+# systemctl restart docker
+</code></pre>
+<p>　　<strong>4.4 查看consul 中的节点信息</strong>　　<img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/Untitled.assets/2021.03.09-17:31:40-1594534003534-ed86257f-af32-4fde-a4c2-8bbc857ea15c.png" alt="image"></p>
+<p>　　<strong>4.5 创建overlay网络</strong>　　</p>
+<pre><code># docker network create -d overlay multi_host
+53b042104f366cde2cc887e7cc27cde52222a846c1141690c93e1e17d96120c5
+
+# docker network ls
+
+
+NETWORK ID          NAME                  DRIVER              SCOPE
+3f5ff55c93e6        bridge                bridge              local
+1e3aff32ba48        composelnmp_default   bridge              local
+0d60b988fe59        composetest_default   bridge              local
+b4cf6d623265        host                  host                local
+53b042104f36        multi_host
+</code></pre>
+<p>　　-d : 指定创建网络的类型</p>
+<p>　　另一台机器会自动同步新建的网络</p>
+<p>　　详细信息</p>
+<pre><code># docker network inspect multi_host
+[
+    {
+        &quot;Name&quot;: &quot;multi_host&quot;,
+        &quot;Id&quot;: &quot;53b042104f366cde2cc887e7cc27cde52222a846c1141690c93e1e17d96120c5&quot;,
+        &quot;Created&quot;: &quot;2018-03-07T16:23:38.682906025+08:00&quot;,
+        &quot;Scope&quot;: &quot;global&quot;,
+        &quot;Driver&quot;: &quot;overlay&quot;,
+        &quot;EnableIPv6&quot;: false,
+        &quot;IPAM&quot;: {
+            &quot;Driver&quot;: &quot;default&quot;,
+            &quot;Options&quot;: {},
+            &quot;Config&quot;: [
+                {
+                    &quot;Subnet&quot;: &quot;10.0.0.0/24&quot;,
+                    &quot;Gateway&quot;: &quot;10.0.0.1&quot;
+                }
+            ]
+        },
+        &quot;Internal&quot;: false,
+        &quot;Attachable&quot;: false,
+        &quot;Ingress&quot;: false,
+        &quot;ConfigFrom&quot;: {
+            &quot;Network&quot;: &quot;&quot;
+        },
+        &quot;ConfigOnly&quot;: false,
+        &quot;Containers&quot;: {},
+        &quot;Options&quot;: {},
+        &quot;Labels&quot;: {}
+    }
+]
+</code></pre>
+<p>　　<strong>4.6 使用overlay网络启动容器</strong></p>
+<p>　　分别在两台机器上使用overlay网络启动一个容器</p>
+<p># docker run -it &ndash;net=multi_host busybox</p>
+<p>　　这两个节点上的容器的ip分别为：　</p>
+<pre><code>[root@docker2 ~]``# docker run -it --net=multi_host busybox``/` `# ifconfig``eth0   Link encap:Ethernet HWaddr ``02``:``42``:``0A``:``00``:``00``:``02``     ``inet addr:``10.0``.``0.2`  `Bcast:``10.0``.``0.255`  `Mask:``255.255``.``255.0``     ``UP BROADCAST RUNNING MULTICAST MTU:``1450`  `Metric:``1``     ``RX packets:``0` `errors:``0` `dropped:``0` `overruns:``0` `frame:``0``     ``TX packets:``0` `errors:``0` `dropped:``0` `overruns:``0` `carrier:``0``     ``collisions:``0` `txqueuelen:``0``     ``RX bytes:``0` `(``0.0` `B) TX bytes:``0` `(``0.0` `B)
+</code></pre>
+<pre><code>/` `# ifconfig``eth0   Link encap:Ethernet HWaddr ``02``:``42``:``0A``:``00``:``00``:``03``     ``inet addr:``10.0``.``0.3`  `Bcast:``10.0``.``0.255`  `Mask:``255.255``.``255.0``     ``UP BROADCAST RUNNING MULTICAST MTU:``1450`  `Metric:``1``     ``RX packets:``0` `errors:``0` `dropped:``0` `overruns:``0` `frame:``0``     ``TX packets:``0` `errors:``0` `dropped:``0` `overruns:``0` `carrier:``0``     ``collisions:``0` `txqueuelen:``0``     ``RX bytes:``0` `(``0.0` `B) TX bytes:``0` `(``0.0` `B)
+</code></pre>
+<p>　　它们之间是可以相互ping 通的</p>
+<pre><code># ping 10.0.0.2``PING ``10.0``.``0.2` `(``10.0``.``0.2``): ``56` `data bytes``64` `bytes ``from` `10.0``.``0.2``: seq``=``0` `ttl``=``64` `time``=``11.137` `ms``64` `bytes ``from` `10.0``.``0.2``: seq``=``1` `ttl``=``64` `time``=``0.251` `ms``64` `bytes ``from` `10.0``.``0.2``: seq``=``2` `ttl``=``64` `time``=``0.280` `ms
+</code></pre>
+
+        </div>
+        
+        
+        
+        
+        
+        
+        
+<div class="flex flex-col md:flex-row md:justify-between -mx-2 mt-4 px-2 pt-4 border-t">
+    <div>
+        
+        <span class="block font-bold">上一页</span>
+        <a href="/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_docker/docker%E6%97%B6%E9%97%B4%E5%AE%BF%E4%B8%BB%E5%90%8C%E6%AD%A5/" class="block">Docker时间宿主机同步</a>
+        
+    </div>
+    <div class="md:text-right mt-4 md:mt-0">
+        
+        <span class="block font-bold">下一页</span>
+        <a href="/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/kubernetes1.16.2-%E5%AE%89%E8%A3%85/" class="block">kubernetes1.16.2部署</a>
+        
+    </div>
+</div>
+
+        
+    </div>
+    
+
+    
+    
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', ()=>{
+        hljs.initHighlightingOnLoad();
+    })
+</script>
+
+      </div>
+    </div>
+    
+  </main>
+  <footer class="pl-scrollbar">
+    <div class="w-full max-w-screen-xl mx-auto"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 2021 <a href="https://www.songjinfeng.com/">SonJinfeng</a> 
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+  </footer>
+</body>
+
+</html>

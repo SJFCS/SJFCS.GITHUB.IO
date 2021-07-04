@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang='zh' ><meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+
+
+<title>Songjinfeng&#39;s BLOG</title>
+<link rel="stylesheet" href="/css/eureka.min.css">
+<script defer src="/js/eureka.min.js"></script>
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Noto+Serif+SC:wght@400;600;700&display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/styles/solarized-light.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/highlight.min.js"
+   crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/dart.min.js"
+     crossorigin></script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/js/all.min.js"
+   integrity="sha256-uNYoXefWRqv&#43;PsIF/OflNmwtKM4lStn9yrz2gVl6ymo="  crossorigin></script>
+
+
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css"
+   integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3&#43;Aro6EYUG4&#43;cU&#43;KJWu/X"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js" 
+  integrity="sha384-g7c&#43;Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI&#43;sEnkvrMWph2EDg4"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js"
+   integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC&#43;Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.9.2/dist/mermaid.min.js" 
+  integrity="sha256-Zmpaaj&#43;GXFsPF5WdPArSrnW3b30dovldeKsW00xBVwE="  crossorigin></script>
+
+
+<link rel="icon" type="image/png" sizes="32x32" href="/images/icon_hucfa16751ac9c82c06b84c3502c0db793_16378_32x32_fill_box_center_2.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hucfa16751ac9c82c06b84c3502c0db793_16378_180x180_fill_box_center_2.png">
+
+<meta name="description"
+  content="1. 集群架构    主机名 IP地址     hdss7-11.host.com 10.4.7.11   hdss7-12.host.com 10.4.7.12   hdss7-21.host.com 10.4.7.21   hdss7-22.host.com 10.4.7.22   hdss7-200.host.com 10.4.7.200    master节点的三个组件** kube-apiserver 整个集群的唯一入口，并提供认证、授权、访问控制、API注册和发现等机制。  kube-controller-manager 控制器管理器 负责维护集群的状态，比如故障检测、自动扩展、滚动更新等。保证资源到达期望值。  kube-scheduler 调度器 经过策略调度POD到合适的节点上面运行。分别有预选策略和优选策略。  node节点的两个组件 kubelet 在集群节点上运行的代理，kubelet会通过各种机制来确保容器处于运行状态且健康。kubelet不会管理不是由kubernetes创建的容器。kubelet接收POD的期望状态（副本数、镜像、网络等），并调用容器运行环境来实现预期状态。 kubelet会定时汇报节点的状态给apiserver，作为scheduler调度的基础。kubelet会对镜像和容器进行清理，避免不必要的文件资源占用。  kube-proxy kube-proxy是集群中节点上运行的网络代理，是实现service资源功能组件之一。kube-proxy建立了POD网络和集群网络之间的关系。不同node上的service流量转发规则会通过kube-proxy来调用apiserver访问etcd进行规则更新。 service流量调度方式有三种方式：userspace（废弃，性能很差）、iptables（性能差，复杂，即将废弃）、ipvs（性能好，转发方式清晰）。  1.2. kubernetes的三条网络 节点网络 就是宿主机网络 地址段：10.4.7.0/24
+Pod网络 容器运行的网络 建议172.7.21.0/24 ,并建议POD网段与节点IP绑定 如: 节点IP为10.4.7.21，则POD网络为172.7.21.0/24
+Service 网络 也叫集群网络(cluster server)，用于内部集群间通信 构建于POD网络之上, 主要是解决服务发现和负载均衡 通过kube-proxy连接POD网络和service网络 地址段：`192.168.0.0/16
+2. 基础环境准备 k8s组件介绍：https://blog.csdn.net/fajing_feiyue/article/details/107732453">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"技术专栏",
+      "item":"/posts/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"容器虚拟化",
+      "item":"/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/"},{
+      "@type": "ListItem",
+      "position": 3 ,
+      "name":"",
+      "item":"/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/1.-%E9%9B%86%E7%BE%A4%E6%9E%B6%E6%9E%84%E5%92%8C%E5%9F%BA%E7%A1%80%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/"}]
+}
+</script>
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/1.-%E9%9B%86%E7%BE%A4%E6%9E%B6%E6%9E%84%E5%92%8C%E5%9F%BA%E7%A1%80%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/"
+    },
+    "headline": "Songjinfeng\u0027s BLOG","wordCount":  834 ,
+    "publisher": {
+        "@type": "Person",
+        "name": "JF. Song",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "/images/icon.png"
+        }
+        },
+    "description": "1. 集群架构    主机名 IP地址     hdss7-11.host.com 10.4.7.11   hdss7-12.host.com 10.4.7.12   hdss7-21.host.com 10.4.7.21   hdss7-22.host.com 10.4.7.22   hdss7-200.host.com 10.4.7.200    master节点的三个组件** kube-apiserver 整个集群的唯一入口，并提供认证、授权、访问控制、API注册和发现等机制。  kube-controller-manager 控制器管理器 负责维护集群的状态，比如故障检测、自动扩展、滚动更新等。保证资源到达期望值。  kube-scheduler 调度器 经过策略调度POD到合适的节点上面运行。分别有预选策略和优选策略。  node节点的两个组件 kubelet 在集群节点上运行的代理，kubelet会通过各种机制来确保容器处于运行状态且健康。kubelet不会管理不是由kubernetes创建的容器。kubelet接收POD的期望状态（副本数、镜像、网络等），并调用容器运行环境来实现预期状态。 kubelet会定时汇报节点的状态给apiserver，作为scheduler调度的基础。kubelet会对镜像和容器进行清理，避免不必要的文件资源占用。  kube-proxy kube-proxy是集群中节点上运行的网络代理，是实现service资源功能组件之一。kube-proxy建立了POD网络和集群网络之间的关系。不同node上的service流量转发规则会通过kube-proxy来调用apiserver访问etcd进行规则更新。 service流量调度方式有三种方式：userspace（废弃，性能很差）、iptables（性能差，复杂，即将废弃）、ipvs（性能好，转发方式清晰）。  1.2. kubernetes的三条网络 节点网络 就是宿主机网络 地址段：10.4.7.0\/24\nPod网络 容器运行的网络 建议172.7.21.0\/24 ,并建议POD网段与节点IP绑定 如: 节点IP为10.4.7.21，则POD网络为172.7.21.0\/24\nService 网络 也叫集群网络(cluster server)，用于内部集群间通信 构建于POD网络之上, 主要是解决服务发现和负载均衡 通过kube-proxy连接POD网络和service网络 地址段：`192.168.0.0\/16\n2. 基础环境准备 k8s组件介绍：https:\/\/blog.csdn.net\/fajing_feiyue\/article\/details\/107732453"
+}
+</script><meta property="og:title" content="Songjinfeng&#39;s BLOG" />
+<meta property="og:type" content="article" />
+
+
+<meta property="og:image" content="/images/icon.png">
+
+
+<meta property="og:url" content="/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/1.-%E9%9B%86%E7%BE%A4%E6%9E%B6%E6%9E%84%E5%92%8C%E5%9F%BA%E7%A1%80%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/" />
+
+
+
+
+<meta property="og:description" content="1. 集群架构    主机名 IP地址     hdss7-11.host.com 10.4.7.11   hdss7-12.host.com 10.4.7.12   hdss7-21.host.com 10.4.7.21   hdss7-22.host.com 10.4.7.22   hdss7-200.host.com 10.4.7.200    master节点的三个组件** kube-apiserver 整个集群的唯一入口，并提供认证、授权、访问控制、API注册和发现等机制。  kube-controller-manager 控制器管理器 负责维护集群的状态，比如故障检测、自动扩展、滚动更新等。保证资源到达期望值。  kube-scheduler 调度器 经过策略调度POD到合适的节点上面运行。分别有预选策略和优选策略。  node节点的两个组件 kubelet 在集群节点上运行的代理，kubelet会通过各种机制来确保容器处于运行状态且健康。kubelet不会管理不是由kubernetes创建的容器。kubelet接收POD的期望状态（副本数、镜像、网络等），并调用容器运行环境来实现预期状态。 kubelet会定时汇报节点的状态给apiserver，作为scheduler调度的基础。kubelet会对镜像和容器进行清理，避免不必要的文件资源占用。  kube-proxy kube-proxy是集群中节点上运行的网络代理，是实现service资源功能组件之一。kube-proxy建立了POD网络和集群网络之间的关系。不同node上的service流量转发规则会通过kube-proxy来调用apiserver访问etcd进行规则更新。 service流量调度方式有三种方式：userspace（废弃，性能很差）、iptables（性能差，复杂，即将废弃）、ipvs（性能好，转发方式清晰）。  1.2. kubernetes的三条网络 节点网络 就是宿主机网络 地址段：10.4.7.0/24
+Pod网络 容器运行的网络 建议172.7.21.0/24 ,并建议POD网段与节点IP绑定 如: 节点IP为10.4.7.21，则POD网络为172.7.21.0/24
+Service 网络 也叫集群网络(cluster server)，用于内部集群间通信 构建于POD网络之上, 主要是解决服务发现和负载均衡 通过kube-proxy连接POD网络和service网络 地址段：`192.168.0.0/16
+2. 基础环境准备 k8s组件介绍：https://blog.csdn.net/fajing_feiyue/article/details/107732453" />
+
+
+
+
+<meta property="og:locale" content="zh" />
+
+
+
+
+<meta property="og:site_name" content="Songjinfeng&#39;s BLOG" />
+
+
+
+
+
+
+
+
+
+<meta property="article:section" content="posts" />
+
+
+
+
+<body class="flex flex-col min-h-screen">
+  <header class="fixed flex items-center w-full min-h-16 pl-scrollbar z-50 bg-secondary-bg shadow-sm">
+    <div class="w-full max-w-screen-xl mx-auto"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="mr-6 text-primary-text text-xl font-bold">Songjinfeng&#39;s BLOG</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:flex-grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:flex-grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  mr-4">技术专栏</a>
+            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">文档笔记</a>
+            <a href="/series/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">主题系列</a>
+            <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">标签</a>
+            <a href="/authors/songjinfeng/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">关于</a>
+            <a href="/index.xml" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">RSS</a>
+            <a href="/webstack" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">友链&amp;导航</a>
+        </div>
+
+        <div class="flex">
+            <div class="relative pt-4 md:pt-0">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col left-0 md:left-auto right-auto md:right-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">浅色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">深色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">自动</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            switchMode('Auto')
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+  </header>
+  <main class="flex-grow pt-16">
+    <div class="pl-scrollbar">
+      <div class="w-full max-w-screen-xl lg:px-4 xl:px-8 mx-auto">
+
+
+<div class="grid grid-cols-2 lg:grid-cols-8 gap-4 lg:pt-12">
+    <div
+        class="col-span-2 lg:col-start-2 lg:col-span-6 bg-secondary-bg rounded px-6 py-8">
+        <h1 class="font-bold text-3xl text-primary-text"></h1>
+        <div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>0001-01-01</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>4分钟阅读时长</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="/categories/blog/" class="hover:text-eureka">blog</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/posts/" class="hover:text-eureka">posts</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/%E4%BA%91%E8%AE%A1%E7%AE%97/" class="hover:text-eureka">云计算</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/kubernetes/" class="hover:text-eureka">Kubernetes</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/" class="hover:text-eureka">K8S二进制部署</a>
+        
+    </div>
+    
+
+    
+</div>
+        
+        
+        
+
+        <div class="content">
+            <h1 id="1-集群架构">1. 集群架构</h1>
+<table>
+<thead>
+<tr>
+<th style="text-align:center"><strong>主机名</strong></th>
+<th style="text-align:center"><strong>IP地址</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">hdss7-11.host.com</td>
+<td style="text-align:center">10.4.7.11</td>
+</tr>
+<tr>
+<td style="text-align:center">hdss7-12.host.com</td>
+<td style="text-align:center">10.4.7.12</td>
+</tr>
+<tr>
+<td style="text-align:center">hdss7-21.host.com</td>
+<td style="text-align:center">10.4.7.21</td>
+</tr>
+<tr>
+<td style="text-align:center">hdss7-22.host.com</td>
+<td style="text-align:center">10.4.7.22</td>
+</tr>
+<tr>
+<td style="text-align:center">hdss7-200.host.com</td>
+<td style="text-align:center">10.4.7.200</td>
+</tr>
+</tbody>
+</table>
+<h5 id="master节点的三个组件">master节点的三个组件**</h5>
+<h6 id="kube-apiserver"><strong>kube-apiserver</strong></h6>
+<pre><code>整个集群的唯一入口，并提供认证、授权、访问控制、API注册和发现等机制。
+</code></pre>
+<h6 id="kube-controller-manager"><strong>kube-controller-manager</strong></h6>
+<pre><code>控制器管理器
+负责维护集群的状态，比如故障检测、自动扩展、滚动更新等。保证资源到达期望值。
+</code></pre>
+<h6 id="kube-scheduler"><strong>kube-scheduler</strong></h6>
+<pre><code>调度器
+经过策略调度POD到合适的节点上面运行。分别有预选策略和优选策略。
+</code></pre>
+<h5 id="node节点的两个组件"><strong>node节点的两个组件</strong></h5>
+<h6 id="kubelet"><strong>kubelet</strong></h6>
+<pre><code>在集群节点上运行的代理，kubelet会通过各种机制来确保容器处于运行状态且健康。kubelet不会管理不是由kubernetes创建的容器。kubelet接收POD的期望状态（副本数、镜像、网络等），并调用容器运行环境来实现预期状态。
+kubelet会定时汇报节点的状态给apiserver，作为scheduler调度的基础。kubelet会对镜像和容器进行清理，避免不必要的文件资源占用。
+</code></pre>
+<h6 id="kube-proxy"><strong>kube-proxy</strong></h6>
+<pre><code>kube-proxy是集群中节点上运行的网络代理，是实现service资源功能组件之一。kube-proxy建立了POD网络和集群网络之间的关系。不同node上的service流量转发规则会通过kube-proxy来调用apiserver访问etcd进行规则更新。
+service流量调度方式有三种方式：userspace（废弃，性能很差）、iptables（性能差，复杂，即将废弃）、ipvs（性能好，转发方式清晰）。
+</code></pre>
+<h2 id="12-kubernetes的三条网络">1.2. kubernetes的三条网络</h2>
+<p><img src="D:/assets/1.%20%E9%9B%86%E7%BE%A4%E6%9E%B6%E6%9E%84/aHR0cDovL25vYWgtcGljLm9zcy1jbi1jaGVuZ2R1LmFsaXl1bmNzLmNvbS9waWMvMjAyMDA0MTYvMDkxMzA0MTM5LnBuZw" alt=""></p>
+<p><img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/https/image-fusice.oss-cn-hangzhou.aliyuncs.com/image/%E5%89%8D%E8%A8%80/2021.05.26-08:51:11-https-image-fusice.oss-cn-hangzhou.aliyuncs.com-image-%E5%89%8D%E8%A8%80-2021.05.26-08-50-46-D-assets-%E5%89%8D%E8%A8%80-image-20210513093932481.png" alt=""></p>
+<p><img src="D:/assets/1.%20%E9%9B%86%E7%BE%A4%E6%9E%B6%E6%9E%84/2020081911593913.png" alt="在这里插入图片描述"></p>
+<h6 id="节点网络"><strong>节点网络</strong></h6>
+<p>就是宿主机网络
+地址段：<code>10.4.7.0/24</code></p>
+<h6 id="pod网络"><strong>Pod网络</strong></h6>
+<p>容器运行的网络
+建议<code>172.7.21.0/24</code> ,并建议POD网段与节点IP绑定
+如: 节点IP为<code>10.4.7.21</code>，则POD网络为<code>172.7.21.0/24</code></p>
+<h6 id="service-网络"><strong>Service 网络</strong></h6>
+<p>也叫集群网络(cluster server)，用于内部集群间通信
+构建于POD网络之上, 主要是解决服务发现和负载均衡
+通过kube-proxy连接POD网络和service网络
+地址段：`192.168.0.0/16</p>
+<h1 id="2-基础环境准备">2. 基础环境准备</h1>
+<p>k8s组件介绍：https://blog.csdn.net/fajing_feiyue/article/details/107732453</p>
+<p><img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/1.%20%E9%9B%86%E7%BE%A4%E6%9E%B6%E6%9E%84/2021.05.26-08:47:26-D-assets-1.%20%E9%9B%86%E7%BE%A4%E6%9E%B6%E6%9E%84-Snipaste_2021-05-26_08-46-00.png" alt="Snipaste_2021-05-26_08-46-00"></p>
+<p><img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/1.%20%E9%9B%86%E7%BE%A4%E6%9E%B6%E6%9E%84/2021.05.26-08:47:29-D-assets-1.%20%E9%9B%86%E7%BE%A4%E6%9E%B6%E6%9E%84-Snipaste_2021-05-26_08-46-06.png" alt="Snipaste_2021-05-26_08-46-06"></p>
+<p><img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/1.%20%E9%9B%86%E7%BE%A4%E6%9E%B6%E6%9E%84/2021.05.26-08:47:31-D-assets-1.%20%E9%9B%86%E7%BE%A4%E6%9E%B6%E6%9E%84-Snipaste_2021-05-26_08-46-09.png" alt="Snipaste_2021-05-26_08-46-09"></p>
+<p><img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/1.%20%E9%9B%86%E7%BE%A4%E6%9E%B6%E6%9E%84/2021.05.21-14:50:39-D-assets-1.%20%E9%9B%86%E7%BE%A4%E6%9E%B6%E6%9E%84-image-20210521145037565.png" alt="image-20210521145037565"></p>
+<p>为什么要用二进制安装</p>
+<p>知其然更要知其所以然，平常我们通过yum安装软件后 systemd自动就接管服务了，系统立马可以打出命令，你可想过这背后如何实现的？下面我们通过一步步手动配置实现，让给你能更深入地了解linux系统运行机制，同时不用kuberadmin 而用二进制部署k8s可以进一步了解每个组件之间的联系，利于故障分析，故障排错，相信能对k8s集群架构有个全面的认识</p>
+<p>课程简介：</p>
+<p>课程目的：</p>
+<p>学完本节课程你能够，。。。</p>
+<p>相关资料：</p>
+<blockquote>
+<blockquote>
+<p>注意：serial字段在每次修改配置文件时数值+1**</p>
+</blockquote>
+<p>==注意==： 免密登录  内核转发  selinux 防火墙 为方便实验 关闭了防火墙，生产中建议根据端口需求配置防火墙 请阅读</p>
+</blockquote>
+<h3 id="实验拓扑">实验拓扑</h3>
+<p><img src="D:/assets/%E5%89%8D%E8%A8%80/image-20210513093803140.png" alt="image-20210513093803140"></p>
+<p><img src="D:/assets/%E5%89%8D%E8%A8%80/image-20210513093822096.png" alt="image-20210513093822096"></p>
+<h3 id="网络规划">网络规划</h3>
+<p><img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/%E5%89%8D%E8%A8%80/2021.05.26-08:50:46-D-assets-%E5%89%8D%E8%A8%80-image-20210513093932481.png" alt="image-20210513093932481"></p>
+<h3 id="软件版本">软件版本</h3>
+<table>
+<thead>
+<tr>
+<th>组件</th>
+<th>版本</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>harbor</td>
+<td>1.7.5以上</td>
+</tr>
+<tr>
+<td>etcd</td>
+<td>3.3.3以下（建议3.1.*稳定版）</td>
+</tr>
+<tr>
+<td>k8s</td>
+<td>1.15（生产建议）</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>harbor私有仓库1.7.5版本以下爆出有漏洞，可能被越权获取管理员权限</p>
+<p>k8s，1.16版之后api改动较大</p>
+</blockquote>
+<ul>
+<li>
+<pre><code>注意事项：
+etcd/ssl目录下的证书如果没有更新，etcd服务无法启动
+ansible 的copy模块拷贝etcd目录到etcd数据库节点时etcd/bin/目录下的文件会丢失x权限 
+etcd/cfg/etcd.conf文件中IP地址和节点名称需要修改
+                  
+ansible etcd -m copy -a &quot;src=/root/k8s/ETCD/etcd.service  dest=/usr/lib/systemd/system/&quot; 
+ansible etcd -m copy -a &quot;src=/root/k8s/ETCD/etcd  dest=/opt/ mode=0755&quot;    
+</code></pre>
+</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>主机</th>
+<th>服务</th>
+<th>组件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>10.4.7.11</td>
+<td>负载均衡，DNS</td>
+<td>Nginx、bind、</td>
+</tr>
+<tr>
+<td>10.4.7.12</td>
+<td>负载均衡，DNS、etcd</td>
+<td></td>
+</tr>
+<tr>
+<td>10.4.7.21</td>
+<td>k8s-master+node、etcd</td>
+<td></td>
+</tr>
+<tr>
+<td>10.4.7.22</td>
+<td>k8s-master+node、etcd</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>10.4.7.200</td>
+<td>软件包配置脚本记录、<br />harbor仓库、<br />NFS共享存储、<br />CA证书签证、<br />k8s资源配置清单仓库</td>
+<td>运维主机</td>
+</tr>
+</tbody>
+</table>
+<h1 id="基础环境配置">基础环境配置</h1>
+<h2 id="32-设置主机名">3.2. 设置主机名</h2>
+<pre><code class="language-bash"># 设置
+hostnamectl set-hostname hdss7-xx.host.com
+bash
+</code></pre>
+<h2 id="35-关闭防火墙和selinux">3.5. 关闭防火墙和selinux</h2>
+<pre><code class="language-bash"># 查看内核版本（docker需要在3.8以上）
+uname -a
+
+# 关闭防火墙和selinux
+systemctl stop firewalld
+systemctl disable firewalld
+setenforce 0
+sed -i &quot;s/SELINUX=enforcing/SELINUX=disabled/g&quot; /etc/selinux/config
+sed -i 's/^SELINUX=.\*/SELINUX=disabled/' /etc/selinux/config
+sed -i 's#SELINUX=enforcing#SELINUX=disabled#g' /etc/sysconfig/selinux
+sed -i 's#SELINUX=enforcing#SELINUX=disabled#g' /etc/selinux/config
+</code></pre>
+<h2 id="关闭交换分区">关闭交换分区</h2>
+<pre><code>关闭交换分区
+swapoff -a
+永久关闭，修改/etc/fstab,注释掉swap一行
+
+////////////////////////////////////////////////////
+swapoff -a &amp;&amp; sysctl -w vm.swappiness=0
+swappiness参数设置与内存交换
+https://www.cnblogs.com/shouke/p/10157626.html
+https://blog.csdn.net/andyguan01_2/article/details/89315345
+
+</code></pre>
+<h2 id="修改时区">修改时区</h2>
+<pre><code>
+$ # 调整系统 TimeZone
+sudo timedatectl set-timezone Asia/Shanghai
+
+$ # 将当前的 UTC 时间写入硬件时钟
+sudo timedatectl set-local-rtc 0
+
+$ # 重启依赖于系统时间的服务
+sudo systemctl restart rsyslog 
+sudo systemctl restart crond
+</code></pre>
+<h2 id="时间同步">时间同步</h2>
+<pre><code>yum install -y chrony
+systemctl start chronyd
+systemctl enable chronyd
+chronyc sources
+</code></pre>
+<h2 id="修改内核参数no">修改内核参数(no)</h2>
+<pre><code>cat &gt; /etc/sysctl.d/k8s.conf &lt;&lt; EOF
+net.ipv4.ip_forward = 1
+net.bridge.bridge-nf-call-ip6tables = 1
+net.bridge.bridge-nf-call-iptables = 1
+EOF
+sysctl --system
+</code></pre>
+<h2 id="加载ipvs模块no">加载ipvs模块(no)</h2>
+<pre><code>modprobe -- ip_vs
+modprobe -- ip_vs_rr
+modprobe -- ip_vs_wrr
+modprobe -- ip_vs_sh
+modprobe -- nf_conntrack  
+#linux 4.18及以下内核版本使用：modprobe -- nf_conntrack_ipv4
+lsmod | grep ip_vs
+lsmod | grep nf_conntrack_ipv4
+yum install -y ipvsadm
+yum install ipvsadm ipset sysstat conntrack libseccomp -y
+https://blog.csdn.net/qq_26900081/article/details/109291999
+
+
+</code></pre>
+<h2 id="limit优化">limit优化</h2>
+<pre><code>ulimit -SHn 65535
+
+cat &lt;&lt;EOF &gt;&gt; /etc/security/limits.conf
+* soft nofile 655360
+* hard nofile 131072
+* soft nproc 655350
+* hard nproc 655350
+* soft memlock unlimited
+* hard memlock unlimited
+EOF
+</code></pre>
+<h2 id="免密登录">免密登录</h2>
+<pre><code>#Master01节点免密钥登录其他节点，安装过程中生成配置文件和证书均在Master01上操作，集群管理也在Master01上操作，阿里云或者AWS上需要单独一台kubectl服务器。密钥配置如下：
+cd /root
+ssh-keygen -t rsa
+for i in host7-101 host7-102 host7-103;do ssh-copy-id -i .ssh/id_rsa.pub $i;done
+</code></pre>
+<h2 id="36-设置yum源">3.6. 设置yum源</h2>
+<pre><code class="language-bash">curl -o /etc/yum.repos.d/CentOS-Base.repo  http://mirrors.aliyun.com/repo/Centos-7.repo
+curl -o /etc/yum.repos.d/epel.repo  http://mirrors.aliyun.com/repo/epel-7.repo
+yum clean all
+yum makecache
+</code></pre>
+<h2 id="37-安装常用工具">3.7. 安装常用工具</h2>
+<pre><code class="language-bash">yum install wget net-tools telnet tree nmap sysstat lrzsz dos2unix bind-utils -y
+# wget：wget命令用来从指定的URL下载文件
+# net-tools：网络相关的工具
+# telnet：Telnet是TCP/IP协议簇中的一个虚拟终端协议，它允许连接到远程主机
+# tree：树结构目录
+# nmap：nmap是一款非常强大的测试工具，是每一个学习安全的人所必须掌握的工具
+# sysstat是一个软件包，包含监测系统性能及效率的一组工具，这些工具对于我们收集系统性能数据，比如
+CPU使用率、硬盘和网络吞吐数据，这些数据的收集和分析，有利于我们判断系统是否正常运行，是提高系统运行效率、安全运行服务器的得力助手。
+# lrzsz：上传下载
+# dos2unix：dos2unix是将Windows格式文件转换为Unix、Linux格式的实用命令
+# bind-utils： bind是linux系统下的一个DNS服务程序.bind-utils是bind软件提供的一组DNS工具包,里面有一些DNS相关的工具.主要有:dig,host,nslookup,nsupdate.使用这些工具可以进行域名解析和DNS调试工作
+</code></pre>
+<h2 id="软件更新">软件更新</h2>
+<pre><code>yum update
+</code></pre>
+<h2 id="内核升级">内核升级</h2>
+<h3 id="1-安装-elrepo-release-源">1. 安装 elrepo-release 源</h3>
+<pre><code class="language-bash">yum install elrepo-release -y
+或者
+# 下载公钥
+rpm --import https://www.elrepo.org/RPM-GPG-KEY-elrepo.org
+# 安装elrepo repo
+rpm -Uvh http://www.elrepo.org/elrepo-release-7.0-5.el7.elrepo.noarch.rpm
+</code></pre>
+<h3 id="2-升级内核">2. 升级内核</h3>
+<p>步骤：</p>
+<ul>
+<li><code>for i in </code>rpm -qa | grep kernel<code>; do rpm -e &quot;${i}&quot; --nodeps; done  </code></li>
+<li><code>yum --enablerepo=elrepo-kernel install kernel-ml kernel-ml-devel kernel-ml-tools kernel-ml-tools-libs kernel-ml-tools-libs-devel kernel-ml-headers -y</code></li>
+<li><code>grub2-set-default &quot;CentOS Linux (5.12.6-1.el7.elrepo.x86_64) 7 (Core)&quot;</code></li>
+<li><code>grub2-mkconfig -o /etc/grub2.cfg</code></li>
+<li><code>reboot</code></li>
+</ul>
+<pre><code class="language-bash"># 1.列出可用内核相关包： 
+yum --disablerepo=&quot;*&quot; --enablerepo=&quot;elrepo-kernel&quot; list available
+# 2.查询所有当前系统kernel包
+rpm -qa|grep kernel
+# 3.根据上述查询结果，卸载现有内核与相关包
+for i in `rpm -qa | grep kernel`; do rpm -e &quot;${i}&quot; --nodeps; done  
+## --nodeps 不会删除依赖
+## 此命令会将当前内核删除，重启后无法回退到当前内核，稳妥可以手动删除，保留当前的内核: rpm -e 包名 --nodeps 
+
+# 4.安装新内核与相关包：
+yum --enablerepo=elrepo-kernel install kernel-ml kernel-ml-devel kernel-ml-tools kernel-ml-tools-libs kernel-ml-tools-libs-devel kernel-ml-headers -y
+# 安装完成后检查 /boot/grub2/grub.cfg 中对应内核 menuentry 中是否包含 initrd16 配置，如果没有，再安装一次！
+root@host7-101[08:40:26]:~$ cat /boot/grub2/grub.cfg |grep initrd16
+	initrd16 /initramfs-5.12.6-1.el7.elrepo.x86_64.img
+	initrd16 /initramfs-0-rescue-e35cc3a0bca74d099157a91dfd7ef6a3.img
+</code></pre>
+<blockquote>
+<p>注意：</p>
+<p>使用 yum remove 卸载现有内核与相关包：</p>
+<ol>
+<li>
+<p>不能删除正在使用的当前内核<code>kernel-3.10.0-1160.el7.x86_64</code>，需重启到其他内核后移除；</p>
+</li>
+<li>
+<p>会删除依赖包。</p>
+<pre><code class="language-bash">root@hdss7-22[05:36:55]:~$ grub2-editenv list
+saved_entry=CentOS Linux (3.10.0-1160.el7.x86_64) 7 (Core)
+root@hdss7-22[05:36:52]:~$ rpm -qa|grep kernel
+kernel-3.10.0-1160.el7.x86_64
+kernel-tools-3.10.0-1160.el7.x86_64
+kernel-tools-libs-3.10.0-1160.el7.x86_64
+</code></pre>
+</li>
+<li>
+<p>这些依赖包需要更新内核后重新安装</p>
+<pre><code class="language-bash"># 若涉及需重新安装依赖包
+yum install -y compat-glibc compat-glibc-headers gcc gcc-c++ gcc-gfortran glibc-devel glibc-headers libquadmath-devel libtool systemtap systemtap-devel
+                  
+# 卸载kernel-devel会连带删除:
+systemtap和systemtap-devel。
+                  
+# 卸载kernel-headers会连带删除:
+compat-glibc   x86_64   1:2.12-4.el7.centos
+compat-glibc-headers  x86_64   1:2.12-4.el7.centos
+gcc x86_64   4.8.5-28.el7_5.1
+gcc-c++x86_64   4.8.5-28.el7_5.1
+gcc-gfortran   x86_64   4.8.5-28.el7_5.1
+glibc-develx86_64   2.17-222.el7
+glibc-headers  x86_64   2.17-222.el7
+libquadmath-devel  x86_64   4.8.5-28.el7_5.1
+libtool x86_64   2.4.2-22.el7_3
+systemtap   x86_64   3.2-8.el7_5
+systemtap-develx86_64   3.2-8.el7_5
+</code></pre>
+</li>
+</ol>
+</blockquote>
+<h3 id="3-添加启动项">3. 添加启动项</h3>
+<pre><code class="language-bash">#查看grub2启动项可用内核版本：
+root@hdss7-22[05:47:05]:~$ awk -F\' '$1==&quot;menuentry &quot; {print i++ &quot; : &quot; $2}' /etc/grub2.cfg
+0 : CentOS Linux (5.12.6-1.el7.elrepo.x86_64) 7 (Core)
+1 : CentOS Linux (0-rescue-e35cc3a0bca74d099157a91dfd7ef6a3) 7 (Core)
+# 查看grub2默认启动项内核
+root@hdss7-22[05:47:09]:~$ grub2-editenv list
+saved_entry=CentOS Linux (0-rescue-e35cc3a0bca74d099157a91dfd7ef6a3) 7 (Core)
+
+#通过grub2-set-default + 字符串可以设置默认的启动项、0代表查看当前可用内核版本列表的左侧索引号
+root@hdss7-22[05:47:12]:~$ grub2-set-default &quot;CentOS Linux (5.12.6-1.el7.elrepo.x86_64) 7 (Core)&quot;
+root@hdss7-22[05:47:43]:~$ grub2-editenv list
+saved_entry=CentOS Linux (5.12.6-1.el7.elrepo.x86_64) 7 (Core)
+# 生成 grub 配置文件
+grub2-mkconfig -o /etc/grub2.cfg
+
+
+</code></pre>
+<h3 id="4-重启验证">4. 重启验证</h3>
+<pre><code class="language-bash">reboot
+# 查看当前内核
+uname -r
+
+# 查询所有当前系统kernel包
+rpm -qa|grep kernel
+# 查看默认内核
+grub2-editenv list
+#查看grub2启动项可用内核版本：
+awk -F\' '$1==&quot;menuentry &quot; {print i++ &quot; : &quot; $2}' /etc/grub2.cfg
+</code></pre>
+<h3 id="更新内核案例">更新内核案例</h3>
+<h4 id="实验机器">实验机器</h4>
+<p><img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/1.%20%E9%9B%86%E7%BE%A4%E6%9E%B6%E6%9E%84%E5%92%8C%E5%9F%BA%E7%A1%80%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/2021.05.26-17:37:29-D-assets-1.%20%E9%9B%86%E7%BE%A4%E6%9E%B6%E6%9E%84%E5%92%8C%E5%9F%BA%E7%A1%80%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE-image-20210526173726198.png" alt="image-20210526173726198"></p>
+<h4 id="安装--elrepo-release-源">安装  elrepo-release 源</h4>
+<p><img src="D:/assets/1.%20%E9%9B%86%E7%BE%A4%E6%9E%B6%E6%9E%84%E5%92%8C%E5%9F%BA%E7%A1%80%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/image-20210526174104371.png" alt="image-20210526174104371"></p>
+<h4 id="更新内核">更新内核</h4>
+<p><img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/1.%20%E9%9B%86%E7%BE%A4%E6%9E%B6%E6%9E%84%E5%92%8C%E5%9F%BA%E7%A1%80%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/2021.05.26-17:43:52-D-assets-1.%20%E9%9B%86%E7%BE%A4%E6%9E%B6%E6%9E%84%E5%92%8C%E5%9F%BA%E7%A1%80%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE-image-20210526174349773.png" alt="image-20210526174349773"></p>
+<p><img src="D:/assets/1.%20%E9%9B%86%E7%BE%A4%E6%9E%B6%E6%9E%84%E5%92%8C%E5%9F%BA%E7%A1%80%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/image-20210526174557920.png" alt="image-20210526174557920"></p>
+<h4 id="配置启动项">配置启动项</h4>
+<p><img src="D:/assets/1.%20%E9%9B%86%E7%BE%A4%E6%9E%B6%E6%9E%84%E5%92%8C%E5%9F%BA%E7%A1%80%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/image-20210526174816513.png" alt="image-20210526174816513"></p>
+<h4 id="重启验证">重启验证</h4>
+<p><img src="D:/assets/1.%20%E9%9B%86%E7%BE%A4%E6%9E%B6%E6%9E%84%E5%92%8C%E5%9F%BA%E7%A1%80%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/image-20210526175858497.png" alt="image-20210526175858497"></p>
+<h2 id="集群环境变量示例">集群环境变量示例</h2>
+<p>后续的部署步骤将使用下面定义的全局环境变量，请根据<strong>自己的机器、网络情况</strong>修改：</p>
+<pre><code class="language-bash">#!/usr/bin/bash
+
+# 生成 EncryptionConfig 所需的加密 key
+ENCRYPTION_KEY=$(head -c 32 /dev/urandom | base64)
+
+# 最好使用 当前未用的网段 来定义服务网段和 Pod 网段
+
+# 服务网段，部署前路由不可达，部署后集群内路由可达(kube-proxy 和 ipvs 保证)
+SERVICE_CIDR=&quot;10.254.0.0/16&quot;
+
+# Pod 网段，建议 /16 段地址，部署前路由不可达，部署后集群内路由可达(flanneld 保证)
+CLUSTER_CIDR=&quot;172.30.0.0/16&quot;
+
+# 服务端口范围 (NodePort Range)
+export NODE_PORT_RANGE=&quot;8400-9000&quot;
+
+# 集群各机器 IP 数组
+export NODE_IPS=(172.27.129.105 172.27.129.111 172.27.129.112)
+
+# 集群各 IP 对应的 主机名数组
+export NODE_NAMES=(kube-node1 kube-node2 kube-node3)
+
+# kube-apiserver 的 VIP（HA 组件 keepalived 发布的 IP）
+export MASTER_VIP=172.27.129.253
+
+# kube-apiserver VIP 地址（HA 组件 haproxy 监听 8443 端口）
+export KUBE_APISERVER=&quot;https://${MASTER_VIP}:8443&quot;
+
+# HA 节点，VIP 所在的网络接口名称
+export VIP_IF=&quot;eth0&quot;
+
+# etcd 集群服务地址列表
+export ETCD_ENDPOINTS=&quot;https://172.27.129.105:2379,https://172.27.129.111:2379,https://172.27.129.112:2379&quot;
+
+# etcd 集群间通信的 IP 和端口
+export ETCD_NODES=&quot;kube-node1=https://172.27.129.105:2380,kube-node2=https://172.27.129.111:2380,kube-node3=https://172.27.129.112:2380&quot;
+
+# flanneld 网络配置前缀
+export FLANNEL_ETCD_PREFIX=&quot;/kubernetes/network&quot;
+
+# kubernetes 服务 IP (一般是 SERVICE_CIDR 中第一个IP)
+export CLUSTER_KUBERNETES_SVC_IP=&quot;10.254.0.1&quot;
+
+# 集群 DNS 服务 IP (从 SERVICE_CIDR 中预分配)
+export CLUSTER_DNS_SVC_IP=&quot;10.254.0.2&quot;
+
+# 集群 DNS 域名
+export CLUSTER_DNS_DOMAIN=&quot;cluster.local.&quot;
+
+# 将二进制目录 /opt/k8s/bin 加到 PATH 中
+export PATH=/opt/k8s/bin:$PATH
+</code></pre>
+<h2 id="分发集群环境变量定义脚本">分发集群环境变量定义脚本</h2>
+<p>把全局变量定义脚本拷贝到<strong>所有</strong>节点的 <code>/opt/k8s/bin</code> 目录：</p>
+<pre><code class="language-bash">source environment.sh
+for node_ip in ${NODE_IPS[@]}
+  do
+    echo &quot;&gt;&gt;&gt; ${node_ip}&quot;
+    scp environment.sh k8s@${node_ip}:/opt/k8s/bin/
+    ssh k8s@${node_ip} &quot;chmod +x /opt/k8s/bin/*&quot;
+  done
+</code></pre>
+
+        </div>
+        
+        
+        
+        
+        
+        
+        
+<div class="flex flex-col md:flex-row md:justify-between -mx-2 mt-4 px-2 pt-4 border-t">
+    <div>
+        
+        <span class="block font-bold">上一页</span>
+        <a href="/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/0000/" class="block"></a>
+        
+    </div>
+    <div class="md:text-right mt-4 md:mt-0">
+        
+        <span class="block font-bold">下一页</span>
+        <a href="/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/5.2-controller-manager/" class="block"></a>
+        
+    </div>
+</div>
+
+        
+    </div>
+    
+
+    
+    
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', ()=>{
+        hljs.initHighlightingOnLoad();
+    })
+</script>
+
+      </div>
+    </div>
+    
+  </main>
+  <footer class="pl-scrollbar">
+    <div class="w-full max-w-screen-xl mx-auto"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 2021 <a href="https://www.songjinfeng.com/">SonJinfeng</a> 
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+  </footer>
+</body>
+
+</html>

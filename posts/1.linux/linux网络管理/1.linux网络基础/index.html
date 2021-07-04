@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang='zh' ><meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+
+
+<title>Linux网络基础 | Songjinfeng&#39;s BLOG</title>
+<link rel="stylesheet" href="/css/eureka.min.css">
+<script defer src="/js/eureka.min.js"></script>
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Noto+Serif+SC:wght@400;600;700&display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/styles/solarized-light.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/highlight.min.js"
+   crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/dart.min.js"
+     crossorigin></script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/js/all.min.js"
+   integrity="sha256-uNYoXefWRqv&#43;PsIF/OflNmwtKM4lStn9yrz2gVl6ymo="  crossorigin></script>
+
+
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css"
+   integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3&#43;Aro6EYUG4&#43;cU&#43;KJWu/X"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js" 
+  integrity="sha384-g7c&#43;Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI&#43;sEnkvrMWph2EDg4"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js"
+   integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC&#43;Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.9.2/dist/mermaid.min.js" 
+  integrity="sha256-Zmpaaj&#43;GXFsPF5WdPArSrnW3b30dovldeKsW00xBVwE="  crossorigin></script>
+
+
+<link rel="icon" type="image/png" sizes="32x32" href="/images/icon_hucfa16751ac9c82c06b84c3502c0db793_16378_32x32_fill_box_center_2.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hucfa16751ac9c82c06b84c3502c0db793_16378_180x180_fill_box_center_2.png">
+
+<meta name="description"
+  content="https://segmentfault.com/a/1190000015476963
+https://segmentfault.com/a/1190000011954814
+bond mode为0,1,2,3,4时，bond口的MAC地址和成员口MAC地址相同；bond mode为5和6时，bond口的MAC地址不同于成员口的MAC地址。
+网卡配置详解 默认网卡配置 /etc/sysconfig/network-scripts/ifcfg-*
+TYPE=Ethernet # 网络类型（通常是Ethemet） PROXY_METHOD=none BROWSR_ONLY=no BOOTPROTO=dhcp # IP的配置方法[none|static|bootp|dhcp]（引导时不使用协议|静态分配IP|BOOTP协议|DHCP协议） DEFROUTE=yes IPV4_FAILURE_FATAL=no IPV6INIT=yes # IPV6是否有效（yes/no） IPV6_AUTOCONF=yes IPV6_DEFROUTE=yes IPV6_FAILURE_FATAL=no IPV6_ADDR_GEN_MODE=stable-privacy NAME=ens33 UUID=ac9b66bf-74fb-4bda-b89f-c66ff84c9571 # 获取新的UUID # uuidgen ens33 将获取的UUID填入配置文件后重启网卡服务 # 验证UUID # nmcli con | sed -n &#39;1,2p&#39; DEVICE=ens33 # 接口名（设备,网卡） ONBOOT=yes #ONBOOT是指明在系统启动时是否激活网卡，只有在激活状态的网卡才能去连接网络，进行网络通讯  永久生效-设置静态地址 上述默认配置文件修改加入如下配置，配置完成后systemctl restart network重启网卡服务生效
+BOOTPROTO=static #静态IP IPADDR= #本机地址 NETMASK= #子网掩码 GATEWAY= #默认网关 # DNS1= # DNS2=  临时生效-详见工具包对比 也可以通过 ip、nmlic、ifconfig管理命令进行配置，后续会展开介绍
+ifconfig eth0 192.168.0.2 netmask 255.255.255.0  vi /etc/resolv.">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"技术专栏",
+      "item":"/posts/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"Linux",
+      "item":"/posts/1.linux/"},{
+      "@type": "ListItem",
+      "position": 3 ,
+      "name":"Linux网络基础",
+      "item":"/posts/1.linux/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/1.linux%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80/"}]
+}
+</script>
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/posts/1.linux/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/1.linux%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80/"
+    },
+    "headline": "Linux网络基础 | Songjinfeng\u0027s BLOG","wordCount":  1176 ,
+    "publisher": {
+        "@type": "Person",
+        "name": "JF. Song",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "/images/icon.png"
+        }
+        },
+    "description": "https:\/\/segmentfault.com\/a\/1190000015476963\nhttps:\/\/segmentfault.com\/a\/1190000011954814\nbond mode为0,1,2,3,4时，bond口的MAC地址和成员口MAC地址相同；bond mode为5和6时，bond口的MAC地址不同于成员口的MAC地址。\n网卡配置详解 默认网卡配置 \/etc\/sysconfig\/network-scripts\/ifcfg-*\nTYPE=Ethernet # 网络类型（通常是Ethemet） PROXY_METHOD=none BROWSR_ONLY=no BOOTPROTO=dhcp # IP的配置方法[none|static|bootp|dhcp]（引导时不使用协议|静态分配IP|BOOTP协议|DHCP协议） DEFROUTE=yes IPV4_FAILURE_FATAL=no IPV6INIT=yes # IPV6是否有效（yes\/no） IPV6_AUTOCONF=yes IPV6_DEFROUTE=yes IPV6_FAILURE_FATAL=no IPV6_ADDR_GEN_MODE=stable-privacy NAME=ens33 UUID=ac9b66bf-74fb-4bda-b89f-c66ff84c9571 # 获取新的UUID # uuidgen ens33 将获取的UUID填入配置文件后重启网卡服务 # 验证UUID # nmcli con | sed -n \u00271,2p\u0027 DEVICE=ens33 # 接口名（设备,网卡） ONBOOT=yes #ONBOOT是指明在系统启动时是否激活网卡，只有在激活状态的网卡才能去连接网络，进行网络通讯  永久生效-设置静态地址 上述默认配置文件修改加入如下配置，配置完成后systemctl restart network重启网卡服务生效\nBOOTPROTO=static #静态IP IPADDR= #本机地址 NETMASK= #子网掩码 GATEWAY= #默认网关 # DNS1= # DNS2=  临时生效-详见工具包对比 也可以通过 ip、nmlic、ifconfig管理命令进行配置，后续会展开介绍\nifconfig eth0 192.168.0.2 netmask 255.255.255.0  vi \/etc\/resolv."
+}
+</script><meta property="og:title" content="Linux网络基础 | Songjinfeng&#39;s BLOG" />
+<meta property="og:type" content="article" />
+
+
+<meta property="og:image" content="/images/icon.png">
+
+
+<meta property="og:url" content="/posts/1.linux/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/1.linux%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80/" />
+
+
+
+
+<meta property="og:description" content="https://segmentfault.com/a/1190000015476963
+https://segmentfault.com/a/1190000011954814
+bond mode为0,1,2,3,4时，bond口的MAC地址和成员口MAC地址相同；bond mode为5和6时，bond口的MAC地址不同于成员口的MAC地址。
+网卡配置详解 默认网卡配置 /etc/sysconfig/network-scripts/ifcfg-*
+TYPE=Ethernet # 网络类型（通常是Ethemet） PROXY_METHOD=none BROWSR_ONLY=no BOOTPROTO=dhcp # IP的配置方法[none|static|bootp|dhcp]（引导时不使用协议|静态分配IP|BOOTP协议|DHCP协议） DEFROUTE=yes IPV4_FAILURE_FATAL=no IPV6INIT=yes # IPV6是否有效（yes/no） IPV6_AUTOCONF=yes IPV6_DEFROUTE=yes IPV6_FAILURE_FATAL=no IPV6_ADDR_GEN_MODE=stable-privacy NAME=ens33 UUID=ac9b66bf-74fb-4bda-b89f-c66ff84c9571 # 获取新的UUID # uuidgen ens33 将获取的UUID填入配置文件后重启网卡服务 # 验证UUID # nmcli con | sed -n &#39;1,2p&#39; DEVICE=ens33 # 接口名（设备,网卡） ONBOOT=yes #ONBOOT是指明在系统启动时是否激活网卡，只有在激活状态的网卡才能去连接网络，进行网络通讯  永久生效-设置静态地址 上述默认配置文件修改加入如下配置，配置完成后systemctl restart network重启网卡服务生效
+BOOTPROTO=static #静态IP IPADDR= #本机地址 NETMASK= #子网掩码 GATEWAY= #默认网关 # DNS1= # DNS2=  临时生效-详见工具包对比 也可以通过 ip、nmlic、ifconfig管理命令进行配置，后续会展开介绍
+ifconfig eth0 192.168.0.2 netmask 255.255.255.0  vi /etc/resolv." />
+
+
+
+
+<meta property="og:locale" content="zh" />
+
+
+
+
+<meta property="og:site_name" content="Songjinfeng&#39;s BLOG" />
+
+
+
+
+
+
+
+
+
+<meta property="article:section" content="posts" />
+
+
+
+
+<body class="flex flex-col min-h-screen">
+  <header class="fixed flex items-center w-full min-h-16 pl-scrollbar z-50 bg-secondary-bg shadow-sm">
+    <div class="w-full max-w-screen-xl mx-auto"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="mr-6 text-primary-text text-xl font-bold">Songjinfeng&#39;s BLOG</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:flex-grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:flex-grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  mr-4">技术专栏</a>
+            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">文档笔记</a>
+            <a href="/series/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">主题系列</a>
+            <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">标签</a>
+            <a href="/authors/songjinfeng/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">关于</a>
+            <a href="/index.xml" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">RSS</a>
+            <a href="/webstack" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">友链&amp;导航</a>
+        </div>
+
+        <div class="flex">
+            <div class="relative pt-4 md:pt-0">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col left-0 md:left-auto right-auto md:right-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">浅色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">深色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">自动</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            switchMode('Auto')
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+  </header>
+  <main class="flex-grow pt-16">
+    <div class="pl-scrollbar">
+      <div class="w-full max-w-screen-xl lg:px-4 xl:px-8 mx-auto">
+
+
+<div class="grid grid-cols-2 lg:grid-cols-8 gap-4 lg:pt-12">
+    <div
+        class="col-span-2 lg:col-start-2 lg:col-span-6 bg-secondary-bg rounded px-6 py-8">
+        <h1 class="font-bold text-3xl text-primary-text">Linux网络基础</h1>
+        <div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>0001-01-01</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>6分钟阅读时长</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="/categories/blog/" class="hover:text-eureka">blog</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/posts/" class="hover:text-eureka">posts</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/linux/" class="hover:text-eureka">Linux</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/" class="hover:text-eureka">Linux网络管理</a>
+        
+    </div>
+    
+
+    
+</div>
+        
+        
+        
+
+        <div class="content">
+            <p><a href="https://segmentfault.com/a/1190000015476963">https://segmentfault.com/a/1190000015476963</a></p>
+<p><a href="https://segmentfault.com/a/1190000011954814">https://segmentfault.com/a/1190000011954814</a></p>
+<p>bond mode为0,1,2,3,4时，bond口的MAC地址和成员口MAC地址相同；bond mode为5和6时，bond口的MAC地址不同于成员口的MAC地址。</p>
+<h1 id="网卡配置详解">网卡配置详解</h1>
+<h2 id="默认网卡配置">默认网卡配置</h2>
+<p><code>/etc/sysconfig/network-scripts/ifcfg-*</code></p>
+<pre><code class="language-bash">TYPE=Ethernet            # 网络类型（通常是Ethemet）   
+PROXY_METHOD=none
+BROWSR_ONLY=no
+BOOTPROTO=dhcp            # IP的配置方法[none|static|bootp|dhcp]（引导时不使用协议|静态分配IP|BOOTP协议|DHCP协议）
+DEFROUTE=yes
+IPV4_FAILURE_FATAL=no
+IPV6INIT=yes            # IPV6是否有效（yes/no） 
+IPV6_AUTOCONF=yes
+IPV6_DEFROUTE=yes
+IPV6_FAILURE_FATAL=no
+IPV6_ADDR_GEN_MODE=stable-privacy
+NAME=ens33
+UUID=ac9b66bf-74fb-4bda-b89f-c66ff84c9571
+# 获取新的UUID        # uuidgen ens33 将获取的UUID填入配置文件后重启网卡服务
+# 验证UUID       # nmcli con | sed -n '1,2p' 
+DEVICE=ens33             # 接口名（设备,网卡）
+ONBOOT=yes       #ONBOOT是指明在系统启动时是否激活网卡，只有在激活状态的网卡才能去连接网络，进行网络通讯
+</code></pre>
+<h2 id="永久生效-设置静态地址">永久生效-设置静态地址</h2>
+<p>上述默认配置文件修改加入如下配置，配置完成后<code>systemctl restart network</code>重启网卡服务生效</p>
+<pre><code class="language-bash">BOOTPROTO=static #静态IP
+IPADDR= #本机地址
+NETMASK= #子网掩码
+GATEWAY= #默认网关
+# DNS1=
+# DNS2=
+</code></pre>
+<h2 id="临时生效-详见工具包对比">临时生效-详见工具包对比</h2>
+<p>也可以通过 ip、nmlic、ifconfig管理命令进行配置，后续会展开介绍</p>
+<pre><code class="language-bash">ifconfig eth0 192.168.0.2 netmask 255.255.255.0  
+</code></pre>
+<pre><code class="language-bash">vi /etc/resolv.conf 加入 nameserver 8.8.8.8 
+</code></pre>
+<pre><code class="language-bash">route add default gw 192.168.0.1 dev eth0 
+</code></pre>
+<h2 id="其他参数">其他参数</h2>
+<pre><code class="language-bash">USERCTL    [yes|no]（非root用户是否可以控制该设备）
+HWADDR     MAC地址   
+BROADCAST   广播地址
+NETWORK    网络地址
+NM_CONTROLLED=no 
+# NM_CONTROLLED 设置 yes 表示网卡允许用 NetworkManager 程序管理。它可以降低网络配置使用难度，便于管理无线网络、虚拟专用网等网络连接，适合普通台式机和笔记本电脑使用。
+# NM_CONTROLLED 设为 yes 或没有此行参数时，并有安装运行 NetworkManager 服务(必须具有HWADDR = \ &lt;MAC-Address&gt;行)。若编辑了网卡配置文件，需要先重启 NetworkManager 再重启 network 服务。
+# NM_CONTROLLED 设置 no 表示网卡使用传统方式管理而不用 NetworkManager。好处是修改网卡配置文件后直接重启 network 就生效，不受 NetworkManager 干扰。适合用以太网连接的服务器使用。
+# 要快速查询哪些网卡使用 NetworkManager 管理，可用 nmcli device status命令查询（不支持 CentOS 6），STATE 状态下非 unmanaged 值的网卡都由 NetworkManager 管理。
+# 参考链接：https://www.thegeekdiary.com/centos-rhel-7-how-to-disable-networkmanager/amp/
+# 参考链接：https://access.redhat.com/solutions/44839
+</code></pre>
+<p>:::info no-icon</p>
+<p>当新添加网卡后linux没自动生成网卡配置文件时，可以将默认配置复制一份，其中 HWADDR 和 UUID 删除或重新获取不能与其他网卡重复，通过<code>ip a</code>查看新网卡设备名字，把 DEVICE 和 NAME 设置为新网卡名。</p>
+<p>获取新的UUID        # uuidgen ens33</p>
+<p>验证UUID       # nmcli con | sed -n &lsquo;1,2p&rsquo;</p>
+<p>查看网卡MAC  cat /sys/class/net/eth0/address</p>
+<p>查看网卡UUID：
+nmcli con show  或  nmcli con list</p>
+<p>查看网卡mac地址：
+nmcli dev show  或  nmcli dev list</p>
+<p>注：show用于7版本；list用于6版本；</p>
+<p>:::</p>
+<h1 id="更改网卡名">更改网卡名</h1>
+<h2 id="一临时生效-非udev">一、临时生效-非Udev</h2>
+<p><em>注意：对于远程联网的机器，要确保你有两个网卡：例如一个内网一个外网，否则你在关闭网卡时，会失去与主机的连接</em></p>
+<pre><code class="language-bash">ip link set peth0 name eth0   //改名之前把网卡关闭  重启失效
+
+ifup {interface}      //会读取配置文件配上网卡  速度比ip link set eth0 up慢，同时会配置默认路由。
+ifdown {interface}    //网卡down不显示之前配置的任何配置信息IP
+
+ip link set eth0 down  //关闭eth0 网络接口，删除路由
+ip link set eth0 up   //打开eth0 网络接口,仅仅启用网卡，但是不会配置路由；
+
+nmcli device connect eth0    ###启用eth0接口
+nmcli device disconnect eth0  ###关闭eth0接口
+
+ifconfig peth0 down
+ifconfig eth0 up
+
+
+
+</code></pre>
+<p>自定义脚本处理</p>
+<pre><code class="language-bash">#!/bin/bash
+#如将网口ens33改为eth0
+ip link set ens33 down
+ip link set ens33 name eth0
+ip link set eth0 up
+
+mv /etc/sysconfig/network-scripts/ifcfg-{ens33,eth0}
+
+sed -ire &quot;s/NAME=\&quot;ens33\&quot;/NAME=\&quot;eth0\&quot;/&quot; /etc/sysconfig/network-scripts/ifcfg-eth0
+
+sed -ire &quot;s/DEVICE=\&quot;ens33\&quot;/NAME=\&quot;eth0\&quot;/&quot; /etc/sysconfig/network-scripts/ifcfg-eth0
+
+MAC=$(cat /sys/class/net/eth0/address)
+
+echo -n 'HWADDR=&quot;'$MAC\&quot; &gt;&gt; /etc/sysconfig/network-scripts/ifcfg-eth0
+</code></pre>
+<h2 id="二自定义网卡名修改udev需重启永久生效">二、自定义网卡名，修改Udev需重启，永久生效</h2>
+<p>参考链接：https://blog.51cto.com/bella41981/2361482</p>
+<p>参考链接：https://blog.csdn.net/u010039418/article/details/79260553</p>
+<p>参考链接：https://unix.stackexchange.com/questions/205010/centos-7-rename-network-interface-without-rebooting</p>
+<p>::: info</p>
+<p>centos7.3 和7.4不同  本章只讨论7.4</p>
+<p>:::</p>
+<p>CentOS6中可以通过修改/etc/udev/rules.d/70-persistent-net.rules中mac与NAME的映射关系来重命名网卡名称，</p>
+<p>CentOS7.4新版本系统引入了systemd组件，由该组件管理生成udev规则，文件目录变为  /usr/lib/udev/rules.d/60-net.rules。</p>
+<p>如果将“ net.ifnames = 0 biosdevname = 0”添加到内核引导字符串中，以返回到网卡的旧命名方案（eth*），则可以删除</p>
+<pre><code>ACTION==&quot;add&quot;, SUBSYSTEM==&quot;net&quot;, DRIVERS==&quot;?*&quot;, ATTR{type}==&quot;1&quot;, PROGRAM=&quot;/lib/udev/rename_device&quot;, RESULT==&quot;?*&quot;, NAME=&quot;$result&quot;
+</code></pre>
+<p>取而代之的</p>
+<pre><code>ACTION==&quot;add&quot;, SUBSYSTEM==&quot;net&quot;, DRIVERS==&quot;?*&quot;, ATTR{address}==&quot;00:50:56:8e:3f:a7&quot;, NAME=&quot;eth123&quot;s.
+</code></pre>
+<p>每个网卡需要一个条目。确保使用正确的 MAC 地址并更新 NAME 字段。如果您没有使用“ net.ifnames = 0 biosdevname = 0”，请小心，因为这里可能有意外后果。</p>
+<p>==<strong>centos6</strong>==</p>
+<p>1.修改 /etc/udev/rules.d/70-persistent-net.rules 文件中网卡名
+2.ethtool -i eth2 查看网卡驱动模块名
+ethtool -i eth2 || dmesg | grep –i eth0 查看驱动模块信息(两个命令都可以使用)
+dmesg //显示开机加载的网卡信息 grep –i eth0 过滤信息 (没有太大用)
+ethtool eth2 //这个命令是查看网卡更详细的信息的比如工作模式是否为双工模式
+3.modprobe -r e1000 卸载网卡模块
+modprobe -r e1000 || rmmod e1000 卸载模块(两个命令都可以使用 )</p>
+<p>4.modprobe e1000 重新加载网卡模块
+5.修改/etc/sysconfig/network-scripts中网卡的配置文件(使其格式为ifcfg-网卡名)
+6.重启网卡服务/etc/inint.d/network restart 、service NetworkManager restart</p>
+<p><img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/Linux%E7%BD%91%E5%8D%A1%E7%BB%91%E5%AE%9A/2021.03.30-11:33:08-D-assets-Linux%E7%BD%91%E5%8D%A1%E7%BB%91%E5%AE%9A-93585e5fc0aa86ca4cf05415e0cac962.png" alt="CentOS6修改网卡名"></p>
+<p>1、dmesg |grep -i eth</p>
+<p>ethtool -i eth1</p>
+<p>卸载网卡驱动：modprobe -r e1000</p>
+<p>装载网卡驱动：modprobe e1000</p>
+<p>2、编辑 /etc/udev/rules.d/70-persistent-net.rules #注意mac 地址</p>
+<pre><code>
+SUBSYSTEM==&quot;net&quot;, ACTION==&quot;add&quot;, DRIVERS==&quot;?*&quot;, ATTR{address}==&quot;00:50:56:25:24:c8&quot;, ATTR{type}==&quot;1&quot;, KERNEL==&quot;eth*&quot;, NAME=&quot;eth1&quot;
+
+修改网卡配置文件、重启
+
+</code></pre>
+<p>脚本</p>
+<pre><code class="language-bash">[root@centos6 network-scripts]# cat f1.sh 
+VERSION=`egrep -o &quot;[0-9]+&quot; /etc/centos-release | head -1`
+
+dev_list() {
+    echo -e &quot;\033[31mthe device list as following:\033[0m\n===========&quot;
+    ip a | grep mtu | awk -F &quot;[ :]+&quot; '{print $2}' | grep -v lo
+    echo &quot;===========&quot;
+}
+
+change_name() {
+    if [ ${VERSION} != &quot;6&quot; ];then
+        echo &quot;only support centos6&quot;;exit 
+    fi
+
+    dev_list
+
+    read -p &quot;please select a device:&quot; OLD_NAME
+    read -p &quot;please input a new device name:&quot; NEW_NAME
+
+    /sbin/ifconfig ${OLD_NAME} &amp;&gt; /dev/null
+    if [ $? -ne 0 ];then
+        echo -e &quot;\033[31mdevice [${OLD_NAME}] do not found\033[0m&quot;;exit
+    fi
+
+    DRIVER=`ethtool -i ${OLD_NAME} | awk -F &quot;[: ]+&quot; '/driver/{print $2}'`
+    cd /etc/sysconfig/network-scripts/ &amp;&amp; \
+    sed -i &quot;/DEVICE=/s/${OLD_NAME}/${NEW_NAME}/&quot; ifcfg-${OLD_NAME}
+    sed -i &quot;/NAME=/s/${OLD_NAME}/${NEW_NAME}/&quot; ifcfg-${OLD_NAME}
+    sed -i &quot;/${OLD_NAME}/s/${OLD_NAME}/${NEW_NAME}/&quot; /etc/udev/rules.d/70-persistent-net.rules
+    mv ifcfg-${OLD_NAME} ifcfg-${NEW_NAME}
+    modprobe -r $DRIVER
+    modprobe $DRIVER
+    /etc/init.d/network restart
+}
+
+change_name
+</code></pre>
+<h2 id="三禁用预测命名规则">三、禁用预测命名规则</h2>
+<p>禁用该可预测命名规则，是网卡名变为ethX。你可以在启动时传递“net.ifnames=0 biosdevname=0 ”的内核参数。</p>
+<ol>
+<li>安装系统引导界面按Tab键
+空格，输入net.ifnames=0 biosdevname=0，回车即可</li>
+</ol>
+<p><img src="D:%5Cassets%5CLinux%E7%BD%91%E5%8D%A1%E7%BB%91%E5%AE%9A%5C1597728193823079.png" alt="12.png"></p>
+<ol start="2">
+<li>装系统后，修改网卡</li>
+</ol>
+<pre><code class="language-bash">vi /etc/default/grub
+# GRUB_CMDLINE_LINUX下添加参数：net.ifnames=0 biosdevname=0,如下
+GRUB_CMDLINE_LINUX=&quot;crashkernel=auto net.ifnames=0 biosdevname=0 后面默认配置保留不动&quot;
+#重新生成配置
+grub2-mkconfig -o /boot/grub2/grub.cfg
+#重命名原网卡配置文件,如cp -p /etc/sysconfig/network-scripts/ifcfg-ens192 /etc/sysconfig/network-scripts/ifcfg-eth0
+cp -p /etc/sysconfig/network-scripts/ifcfg-&lt;ifname&gt; /etc/sysconfig/network-scripts/ifcfg-&lt;new-ifname&gt;
+#修改原配置文件中的NAME及DEVICE属性,改为新值
+vi /etc/sysconfig/network-scripts/ifcfg-eth0
+NAME=eth0
+DEVICE=eth0
+
+reboot
+</code></pre>
+<h1 id="路由简介">路由简介</h1>
+<p><a href="https://www.cnblogs.com/baiduboy/p/7278715.html">https://www.cnblogs.com/baiduboy/p/7278715.html</a></p>
+<p>route 命令的输出项说明</p>
+<p>输出项 说明</p>
+<table>
+<thead>
+<tr>
+<th>Destination</th>
+<th>目标网段或者主机</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Gateway</td>
+<td>网关地址，”*” 表示目标是本主机所属的网络，不需要路由</td>
+</tr>
+<tr>
+<td>Genmask</td>
+<td>网络掩码</td>
+</tr>
+<tr>
+<td>Flags</td>
+<td>标记。一些可能的标记如下：</td>
+</tr>
+<tr>
+<td></td>
+<td>U — 路由是活动的</td>
+</tr>
+<tr>
+<td></td>
+<td>H — 目标是一个主机</td>
+</tr>
+<tr>
+<td></td>
+<td>G — 路由指向网关</td>
+</tr>
+<tr>
+<td></td>
+<td>R — 恢复动态路由产生的表项</td>
+</tr>
+<tr>
+<td></td>
+<td>D — 由路由的后台程序动态地安装</td>
+</tr>
+<tr>
+<td></td>
+<td>M — 由路由的后台程序修改</td>
+</tr>
+<tr>
+<td></td>
+<td>! — 拒绝路由</td>
+</tr>
+<tr>
+<td>Metric</td>
+<td>路由距离，到达指定网络所需的中转数（linux 内核中没有使用）</td>
+</tr>
+<tr>
+<td>Ref</td>
+<td>路由项引用次数（linux 内核中没有使用）</td>
+</tr>
+<tr>
+<td>Use</td>
+<td>此路由项被路由软件查找的次数</td>
+</tr>
+<tr>
+<td>Iface</td>
+<td>该路由表项对应的输出接口</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3-种路由类型">3 种路由类型</h3>
+<h4 id="主机路由">主机路由</h4>
+<p>主机路由是路由选择表中指向单个IP地址或主机名的路由记录。主机路由的Flags字段为H。例如，在下面的示例中，本地主机通过IP地址192.168.1.1的路由器到达IP地址为10.0.0.10的主机。</p>
+<pre><code>Destination    Gateway       Genmask Flags     Metric    Ref    Use    Iface
+-----------    -------     -------            -----     ------    ---    ---    -----
+10.0.0.10     192.168.1.1    255.255.255.255   UH       0    0      0    eth0
+</code></pre>
+<h4 id="网络路由">网络路由</h4>
+<p>网络路由是代表主机可以到达的网络。网络路由的Flags字段为N。例如，在下面的示例中，本地主机将发送到网络192.19.12的数据包转发到IP地址为192.168.1.1的路由器。</p>
+<pre><code>Destination    Gateway       Genmask Flags    Metric    Ref     Use    Iface
+-----------    -------     -------         -----    -----   ---    ---    -----
+192.19.12     192.168.1.1    255.255.255.0      UN      0       0     0    eth0
+</code></pre>
+<h4 id="默认路由">默认路由</h4>
+<p>当主机不能在路由表中查找到目标主机的IP地址或网络路由时，数据包就被发送到默认路由（默认网关）上。默认路由的Flags字段为G。例如，在下面的示例中，默认路由是IP地址为192.168.1.1的路由器。</p>
+<pre><code>Destination    Gateway       Genmask Flags     Metric    Ref    Use    Iface
+-----------    -------     ------- -----      ------    ---    ---    -----
+default       192.168.1.1     0.0.0.0    UG       0        0     0    eth0
+</code></pre>
+<h2 id="配置静态路由">配置静态路由</h2>
+<h3 id="route-命令">route 命令</h3>
+<p>设置和查看路由表都可以用 route 命令，设置内核路由表的命令格式是：</p>
+<pre><code># route  [add|del] [-net|-host] target [netmask Nm] [gw Gw] [[dev] If]
+</code></pre>
+<h2 id="配置静态路由-1">配置静态路由</h2>
+<h3 id="route-命令-1">route 命令</h3>
+<p>设置和查看路由表都可以用 route 命令，设置内核路由表的命令格式是：</p>
+<pre><code># route  [add|del] [-net|-host] target [netmask Nm] [gw Gw] [[dev] If]
+</code></pre>
+<p>其中：</p>
+<ul>
+<li>add : 添加一条路由规则</li>
+<li>del : 删除一条路由规则</li>
+<li>-net : 目的地址是一个网络</li>
+<li>-host : 目的地址是一个主机</li>
+<li>target : 目的网络或主机</li>
+<li>netmask : 目的地址的网络掩码</li>
+<li>gw : 路由数据包通过的网关</li>
+<li>dev : 为路由指定的网络接口</li>
+</ul>
+<h3 id="route-命令使用举例">route 命令使用举例</h3>
+<p>添加到主机的路由</p>
+<p><strong>[cpp]</strong> <a href="http://blog.csdn.net/chenlycly/article/details/52141854#">view plain</a> <a href="http://blog.csdn.net/chenlycly/article/details/52141854#">copy</a> <a href="http://blog.csdn.net/chenlycly/article/details/52141854#">print</a><a href="http://blog.csdn.net/chenlycly/article/details/52141854#">?</a></p>
+<ol>
+<li># route add -host 192.168.1.2 dev eth0</li>
+<li># route add -host 10.20.30.148 gw 10.20.30.40   #添加到10.20.30.148的网管</li>
+</ol>
+<pre><code># route add -host 192.168.1.2 dev eth0 
+# route add -host 10.20.30.148 gw 10.20.30.40     #添加到10.20.30.148的网管
+</code></pre>
+<p>添加到网络的路由</p>
+<p><strong>[cpp]</strong> <a href="http://blog.csdn.net/chenlycly/article/details/52141854#">view plain</a> <a href="http://blog.csdn.net/chenlycly/article/details/52141854#">copy</a> <a href="http://blog.csdn.net/chenlycly/article/details/52141854#">print</a><a href="http://blog.csdn.net/chenlycly/article/details/52141854#">?</a></p>
+<ol>
+<li># route add -net 10.20.30.40 netmask 255.255.255.248 eth0  #添加10.20.30.40的网络</li>
+<li># route add -net 10.20.30.48 netmask 255.255.255.248 gw 10.20.30.41 #添加10.20.30.48的网络</li>
+<li># route add -net 192.168.1.0/24 eth1</li>
+</ol>
+<pre><code># route add -net 10.20.30.40 netmask 255.255.255.248 eth0   #添加10.20.30.40的网络
+# route add -net 10.20.30.48 netmask 255.255.255.248 gw 10.20.30.41 #添加10.20.30.48的网络
+# route add -net 192.168.1.0/24 eth1
+</code></pre>
+<p>添加默认路由</p>
+<p><strong>[cpp]</strong> <a href="http://blog.csdn.net/chenlycly/article/details/52141854#">view plain</a> <a href="http://blog.csdn.net/chenlycly/article/details/52141854#">copy</a> <a href="http://blog.csdn.net/chenlycly/article/details/52141854#">print</a><a href="http://blog.csdn.net/chenlycly/article/details/52141854#">?</a></p>
+<ol>
+<li># route add default gw 192.168.1.1</li>
+</ol>
+<pre><code># route add default gw 192.168.1.1
+</code></pre>
+<p>删除路由</p>
+<p><strong>[cpp]</strong> <a href="http://blog.csdn.net/chenlycly/article/details/52141854#">view plain</a> <a href="http://blog.csdn.net/chenlycly/article/details/52141854#">copy</a> <a href="http://blog.csdn.net/chenlycly/article/details/52141854#">print</a><a href="http://blog.csdn.net/chenlycly/article/details/52141854#">?</a></p>
+<ol>
+<li># route del -host 192.168.1.2 dev eth0:0</li>
+<li># route del -host 10.20.30.148 gw 10.20.30.40</li>
+<li># route del -net 10.20.30.40 netmask 255.255.255.248 eth0</li>
+<li># route del -net 10.20.30.48 netmask 255.255.255.248 gw 10.20.30.41</li>
+<li># route del -net 192.168.1.0/24 eth1</li>
+<li># route del default gw 192.168.1.1</li>
+</ol>
+<pre><code># route del -host 192.168.1.2 dev eth0:0
+# route del -host 10.20.30.148 gw 10.20.30.40
+# route del -net 10.20.30.40 netmask 255.255.255.248 eth0
+# route del -net 10.20.30.48 netmask 255.255.255.248 gw 10.20.30.41
+# route del -net 192.168.1.0/24 eth1
+# route del default gw 192.168.1.1
+</code></pre>
+<h3 id="设置包转发">设置包转发</h3>
+<p>在 CentOS 中默认的内核配置已经包含了路由功能，但默认并没有在系统启动时启用此功能。开启 <a href="http://lib.csdn.net/base/linux">linux</a> 的路由功能可以通过调整内核的网络参数来实现。要配置和调整内核参数可以使用 sysctl 命令。例如：要开启 Linux 内核的数据包转发功能可以使用如下的命令。</p>
+<p><strong>[cpp]</strong> <a href="http://blog.csdn.net/chenlycly/article/details/52141854#">view plain</a> <a href="http://blog.csdn.net/chenlycly/article/details/52141854#">copy</a> <a href="http://blog.csdn.net/chenlycly/article/details/52141854#">print</a><a href="http://blog.csdn.net/chenlycly/article/details/52141854#">?</a></p>
+<ol>
+<li># sysctl -w net.ipv4.ip_forward=1</li>
+</ol>
+<pre><code># sysctl -w net.ipv4.ip_forward=1
+</code></pre>
+<p>这样设置之后，当前系统就能实现包转发，但下次启动计算机时将失效。为了使在下次启动计算机时仍然有效，需要将下面的行写入配置文件/etc/sysctl.conf。</p>
+<p><strong>[cpp]</strong> <a href="http://blog.csdn.net/chenlycly/article/details/52141854#">view plain</a> <a href="http://blog.csdn.net/chenlycly/article/details/52141854#">copy</a> <a href="http://blog.csdn.net/chenlycly/article/details/52141854#">print</a><a href="http://blog.csdn.net/chenlycly/article/details/52141854#">?</a></p>
+<ol>
+<li># vi /etc/sysctl.conf</li>
+<li>net.ipv4.ip_forward = 1</li>
+</ol>
+<pre><code># vi /etc/sysctl.conf
+net.ipv4.ip_forward = 1
+</code></pre>
+<p>用户还可以使用如下的命令查看当前系统是否支持包转发。</p>
+<ol>
+<li># sysctl net.ipv4.ip_forward</li>
+</ol>
+<pre><code># sysctl net.ipv4.ip_forward
+</code></pre>
+<p><img src="D:%5Cassets%5C1.Linux%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80%5Cimage-20210409172852868.png" alt="image-20210409172852868"></p>
+<p>1.在vm1上ping1.1.1.2,能不能通? 如果不能通怎么解决?</p>
+<p>分析方法:源IP: 1.1.1.8 目标IP: 1.1.1.2，按照前面的四步口诀，达到目标后，源和目标IP反转并能成功返回则表示能通; 否则不能通</p>
+<p>结果:能通</p>
+<p>2.在前面ping通的基础上,继续在vm1上ping2.2.2.2,能不能通? 如果不能通怎么解决?</p>
+<p>结果:不能通.</p>
+<p>解决:在VM1上加网关指向1.1.1.2</p>
+<p>3.在前面ping通的基础上,继续在vm1上ping2.2.2.3,能不能通? 如果不能通怎么解决?</p>
+<p>结果:不能通.</p>
+<p>解决:在VM3上加网关指向2.2.2.2.还要打开VM2的ip_forward</p>
+<p>4.在前面ping通的基础上,继续在vm1上ping3.3.3.3,能不能通? 如果不能通怎么解决?</p>
+<p>结果:不能通</p>
+<p>解决:在VM2上加网关指向2.2.2.3</p>
+<p>5.在前面ping通的基础上,继续在vm1上ping3.3.3.4,能不能通? 如果不能通怎么解决?</p>
+<p>结果:不能通</p>
+<p>解决:在VM4加网关指向3.3.3.3,还要打开VM3的ip_forward</p>
+<p>6.在前面ping通的基础上,继续在vm1上ping4.4.4.4,能不能通? 如果不能通怎么解决?</p>
+<p>结果:不能通</p>
+<p>错误解决:在vm3加网关指向3.3.3.4是不行的，这样的话vm3一张路由表就会产生两个网关。 正确解决:在vm3上加路由</p>
+<p>route add -net 4.4.4.0 netmask 255.255.255.0 dev ens37</p>
+<h1 id="其他">其他</h1>
+<h2 id="网卡别名-多个ip--待续">网卡别名 多个IP  待续。。。</h2>
+<h2 id="centos添加网卡配置ip">centos添加网卡、配置IP</h2>
+<pre><code># 1、添加一张物理网卡
+
+# 2、命令添加网卡
+
+nmcli  connection  add  con-name  eth1  ifname  eth1  type  ethernet
+
+# 3、网卡配置ip
+
+nmcli  conn  modify  eth1  ipv4.method  manual  ipv4.addr  10.1.1.18/24  connection.autoconnect  yes
+
+# 4、启动网卡
+
+nmcli  conn  up  eth1
+
+# 5、关闭网卡
+
+nmcli  conn  down  eth1
+
+# 6、添加网关
+
+nmcli  connection  modify  eth1  ipv4.gateway  10.1.1.2
+
+# 7、查看网关路由
+
+route  -n
+</code></pre>
+<p><strong>查看命令是由哪个软件包提供的</strong></p>
+<pre><code class="language-bash">which
+rpm -qf
+
+[root@localhost ~]# which ping
+/bin/ping
+[root@localhost ~]# rpm -qf /bin/ping
+iputils-20071127-17.el6_4.2.x86_64
+
+由此可见 ping 命令是有iputils软件包提供的。
+
+
+yum providers /usr/bin/ip
+或
+yum whatprovides '*/ifconfig'
+</code></pre>
+<p>您可以使用-p（pretty）选项使该输出更易于阅读，如下所示：</p>
+<pre><code>nmcli -p设备展示
+</code></pre>
+<p>给服务器重装系统（centos）后发现对外访问是通的，但是从其他点却怎么也ping不通，ssh连接不上，把防火墙试试关了之后发现也没有用。最后发现是网卡配置问题，系统默认路由选择的是eth0网卡，而实际使用的eth1网卡，所以需要在eth1的配置文件内加上DEFROUTE=yes</p>
+<p>DPEERDNS=yes - 使用 DNS 选项的值替代 /etc/resolv.conf 中的配置
+注意：在5.0时代DNS服务器写在 /etc/resolv.conf 文件中，但到了6.0时代DNS可以写在/etc/resolv.conf但是此时需要在 /etc/sysconfig/network-scripts/ifcfg-eth0 文件中添加 PEERDNS=no 配置，不然每次重启网卡就会重写/etc/resolv.conf文件的内容，当然了也可以直接写在 /etc/sysconfig/network-scripts/ifcfg-eth0 文件中。</p>
+<p><strong>IPV4_FAILURE_FATAL|IPV6_FAILURE_FATAL=answer</strong>: Where answer is one of the following:</p>
+<ul>
+<li><strong>yes</strong>: This interface is disabled if IPv4 or IPv6 configuration fails.</li>
+<li><strong>no</strong>: This interface is not disabled if configuration fails.</li>
+</ul>
+<h2 id="设置-ip-转发">设置 IP 转发</h2>
+<p>出于安全考虑，Linux系统默认是禁止数据包转发的。所谓转发即当主机拥有多于一块的网卡时，其中一块收到数据包，根据数据包的目的ip地址将包发往本机另一网卡，该网卡根据路由表继续发送数据包。这通常就是路由器所要实现的功能。</p>
+<pre><code># 查看当前系统是否支持IP转发，0 为禁用，1 为启用
+sysctl net.ipv4.ip_forward;
+# 启用转发
+echo 'net.ipv4.ip_forward = 1' &gt;&gt; /etc/sysctl.conf;
+# 立即生效
+sysctl -p;
+</code></pre>
+
+        </div>
+        
+        
+        
+        
+        
+        
+        
+<div class="flex flex-col md:flex-row md:justify-between -mx-2 mt-4 px-2 pt-4 border-t">
+    <div>
+        
+        <span class="block font-bold">上一页</span>
+        <a href="/posts/1.linux/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/3.linux%E7%BD%91%E5%8D%A1%E7%BB%91%E5%AE%9A/" class="block">Linux网卡绑定</a>
+        
+    </div>
+    <div class="md:text-right mt-4 md:mt-0">
+        
+        <span class="block font-bold">下一页</span>
+        <a href="/posts/1.linux/linux%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/lvm%E7%AE%A1%E7%90%86/" class="block">LVM管理</a>
+        
+    </div>
+</div>
+
+        
+    </div>
+    
+
+    
+    
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', ()=>{
+        hljs.initHighlightingOnLoad();
+    })
+</script>
+
+      </div>
+    </div>
+    
+  </main>
+  <footer class="pl-scrollbar">
+    <div class="w-full max-w-screen-xl mx-auto"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 2021 <a href="https://www.songjinfeng.com/">SonJinfeng</a> 
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+  </footer>
+</body>
+
+</html>

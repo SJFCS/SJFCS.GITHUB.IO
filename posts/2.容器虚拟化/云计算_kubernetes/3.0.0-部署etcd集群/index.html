@@ -1,0 +1,1292 @@
+<!DOCTYPE html>
+<html lang='zh' ><meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+
+
+<title>4.1. 部署etcd集群 | Songjinfeng&#39;s BLOG</title>
+<link rel="stylesheet" href="/css/eureka.min.css">
+<script defer src="/js/eureka.min.js"></script>
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Noto+Serif+SC:wght@400;600;700&display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/styles/solarized-light.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/highlight.min.js"
+   crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/dart.min.js"
+     crossorigin></script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/js/all.min.js"
+   integrity="sha256-uNYoXefWRqv&#43;PsIF/OflNmwtKM4lStn9yrz2gVl6ymo="  crossorigin></script>
+
+
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css"
+   integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3&#43;Aro6EYUG4&#43;cU&#43;KJWu/X"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js" 
+  integrity="sha384-g7c&#43;Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI&#43;sEnkvrMWph2EDg4"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js"
+   integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC&#43;Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.9.2/dist/mermaid.min.js" 
+  integrity="sha256-Zmpaaj&#43;GXFsPF5WdPArSrnW3b30dovldeKsW00xBVwE="  crossorigin></script>
+
+
+<link rel="icon" type="image/png" sizes="32x32" href="/images/icon_hucfa16751ac9c82c06b84c3502c0db793_16378_32x32_fill_box_center_2.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hucfa16751ac9c82c06b84c3502c0db793_16378_180x180_fill_box_center_2.png">
+
+<meta name="description"
+  content="本文将引导您使用二进制文件部署ETCD集群，从 证书创建 到 服务管理 以及涉及一小部分调优参数.">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"技术专栏",
+      "item":"/posts/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"容器虚拟化",
+      "item":"/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/"},{
+      "@type": "ListItem",
+      "position": 3 ,
+      "name":"4.1. 部署etcd集群",
+      "item":"/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/3.0.0-%E9%83%A8%E7%BD%B2etcd%E9%9B%86%E7%BE%A4/"}]
+}
+</script>
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/3.0.0-%E9%83%A8%E7%BD%B2etcd%E9%9B%86%E7%BE%A4/"
+    },
+    "headline": "4.1. 部署etcd集群 | Songjinfeng\u0027s BLOG","datePublished": "2021-05-15T00:00:00+00:00",
+    "dateModified": "2021-05-15T00:00:00+00:00",
+    "wordCount":  1705 ,
+    "author": {
+        "@type": "Person",
+        "name": ["songjinfeng"]
+    },
+    "publisher": {
+        "@type": "Person",
+        "name": "JF. Song",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "/images/icon.png"
+        }
+        },
+    "description": "\u003cp\u003e本文将引导您使用二进制文件部署ETCD集群，从 证书创建 到 服务管理 以及涉及一小部分调优参数.\u003c\/p\u003e"
+}
+</script><meta property="og:title" content="4.1. 部署etcd集群 | Songjinfeng&#39;s BLOG" />
+<meta property="og:type" content="article" />
+
+
+<meta property="og:image" content="/images/icon.png">
+
+
+<meta property="og:url" content="/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/3.0.0-%E9%83%A8%E7%BD%B2etcd%E9%9B%86%E7%BE%A4/" />
+
+
+
+
+<meta property="og:description" content="本文将引导您使用二进制文件部署ETCD集群，从 证书创建 到 服务管理 以及涉及一小部分调优参数." />
+
+
+
+
+<meta property="og:locale" content="zh" />
+
+
+
+
+<meta property="og:site_name" content="Songjinfeng&#39;s BLOG" />
+
+
+
+
+
+
+<meta property="article:published_time" content="2021-05-15T00:00:00&#43;00:00" />
+
+
+<meta property="article:modified_time" content="2021-05-15T00:00:00&#43;00:00" />
+
+
+
+<meta property="article:section" content="posts" />
+
+
+<meta property="article:tag" content="ETCD" />
+
+<meta property="article:tag" content="Kubernetes" />
+
+<meta property="article:tag" content="posts" />
+
+
+
+
+
+
+
+
+
+<meta property="og:see_also" content="/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/4.-%E9%83%A8%E7%BD%B2etcd%E9%9B%86%E7%BE%A4/" />
+
+
+
+
+
+<meta property="og:see_also" content="/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/5.1.-kube-apiserver%E9%9B%86%E7%BE%A4/" />
+
+
+
+
+
+<body class="flex flex-col min-h-screen">
+  <header class="fixed flex items-center w-full min-h-16 pl-scrollbar z-50 bg-secondary-bg shadow-sm">
+    <div class="w-full max-w-screen-xl mx-auto"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="mr-6 text-primary-text text-xl font-bold">Songjinfeng&#39;s BLOG</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:flex-grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:flex-grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  mr-4">技术专栏</a>
+            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">文档笔记</a>
+            <a href="/series/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">主题系列</a>
+            <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">标签</a>
+            <a href="/authors/songjinfeng/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">关于</a>
+            <a href="/index.xml" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">RSS</a>
+            <a href="/webstack" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">友链&amp;导航</a>
+        </div>
+
+        <div class="flex">
+            <div class="relative pt-4 md:pt-0">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col left-0 md:left-auto right-auto md:right-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">浅色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">深色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">自动</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            switchMode('Auto')
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+  </header>
+  <main class="flex-grow pt-16">
+    <div class="pl-scrollbar">
+      <div class="w-full max-w-screen-xl lg:px-4 xl:px-8 mx-auto">
+
+
+<div class="grid grid-cols-2 lg:grid-cols-8 gap-4 lg:pt-12">
+    <div
+        class="col-span-2  lg:col-span-6 bg-secondary-bg rounded px-6 py-8">
+        <h1 class="font-bold text-3xl text-primary-text">4.1. 部署etcd集群</h1>
+        <div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>2021-05-15</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>9分钟阅读时长</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="/categories/blog/" class="hover:text-eureka">blog</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/posts/" class="hover:text-eureka">posts</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/%E4%BA%91%E8%AE%A1%E7%AE%97/" class="hover:text-eureka">云计算</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/kubernetes/" class="hover:text-eureka">Kubernetes</a>
+        
+    </div>
+    
+
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-th-list mr-1"></i>
+        
+        <a href="/series/kubernetes%E9%9B%86%E7%BE%A4%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2%E6%8C%87%E5%8D%97/" class="hover:text-eureka">Kubernetes集群二进制部署指南</a>
+        
+    </div>
+    
+</div>
+        
+        
+        
+
+        <div class="content">
+            <p>本文将引导您使用二进制文件部署ETCD集群，从 证书创建 到 服务管理 以及涉及一小部分调优参数.</p>
+<p>官网： <a href="https://etcd.io">https://etcd.io</a></p>
+<p>版本：<code>etcd-v3.4.15</code></p>
+<p>脚本：</p>
+<h2 id="etcd-简介">ETCD 简介</h2>
+<p>coreos 开发的分布式服务系统，内部采用 raft 协议作为一致性算法。作为服务发现系统，有以下的特点：</p>
+<ul>
+<li>简单：安装配置简单，而且提供了 HTTP API 进行交互，使用也很简单</li>
+<li>安全：支持 SSL 证书验证</li>
+<li>快速：根据官方提供的 benchmark 数据，单实例支持每秒 2k+ 读操作</li>
+<li>可靠：采用 raft 算法，实现分布式系统数据的可用性和一致性</li>
+</ul>
+<p>etcd 目前默认使用 <code>2379</code> 端口提供 HTTP API 服务，<code>2380</code> 端口和 peer 通信（这两个端口已经被 IANA 官方预留给 etcd）；在之前的版本中，可能会分别使用 <code>4001</code> 和 <code>7001</code>，在使用的过程中需要注意这个区别。</p>
+<p>虽然 etcd 也支持单点部署，但是在生产环境中推荐集群方式部署，一般 etcd 节点数会选择 3、5、7等奇数节点。etcd 会保证所有的节点都会保存数据，并保证数据的一致性和正确性</p>
+<h2 id="实验环境">实验环境</h2>
+<h3 id="节点规划">节点规划</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">主机名</th>
+<th style="text-align:center">角色</th>
+<th style="text-align:center">ip地址</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">hdss7-12.host.com</td>
+<td style="text-align:center">lead</td>
+<td style="text-align:center">10.4.7.12</td>
+</tr>
+<tr>
+<td style="text-align:center">hdss7-21.host.com</td>
+<td style="text-align:center">follow</td>
+<td style="text-align:center">10.4.7.21</td>
+</tr>
+<tr>
+<td style="text-align:center">hdss7-22.host.com</td>
+<td style="text-align:center">follow</td>
+<td style="text-align:center">10.4.7.22</td>
+</tr>
+</tbody>
+</table>
+<h3 id="目录规划">目录规划</h3>
+<table>
+<thead>
+<tr>
+<th>ETCD相关文件</th>
+<th>目录/文件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>下载目录</td>
+<td>/opt/src/etcd-v3.4.15-linux-amd64.tar</td>
+</tr>
+<tr>
+<td>解压目录</td>
+<td>/usr/local/etcd-v3.4.15-linux-amd64/</td>
+</tr>
+<tr>
+<td>解压目录-软连接</td>
+<td>/usr/local/etcd =连接指向==&raquo; /usr/local/etcd-v3.4.15-linux-amd64/</td>
+</tr>
+<tr>
+<td>主程序-软连接</td>
+<td>/usr/local/bin/{etcd,etcdctl} =链接指向==&raquo;/usr/local/etcd{etcd,etcdctl}</td>
+</tr>
+<tr>
+<td>配置文件</td>
+<td>/etc/etcd/cfg/{etcd.conf/etcd.conf.yml}</td>
+</tr>
+<tr>
+<td>SSL证书</td>
+<td>/etc/etcd/ssl/{ca.pem,ca-key.pem,etcd-peer.pem,etcd-peer-key.pem}</td>
+</tr>
+<tr>
+<td>ETCD_DATA_DIR</td>
+<td>/var/lib/etcd/data/default.etcd</td>
+</tr>
+<tr>
+<td>ETCD_WAL_DIR</td>
+<td>/var/lib/etcd/wal/</td>
+</tr>
+<tr>
+<td>systemd 配置文件</td>
+<td>/usr/bin/systemd/system/etcd.service</td>
+</tr>
+<tr>
+<td>日志文件</td>
+<td>etcd不提供转储日志选项</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>如何将Systemd服务的输出重定向到文件？</strong></p>
+<hr>
+<p>我碰巧在etcd的GitHub下面找到了这个issue：</p>
+<p><code>https://github.com/etcd-io/etcd/issues/7936</code></p>
+<p>译文：</p>
+<p>如果使用systemd运行，则所有日志均通过journald处理。</p>
+<pre><code>journalctl -u YOUR_SERVICE.service -l --no-pager\|less
+</code></pre>
+<p>etcd不提供转储日志选项，可以把<code>journald</code> 日志存储在硬盘上，然后对数据进行处理</p>
+<pre><code>[Journal]
+Storage=persistent
+</code></pre>
+</blockquote>
+<blockquote>
+<p><strong>软连接目的：</strong></p>
+<hr>
+<p>在<code>/bin/</code>目录创建软连接是为了在系统任何地方都可以执行此命令</p>
+<p>在<code>/usr/local/</code>目录建软连接方便后续升级和管理，升级只需将此软链接指向新版本的目录即可。</p>
+<p>当然，在<code>/usr/local/</code>不创建软连接，升级时直接重命名也可以，根据inode机制，可在下次重启服务时候完成切换。因为Linux打开文件是通过文件名映射到inodeID，然后通过inodeID来操作文件，所以重命名不会影响正在运行的进程。</p>
+<blockquote>
+<p>关于inode请阅读：</p>
+</blockquote>
+</blockquote>
+<h3 id="部署流程">部署流程</h3>
+<ul>
+<li>基础环境：参考此文进行配置 <a href="/series/kubernetes%E9%9B%86%E7%BE%A4%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2%E6%8C%87%E5%8D%97/1.%E5%9F%BA%E7%A1%80%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE">1.基础环境配置</a></li>
+<li>ssl签发证书环境、签发CA证书，签发etcd证书</li>
+<li>下载etcd 解压到指定位置，编辑配置文件</li>
+<li>创建服务启动项，方法1：systemd 方法2：supervisor</li>
+<li>验证</li>
+<li>华三CloudOS配置参考、常见操作和问题</li>
+</ul>
+<h2 id="签发证书">签发证书</h2>
+<blockquote>
+<p>签发证书即可使用cfssl也可openssl生成证书</p>
+<blockquote>
+<p>关于openssl 请阅读：</p>
+</blockquote>
+</blockquote>
+<p>我选择在非ETCD集群的hdss7-200主机上签发证书。使用 CloudFlare&rsquo;s PKI 工具 cfssl 来配置 PKI Infrastructure，然后使用它去创建 Certificate Authority（CA）， 并为 etcd创建 TLS 证书。</p>
+<h3 id="准备cfssl签证工具">准备cfssl签证工具</h3>
+<p>安装cfssl、cfssl-json、cfssl-certinfo</p>
+<pre><code class="language-bash">[root@hdss7-200 ~]# 
+wget https://pkg.cfssl.org/R1.2/cfssl_linux-amd64 -O /usr/bin/cfssl
+wget https://pkg.cfssl.org/R1.2/cfssljson_linux-amd64 -O /usr/bin/cfssl-json
+wget https://pkg.cfssl.org/R1.2/cfssl-certinfo_linux-amd64 -O /usr/bin/cfssl-certinfo
+chmod +x /usr/bin/cfssl*
+# 检查
+[root@hdss7-200 ~]# which cfssl 
+/usr/bin/cfssl
+[root@hdss7-200 ~]# which cfssl-json
+/usr/bin/cfssl-json
+[root@hdss7-200 ~]# which cfssl-certinfo
+/usr/bin/cfssl-certinfo
+</code></pre>
+<h3 id="ca证书">CA证书</h3>
+<h4 id="配置ca证书请求文件">配置CA证书请求文件</h4>
+<pre><code class="language-bash">[root@hdss7-200 ~]# 
+mkdir /opt/ssl
+vi /opt/ssl/ca-csr.json
+{
+    &quot;CN&quot;:&quot;MY_CA&quot;,
+    &quot;hosts&quot;:[
+    ],
+    &quot;key&quot;:{
+        &quot;algo&quot;:&quot;rsa&quot;,
+        &quot;size&quot;:2048
+    },
+    &quot;names&quot;:[
+        {
+            &quot;C&quot;:&quot;CN&quot;,
+            &quot;ST&quot;:&quot;beijing&quot;,
+            &quot;L&quot;:&quot;beijing&quot;,
+            &quot;O&quot;:&quot;organization&quot;,
+            &quot;OU&quot;:&quot;organizational units&quot;
+        }
+    ],
+    &quot;ca&quot;:{
+        &quot;expiry&quot;:&quot;175200h&quot;
+    }
+}
+</code></pre>
+<blockquote>
+<p><strong>参数说明：</strong></p>
+<hr>
+<p>CN=Common Name，常用名(或域名),浏览器使用该字段验证网站是否合法</p>
+<p>C=Country，国家</p>
+<p>ST=State，洲,省</p>
+<p>L=Locality，地区，市</p>
+<p>O=Organization Name，组织名称，公司名称</p>
+<p>OU=Organization Unit Name，组织单位名称，公司部门名称</p>
+<p>expiry为证书有效时间，使用kubeadmin 安装k8s集群的证书默认一年</p>
+</blockquote>
+<h4 id="生成ca证书文件">生成ca证书文件</h4>
+<pre><code class="language-bash">[root@hdss7-200 ~]#
+cd /opt/ssl
+cfssl gencert -initca ca-csr.json | cfssl-json -bare ca
+
+# 生成的公钥和私钥如下
+[root@hdss-200 ssl]# ll
+总用量 16
+-rw-r--r--. 1 root root  993 11月  2 10:57 ca.csr
+-rw-r--r--. 1 root root  328 11月  2 10:49 ca-csr.json
+-rw-------. 1 root root 1679 11月  2 10:57 ca-key.pem
+-rw-r--r--. 1 root root 1346 11月  2 10:57 ca.pem
+</code></pre>
+<h4 id="配置ca证书策略文件">配置CA证书策略文件</h4>
+<pre><code class="language-bash">[root@hdss7-200 ~]# 
+vi /opt/ssl/ca-config.json
+{
+    &quot;signing&quot;: {
+        &quot;default&quot;: {
+            &quot;expiry&quot;: &quot;175200h&quot;
+        },
+        &quot;profiles&quot;: {
+            &quot;server&quot;: {
+                &quot;expiry&quot;: &quot;175200h&quot;,
+                &quot;usages&quot;: [
+                    &quot;signing&quot;,
+                    &quot;key encipherment&quot;,
+                    &quot;server auth&quot;
+                ]
+            },
+            &quot;client&quot;: {
+                &quot;expiry&quot;: &quot;175200h&quot;,
+                &quot;usages&quot;: [
+                    &quot;signing&quot;,
+                    &quot;key encipherment&quot;,
+                    &quot;client auth&quot;
+                ]
+            },
+            &quot;peer&quot;: {
+                &quot;expiry&quot;: &quot;175200h&quot;,
+                &quot;usages&quot;: [
+                    &quot;signing&quot;,
+                    &quot;key encipherment&quot;,
+                    &quot;server auth&quot;,
+                    &quot;client auth&quot;
+                ]
+            }
+        }
+    }
+} 
+</code></pre>
+<blockquote>
+<p><strong>参数说明：</strong></p>
+<hr>
+<p>expiry: 证书有效期 175200h=20年</p>
+<p>client ： 客户端使用，用于服务端认证客户端,例如etcdctl、etcd proxy、fleetctl、docker客户端</p>
+<p>server : 服务端使用，客户端以此验证服务端身份,例如docker服务端、kube-apiserver</p>
+<p>peer : 双向证书，用于etcd集群成员间通信</p>
+</blockquote>
+<h3 id="etcd证书">ETCD证书</h3>
+<p>依赖CA证书，确保CA证书已生成。</p>
+<h4 id="创建etcd证书请求文件">创建etcd证书请求文件</h4>
+<pre><code class="language-bash">[root@hdss7-200 ~]# 
+vi /opt/ssl/etcd-peer-csr.json
+{
+    &quot;CN&quot;: &quot;k8s-etcd&quot;,
+    &quot;hosts&quot;: [
+    	&quot;172.0.0.1&quot;,
+        &quot;10.4.7.12&quot;,
+        &quot;10.4.7.21&quot;,
+        &quot;10.4.7.22&quot;
+    ],
+    &quot;key&quot;: {
+        &quot;algo&quot;: &quot;rsa&quot;,
+        &quot;size&quot;: 2048
+    },
+    &quot;names&quot;: [
+        {
+            &quot;C&quot;: &quot;CN&quot;,
+            &quot;ST&quot;: &quot;beijing&quot;,
+            &quot;L&quot;: &quot;beijing&quot;,
+            &quot;O&quot;: &quot;organizational&quot;,
+            &quot;OU&quot;: &quot;organizational units&quot;
+        }
+    ]
+}
+</code></pre>
+<h4 id="生成etcd证书文件">生成etcd证书文件</h4>
+<pre><code class="language-bash">[root@hdss7-200 ~]# cd /opt/ssl/
+[root@hdss7-200 ssl]# cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -profile=peer etcd-peer-csr.json |cfssl-json -bare etcd-peer
+# gencert：generate生成，certificate证书
+
+#生成证书如下
+[root@hdss7-200 ssl]# ll |grep etcd*
+etcd-peer.csr
+etcd-peer-csr.json
+etcd-peer-key.pem
+etcd-peer.pem
+</code></pre>
+<h4 id="将etcd证书分发到每个节点">将ETCD证书分发到每个节点</h4>
+<pre><code class="language-bash">for i in hdss7-12 hdss7-21 hdss7-22;do ssh $i mkdir -p /etc/etcd/ssl;done
+for i in hdss7-12 hdss7-21 hdss7-22;do scp /opt/ssl/{ca-key.pem,etcd-peer.pem,ca.pem,etcd-peer-key.pem} $i:/etc/etcd/ssl;done
+for i in hdss7-12 hdss7-21 hdss7-22;do echo &quot;&lt;-------&quot;$i&quot;-------&gt;&quot;;ssh $i ls -l /etc/etcd/ssl;done
+</code></pre>
+<h2 id="etcd二进制部署">ETCD二进制部署</h2>
+<p>我选择在hdss7-12主机作为示例。</p>
+<h3 id="下载etcd二进制包">下载ETCD二进制包</h3>
+<blockquote>
+<p>通过GitHub下载ETCD，如果因为国内的DNS污染导致GitHub无法访问，并且你不想配置代理可试试下面方法</p>
+<ol>
+<li>通过github.com.ipaddress.com 解析到地址写入本地hosts或dns服务器。</li>
+<li>通过替换成cdn.jsdelivr.net镜像加速后的链接</li>
+<li>通过toolwa.com/github/ 第三方代理下载服务，下载到宿主机后上传到Linux</li>
+</ol>
+</blockquote>
+<pre><code class="language-bash">[root@hdss7-12 ~]
+mkdir /opt/src/
+wget -P /opt/src/  https://github.com/etcd-io/etcd/releases/download/v3.4.15/etcd-v3.4.15-linux-amd64.tar
+tar -xvf /opt/src/etcd-v3.4.15-linux-amd64.tar -C /usr/local/
+# 创建软连接利于后续版本升级。解压后的目录下有etcd、etcdctl两个可执行二进制文件，和相关文档。
+ln -s /usr/local/etcd-v3.4.15-linux-amd64/ /usr/local/etcd
+# 注意：添加软连接到bin目录，在bin目录创建软连接是为了在系统任何地方都可以执行此命令，选择/usr/local/bin/而不是/usr/bin/ 是因为/usr/local/bin目录是给用户放置自己的可执行程序的地方，不会被系统升级而覆盖同名文件。usr是Unix System Resource,即Unix系统资源的缩写，想进一步了解Linux文件系统请阅读：
+
+ln -s /usr/local/etcd/etcd /usr/local/bin/etcd
+ln -s /usr/local/etcd/etcdctl /usr/local/bin/etcdctl
+</code></pre>
+<p>此时hdss7-12已经下载好etcd，在其它节点上重复上述操作。
+或者在hdss7-12通过以下shell命令，完成其他节点的配置。</p>
+<pre><code class="language-bash"># 发送到其余节点,并创建软连接
+# -p：保留原文件的修改时间，访问时间和访问权限。
+# 拷贝tar到opt
+for i in hdss7-21 hdss7-22;do ssh $i mkdir /opt/src/;scp -p /opt/src/etcd-v3.4.15-linux-amd64.tar $i:/opt/src/;done
+# 解压
+for i in hdss7-21 hdss7-22;do ssh $i tar -xvf /opt/src/etcd-v3.4.15-linux-amd64.tar -C /usr/local/;done
+# 创建软连接
+for i in hdss7-21 hdss7-22;do ssh $i ln -s /usr/local/etcd-v3.4.15-linux-amd64/ /usr/local/etcd;done
+for i in hdss7-21 hdss7-22;do ssh $i ln -s /usr/local/etcd/etcd /usr/local/bin/etcd;done
+for i in hdss7-21 hdss7-22;do ssh $i ln -s /usr/local/etcd/etcdctl /usr/local/bin/etcdctl;done
+# 查看
+for i in hdss7-21 hdss7-22;do echo &quot;&lt;-------&quot;$i&quot;-------&gt;&quot;;ssh $i ls -l /usr/local/etcd*;done
+for i in hdss7-21 hdss7-22;do echo &quot;&lt;-------&quot;$i&quot;-------&gt;&quot;;ssh $i ls -l /usr/local/bin/etcd*;done
+# 为防止传输过程中文件损坏，推荐使用上面命令scp压缩包，而不是下面命令的scp解压后的文件。
+# 建议传输完成后使用md5sum进行校验，养成良好习惯
+//for i in hdss7-21 hdss7-22;do scp -rp /usr/local/bin/etcd-v3.4.15-linux-amd64/ $i:/usr/local/bin/;done
+</code></pre>
+<h3 id="配置文件">配置文件</h3>
+<p>etcd可通过两种方式读取配置，</p>
+<p>1、通过环境变量2、通过yml配置</p>
+<p>yml配置文件参考：https://github.com/etcd-io/etcd/blob/master/etcd.conf.yml.sample</p>
+<p>本文使用环境变量方式，会在启动时作为环境变量共etcd读取</p>
+<pre><code class="language-bash">[root@hdss7-12 ~]
+mkdir -p /etc/etcd/cfg
+mkdir -p /var/lib/etcd/{data,wal}
+cat &gt;/etc/etcd/cfg/etcd.conf&lt;&lt;EOFL
+#[Member]
+ETCD_NAME=&quot;etcd-hdss7-12&quot;
+ETCD_DATA_DIR=&quot;/var/lib/etcd/data/default.etcd&quot;
+ETCD_WAL_DIR=&quot;/var/lib/etcd/wal/&quot;
+ETCD_LISTEN_PEER_URLS=&quot;https://10.4.7.12:2380&quot;
+ETCD_LISTEN_CLIENT_URLS=&quot;https://10.4.7.12:2379,http://127.0.0.1:2379&quot;
+ETCD_AUTO_COMPACTION_RETENTION=&quot;1&quot; 
+ETCD_MAX_REQUEST_BYTES=&quot;33554432&quot;
+ETCD_QUOTA_BACKEND_BYTES=&quot;8589934592&quot;
+ETCD_LOGGER=&quot;zap&quot;
+#[Clustering]
+ETCD_INITIAL_ADVERTISE_PEER_URLS=&quot;https://10.4.7.12:2380&quot;
+ETCD_ADVERTISE_CLIENT_URLS=&quot;https://10.4.7.12:2379&quot;
+ETCD_INITIAL_CLUSTER=&quot;etcd-hdss7-12=https://10.4.7.12:2380,etcd-hdss7-21=https://10.4.7.21:2380,etcd-hdss7-22=https://10.4.7.22:2380&quot;
+ETCD_INITIAL_CLUSTER_TOKEN=&quot;etcd-cluster&quot;
+ETCD_INITIAL_CLUSTER_STATE=&quot;new&quot;
+ETCD_ENABLE_V2=&quot;true&quot;
+
+#[Security]
+ETCD_CERT_FILE=&quot;/etc/etcd/ssl/etcd-peer.pem&quot;
+ETCD_KEY_FILE=&quot;/etc/etcd/ssl/etcd-peer-key.pem&quot;
+ETCD_TRUSTED_CA_FILE=&quot;/etc/etcd/ssl/ca.pem&quot;
+ETCD_CLIENT_CERT_AUTH=&quot;true&quot;
+ETCD_PEER_CERT_FILE=&quot;/etc/etcd/ssl/etcd-peer.pem&quot;
+ETCD_PEER_KEY_FILE=&quot;/etc/etcd/ssl/etcd-peer-key.pem&quot;
+ETCD_PEER_TRUSTED_CA_FILE=&quot;/etc/etcd/ssl/ca.pem&quot;
+ETCD_PEER_CLIENT_CERT_AUTH=&quot;true&quot;
+EOFL
+# 分发到各个节点，更改相对应IP
+
+# 注意：ETCD3.4版本ETCDCTL_API=3 etcdctl 和 etcd --enable-v2=false 成为了默认配置，如要使用v2版本，执行etcdctl时候需要设置ETCDCTL_API环境变量，例如：ETCDCTL_API=2 etcdctl
+# flannel操作etcd使用的是v2的API，而kubernetes操作etcd使用的v3的API，为了兼容flannel，将默认开启v2版本，故配置文件中设置 ETCD_ENABLE_V2=&quot;true&quot;
+</code></pre>
+<blockquote>
+<p><strong>介绍参数含义调优：</strong></p>
+<p>参考链接：</p>
+<p>参数介绍：https://www.cnblogs.com/davygeek/p/8951999.html</p>
+<p>调优指南：https://jishuin.proginn.com/p/763bfbd55ce0</p>
+<hr>
+<p>我们在实际生产中使用ETCD存储元数据，　起初集群规模不大的时候元数据信息不多没有发现什么问题。　随着集群规模越来越大问题逐渐暴露了。有些实际的配置还是需要在初始化的时候就研究确定。</p>
+<ol>
+<li>
+<p>&ndash;auto-compaction-retention
+由于ETCD数据存储多版本数据，随着写入的主键增加历史版本需要定时清理，　默认的历史数据是不会清理的，数据达到2G就不能写入，必须要清理压缩历史数据才能继续写入；
+所以根据业务需求，在上生产环境之前就提前确定，历史数据多长时间压缩一次；　我们的生产环境现在升级后是默认一小时压缩一次数据。这样可以极大的保证集群稳定，减少内存和磁盘占用</p>
+</li>
+<li>
+<p>&ndash;max-request-bytes
+etcd Raft消息最大字节数，ETCD默认该值为1.5M; 但是很多业务场景发现同步数据的时候1.5M完全没法满足要求，所以提前确定初始值很重要；　由于1.5M导致我们线上的业务无法写入元数据的问题，
+我们紧急升级之后把该值修改为默认32M,但是官方推荐的是10M，大家可以根据业务情况自己调整</p>
+</li>
+<li>
+<p>&ndash;quota-backend-bytes
+ETCDdb数据大小，默认是２G,当数据达到２G的时候就不允许写入，必须对历史数据进行压缩才能继续写入；　
+参加1里面说的，我们启动的时候就应该提前确定大小，官方推荐是8G,这里我们也使用8G的配置</p>
+</li>
+<li>
+<p>&ndash;auto-compaction-mode=periodic</p>
+</li>
+<li>
+<p>&ndash;heartbeat-interval=250</p>
+</li>
+<li>
+<p>&ndash;election-timeout=2000</p>
+</li>
+</ol>
+</blockquote>
+<h3 id="etcd灵活的启动方式">ETCD灵活的启动方式</h3>
+<ol>
+<li>etcd 后面加上参数来启动，参数后面的值也可为环境变量,例：<code>--name=\${ETCD_NAME}</code>，3.4版本后可自动读取环境变量不需指定。</li>
+</ol>
+<pre><code class="language-bash"># etcd-hdss7-12
+etcd   --name etcd-hdss7-12 \
+       --data-dir /var/lib/etcd/data/default.etcd \
+       --wal-dir /var/lib/etcd/wal/ \
+       --listen-peer-urls https://10.4.7.12:2380 \
+       --listen-client-urls https://10.4.7.12:2379,http://127.0.0.1:2379 \
+       --auto-compaction-retention 1 \
+       --max-request-bytes 33554432\
+       --quota-backend-bytes 8589934592 \
+       --logger zap \
+       --initial-advertise-peer-urls https://10.4.7.12:2380 \
+       --advertise-client-urls https://10.4.7.12:2379 \
+       --initial-cluster  etcd-hdss7-12=https://10.4.7.12:2380,etcd-hdss7-21=https://10.4.7.21:2380,etcd-hdss7-22=https://10.4.7.22:2380 \
+       --enable-v2 \
+       --trusted-ca-file /etc/etcd/ssl/ca.pem \
+       --cert-file /etc/etcd/ssl/etcd-peer.pem \
+       --key-file /etc/etcd/ssl/etcd-peer-key.pem \
+       --client-cert-auth  \
+       --peer-trusted-ca-file /etc/etcd/ssl/ca.pem \
+       --peer-cert-file /etc/etcd/ssl/etcd-peer.pem \
+       --peer-key-file /etc/etcd/ssl/etcd-peer-key.pem \
+       --peer-client-cert-auth 
+       
+# etcd-hdss7-21
+etcd   --name etcd-hdss7-21 \
+       --data-dir /var/lib/etcd/data/default.etcd \
+       --wal-dir /var/lib/etcd/wal/ \
+       --listen-peer-urls https://10.4.7.21:2380 \
+       --listen-client-urls https://10.4.7.21:2379,http://127.0.0.1:2379 \
+       --auto-compaction-retention 1 \
+       --max-request-bytes 33554432\
+       --quota-backend-bytes 8589934592 \
+       --logger zap \
+       --initial-advertise-peer-urls https://10.4.7.21:2380 \
+       --advertise-client-urls https://10.4.7.21:2379 \
+       --initial-cluster  etcd-hdss7-12=https://10.4.7.12:2380,etcd-hdss7-21=https://10.4.7.21:2380,etcd-hdss7-22=https://10.4.7.22:2380 \
+       --enable-v2 \
+       --trusted-ca-file /etc/etcd/ssl/ca.pem \
+       --cert-file /etc/etcd/ssl/etcd-peer.pem \
+       --key-file /etc/etcd/ssl/etcd-peer-key.pem \
+       --client-cert-auth  \
+       --peer-trusted-ca-file /etc/etcd/ssl/ca.pem \
+       --peer-cert-file /etc/etcd/ssl/etcd-peer.pem \
+       --peer-key-file /etc/etcd/ssl/etcd-peer-key.pem \
+       --peer-client-cert-auth 
+       
+# etcd-hdss7-22
+etcd   --name etcd-hdss7-22 \
+       --data-dir /var/lib/etcd/data/default.etcd \
+       --wal-dir /var/lib/etcd/wal/ \
+       --listen-peer-urls https://10.4.7.22:2380 \
+       --listen-client-urls https://10.4.7.22:2379,http://127.0.0.1:2379 \
+       --auto-compaction-retention 1 \
+       --max-request-bytes 33554432\
+       --quota-backend-bytes 8589934592 \
+       --logger zap \
+       --initial-advertise-peer-urls https://10.4.7.22:2380 \
+       --advertise-client-urls https://10.4.7.22:2379 \
+       --initial-cluster  etcd-hdss7-12=https://10.4.7.12:2380,etcd-hdss7-21=https://10.4.7.21:2380,etcd-hdss7-22=https://10.4.7.22:2380 \
+       --enable-v2 \
+       --trusted-ca-file /etc/etcd/ssl/ca.pem \
+       --cert-file /etc/etcd/ssl/etcd-peer.pem \
+       --key-file /etc/etcd/ssl/etcd-peer-key.pem \
+       --client-cert-auth  \
+       --peer-trusted-ca-file /etc/etcd/ssl/ca.pem \
+       --peer-cert-file /etc/etcd/ssl/etcd-peer.pem \
+       --peer-key-file /etc/etcd/ssl/etcd-peer-key.pem \
+       --peer-client-cert-auth 
+</code></pre>
+<ol start="2">
+<li>etcd &ndash;config-file 如果提供了配置文件，其他命令行标志和环境变量将被忽略。</li>
+</ol>
+<pre><code class="language-bash"># 例子
+etcd --config-file=/etc/etcd/etcd.conf.yml
+</code></pre>
+<p>使用上面的方法1运行起etcd服务后，可以参考检查集群状态章节，来查看集群是否正常。</p>
+<p>但这样直接启动ETCD服务无法在服务异常退出时候自动拉起，我们需要能够管理服务的工具systemd或supervisor帮我们实现</p>
+<h2 id="使用systemd管理etcd服务">使用systemd管理ETCD服务</h2>
+<h3 id="创建non-root用户">创建non-root用户</h3>
+<p>设计系统时应遵循最小权限原则，不应给etcd服务以root权限运行。此处创建etcd用户，并授权相关目录</p>
+<pre><code class="language-bash">useradd -s /sbin/nologin -M etcd
+# -M 不生成家目录
+chown -R etcd:etcd /usr/local/etcd-v3.4.15-linux-amd64/
+chown -R etcd:etcd /var/lib/etcd/
+chown -R etcd:etcd /etc/etcd/
+</code></pre>
+<h3 id="编辑unit配置文件">编辑Unit配置文件</h3>
+<pre><code class="language-bash"># vi /usr/lib/systemd/system/etcd.service
+[Unit]
+Description=Etcd Server
+Documentation=https://etcd.io
+After=network.target
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=etcd
+Type=notify
+EnvironmentFile=/etc/etcd/cfg/etcd.conf
+ExecStart=/usr/local/bin/etcd
+
+Restart=on-failure
+RestartSec=10s
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target
+# 分发到每个节点
+# .yml配置文件和环境变量.conf 二者选其一
+# EnvironmentFile=/etc/etcd/cfg/etcd2.conf
+# ExecStart=/usr/bin/etcd --config-file=/etc/etcd/etcd.conf.yml 
+
+# 如果启动不了可以使用 /usr/bin/etcd --config-file=/etc/etcd/etcd.conf.yml 直接运行查看报错信息
+# 注意：ETCD3.4版本会自动读取环境变量的参数，所以EnvironmentFile文件中有的参数，不需要再次在ExecStart启动参数中添加，二选一，如同时配置，会触发以下类似报错“etcd: conflicting environment variable &quot;ETCD_NAME&quot; is shadowed by corresponding command-line flag (either unset environment variable or disable flag)”
+</code></pre>
+<blockquote>
+<p>重点参数详解</p>
+<ul>
+<li>
+<p>Restart={ <code>no</code>, <code>on-success</code>, <code>on-failure</code>, <code>on-abnormal</code>, <code>on-watchdog</code>, <code>on-abort</code>, <code>always</code>}:</p>
+</li>
+<li>
+<p>该选项的值可以取 <code>no</code>, <code>on-success</code>, <code>on-failure</code>, <code>on-abnormal</code>, <code>on-watchdog</code>, <code>on-abort</code>, <code>always</code> 之一。</p>
+</li>
+<li>
+<p><code>no</code>(默认值) 表示不会被重启。</p>
+</li>
+<li>
+<p><code>always</code> 表示只要不是通过systemctl stop来停止服务，都会被无条件的重启。</p>
+</li>
+<li>
+<p><code>on-success</code> 表示仅在服务进程正常退出时重启， 所谓&quot;正常退出&quot;是指：退出码为&quot;0&quot;， 或者进程收到 <code>SIGHUP</code>, <code>SIGINT</code>, <code>SIGTERM</code>, <code>SIGPIPE</code> 信号之一， 并且 退出码符合 <code>SuccessExitStatus=</code> 的设置。</p>
+</li>
+<li>
+<p><code>on-failure</code> 表示仅在服务进程异常退出时重启， 所谓&quot;异常退出&quot; 是指： 退出码不为&quot;0&quot;， 或者 进程被强制杀死(包括 &ldquo;core dump&quot;以及收到 <code>SIGHUP</code>, <code>SIGINT</code>, <code>SIGTERM</code>, <code>SIGPIPE</code> 之外的其他信号)， 或者进程由于 看门狗超时 或者 systemd 的操作超时 而被杀死</p>
+</li>
+<li>
+<p>RestartSec=10: 重启间隔，设置在重启服务(<code>Restart=</code>)前暂停多长时间。 默认值是100毫秒(100ms)。 如果未指定时间单位，那么将视为以秒为单位。 例如设为&quot;20&quot;等价于设为&quot;20s&rdquo;。</p>
+</li>
+<li>
+<p>StartLimitInterval=0: 无限次重启，默认是10秒内如果重启超过5次则不再重启，设置为0表示不限次数重启</p>
+</li>
+<li>
+<p>network-online.target</p>
+</li>
+</ul>
+<p>对于那些严格要求 必须存在真实可用的网络连接的单元， 应该在其单元文件中包含 <code>Wants=network-online.target</code> 与 <code>After=network-online.target</code> 指令。 此目标单元意在包含 一个能够将执行流程一直阻塞到网络变为真实可用为止的服务单元。 具体的实现方法取决于网络管理服务所实际使用的网络管理工具。</p>
+<p>注意，<code>network-online.target</code> 是一个主动单元(被功能使用者包含而不是被功能提供者包含)， 它包含的服务单元可以将执行流程一直阻塞到网络变为真实可用为止。 相反，<code>network.target</code> 是一个被动单元(被功能提供者包含而不是被功能使用者包含)， 它不会导致执行流程出现明显的阻塞。 一般来说， <code>network.target</code> 是系统启动流程中的一部分， 而 <code>network-online.target</code> 则不是(除非确有某些单元依赖于它)。 详情参见 <a href="https://www.freedesktop.org/wiki/Software/systemd/NetworkTarget">Running Services After the Network is up</a> 文档。</p>
+<p>所有用于挂载远程网络文件系统的 mount 单元都自动包含 <code>Wants=network-online.target</code> 与 <code>After=network-online.target</code> 指令。 注意，仅向网络上其他主机提供服务的守护进程 通常并不依赖于此单元。</p>
+<p><code>Wants=network-online.target</code> 与 <code>After=network-online.target</code> 将被自动添加到所有引用了 &ldquo;<code>$network</code>&rdquo; 的SysV初始化脚本单元中。</p>
+<p>注意，此单元仅用于系统启动期间。 系统启动完成之后， 此单元将不再跟踪系统的网络状态。 因此，不能将此单元用作网络连接监视器。</p>
+<blockquote>
+<p><strong>参考链接：</strong></p>
+<p>systemd.special 中文手册    译者：金步国</p>
+<p><a href="http://www.jinbuguo.com/systemd/systemd.service.html">http://www.jinbuguo.com/systemd/systemd.service.html</a></p>
+<p><a href="http://www.jinbuguo.com/systemd/systemd.exec.html#LimitNOFILE=">http://www.jinbuguo.com/systemd/systemd.exec.html#LimitNOFILE=</a></p>
+<p><a href="http://www.jinbuguo.com/systemd/systemd.special.html">http://www.jinbuguo.com/systemd/systemd.special.html</a></p>
+</blockquote>
+</blockquote>
+<h3 id="启动etcd服务">启动etcd服务</h3>
+<pre><code class="language-bash">systemctl daemon-reload
+systemctl restart etcd
+systemctl enable etcd
+</code></pre>
+<h2 id="或使用supervisor管理etcd服务不建议">或使用supervisor管理ETCD服务(不建议)</h2>
+<p>除了systemd之外我们也可以用 supervisor 来管理服务，supervisor 本身也需要被监控，如果自身服务挂了其管理的服务也会被停止。</p>
+<p><strong>创建etcd服务启动脚本</strong></p>
+<pre><code class="language-bash">[root@hdss7-12 ~]# vi /opt/etcd/etcd-server-startup.sh
+#!/bin/sh
+etcd   --name etcd-hdss7-12 \
+       --data-dir /var/lib/etcd/data/default.etcd \
+       --wal-dir /var/lib/etcd/wal/ \
+       --listen-peer-urls https://10.4.7.12:2380 \
+       --listen-client-urls https://10.4.7.12:2379,http://127.0.0.1:2379 \
+       --auto-compaction-retention 1 \
+       --max-request-bytes 33554432\
+       --quota-backend-bytes 8589934592 \
+       --logger zap \
+       --initial-advertise-peer-urls https://10.4.7.12:2380 \
+       --advertise-client-urls https://10.4.7.12:2379 \
+       --initial-cluster  etcd-hdss7-12=https://10.4.7.12:2380,etcd-hdss7-21=https://10.4.7.21:2380,etcd-hdss7-22=https://10.4.7.22:2380 \
+       --enable-v2 \
+       --trusted-ca-file /etc/etcd/ssl/ca.pem \
+       --cert-file /etc/etcd/ssl/etcd-peer.pem \
+       --key-file /etc/etcd/ssl/etcd-peer-key.pem \
+       --client-cert-auth  \
+       --peer-trusted-ca-file /etc/etcd/ssl/ca.pem \
+       --peer-cert-file /etc/etcd/ssl/etcd-peer.pem \
+       --peer-key-file /etc/etcd/ssl/etcd-peer-key.pem \
+       --peer-client-cert-auth 
+[root@hdss7-12 ~]# chmod +x /opt/etcd/etcd-server-startup.sh
+</code></pre>
+<p><strong>授权目录权限</strong></p>
+<pre><code class="language-bash">useradd -s /sbin/nologin -M etcd
+# -M 不生成家目录
+chown -R etcd:etcd /usr/local/etcd-v3.4.15-linux-amd64/
+chown -R etcd:etcd /var/lib/etcd/
+chown -R etcd:etcd /etc/etcd/
+</code></pre>
+<p><strong>安装supervisor软件</strong></p>
+<blockquote>
+<p>不直接sh运行，用supervisor管理后端进程，挂了自动拉起</p>
+</blockquote>
+<pre><code class="language-bash">[root@hdss7-12 ~]# yum install supervisor -y
+[root@hdss7-12 ~]# systemctl start supervisord
+[root@hdss7-12 ~]# systemctl enable supervisord
+</code></pre>
+<p><strong>创建supervisor配置</strong></p>
+<pre><code class="language-bash">[root@hdss7-12 ~]# vi /etc/supervisord.d/etcd-server.ini
+[program:etcd-server-7-12]
+command=/opt/etcd/etcd-server-startup.sh                        ; the program (relative uses PATH, can take args)
+numprocs=1                                                      ; number of processes copies to start (def 1)
+directory=/opt/etcd                                             ; directory to cwd to before exec (def no cwd)
+autostart=true                                                  ; start at supervisord start (default: true)
+autorestart=true                                                ; retstart at unexpected quit (default: true)
+startsecs=30                                                    ; number of secs prog must stay running (def. 1)
+startretries=3                                                  ; max # of serial start failures (default 3)
+exitcodes=0,2                                                   ; 'expected' exit codes for process (default 0,2)
+stopsignal=QUIT                                                 ; signal used to kill process (default TERM)
+stopwaitsecs=10                                                 ; max num secs to wait b4 SIGKILL (default 10)
+user=etcd                                                       ; setuid to this UNIX account to run the program
+redirect_stderr=true                                            ; redirect proc stderr to stdout (default false)
+stdout_logfile=/data/logs/etcd-server/etcd.stdout.log           ; stdout log path, NONE for none; default AUTO
+stdout_logfile_maxbytes=64MB                                    ; max # logfile bytes b4 rotation (default 50MB)
+stdout_logfile_backups=4                                        ; # of stdout logfile backups (default 10)
+stdout_capture_maxbytes=1MB                                     ; number of bytes in 'capturemode' (default 0)
+stdout_events_enabled=false                                     ; emit events on stdout writes (default false)
+</code></pre>
+<p><strong>启动etcd服务并检查</strong></p>
+<pre><code class="language-bash">[root@hdss7-12 ~]# supervisorctl update
+[root@hdss7-12 ~]# supervisorctl status
+[root@hdss7-12 ~]# netstat -lntup|grep etcd
+</code></pre>
+<p><strong>配置每个节点，以下配置根据各节点进行修改</strong></p>
+<pre><code class="language-bash"># /opt/etcd/etcd-server-startup.sh
+--name
+--listen-peer-urls
+--listen-client-urls
+--initial-advertise-peer-urls
+--advertise-client-urls
+####
+# /etc/supervisord.d/etcd-server.ini
+[program:etcd-server-7-12]
+</code></pre>
+<h2 id="检查集群状态日志">检查集群状态、日志</h2>
+<h3 id="查看进程所属用户">查看进程所属用户</h3>
+<pre><code>  ps -aux | less
+</code></pre>
+<p><img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/4.1.%20%E9%83%A8%E7%BD%B2etcd%E9%9B%86%E7%BE%A4/2021.05.13-23:05:48-D-assets-4.1.%20%E9%83%A8%E7%BD%B2etcd%E9%9B%86%E7%BE%A4-image-20210513171011764.png" alt="image-20210513171011764"></p>
+<h3 id="查看服务端口">查看服务端口</h3>
+<pre><code>netstat -lntup|grep etcd
+</code></pre>
+<p><img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/4.1.%20%E9%83%A8%E7%BD%B2etcd%E9%9B%86%E7%BE%A4/2021.05.13-23:05:51-D-assets-4.1.%20%E9%83%A8%E7%BD%B2etcd%E9%9B%86%E7%BE%A4-image-20210513161832633.png" alt="image-20210513161832633"></p>
+<h3 id="使用etcdctl查看集群状态">使用etcdctl查看集群状态</h3>
+<blockquote>
+<p>参考官方文档：https://etcd.io/docs/v3.4/demo/</p>
+<p><img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/https/image-fusice.oss-cn-hangzhou.aliyuncs.com/image/4.1.%20%E9%83%A8%E7%BD%B2etcd%E9%9B%86%E7%BE%A4/2021.05.13-23:06:03-https-image-fusice.oss-cn-hangzhou.aliyuncs.com-image-4.1.%20%E9%83%A8%E7%BD%B2etcd%E9%9B%86%E7%BE%A4-2021.05.12-23-14-15-D-assets-4.1.%20%E9%83%A8%E7%BD%B2etcd%E9%9B%86%E7%BE%A4-01_etcd_clustering_2016051001.gif" alt="01_etcd_clustering_2016050601"></p>
+</blockquote>
+<p>我们可以再etcdctl 命令结尾 加上<code>--write-out=table</code> 或 <code>-w table</code> 将输出格式化为表格形式</p>
+<pre><code>etcdctl \
+--cacert=/etc/etcd/ssl/ca.pem \
+--cert=/etc/etcd/ssl/etcd-peer.pem \
+--key=/etc/etcd/ssl/etcd-peer-key.pem \
+--endpoints=&quot;https://10.4.7.12:2379,https://10.4.7.21:2379,https://10.4.7.22:2379&quot; \
+endpoint status -w table
+</code></pre>
+<p><img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/4.1.%20%E9%83%A8%E7%BD%B2etcd%E9%9B%86%E7%BE%A4/2021.05.13-23:05:54-D-assets-4.1.%20%E9%83%A8%E7%BD%B2etcd%E9%9B%86%E7%BE%A4-image-20210513162407154.png" alt="image-20210513162407154"></p>
+<pre><code>etcdctl \
+--cacert=/etc/etcd/ssl/ca.pem \
+--cert=/etc/etcd/ssl/etcd-peer.pem \
+--key=/etc/etcd/ssl/etcd-peer-key.pem \
+--endpoints=&quot;https://10.4.7.12:2379,https://10.4.7.21:2379,https://10.4.7.22:2379&quot; \
+endpoint health -w table
+</code></pre>
+<p><img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/4.1.%20%E9%83%A8%E7%BD%B2etcd%E9%9B%86%E7%BE%A4/2021.05.13-23:05:57-D-assets-4.1.%20%E9%83%A8%E7%BD%B2etcd%E9%9B%86%E7%BE%A4-image-20210513162343875.png" alt="image-20210513162343875"></p>
+<pre><code>etcdctl member list -w table
+</code></pre>
+<p><img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/4.1.%20%E9%83%A8%E7%BD%B2etcd%E9%9B%86%E7%BE%A4/2021.05.13-23:05:59-D-assets-4.1.%20%E9%83%A8%E7%BD%B2etcd%E9%9B%86%E7%BE%A4-image-20210513162318811.png" alt="image-20210513162318811"></p>
+<h3 id="日志查询">日志查询</h3>
+<pre><code>journalctl -f   -u etcd.service 
+journalctl -u etcd.service  -l --no-pager  |less
+</code></pre>
+<blockquote>
+<p><strong>关于日志管理</strong></p>
+<hr>
+<p>金步国 systemd.service 中文手册：http://www.jinbuguo.com/systemd/systemd.service.html</p>
+<p>systemd 常用命令：https://www.cnblogs.com/soymilk2019/p/12161590.html</p>
+<p>journalctl 常用命令：https://blog.csdn.net/agg7911/article/details/101137030</p>
+</blockquote>
+<!--  
+升级案例：v3.4.13---》v3.4.15
+```bash
+解压
+for i in hdss7-12 hdss7-21 hdss7-22;do ssh $i tar -xvf /opt/src/etcd-v3.4.15-linux-amd64.tar -C /usr/local/;done
+修改软连接
+for i in hdss7-12 hdss7-21 hdss7-22;do ssh $i "rm -rf /usr/local/etcd;ln -s /usr/local/etcd-v3.4.15-linux-amd64/ /usr/local/etcd";done
+ps: ln -fs f参数不生效 只能 先rm了。。。
+
+备份配置文件
+for i in hdss7-12 hdss7-21 hdss7-22;do ssh $i mv /etc/etcd/cfg/etcd-v3.4.13.conf /etc/etcd/cfg/etcd-v3.4.13.conf.back;done
+ps: 备份seivice文件（若需要的话）
+```
+-->
+<h2 id="华三cloudos配置参考">华三cloudOS配置参考</h2>
+<p>下面是配置参考</p>
+<blockquote>
+<p>注意：本文使用的3.4 版本会自动读取环境变量的参数，所以EnvironmentFile文件中有的参数，不需要再次在ExecStart启动参数中添加。所以与下面配置略有不同。</p>
+</blockquote>
+<pre><code class="language-bash">[root@cloudos-master opt]# cat  /usr/lib/systemd/system/etcd2.service
+[Unit]
+Description=Etcd2 Server
+
+[Service]
+Type=notify
+EnvironmentFile=-/etc/sysconfig/kube-etcd-cluster
+ExecStart=/usr/bin/ionice -c2 -n0 /opt/bin/etcd3 --cert-file=${ETCD_SERVER_PEM} --key-file=${ETCD_SERVER_KEY_PEM} --client-cert-auth=true --trusted-ca-file=/root/cfssl/ca.pem --peer-cert-file=${ETCD_MEMBER_PEM} --peer-key-file=${ETCD_MEMBER_KEY_PEM} --peer-client-cert-auth=true --peer-trusted-ca-file=/root/cfssl/ca.pem --name=${ETCD_NAME} --initial-advertise-peer-urls=${ETCD_INITIAL_ADVERTISE_PEER_URLS} --listen-peer-urls=${ETCD_LISTEN_PEER_URLS} --listen-client-urls=${ETCD_LISTEN_CLIENT_URLS} --advertise-client-urls=${ETCD_ADVERTISE_CLIENT_URLS} --initial-cluster-token=${ETCD_INITIAL_CLUSTER_TOKEN} --initial-cluster=${ETCD_INITIAL_CLUSTER} --initial-cluster-state=${ETCD_INITIAL_CLUSTER_STATE}
+Restart=always
+RestartSec=10
+[Install]
+WantedBy=multi-user.target
+
+[root@cloudos-master opt]# cat /etc/sysconfig/kube-etcd-cluster
+#write by create_srv_envfile.sh
+ETCD_SERVER_PEM=/root/cfssl/X.X.X.X-server.pem
+ETCD_SERVER_KEY_PEM=/root/cfssl/X.X.X.X-server-key.pem
+ETCD_MEMBER_PEM=/root/cfssl/X.X.X.X-member.pem
+ETCD_MEMBER_KEY_PEM=/root/cfssl/X.X.X.X-member-key.pem
+ETCD_NAME=NODE1
+ETCD_INITIAL_ADVERTISE_PEER_URLS=https://X.X.X.X:2380
+ETCD_LISTEN_PEER_URLS=https://X.X.X.X:2380
+ETCD_LISTEN_CLIENT_URLS=https://0.0.0.0:2379
+ETCD_ADVERTISE_CLIENT_URLS=https://X.X.X.X:2379
+ETCD_INITIAL_CLUSTER_TOKEN=&quot;my-etcd-cluster&quot;
+ETCD_INITIAL_CLUSTER=NODE1=https://X.X.X.X:2380,NODE2=https://X.X.X.X:2380,NODE3=https://X.X.X.X:2380
+ETCD_INITIAL_CLUSTER_STATE=new
+</code></pre>
+<blockquote>
+<p>Linux I/O 调度方法 :https://blog.51cto.com/guowang327/1966312</p>
+<p>ionice可以更改任务的类型和优先级,不过只有cfq调度程序可以用ionice.</p>
+<p>有三个例子说明ionice的功能:</p>
+<pre><code>采用cfq的实时调度,优先级为7
+ionice -c1 -n7 -ptime dd if=/dev/sda1 of=/tmp/test bs=2M count=300&amp;
+采用缺省的磁盘I/O调度,优先级为3
+ionice -c2 -n3 -ptime dd if=/dev/sda1 of=/tmp/test bs=2M count=300&amp;
+采用空闲的磁盘调度,优先级为0
+ionice -c3 -n0 -ptime dd if=/dev/sda1 of=/tmp/test bs=2M count=300&amp;
+</code></pre>
+<p>ionice的三种调度方法,实时调度最高,其次是缺省的I/O调度,最后是空闲的磁盘调度.
+ionice的磁盘调度优先级有8种,最高是0,最低是7.</p>
+<p>注意,磁盘调度的优先级与进程nice的优先级没有关系.
+一个是针对进程I/O的优先级,一个是针对进程CPU的优先级.</p>
+</blockquote>
+<h2 id="常用操作常见问题">常用操作、常见问题</h2>
+<p>运维扩容操作</p>
+<p><a href="https://www.jianshu.com/p/ff4b4bd69a49">https://www.jianshu.com/p/ff4b4bd69a49</a></p>
+<p>7、etcd集群成员扩容增加
+etcdctl &ndash;endpoints=http://etcd2.server.biz:2379,http://etcd1.server.biz:2379,http://etcd3.server.biz:2379 member add etcd4   &ndash;peer-urls=http://etcd4.server.biz:2380
+Member 5b316fb0b94e59f8 added to cluster f0364a493c8924dc</p>
+<p>ETCD_NAME=&ldquo;etcd4&rdquo;
+ETCD_INITIAL_CLUSTER=&ldquo;etcd1=http://etcd1.server.biz:2380,etcd3=http://etcd3.server.biz:2380,etcd2=http://etcd2.server.biz:2380,etcd4=http://etcd4.server.biz:2380&rdquo;
+ETCD_INITIAL_CLUSTER_STATE=&ldquo;existing&rdquo;</p>
+<pre><code>      此时，集群会为目标节点生成一个唯一的member ID  
+</code></pre>
+<p>注意:新节点加入集群是作为一个全新的节点加入，如果data-dir有数据，etcd启动时会读取己经存在的数据，启动时仍然用的老member ID,也会造成，集群不无法加入，所以一定要清空新节点的data-dir<br>
+新扩容的etcd机器的etcd.conf中配置修改为 ETCD_INITIAL_CLUSTER_STATE=&ldquo;existing&rdquo;
+删除 rm-rf  /data/etcd/*
+启动etcd服务即可
+————————————————</p>
+<p>etcd 添加集群成员报错
+Jul 23 16:58:25 bjzw_82_137 etcd: failed to process raft message (raft: stopped)
+Jul 23 16:58:25 bjzw_82_137 etcd: failed to find member c79c567db2d16966 in cluster f0364a493c8924dc
+Jul 23 16:58:25 bjzw_82_137 etcd: failed to find member c79c567db2d16966 in cluster f0364a493c8924dc</p>
+<p>需要将etcd.conf中的配置修改为</p>
+<p>ETCD_INITIAL_CLUSTER_STATE=&ldquo;existing&rdquo;
+————————————————
+版权声明：本文为CSDN博主「起航90」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。
+原文链接：https://blog.csdn.net/ShouTouDeXingFu/article/details/81167302</p>
+<hr>
+<p>服务启动失败，提示信息：member c2c5804bd87e2884 has already been bootstrapped</p>
+<p>查看资料说是：
+One of the member was bootstrapped via discovery service. You must remove the previous data-dir to clean up the member information. Or the member will ignore the new configuration and start with the old configuration. That is why you see the mismatch.
+大概意思：
+其中一个成员是通过discovery service引导的。必须删除以前的数据目录来清理成员信息。否则成员将忽略新配置，使用旧配置。这就是为什么你看到了不匹配。
+看到了这里，问题所在也就很明确了，启动失败的原因在于data-dir （/var/lib/etcd/default.etcd）中记录的信息与 etcd启动的选项所标识的信息不太匹配造成的。</p>
+<p>问题解决</p>
+<p>既然 data-dir 中已经记录信息，我们就没必要在启动项中加入多于配置。</p>
+<p>第一种方式将 &ndash;initial-cluster-state=new 修改成 &ndash;initial-cluster-state=existing，再次重新启动就ok了。</p>
+<p>第二种方式删除所有etcd节点的 data-dir 文件（不删也行），重启各个节点的etcd服务，这个时候，每个节点的data-dir的数据都会被更新，就不会有以上故障了。</p>
+<p>第三种方式是复制其他节点的data-dir中的内容，以此为基础上以 &ndash;force-new-cluster 的形式强行拉起一个，然后以添加新成员的方式恢复这个集群。</p>
+        </div>
+        
+        <div class="my-4">
+    
+    <a href="/tags/etcd/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#ETCD</a>
+    
+    <a href="/tags/kubernetes/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#Kubernetes</a>
+    
+    <a href="/tags/posts/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#posts</a>
+    
+</div>
+        
+        
+        
+        
+        
+        <div class="py-2">
+    
+    <div class="flex flex-col md:flex-row items-center my-8">
+        <a href="/authors/songjinfeng/" class="w-24 h-24 md:mr-4">
+            
+            
+            <img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/images/2021.04.22-14:35:19-D-assets-images-sjf.png" class="w-full bg-primary-bg rounded-full" alt="Avatar">
+            
+        </a>
+        <div class="w-full md:w-auto mt-4 md:mt-0">
+            <a href="/authors/songjinfeng/" class="block font-bold text-lg pb-1 mb-2 border-b">宋锦丰</a>
+            <span class="block pb-2">一名运维技术爱好者，专注于 Kubernetes 、 Linux 等技术干货分享。</span>
+            
+            
+            
+            
+            
+            <a href="mailto:GW.songjinfengzc@h3c.com" class="mr-1">
+                <i class="fas fa-envelope"></i>
+            </a>
+            
+            
+            
+            
+            
+            <a href="https://github.com/SJFCS/SJFCS.GITHUB.IO" class="mr-1">
+                <i class="fab fa-github"></i>
+            </a>
+            
+            
+            
+            
+            
+            <a href="/index.xml" class="mr-1">
+                <i class="fas fa-rss"></i>
+            </a>
+            
+        </div>
+    </div>
+    
+</div>
+        
+        
+        
+<div class="flex flex-col md:flex-row md:justify-between -mx-2 mt-4 px-2 pt-4 border-t">
+    <div>
+        
+        <span class="block font-bold">上一页</span>
+        <a href="/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/4.-%E9%83%A8%E7%BD%B2etcd%E9%9B%86%E7%BE%A4/" class="block">4.1. 部署ETCD集群</a>
+        
+    </div>
+    <div class="md:text-right mt-4 md:mt-0">
+        
+        <span class="block font-bold">下一页</span>
+        <a href="/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/5.1.-kube-apiserver%E9%9B%86%E7%BE%A4/" class="block">4.2. 部署kube-apiserver集群</a>
+        
+    </div>
+</div>
+
+        
+    </div>
+    
+    <div class="col-span-2">
+        
+        
+<div class="bg-secondary-bg rounded p-6">
+    <h3 class="text-lg font-semibold mb-4">系列文章</h3>
+    <div class="content">
+        
+        
+        <a href="/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/4.-%E9%83%A8%E7%BD%B2etcd%E9%9B%86%E7%BE%A4/">4.1. 部署ETCD集群</a>
+        <br />
+        
+        <a href="/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/3.0.0-%E9%83%A8%E7%BD%B2etcd%E9%9B%86%E7%BE%A4/">4.1. 部署etcd集群</a>
+        <br />
+        
+        <a href="/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/5.1.-kube-apiserver%E9%9B%86%E7%BE%A4/">4.2. 部署kube-apiserver集群</a>
+        <br />
+        
+        
+    </div>
+</div>
+        
+        
+        <div class="sticky top-16 z-10 hidden lg:block px-6 py-4  bg-primary-bg ">
+    <span class="text-lg font-semibold">本页内容</span>
+</div>
+<div class="sticky-toc hidden lg:block px-6 pb-6 ">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#etcd-简介">ETCD 简介</a></li>
+    <li><a href="#实验环境">实验环境</a>
+      <ul>
+        <li><a href="#节点规划">节点规划</a></li>
+        <li><a href="#目录规划">目录规划</a></li>
+        <li><a href="#部署流程">部署流程</a></li>
+      </ul>
+    </li>
+    <li><a href="#签发证书">签发证书</a>
+      <ul>
+        <li><a href="#准备cfssl签证工具">准备cfssl签证工具</a></li>
+        <li><a href="#ca证书">CA证书</a></li>
+        <li><a href="#etcd证书">ETCD证书</a></li>
+      </ul>
+    </li>
+    <li><a href="#etcd二进制部署">ETCD二进制部署</a>
+      <ul>
+        <li><a href="#下载etcd二进制包">下载ETCD二进制包</a></li>
+        <li><a href="#配置文件">配置文件</a></li>
+        <li><a href="#etcd灵活的启动方式">ETCD灵活的启动方式</a></li>
+      </ul>
+    </li>
+    <li><a href="#使用systemd管理etcd服务">使用systemd管理ETCD服务</a>
+      <ul>
+        <li><a href="#创建non-root用户">创建non-root用户</a></li>
+        <li><a href="#编辑unit配置文件">编辑Unit配置文件</a></li>
+        <li><a href="#启动etcd服务">启动etcd服务</a></li>
+      </ul>
+    </li>
+    <li><a href="#或使用supervisor管理etcd服务不建议">或使用supervisor管理ETCD服务(不建议)</a></li>
+    <li><a href="#检查集群状态日志">检查集群状态、日志</a>
+      <ul>
+        <li><a href="#查看进程所属用户">查看进程所属用户</a></li>
+        <li><a href="#查看服务端口">查看服务端口</a></li>
+        <li><a href="#使用etcdctl查看集群状态">使用etcdctl查看集群状态</a></li>
+        <li><a href="#日志查询">日志查询</a></li>
+      </ul>
+    </li>
+    <li><a href="#华三cloudos配置参考">华三cloudOS配置参考</a></li>
+    <li><a href="#常用操作常见问题">常用操作、常见问题</a></li>
+  </ul>
+</nav>
+</div>
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        enableStickyToc();
+    });
+</script>
+        
+    </div>
+    
+
+    
+    
+    <div
+        class="col-span-2  lg:col-span-6 bg-secondary-bg rounded p-6">
+        <h2 class="text-lg font-semibold mb-4">相关</h2>
+        <div class="content">
+            
+            <a href="/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/4.-%E9%83%A8%E7%BD%B2etcd%E9%9B%86%E7%BE%A4/">4.1. 部署ETCD集群</a>
+            <br />
+            
+            <a href="/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/5.1.-kube-apiserver%E9%9B%86%E7%BE%A4/">4.2. 部署kube-apiserver集群</a>
+            <br />
+            
+        </div>
+    </div>
+    
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', ()=>{
+        hljs.initHighlightingOnLoad();
+    })
+</script>
+
+      </div>
+    </div>
+    
+  </main>
+  <footer class="pl-scrollbar">
+    <div class="w-full max-w-screen-xl mx-auto"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 2021 <a href="https://www.songjinfeng.com/">SonJinfeng</a> 
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+  </footer>
+</body>
+
+</html>

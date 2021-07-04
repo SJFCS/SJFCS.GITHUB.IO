@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Linux日志管理 on Songjinfeng&#39;s BLOG</title>
+    <link>/series/linux%E6%97%A5%E5%BF%97%E7%AE%A1%E7%90%86/</link>
+    <description>Recent content in Linux日志管理 on Songjinfeng&#39;s BLOG</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language>
+    <copyright>&amp;copy; 2021 &lt;a href=&#34;https://www.songjinfeng.com/&#34;&gt;SonJinfeng&lt;/a&gt; 
+</copyright>
+    <lastBuildDate>Fri, 16 Oct 2020 00:00:00 +0000</lastBuildDate><atom:link href="/series/linux%E6%97%A5%E5%BF%97%E7%AE%A1%E7%90%86/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>logrotate日志切割</title>
+      <link>/posts/1.linux/linux%E5%B8%B8%E7%94%A8%E6%9C%8D%E5%8A%A1/linux%E6%97%A5%E5%BF%97%E7%AE%A1%E7%90%86%E6%96%87%E4%BB%B6%E5%90%8C%E6%AD%A5/logrotate/</link>
+      <pubDate>Fri, 16 Oct 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/1.linux/linux%E5%B8%B8%E7%94%A8%E6%9C%8D%E5%8A%A1/linux%E6%97%A5%E5%BF%97%E7%AE%A1%E7%90%86%E6%96%87%E4%BB%B6%E5%90%8C%E6%AD%A5/logrotate/</guid>
+      <description>&lt;h2 id=&#34;1关于日志切割&#34;&gt;1、关于日志切割&lt;/h2&gt;
+&lt;p&gt;　　日志文件包含了关于系统中发生的事件的有用信息，在排障过程中或者系统性能分析时经常被用到。对于忙碌的服务器，日志文件大小会增长极快，服务器会很快消耗磁盘空间，这成了个问题。除此之外，处理一个单个的庞大日志文件也常常是件十分棘手的事。
+　　logrotate是个十分有用的工具，它可以自动对日志进行截断（或轮循）、压缩以及删除旧的日志文件。例如，你可以设置logrotate，让/var/log/foo日志文件每30天轮循，并删除超过6个月的日志。配置完后，logrotate的运作完全自动化，不必进行任何进一步的人为干预。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>rsyslog</title>
+      <link>/posts/1.linux/linux%E5%B8%B8%E7%94%A8%E6%9C%8D%E5%8A%A1/linux%E6%97%A5%E5%BF%97%E7%AE%A1%E7%90%86%E6%96%87%E4%BB%B6%E5%90%8C%E6%AD%A5/rsyslog/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/1.linux/linux%E5%B8%B8%E7%94%A8%E6%9C%8D%E5%8A%A1/linux%E6%97%A5%E5%BF%97%E7%AE%A1%E7%90%86%E6%96%87%E4%BB%B6%E5%90%8C%E6%AD%A5/rsyslog/</guid>
+      <description>&lt;p&gt;转载：https://blog.csdn.net/weixin_43695104/article/details/90047507&lt;/p&gt;
+&lt;h2 id=&#34;1-rsyslog介绍&#34;&gt;1. rsyslog介绍&lt;/h2&gt;
+&lt;p&gt;Rsyslog的全称是 rocket-fast system for log，它提供了高性能，高安全功能和模块化设计。rsyslog能够接受从各种各样的来源，将其输入，输出的结果到不同的目的地。rsyslog可以提供超过每秒一百万条消息给目标文件。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang='zh' ><meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+
+
+<title>Linux | Songjinfeng&#39;s BLOG</title>
+<link rel="stylesheet" href="/css/eureka.min.css">
+<script defer src="/js/eureka.min.js"></script>
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Noto+Serif+SC:wght@400;600;700&display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/styles/solarized-light.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/highlight.min.js"
+   crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/dart.min.js"
+     crossorigin></script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/js/all.min.js"
+   integrity="sha256-uNYoXefWRqv&#43;PsIF/OflNmwtKM4lStn9yrz2gVl6ymo="  crossorigin></script>
+
+
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css"
+   integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3&#43;Aro6EYUG4&#43;cU&#43;KJWu/X"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js" 
+  integrity="sha384-g7c&#43;Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI&#43;sEnkvrMWph2EDg4"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js"
+   integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC&#43;Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.9.2/dist/mermaid.min.js" 
+  integrity="sha256-Zmpaaj&#43;GXFsPF5WdPArSrnW3b30dovldeKsW00xBVwE="  crossorigin></script>
+
+
+<link rel="icon" type="image/png" sizes="32x32" href="/images/icon_hucfa16751ac9c82c06b84c3502c0db793_16378_32x32_fill_box_center_2.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hucfa16751ac9c82c06b84c3502c0db793_16378_180x180_fill_box_center_2.png">
+
+<meta name="description"
+  content="Eureka is a elegant and powerful theme for Hugo.">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"Categories",
+      "item":"/categories/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"Linux",
+      "item":"/categories/linux/"}]
+}
+</script>
+
+
+
+
+<script type="application/ld+json">
+{
+    "@context":"https://schema.org",
+    "@type":"ItemList",
+    "itemListElement":[{
+            "@type":"ListItem",
+            "position":  1 ,
+            "name": "",
+            "description": "转载：http://www.ruanyifeng.com/blog/2011/12/inode.html\n作者： 阮一峰\n一、inode是什么？ 理解inode，要从文件储存说起。\n文件储存在硬盘上，硬盘的最小存储单位叫做\u0026quot;扇区\u0026quot;（Sector）。每个扇区储存512字节（相当于0.5KB）。\n操作系统读取硬盘的时候，不会一个个扇区地读取，这样效率太低，而是一次性连续读取多个扇区，即一次性读取一个\u0026quot;块\u0026quot;（block）。这种由多个扇区组成的\u0026quot;块\u0026quot;，是文件存取的最小单位。\u0026ldquo;块\u0026quot;的大小，最常见的是4KB，即连续八个 sector组成一个 block。\n文件数据都储存在\u0026quot;块\u0026quot;中，那么很显然，我们还必须找到一个地方储存文件的元信息，比如文件的创建者、文件的创建日期、文件的大小等等。这种储存文件元信息的区域就叫做inode，中文译名为\u0026quot;索引节点\u0026rdquo;。\n每一个文件都有对应的inode，里面包含了与该文件有关的一些信息。\n二、inode的内容 inode包含文件的元信息，具体来说有以下内容：\n 　* 文件的字节数\n　* 文件拥有者的User ID\n　* 文件的Group ID\n　* 文件的读、写、执行权限\n　* 文件的时间戳，共有三个：ctime指inode上一次变动的时间，mtime指文件内容上一次变动的时间，atime指文件上一次打开的时间。\n　* 链接数，即有多少文件名指向这个inode\n　* 文件数据block的位置\n 可以用stat命令，查看某个文件的inode信息：\n 　stat example.txt\n 总之，除了文件名以外的所有文件信息，都存在inode之中。至于为什么没有文件名，下文会有详细解释。\n三、inode的大小 inode也会消耗硬盘空间，所以硬盘格式化的时候，操作系统自动将硬盘分成两个区域。一个是数据区，存放文件数据；另一个是inode区（inode table），存放inode所包含的信息。\n每个inode节点的大小，一般是128字节或256字节。inode节点的总数，在格式化时就给定，一般是每1KB或每2KB就设置一个inode。假定在一块1GB的硬盘中，每个inode节点的大小为128字节，每1KB就设置一个inode，那么inode table的大小就会达到128MB，占整块硬盘的12.8%。\n查看每个硬盘分区的inode总数和已经使用的数量，可以使用df命令。\n 　df -i\n 查看每个inode节点的大小，可以用如下命令：\n 　sudo dumpe2fs -h /dev/hda | grep \u0026ldquo;Inode size\u0026rdquo;\n 由于每个文件都必须有一个inode，因此有可能发生inode已经用光，但是硬盘还未存满的情况。这时，就无法在硬盘上创建新文件。\n四、inode号码 每个inode都有一个号码，操作系统用inode号码来识别不同的文件。\n这里值得重复一遍，Unix/Linux系统内部不使用文件名，而使用inode号码来识别文件。对于系统来说，文件名只是inode号码便于识别的别称或者绰号。\n表面上，用户通过文件名，打开文件。实际上，系统内部这个过程分成三步：首先，系统找到这个文件名对应的inode号码；其次，通过inode号码，获取inode信息；最后，根据inode信息，找到文件数据所在的block，读出数据。\n使用ls -i命令，可以看到文件名对应的inode号码：",
+            "url": "/posts/1.linux/linux%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/inode/"
+        },{
+            "@type":"ListItem",
+            "position":  2 ,
+            "name": "",
+            "description": "ethtool http://www.voidcn.com/article/p-reuwslap-brm.html\n命令描述： ethtool 是用于查询及设置网卡参数的命令。\n使用概要：\nethtool ethx //查询ethx网口基本设置，其中 x 是对应网卡的编号，如eth0、eth1等等 ethtool –h //显示ethtool的命令帮助(help) ethtool –i ethX //查询ethX网口的相关信息 ethtool –d ethX //查询ethX网口注册性信息 ethtool –r ethX //重置ethX网口到自适应模式 ethtool –S ethX //查询ethX网口收发包统计 ethtool –s ethX [speed 10|100|1000] [duplex half|full] [autoneg on|off] //设置网口速率10/100/1000M、设置网口半/全双工、设置网口是否自协商  使用举例：\n1）查询eth0网口基本设置（网卡速率是百兆还是千兆等）:\n# ethtool eth0 Settings for eth0: Supported ports: [ TP ] Supported link modes: 10baseT/Half 10baseT/Full 100baseT/Half 100baseT/Full 1000baseT/Full Supported pause frame use: No //是否支持热插拔 Supports auto-negotiation: Yes //是否支持自动协商 Advertised link modes: 10baseT/Half 10baseT/Full 100baseT/Half 100baseT/Full 1000baseT/Full Advertised pause frame use: No Advertised auto-negotiation: Yes Speed: 1000Mb/s //速率 Duplex: Full //全双工 Port: Twisted Pair //电口 PHYAD: 0 Transceiver: internal Auto-negotiation: on MDI-X: Unknown Supports Wake-on: d Wake-on: d Current message level: 0x00000007 (7) drv probe link Link detected: yes  2）查看网卡的驱动信息：",
+            "url": "/posts/1.linux/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/ethtool/"
+        },{
+            "@type":"ListItem",
+            "position":  3 ,
+            "name": "",
+            "description": "CentOS7配置LLDP服务 https://blog.csdn.net/BK_sys/article/details/88554593 https://vincentbernat.github.io/lldpd/usage.html\nlldpad(2010年停更)：https://github.com/jrfastab/lldpad\nlldpd（lldpd可以输出json格式）：https://github.com/vincentbernat/lldpd\n第一种方式：lldpd 1、软件lldpd和lldpcli\nyum install lldpd -y\n2、服务启动后，相关信息可以通过如下命令获取\nlldpcli show neighbors\n将结果处理成json格式，只需要在命令后加上：lldpcli show neighbors -f json\n第二种方式：lldpad 1、安装相关服务软件和工具\n软件lldpad和lldptool\nyum install lldpad -y\n2、配置服务器端口用于接收和发送相关LLDP信息，包括端口，主机名，mac地址和ip地址\n（1）查看系统本地网卡设备：\n##因为网卡设备名称包含eth，eno，em，p1p1 ……，默认都是以e或者p开头\nls /sys/class/net/ |egrep ‘e|p’\n（2）分别配置每个端口，以eno1为例，如下：\nlldptool set-lldp -i eno1 adminStatus=rxtx lldptool -T -i eno1 -V sysName enableTx=yes lldptool -T -i eno1 -V portDesc enableTx=yes lldptool -T -i eno1 -V sysDesc enableTx=yes lldptool -T -i eno1 -V mngAddr enableTx=yes  ##每个端口都配置的原因是防止已经down的端口遗漏掉，新部署服务器可以只配置up状态的接口，具体配置请根据实际需求配置。\n4、完成端口配置后，相关信息可以通过如下命令获取\nlldptool -t -n -i eno1",
+            "url": "/posts/1.linux/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/lldp/"
+        },{
+            "@type":"ListItem",
+            "position":  4 ,
+            "name": "",
+            "description": "https://blog.51cto.com/14012942/2432243\n https://blog.csdn.net/cuichongxin/article/details/106473581\n ",
+            "url": "/posts/1.linux/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/nmcli/"
+        },{
+            "@type":"ListItem",
+            "position":  5 ,
+            "name": "",
+            "description": "https://www.cnblogs.com/oloroso/p/4844907.html https://www.cnblogs.com/xdp-gacl/p/4016524.html https://www.cnblogs.com/smillepro/articles/9948253.html\n​\thttps://blog.csdn.net/lqy461929569/article/details/79881269\n​\thttps://www.cnblogs.com/xdp-gacl/p/3978825.html\n​\thttps://wenku.baidu.com/view/cf0efc335a8102d276a22f6d.html?sxts=1541989059623\nsnmp简介 https://www.cnblogs.com/xdp-gacl/p/3978825.html　​\tSNMP采用UDP协议在管理端和agent之间传输信息。 ==SNMP采用UDP 161端口接收和发送请求，162端口接收trap==，执行SNMP的设备缺省都必须采用这些端口。SNMP消息全部通过UDP端口161接收，只有Trap信息采用UDP端口162。\nsnmp安装与卸载 安装包介绍\u0026hellip;\u0026hellip;\nyum安装 yum install -y net-snmp yum install -y net-snmp-utils yum install -y net-snmp-devel yum install -y net-snmp-libs yum install -y net-snmp-perl yum install -y mrtg 可使用iptables -L -n 查看当前iptables规则,放udp 161端口的访问权限  源码编译安装 https://www.cnblogs.com/xdp-gacl/p/4016524.html\n1.下载 下载Net-SNMP的源代码,选择一个SNMP版本，比如5.7.1，下载地址如下：\nhttp://www.net-snmp.org/download.html http://sourceforge.net/projects/net-snmp/files/net-snmp/5.7.1/，如下图所示：\n2. 解压编译 tar xzvf net-snmp-5.7.1.tar.gz解压后``cd net-snmp-5.7.1`通过configure来生成编译规则\n net-snmp-5.7.1目录下的configure是可执行文件，如果想指定程序包的安装路径，那么首先建立相应的文件夹来存放安装信息，可以写成./configure –-prefix=/指定的路径名。参数\u0026ndash;prefix用来告诉系统安装信息存放的路径，如果没有指定路径，直接执行./configure，那么程序包都会安装在系统默认的目录下，通常为：/usr/local下\n 执行命令\n./configure --prefix=/usr/local/snmp --with-mib-modules='ucd-snmp/diskio ip-mib/ipv4InterfaceTable'\n::: info 请注意参数：\n–prefix=/usr/local/snmp 选项，选择snmp的安装路径。\n–with-mib-modules=ucd-snmp/diskio 选项，可以让服务器支持磁盘I/O监控。",
+            "url": "/posts/1.linux/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/snmp/"
+        },{
+            "@type":"ListItem",
+            "position":  6 ,
+            "name": "",
+            "description": "Eureka is a elegant and powerful theme for Hugo.",
+            "url": "/posts/1.linux/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/wireshark/"
+        },{
+            "@type":"ListItem",
+            "position":  7 ,
+            "name": "",
+            "description": "SCP scp 命令将目录从一个远程服务器复制到另一个远程服务器上的新目录，命令如下：\n$ scp -r server1:dir1 server2:dir2  如果在 server2 上不存在 dir2，这可以正常工作，它会创建一个名为 dir2 的新目录，其中包含 server1 上 dir1 的所有内容。\n但是当 dir2 已经存在于 server2 上时，就会出现问题，已经存在的文件不会被覆盖。\n解决办法：\n$ scp -prq server1:dir1/. server2:dir2/  在文件目录后面加个点 .，将复制该目录的内容，而不是目录本身。\nCP 如果知道多个文件的名字时，可以使用 cp {filename1,filename2,\u0026hellip;} 目标/，目标必须是个文件夹\n -a：此参数的效果和同时指定\u0026quot;-dpR\u0026quot;参数相同； -d：当复制符号连接时，把目标文件或目录也建立为符号连接，并指向与源文件或目录连接的原始文件或目录； -f：强行复制文件或目录，不论目标文件或目录是否已存在； -i：覆盖既有文件之前先询问用户； -l：对源文件建立硬连接，而非复制文件； -p：保留源文件或目录的属性； -R/r：递归处理，将指定目录下的所有文件与子目录一并处理； -s：对源文件建立符号连接，而非复制文件； -u：使用这项参数后只会在源文件的更改时间较目标文件更新时或是名称相互对应的目标文件并不存在时，才复制文件； -S：在备份文件时，用指定的后缀“SUFFIX”代替文件的默认后缀； -b：覆盖已存在的文件目标前将目标文件备份； -v：详细显示命令执行的操作。\n 一.通配符的使用\n 通配符是一种特殊语句，主要有星号(*)和问号(?)，用来模糊搜索文件。主要的通配符有：\n * 匹配任意长度的字符串\n? 匹配一个长度的字符\n[\u0026hellip;] 匹配其中指定的字符\n[a-z] 匹配指定的字符范围\n[^\u0026hellip;] 除了其中指定的字符，其他均可匹配\n 例1：可以代替0个或多个字符。如果需要拷贝以ABC开头的文件，可以输入ABC，拷贝以ABC开头的所有文件类型的文件，如ABCD.txt、ABCDEFG.exe、ABCZH.dll等。如果只需要拷贝txt文件，则可以输入ABC*.txt，拷贝以ABC为开头的TXT类型的文件，如ABC.txt、ABC12.txt。\n例2：？则只匹配一个字符，[1,b,8]就匹配括号中的1，b和8，这些都可以混搭使用。在linux2.6.14内核中，ls可以看到如图：\n  如果需要将.IAB .IAD .IMB .IMD和.WK3 这5个文件拷贝到根目录的tmp下，可以使用如下命令：",
+            "url": "/posts/7.%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4/shell/cpscp%E5%91%BD%E4%BB%A4/"
+        },{
+            "@type":"ListItem",
+            "position":  8 ,
+            "name": "",
+            "description": "SSH连接服务器后执行多条命令 https://stackoverflow.com/a/4412338/4884227\n大家平时有没有遇到自己连接云服务器，ssh 连接上去之后，发现自己的一些小工具用不了\n例如go build无法使用 ，由于我们安装配置golang 环境的时候，是在文件/etc/profile中写了配置，因此需要source 一下/etc/profile\n那么是否可以在ssh 连接上服务器的时候就可以立即自动执行这一类命令呢？\n我们的智慧无穷无尽，小工具也是非常的多，今天来讲述一下SSH连接服务器后执行多条命令可以如何做\n1 使用分号隔开 使用 分号 ;来隔开命令\n  附带1条命令\nssh User@Host 'source /etc/profile'    附带多条命令\nssh User@Host 'source /etc/profile ; uptime'    2 使用管道符号隔开 使用管道|来隔开命令\n  附带1条命令\nssh User@Host 'source /etc/profile'    附带多条命令\nssh User@Host 'source /etc/profile | uptime'    3 使用写EOF的方式 同样适用于一条 / 多条命令\nssh User@Host /bin/bash \u0026lt;\u0026lt; EOF \u0026gt; ls -al \u0026gt; source /etc/profile \u0026gt; EOF  4 使用脚本的方式 使用脚本的方式花样就更多了，例如有一个脚本myinit.",
+            "url": "/posts/7.%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4/shell/ssh%E5%90%8E%E6%89%A7%E8%A1%8C%E5%A4%9A%E6%9D%A1%E5%91%BD%E4%BB%A4/"
+        },{
+            "@type":"ListItem",
+            "position":  9 ,
+            "name": "",
+            "description": "推荐阅读 advance bash scripting guide http://www.linuxplus.org/kb/special-chars.html\nman手册 https://linux.die.net/man/1/bash\n官方手册 https://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html\n变量 XXX 在linux的shell里，${name}可以表示变量，也可以表示数组。\nname后面加[ ]的，一般是数组， ${name[*]}是数组所有元素(all of the elements) ${name[@]}是数组每一个元素(each of the elements)  其实这两个几乎一样，差别主要在于当加上引号时，\u0026quot;${name[*]}\u0026quot;等于所有数组元素及其分隔符（一般是空格）排成的字符串，而\u0026quot;${name[@]}\u0026quot;仍然表示每一个元素。 ${#name[*]}是数组元素的个数，也可以写成${#name[@]}\n${name:-Hello} 是指，如果${name}没有赋值，那么它等于Hello,如果赋值了，就保持原值，不用管这个Hello了。(可为空，语句结束后变量销毁)\n自定义变量 将命令结果赋值给变量\ntest=$(ls -l /root/)  变量是由任何字母、数字和下划线组成的字符串，且不能以数字开头 区分字母大小写，例如Var1和var1是不同的 变量、等号、值中间不能出现任何空格\n变量位置 执行命令脚本时后可跟变量参数\n   - - -     $n n为数字$0代表脚本本身，$1-$9代表1-9个参数，10以上需要用大括号，如$｛10｝    $@ $@命令行所有参数，每个参数都看作独立个体    $* $*命令行所有参数，所有的参数从整体上看作一个整体    $# 参数个数     Shell $*和$@的区别:http://c.biancheng.net/view/807.html\n环境变量 https://blog.csdn.net/jiangyanting2011/article/details/78875928\nhttps://www.cnblogs.com/x_wukong/p/4771316.html",
+            "url": "/posts/7.%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4/shell/untitled/"
+        },{
+            "@type":"ListItem",
+            "position":  10 ,
+            "name": "",
+            "description": "Eureka is a elegant and powerful theme for Hugo.",
+            "url": "/posts/7.%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4/shell/%E5%88%A4%E6%96%AD%E6%9D%A1%E4%BB%B6/"
+        }
+    ]
+}
+</script><meta property="og:title" content="Linux | Songjinfeng&#39;s BLOG" />
+<meta property="og:type" content="website" />
+
+
+<meta property="og:image" content="/images/icon.png">
+
+
+<meta property="og:url" content="/categories/linux/" />
+
+
+
+
+
+<meta property="og:description" content="Eureka is a elegant and powerful theme for Hugo." />
+
+
+
+
+
+<meta property="og:locale" content="zh" />
+
+
+
+
+<meta property="og:site_name" content="Songjinfeng&#39;s BLOG" />
+
+
+
+
+
+
+
+
+<meta property="article:section" content="categories" />
+
+
+<link rel="alternate" type="application/rss+xml" href="/categories/linux/index.xml" title="Songjinfeng's BLOG" />
+
+<body class="flex flex-col min-h-screen">
+  <header class="fixed flex items-center w-full min-h-16 pl-scrollbar z-50 bg-secondary-bg shadow-sm">
+    <div class="w-full max-w-screen-xl mx-auto"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="mr-6 text-primary-text text-xl font-bold">Songjinfeng&#39;s BLOG</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:flex-grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:flex-grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">技术专栏</a>
+            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">文档笔记</a>
+            <a href="/series/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">主题系列</a>
+            <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">标签</a>
+            <a href="/authors/songjinfeng/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">关于</a>
+            <a href="/index.xml" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">RSS</a>
+            <a href="/webstack" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">友链&amp;导航</a>
+        </div>
+
+        <div class="flex">
+            <div class="relative pt-4 md:pt-0">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col left-0 md:left-auto right-auto md:right-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">浅色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">深色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">自动</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            switchMode('Auto')
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+  </header>
+  <main class="flex-grow pt-16">
+    <div class="pl-scrollbar">
+      <div class="w-full max-w-screen-xl lg:px-4 xl:px-8 mx-auto">
+<article class="mx-6 my-8">
+    <h1 class="font-bold text-3xl text-primary-text">Linux</h1>
+    
+</article>
+<div class="bg-secondary-bg rounded px-6">
+    <div class="overflow-hidden divide-y">
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="mb-4">
+  <a href="/posts/1.linux/linux%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/inode/" class="font-bold text-xl hover:text-eureka"></a>
+</div>
+<div class="content">
+  转载：http://www.ruanyifeng.com/blog/2011/12/inode.html
+作者： 阮一峰
+一、inode是什么？ 理解inode，要从文件储存说起。
+文件储存在硬盘上，硬盘的最小存储单位叫做&amp;quot;扇区&amp;quot;（Sector）。每个扇区储存512字节（相当于0.5KB）。
+操作系统读取硬盘的时候，不会一个个扇区地读取，这样效率太低，而是一次性连续读取多个扇区，即一次性读取一个&amp;quot;块&amp;quot;（block）。这种由多个扇区组成的&amp;quot;块&amp;quot;，是文件存取的最小单位。&amp;ldquo;块&amp;quot;的大小，最常见的是4KB，即连续八个 sector组成一个 block。
+文件数据都储存在&amp;quot;块&amp;quot;中，那么很显然，我们还必须找到一个地方储存文件的元信息，比如文件的创建者、文件的创建日期、文件的大小等等。这种储存文件元信息的区域就叫做inode，中文译名为&amp;quot;索引节点&amp;rdquo;。
+每一个文件都有对应的inode，里面包含了与该文件有关的一些信息。
+二、inode的内容 inode包含文件的元信息，具体来说有以下内容：
+ 　* 文件的字节数
+　* 文件拥有者的User ID
+　* 文件的Group ID
+　* 文件的读、写、执行权限
+　* 文件的时间戳，共有三个：ctime指inode上一次变动的时间，mtime指文件内容上一次变动的时间，atime指文件上一次打开的时间。
+　* 链接数，即有多少文件名指向这个inode
+　* 文件数据block的位置
+ 可以用stat命令，查看某个文件的inode信息：
+ 　stat example.txt
+ 总之，除了文件名以外的所有文件信息，都存在inode之中。至于为什么没有文件名，下文会有详细解释。
+三、inode的大小 inode也会消耗硬盘空间，所以硬盘格式化的时候，操作系统自动将硬盘分成两个区域。一个是数据区，存放文件数据；另一个是inode区（inode table），存放inode所包含的信息。
+每个inode节点的大小，一般是128字节或256字节。inode节点的总数，在格式化时就给定，一般是每1KB或每2KB就设置一个inode。假定在一块1GB的硬盘中，每个inode节点的大小为128字节，每1KB就设置一个inode，那么inode table的大小就会达到128MB，占整块硬盘的12.8%。
+查看每个硬盘分区的inode总数和已经使用的数量，可以使用df命令。
+ 　df -i
+ 查看每个inode节点的大小，可以用如下命令：
+ 　sudo dumpe2fs -h /dev/hda | grep &amp;ldquo;Inode size&amp;rdquo;
+ 由于每个文件都必须有一个inode，因此有可能发生inode已经用光，但是硬盘还未存满的情况。这时，就无法在硬盘上创建新文件。
+四、inode号码 每个inode都有一个号码，操作系统用inode号码来识别不同的文件。
+这里值得重复一遍，Unix/Linux系统内部不使用文件名，而使用inode号码来识别文件。对于系统来说，文件名只是inode号码便于识别的别称或者绰号。
+表面上，用户通过文件名，打开文件。实际上，系统内部这个过程分成三步：首先，系统找到这个文件名对应的inode号码；其次，通过inode号码，获取inode信息；最后，根据inode信息，找到文件数据所在的block，读出数据。
+使用ls -i命令，可以看到文件名对应的inode号码：
+</div>
+
+<div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>0001-01-01</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>1分钟阅读时长</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="/categories/blog/" class="hover:text-eureka">blog</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/posts/" class="hover:text-eureka">posts</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/linux/" class="hover:text-eureka">Linux</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/linux%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/" class="hover:text-eureka">Linux文件系统</a>
+        
+    </div>
+    
+
+    
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="mb-4">
+  <a href="/posts/1.linux/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/ethtool/" class="font-bold text-xl hover:text-eureka"></a>
+</div>
+<div class="content">
+  ethtool http://www.voidcn.com/article/p-reuwslap-brm.html
+命令描述： ethtool 是用于查询及设置网卡参数的命令。
+使用概要：
+ethtool ethx //查询ethx网口基本设置，其中 x 是对应网卡的编号，如eth0、eth1等等 ethtool –h //显示ethtool的命令帮助(help) ethtool –i ethX //查询ethX网口的相关信息 ethtool –d ethX //查询ethX网口注册性信息 ethtool –r ethX //重置ethX网口到自适应模式 ethtool –S ethX //查询ethX网口收发包统计 ethtool –s ethX [speed 10|100|1000] [duplex half|full] [autoneg on|off] //设置网口速率10/100/1000M、设置网口半/全双工、设置网口是否自协商  使用举例：
+1）查询eth0网口基本设置（网卡速率是百兆还是千兆等）:
+# ethtool eth0 Settings for eth0: Supported ports: [ TP ] Supported link modes: 10baseT/Half 10baseT/Full 100baseT/Half 100baseT/Full 1000baseT/Full Supported pause frame use: No //是否支持热插拔 Supports auto-negotiation: Yes //是否支持自动协商 Advertised link modes: 10baseT/Half 10baseT/Full 100baseT/Half 100baseT/Full 1000baseT/Full Advertised pause frame use: No Advertised auto-negotiation: Yes Speed: 1000Mb/s //速率 Duplex: Full //全双工 Port: Twisted Pair //电口 PHYAD: 0 Transceiver: internal Auto-negotiation: on MDI-X: Unknown Supports Wake-on: d Wake-on: d Current message level: 0x00000007 (7) drv probe link Link detected: yes  2）查看网卡的驱动信息：
+</div>
+
+<div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>0001-01-01</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>2分钟阅读时长</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="/categories/blog/" class="hover:text-eureka">blog</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/posts/" class="hover:text-eureka">posts</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/linux/" class="hover:text-eureka">Linux</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/" class="hover:text-eureka">Linux网络管理</a>
+        
+    </div>
+    
+
+    
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="mb-4">
+  <a href="/posts/1.linux/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/lldp/" class="font-bold text-xl hover:text-eureka"></a>
+</div>
+<div class="content">
+  CentOS7配置LLDP服务 https://blog.csdn.net/BK_sys/article/details/88554593 https://vincentbernat.github.io/lldpd/usage.html
+lldpad(2010年停更)：https://github.com/jrfastab/lldpad
+lldpd（lldpd可以输出json格式）：https://github.com/vincentbernat/lldpd
+第一种方式：lldpd 1、软件lldpd和lldpcli
+yum install lldpd -y
+2、服务启动后，相关信息可以通过如下命令获取
+lldpcli show neighbors
+将结果处理成json格式，只需要在命令后加上：lldpcli show neighbors -f json
+第二种方式：lldpad 1、安装相关服务软件和工具
+软件lldpad和lldptool
+yum install lldpad -y
+2、配置服务器端口用于接收和发送相关LLDP信息，包括端口，主机名，mac地址和ip地址
+（1）查看系统本地网卡设备：
+##因为网卡设备名称包含eth，eno，em，p1p1 ……，默认都是以e或者p开头
+ls /sys/class/net/ |egrep ‘e|p’
+（2）分别配置每个端口，以eno1为例，如下：
+lldptool set-lldp -i eno1 adminStatus=rxtx lldptool -T -i eno1 -V sysName enableTx=yes lldptool -T -i eno1 -V portDesc enableTx=yes lldptool -T -i eno1 -V sysDesc enableTx=yes lldptool -T -i eno1 -V mngAddr enableTx=yes  ##每个端口都配置的原因是防止已经down的端口遗漏掉，新部署服务器可以只配置up状态的接口，具体配置请根据实际需求配置。
+4、完成端口配置后，相关信息可以通过如下命令获取
+lldptool -t -n -i eno1
+</div>
+
+<div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>0001-01-01</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>3分钟阅读时长</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="/categories/blog/" class="hover:text-eureka">blog</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/posts/" class="hover:text-eureka">posts</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/linux/" class="hover:text-eureka">Linux</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/" class="hover:text-eureka">Linux网络管理</a>
+        
+    </div>
+    
+
+    
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="mb-4">
+  <a href="/posts/1.linux/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/nmcli/" class="font-bold text-xl hover:text-eureka"></a>
+</div>
+<div class="content">
+  https://blog.51cto.com/14012942/2432243
+ https://blog.csdn.net/cuichongxin/article/details/106473581
+ 
+</div>
+
+<div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>0001-01-01</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>1分钟阅读时长</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="/categories/blog/" class="hover:text-eureka">blog</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/posts/" class="hover:text-eureka">posts</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/linux/" class="hover:text-eureka">Linux</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/" class="hover:text-eureka">Linux网络管理</a>
+        
+    </div>
+    
+
+    
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="mb-4">
+  <a href="/posts/1.linux/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/snmp/" class="font-bold text-xl hover:text-eureka"></a>
+</div>
+<div class="content">
+  https://www.cnblogs.com/oloroso/p/4844907.html https://www.cnblogs.com/xdp-gacl/p/4016524.html https://www.cnblogs.com/smillepro/articles/9948253.html
+​	https://blog.csdn.net/lqy461929569/article/details/79881269
+​	https://www.cnblogs.com/xdp-gacl/p/3978825.html
+​	https://wenku.baidu.com/view/cf0efc335a8102d276a22f6d.html?sxts=1541989059623
+snmp简介 https://www.cnblogs.com/xdp-gacl/p/3978825.html　​	SNMP采用UDP协议在管理端和agent之间传输信息。 ==SNMP采用UDP 161端口接收和发送请求，162端口接收trap==，执行SNMP的设备缺省都必须采用这些端口。SNMP消息全部通过UDP端口161接收，只有Trap信息采用UDP端口162。
+snmp安装与卸载 安装包介绍&amp;hellip;&amp;hellip;
+yum安装 yum install -y net-snmp yum install -y net-snmp-utils yum install -y net-snmp-devel yum install -y net-snmp-libs yum install -y net-snmp-perl yum install -y mrtg 可使用iptables -L -n 查看当前iptables规则,放udp 161端口的访问权限  源码编译安装 https://www.cnblogs.com/xdp-gacl/p/4016524.html
+1.下载 下载Net-SNMP的源代码,选择一个SNMP版本，比如5.7.1，下载地址如下：
+http://www.net-snmp.org/download.html http://sourceforge.net/projects/net-snmp/files/net-snmp/5.7.1/，如下图所示：
+2. 解压编译 tar xzvf net-snmp-5.7.1.tar.gz解压后``cd net-snmp-5.7.1`通过configure来生成编译规则
+ net-snmp-5.7.1目录下的configure是可执行文件，如果想指定程序包的安装路径，那么首先建立相应的文件夹来存放安装信息，可以写成./configure –-prefix=/指定的路径名。参数&amp;ndash;prefix用来告诉系统安装信息存放的路径，如果没有指定路径，直接执行./configure，那么程序包都会安装在系统默认的目录下，通常为：/usr/local下
+ 执行命令
+./configure --prefix=/usr/local/snmp --with-mib-modules=&#39;ucd-snmp/diskio ip-mib/ipv4InterfaceTable&#39;
+::: info 请注意参数：
+–prefix=/usr/local/snmp 选项，选择snmp的安装路径。
+–with-mib-modules=ucd-snmp/diskio 选项，可以让服务器支持磁盘I/O监控。
+</div>
+
+<div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>0001-01-01</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>5分钟阅读时长</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="/categories/blog/" class="hover:text-eureka">blog</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/posts/" class="hover:text-eureka">posts</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/linux/" class="hover:text-eureka">Linux</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/" class="hover:text-eureka">Linux网络管理</a>
+        
+    </div>
+    
+
+    
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="mb-4">
+  <a href="/posts/1.linux/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/wireshark/" class="font-bold text-xl hover:text-eureka"></a>
+</div>
+<div class="content">
+  
+</div>
+
+<div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>0001-01-01</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>0分钟阅读时长</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="/categories/blog/" class="hover:text-eureka">blog</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/posts/" class="hover:text-eureka">posts</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/linux/" class="hover:text-eureka">Linux</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/" class="hover:text-eureka">Linux网络管理</a>
+        
+    </div>
+    
+
+    
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="mb-4">
+  <a href="/posts/7.%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4/shell/cpscp%E5%91%BD%E4%BB%A4/" class="font-bold text-xl hover:text-eureka"></a>
+</div>
+<div class="content">
+  SCP scp 命令将目录从一个远程服务器复制到另一个远程服务器上的新目录，命令如下：
+$ scp -r server1:dir1 server2:dir2  如果在 server2 上不存在 dir2，这可以正常工作，它会创建一个名为 dir2 的新目录，其中包含 server1 上 dir1 的所有内容。
+但是当 dir2 已经存在于 server2 上时，就会出现问题，已经存在的文件不会被覆盖。
+解决办法：
+$ scp -prq server1:dir1/. server2:dir2/  在文件目录后面加个点 .，将复制该目录的内容，而不是目录本身。
+CP 如果知道多个文件的名字时，可以使用 cp {filename1,filename2,&amp;hellip;} 目标/，目标必须是个文件夹
+ -a：此参数的效果和同时指定&amp;quot;-dpR&amp;quot;参数相同； -d：当复制符号连接时，把目标文件或目录也建立为符号连接，并指向与源文件或目录连接的原始文件或目录； -f：强行复制文件或目录，不论目标文件或目录是否已存在； -i：覆盖既有文件之前先询问用户； -l：对源文件建立硬连接，而非复制文件； -p：保留源文件或目录的属性； -R/r：递归处理，将指定目录下的所有文件与子目录一并处理； -s：对源文件建立符号连接，而非复制文件； -u：使用这项参数后只会在源文件的更改时间较目标文件更新时或是名称相互对应的目标文件并不存在时，才复制文件； -S：在备份文件时，用指定的后缀“SUFFIX”代替文件的默认后缀； -b：覆盖已存在的文件目标前将目标文件备份； -v：详细显示命令执行的操作。
+ 一.通配符的使用
+ 通配符是一种特殊语句，主要有星号(*)和问号(?)，用来模糊搜索文件。主要的通配符有：
+ * 匹配任意长度的字符串
+? 匹配一个长度的字符
+[&amp;hellip;] 匹配其中指定的字符
+[a-z] 匹配指定的字符范围
+[^&amp;hellip;] 除了其中指定的字符，其他均可匹配
+ 例1：可以代替0个或多个字符。如果需要拷贝以ABC开头的文件，可以输入ABC，拷贝以ABC开头的所有文件类型的文件，如ABCD.txt、ABCDEFG.exe、ABCZH.dll等。如果只需要拷贝txt文件，则可以输入ABC*.txt，拷贝以ABC为开头的TXT类型的文件，如ABC.txt、ABC12.txt。
+例2：？则只匹配一个字符，[1,b,8]就匹配括号中的1，b和8，这些都可以混搭使用。在linux2.6.14内核中，ls可以看到如图：
+  如果需要将.IAB .IAD .IMB .IMD和.WK3 这5个文件拷贝到根目录的tmp下，可以使用如下命令：
+</div>
+
+<div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>0001-01-01</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>1分钟阅读时长</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="/categories/blog/" class="hover:text-eureka">blog</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/posts/" class="hover:text-eureka">posts</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/linux/" class="hover:text-eureka">Linux</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/shell/" class="hover:text-eureka">shell</a>
+        
+    </div>
+    
+
+    
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="mb-4">
+  <a href="/posts/7.%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4/shell/ssh%E5%90%8E%E6%89%A7%E8%A1%8C%E5%A4%9A%E6%9D%A1%E5%91%BD%E4%BB%A4/" class="font-bold text-xl hover:text-eureka"></a>
+</div>
+<div class="content">
+  SSH连接服务器后执行多条命令 https://stackoverflow.com/a/4412338/4884227
+大家平时有没有遇到自己连接云服务器，ssh 连接上去之后，发现自己的一些小工具用不了
+例如go build无法使用 ，由于我们安装配置golang 环境的时候，是在文件/etc/profile中写了配置，因此需要source 一下/etc/profile
+那么是否可以在ssh 连接上服务器的时候就可以立即自动执行这一类命令呢？
+我们的智慧无穷无尽，小工具也是非常的多，今天来讲述一下SSH连接服务器后执行多条命令可以如何做
+1 使用分号隔开 使用 分号 ;来隔开命令
+  附带1条命令
+ssh User@Host &#39;source /etc/profile&#39;    附带多条命令
+ssh User@Host &#39;source /etc/profile ; uptime&#39;    2 使用管道符号隔开 使用管道|来隔开命令
+  附带1条命令
+ssh User@Host &#39;source /etc/profile&#39;    附带多条命令
+ssh User@Host &#39;source /etc/profile | uptime&#39;    3 使用写EOF的方式 同样适用于一条 / 多条命令
+ssh User@Host /bin/bash &amp;lt;&amp;lt; EOF &amp;gt; ls -al &amp;gt; source /etc/profile &amp;gt; EOF  4 使用脚本的方式 使用脚本的方式花样就更多了，例如有一个脚本myinit.
+</div>
+
+<div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>0001-01-01</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>1分钟阅读时长</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="/categories/blog/" class="hover:text-eureka">blog</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/posts/" class="hover:text-eureka">posts</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/linux/" class="hover:text-eureka">Linux</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/shell/" class="hover:text-eureka">shell</a>
+        
+    </div>
+    
+
+    
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="mb-4">
+  <a href="/posts/7.%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4/shell/untitled/" class="font-bold text-xl hover:text-eureka"></a>
+</div>
+<div class="content">
+  推荐阅读 advance bash scripting guide http://www.linuxplus.org/kb/special-chars.html
+man手册 https://linux.die.net/man/1/bash
+官方手册 https://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html
+变量 XXX 在linux的shell里，${name}可以表示变量，也可以表示数组。
+name后面加[ ]的，一般是数组， ${name[*]}是数组所有元素(all of the elements) ${name[@]}是数组每一个元素(each of the elements)  其实这两个几乎一样，差别主要在于当加上引号时，&amp;quot;${name[*]}&amp;quot;等于所有数组元素及其分隔符（一般是空格）排成的字符串，而&amp;quot;${name[@]}&amp;quot;仍然表示每一个元素。 ${#name[*]}是数组元素的个数，也可以写成${#name[@]}
+${name:-Hello} 是指，如果${name}没有赋值，那么它等于Hello,如果赋值了，就保持原值，不用管这个Hello了。(可为空，语句结束后变量销毁)
+自定义变量 将命令结果赋值给变量
+test=$(ls -l /root/)  变量是由任何字母、数字和下划线组成的字符串，且不能以数字开头 区分字母大小写，例如Var1和var1是不同的 变量、等号、值中间不能出现任何空格
+变量位置 执行命令脚本时后可跟变量参数
+   - - -     $n n为数字$0代表脚本本身，$1-$9代表1-9个参数，10以上需要用大括号，如$｛10｝    $@ $@命令行所有参数，每个参数都看作独立个体    $* $*命令行所有参数，所有的参数从整体上看作一个整体    $# 参数个数     Shell $*和$@的区别:http://c.biancheng.net/view/807.html
+环境变量 https://blog.csdn.net/jiangyanting2011/article/details/78875928
+https://www.cnblogs.com/x_wukong/p/4771316.html
+</div>
+
+<div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>0001-01-01</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>3分钟阅读时长</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="/categories/blog/" class="hover:text-eureka">blog</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/posts/" class="hover:text-eureka">posts</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/linux/" class="hover:text-eureka">Linux</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/shell/" class="hover:text-eureka">shell</a>
+        
+    </div>
+    
+
+    
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="mb-4">
+  <a href="/posts/7.%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4/shell/%E5%88%A4%E6%96%AD%E6%9D%A1%E4%BB%B6/" class="font-bold text-xl hover:text-eureka"></a>
+</div>
+<div class="content">
+  
+</div>
+
+<div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>0001-01-01</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>0分钟阅读时长</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="/categories/blog/" class="hover:text-eureka">blog</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/posts/" class="hover:text-eureka">posts</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/linux/" class="hover:text-eureka">Linux</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/shell/" class="hover:text-eureka">shell</a>
+        
+    </div>
+    
+
+    
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
+  
+</div>
+
+
+</div>
+
+<ul class="pagination">
+  <li class="page-item">
+    <a href="/categories/linux/" class="page-link" aria-label="First"><span aria-hidden="true">&laquo;&laquo;</span></a>
+  </li>
+  <li class="page-item disabled">
+    <a  class="page-link" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
+  </li>
+  <li class="page-item active">
+    <a class="page-link" href="/categories/linux/">1</a>
+  </li>
+  <li class="page-item">
+    <a class="page-link" href="/categories/linux/page/2/">2</a>
+  </li>
+  <li class="page-item">
+    <a class="page-link" href="/categories/linux/page/3/">3</a>
+  </li>
+  <li class="page-item">
+    <a href="/categories/linux/page/2/" class="page-link" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
+  </li>
+  <li class="page-item">
+    <a href="/categories/linux/page/3/" class="page-link" aria-label="Last"><span aria-hidden="true">&raquo;&raquo;</span></a>
+  </li>
+</ul>
+
+
+
+      </div>
+    </div>
+    
+  </main>
+  <footer class="pl-scrollbar">
+    <div class="w-full max-w-screen-xl mx-auto"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 2021 <a href="https://www.songjinfeng.com/">SonJinfeng</a> 
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+  </footer>
+</body>
+
+</html>

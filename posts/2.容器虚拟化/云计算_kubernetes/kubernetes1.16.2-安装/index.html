@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang='zh' ><meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+
+
+<title>kubernetes1.16.2部署 | Songjinfeng&#39;s BLOG</title>
+<link rel="stylesheet" href="/css/eureka.min.css">
+<script defer src="/js/eureka.min.js"></script>
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Noto+Serif+SC:wght@400;600;700&display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/styles/solarized-light.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/highlight.min.js"
+   crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/dart.min.js"
+     crossorigin></script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/js/all.min.js"
+   integrity="sha256-uNYoXefWRqv&#43;PsIF/OflNmwtKM4lStn9yrz2gVl6ymo="  crossorigin></script>
+
+
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css"
+   integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3&#43;Aro6EYUG4&#43;cU&#43;KJWu/X"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js" 
+  integrity="sha384-g7c&#43;Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI&#43;sEnkvrMWph2EDg4"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js"
+   integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC&#43;Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.9.2/dist/mermaid.min.js" 
+  integrity="sha256-Zmpaaj&#43;GXFsPF5WdPArSrnW3b30dovldeKsW00xBVwE="  crossorigin></script>
+
+
+<link rel="icon" type="image/png" sizes="32x32" href="/images/icon_hucfa16751ac9c82c06b84c3502c0db793_16378_32x32_fill_box_center_2.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hucfa16751ac9c82c06b84c3502c0db793_16378_180x180_fill_box_center_2.png">
+
+<meta name="description"
+  content="初始化系统 以下操作两个节点都要做并且是root用户安装 #/bin/bash ###################################################### # Written By:Shsnc # Author:direnjie &lt;direnjie@shsnc.com&gt; # Date:2019-10-17 01:32 ##################################################### echo &quot;正在输出结果，请按回车键继续查看... ... ... ... ... ... ...&quot; { echo &quot;####################关闭防火墙和设置防火墙开机不自启#####################&quot; systemctl stop firewalld &amp; systemctl disable firewalld echo &quot;###########################关闭selinux###################################&quot; sed -i &#39;s/enforcing/disabled/g&#39; /etc/selinux/config sed -i &#39;s/permissive/disabled/g&#39; /etc/selinux/config echo &quot;##########################添加本地hosts##################################&quot; echo &#39;192.168.136.134 pinpoint01&#39; &gt;&gt; /etc/hosts echo &#39;192.168.217.135 pinpoint02&#39; &gt;&gt; /etc/hosts echo &quot;###########################关闭swap分区#################################&quot; swapoff -a sed -i &#39;/ swap / s/^/#/&#39; /etc/fstab sed -i &#39;s/.*swap.*/#&amp;/&#39; /etc/fstab free -m echo &quot;###########################配置阿里源#####################################&quot; cat &lt;&lt;EOF &gt; /etc/yum.">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"技术专栏",
+      "item":"/posts/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"容器虚拟化",
+      "item":"/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/"},{
+      "@type": "ListItem",
+      "position": 3 ,
+      "name":"kubernetes1.16.2部署",
+      "item":"/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/kubernetes1.16.2-%E5%AE%89%E8%A3%85/"}]
+}
+</script>
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/kubernetes1.16.2-%E5%AE%89%E8%A3%85/"
+    },
+    "headline": "kubernetes1.16.2部署 | Songjinfeng\u0027s BLOG","wordCount":  385 ,
+    "publisher": {
+        "@type": "Person",
+        "name": "JF. Song",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "/images/icon.png"
+        }
+        },
+    "description": "初始化系统 以下操作两个节点都要做并且是root用户安装 #\/bin\/bash ###################################################### # Written By:Shsnc # Author:direnjie \u0026lt;direnjie@shsnc.com\u0026gt; # Date:2019-10-17 01:32 ##################################################### echo \u0026quot;正在输出结果，请按回车键继续查看... ... ... ... ... ... ...\u0026quot; { echo \u0026quot;####################关闭防火墙和设置防火墙开机不自启#####################\u0026quot; systemctl stop firewalld \u0026amp; systemctl disable firewalld echo \u0026quot;###########################关闭selinux###################################\u0026quot; sed -i \u0027s\/enforcing\/disabled\/g\u0027 \/etc\/selinux\/config sed -i \u0027s\/permissive\/disabled\/g\u0027 \/etc\/selinux\/config echo \u0026quot;##########################添加本地hosts##################################\u0026quot; echo \u0027192.168.136.134 pinpoint01\u0027 \u0026gt;\u0026gt; \/etc\/hosts echo \u0027192.168.217.135 pinpoint02\u0027 \u0026gt;\u0026gt; \/etc\/hosts echo \u0026quot;###########################关闭swap分区#################################\u0026quot; swapoff -a sed -i \u0027\/ swap \/ s\/^\/#\/\u0027 \/etc\/fstab sed -i \u0027s\/.*swap.*\/#\u0026amp;\/\u0027 \/etc\/fstab free -m echo \u0026quot;###########################配置阿里源#####################################\u0026quot; cat \u0026lt;\u0026lt;EOF \u0026gt; \/etc\/yum."
+}
+</script><meta property="og:title" content="kubernetes1.16.2部署 | Songjinfeng&#39;s BLOG" />
+<meta property="og:type" content="article" />
+
+
+<meta property="og:image" content="/images/icon.png">
+
+
+<meta property="og:url" content="/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/kubernetes1.16.2-%E5%AE%89%E8%A3%85/" />
+
+
+
+
+<meta property="og:description" content="初始化系统 以下操作两个节点都要做并且是root用户安装 #/bin/bash ###################################################### # Written By:Shsnc # Author:direnjie &lt;direnjie@shsnc.com&gt; # Date:2019-10-17 01:32 ##################################################### echo &quot;正在输出结果，请按回车键继续查看... ... ... ... ... ... ...&quot; { echo &quot;####################关闭防火墙和设置防火墙开机不自启#####################&quot; systemctl stop firewalld &amp; systemctl disable firewalld echo &quot;###########################关闭selinux###################################&quot; sed -i &#39;s/enforcing/disabled/g&#39; /etc/selinux/config sed -i &#39;s/permissive/disabled/g&#39; /etc/selinux/config echo &quot;##########################添加本地hosts##################################&quot; echo &#39;192.168.136.134 pinpoint01&#39; &gt;&gt; /etc/hosts echo &#39;192.168.217.135 pinpoint02&#39; &gt;&gt; /etc/hosts echo &quot;###########################关闭swap分区#################################&quot; swapoff -a sed -i &#39;/ swap / s/^/#/&#39; /etc/fstab sed -i &#39;s/.*swap.*/#&amp;/&#39; /etc/fstab free -m echo &quot;###########################配置阿里源#####################################&quot; cat &lt;&lt;EOF &gt; /etc/yum." />
+
+
+
+
+<meta property="og:locale" content="zh" />
+
+
+
+
+<meta property="og:site_name" content="Songjinfeng&#39;s BLOG" />
+
+
+
+
+
+
+
+
+
+<meta property="article:section" content="posts" />
+
+
+
+
+<body class="flex flex-col min-h-screen">
+  <header class="fixed flex items-center w-full min-h-16 pl-scrollbar z-50 bg-secondary-bg shadow-sm">
+    <div class="w-full max-w-screen-xl mx-auto"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="mr-6 text-primary-text text-xl font-bold">Songjinfeng&#39;s BLOG</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:flex-grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:flex-grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  mr-4">技术专栏</a>
+            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">文档笔记</a>
+            <a href="/series/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">主题系列</a>
+            <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">标签</a>
+            <a href="/authors/songjinfeng/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">关于</a>
+            <a href="/index.xml" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">RSS</a>
+            <a href="/webstack" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">友链&amp;导航</a>
+        </div>
+
+        <div class="flex">
+            <div class="relative pt-4 md:pt-0">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col left-0 md:left-auto right-auto md:right-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">浅色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">深色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">自动</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            switchMode('Auto')
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+  </header>
+  <main class="flex-grow pt-16">
+    <div class="pl-scrollbar">
+      <div class="w-full max-w-screen-xl lg:px-4 xl:px-8 mx-auto">
+
+
+<div class="grid grid-cols-2 lg:grid-cols-8 gap-4 lg:pt-12">
+    <div
+        class="col-span-2 lg:col-start-2 lg:col-span-6 bg-secondary-bg rounded px-6 py-8">
+        <h1 class="font-bold text-3xl text-primary-text">kubernetes1.16.2部署</h1>
+        <div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>0001-01-01</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>2分钟阅读时长</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="/categories/blog/" class="hover:text-eureka">blog</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/posts/" class="hover:text-eureka">posts</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/%E4%BA%91%E8%AE%A1%E7%AE%97/" class="hover:text-eureka">云计算</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/kubernetes/" class="hover:text-eureka">Kubernetes</a>
+        
+    </div>
+    
+
+    
+</div>
+        
+        
+        
+
+        <div class="content">
+            <h1 id="初始化系统">初始化系统</h1>
+<h2 id="以下操作两个节点都要做并且是root用户安装">以下操作两个节点都要做并且是root用户安装</h2>
+<pre><code>#/bin/bash
+######################################################
+# Written By:Shsnc
+# Author:direnjie &lt;direnjie@shsnc.com&gt;
+# Date:2019-10-17 01:32
+#####################################################
+
+echo &quot;正在输出结果，请按回车键继续查看... ... ... ... ... ... ...&quot;
+  {
+
+
+echo &quot;####################关闭防火墙和设置防火墙开机不自启#####################&quot;
+systemctl stop firewalld &amp; systemctl disable firewalld
+
+
+
+echo &quot;###########################关闭selinux###################################&quot;
+sed -i 's/enforcing/disabled/g' /etc/selinux/config
+sed -i 's/permissive/disabled/g' /etc/selinux/config
+
+
+
+echo &quot;##########################添加本地hosts##################################&quot;
+echo '192.168.136.134 pinpoint01' &gt;&gt; /etc/hosts
+echo '192.168.217.135 pinpoint02' &gt;&gt; /etc/hosts
+
+
+echo &quot;###########################关闭swap分区#################################&quot;
+swapoff -a
+sed -i '/ swap / s/^/#/' /etc/fstab
+sed -i 's/.*swap.*/#&amp;/' /etc/fstab
+free -m
+
+
+echo &quot;###########################配置阿里源#####################################&quot;
+cat &lt;&lt;EOF &gt; /etc/yum.repos.d/kubernetes.repo
+
+[kubernetes]
+
+name=Kubernetes
+
+baseurl=http://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64
+
+enabled=1
+
+gpgcheck=1
+
+repo_gpgcheck=1
+
+gpgkey=http://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg
+
+        http://mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.gpg
+
+EOF
+yum install -y wget yum-utils
+wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo
+yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
+yum makecache
+
+
+echo &quot;##############################安装docker####################################&quot;
+
+yum install -y docker
+systemctl start docker &amp; systemctl enable docker
+
+
+
+
+echo &quot;#############################开始安装k8s组件#################################&quot;
+yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
+systemctl enable kubelet&amp;&amp; systemctl start kubelet
+kubeadm config images list
+
+cat &lt;&lt;EOF &gt; /etc/sysctl.d/k8s.conf
+net.bridge.bridge-nf-call-ip6tables = 1
+net.bridge.bridge-nf-call-iptables = 1
+net.ipv4.ip_forward = 1
+EOF
+modprobe br_netfilter
+sysctl -p /etc/sysctl.d/k8s.conf
+
+
+
+
+
+echo &quot;###########################开始设置docker镜像加速器#########################&quot;
+sudo mkdir -p /etc/docker
+sudo tee /etc/docker/daemon.json &lt;&lt;-'EOF'
+{
+  &quot;registry-mirrors&quot;: [&quot;https://2df50eoy.mirror.aliyuncs.com&quot;]
+}
+EOF
+sudo systemctl daemon-reload
+sudo systemctl restart docker
+
+
+
+
+
+echo &quot;###############################开始下载镜像#################################&quot;
+cat &lt;&lt;EOF &gt; /opt/images.sh
+echo &quot;&quot;
+echo &quot;==========================================================&quot;
+echo &quot;Pull K8s v1.16.2 Images from aliyuncs.com &quot;
+echo &quot;==========================================================&quot;
+echo &quot;&quot;
+
+cat &lt;&lt;EOF &gt; /opt/images.sh
+echo &quot;&quot;
+echo &quot;==========================================================&quot;
+echo &quot;Pull K8s v1.16.6 Images from aliyuncs.com &quot;
+echo &quot;==========================================================&quot;
+echo &quot;&quot;
+
+# 基本组件
+
+
+k8s.gcr.io/kube-apiserver:v1.18.8
+k8s.gcr.io/kube-controller-manager:v1.18.8
+k8s.gcr.io/kube-scheduler:v1.18.8
+k8s.gcr.io/kube-proxy:v1.18.8
+k8s.gcr.io/pause:3.2
+k8s.gcr.io/etcd:3.4.3-0
+k8s.gcr.io/coredns:1.6.7
+
+
+docker pull registry.cn-hangzhou.aliyuncs.com/openthings/k8s-gcr-io-kube-apiserver:v1.17.2
+docker pull registry.cn-hangzhou.aliyuncs.com/openthings/k8s-gcr-io-kube-controller-manager:v1.17.2
+docker pull registry.cn-hangzhou.aliyuncs.com/openthings/k8s-gcr-io-kube-scheduler:v1.17.2
+docker pull registry.cn-hangzhou.aliyuncs.com/openthings/k8s-gcr-io-kube-proxy:v1.17.2
+docker pull registry.cn-hangzhou.aliyuncs.com/openthings/k8s-gcr-io-etcd:3.4.3-0
+docker pull registry.cn-hangzhou.aliyuncs.com/openthings/k8s-gcr-io-pause:3.1
+docker pull registry.cn-hangzhou.aliyuncs.com/openthings/k8s-gcr-io-coredns:1.6.5
+
+
+# 修改tag
+docker tag registry.cn-hangzhou.aliyuncs.com/openthings/k8s-gcr-io-kube-apiserver:v1.17.2 k8s.gcr.io/kube-apiserver:v1.17.2
+docker tag registry.cn-hangzhou.aliyuncs.com/openthings/k8s-gcr-io-kube-scheduler:v1.17.2 k8s.gcr.io/kube-scheduler:v1.17.2
+docker tag registry.cn-hangzhou.aliyuncs.com/openthings/k8s-gcr-io-kube-controller-manager:v1.17.2 k8s.gcr.io/kube-controller-manager:v1.17.2
+docker tag registry.cn-hangzhou.aliyuncs.com/openthings/k8s-gcr-io-kube-proxy:v1.17.2 k8s.gcr.io/kube-proxy:v1.17.2
+docker tag registry.cn-hangzhou.aliyuncs.com/openthings/k8s-gcr-io-etcd:3.4.3-0 k8s.gcr.io/etcd:3.4.3-0
+docker tag registry.cn-hangzhou.aliyuncs.com/openthings/k8s-gcr-io-pause:3.1 k8s.gcr.io/pause:3.1
+docker tag registry.cn-hangzhou.aliyuncs.com/openthings/k8s-gcr-io-coredns:1.6.5 k8s.gcr.io/coredns:1.6.5
+
+## 删除镜像
+docker rmi registry.cn-hangzhou.aliyuncs.com/openthings/k8s-gcr-io-kube-apiserver:v1.17.2
+docker rmi registry.cn-hangzhou.aliyuncs.com/openthings/k8s-gcr-io-kube-controller-manager:v1.17.2
+docker rmi registry.cn-hangzhou.aliyuncs.com/openthings/k8s-gcr-io-kube-scheduler:v1.17.2
+docker rmi registry.cn-hangzhou.aliyuncs.com/openthings/k8s-gcr-io-kube-proxy:v1.17.2
+docker rmi registry.cn-hangzhou.aliyuncs.com/openthings/k8s-gcr-io-etcd:3.4.3-0
+docker rmi registry.cn-hangzhou.aliyuncs.com/openthings/k8s-gcr-io-pause:3.1
+docker rmi registry.cn-hangzhou.aliyuncs.com/openthings/k8s-gcr-io-coredns:1.6.5
+EOF
+
+sh /opt/images.sh
+
+
+} &gt; /opt/err.log
+</code></pre>
+<p>以上操作在两个节点上都要进行，以下操作只在master上进行</p>
+<h1 id="初始化kubernetes">初始化kubernetes</h1>
+<pre><code>kubeadm init --kubernetes-version=1.16.2 --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address=192.168.136.134
+</code></pre>
+<h2 id="为kubectl准备kubeconfig文件">为kubectl准备Kubeconfig文件</h2>
+<p>kubectl默认会在执行的用户家目录下面的.kube目录下寻找config文件。这里是将在初始化时[kubeconfig]步骤生成的admin.conf拷贝到.kube/config。</p>
+<p>在该配置文件中，记录了API Server的访问地址，所以后面直接执行kubectl命令就可以正常连接到API Server中。</p>
+<pre><code>mkdir -p $HOME/.kube
+
+cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+
+chown root.root /root/.kube/config
+</code></pre>
+<h1 id="安装flannel-网络">安装flannel 网络</h1>
+<p>下载docker镜像</p>
+<pre><code>docker pull jmgao1983/flannel:v0.11.0-amd64
+</code></pre>
+<p>下载 kube-flannel.yml 配置文件</p>
+<pre><code>wget https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+</code></pre>
+<p>替换kube-flannel.yml中的镜像名称</p>
+<pre><code>sed -i 's#quay.io/coreos/flannel:v0.11.0-amd64#jmgao1983/flannel:v0.11.0-amd64#g' kube-flannel.yml
+</code></pre>
+<p>运行下面命令安装flannel</p>
+<pre><code>kubectl apply -f kube-flannel.yml
+</code></pre>
+<p>查看node状态</p>
+<pre><code>kubectl -n kube-system get pod 
+
+or
+
+kubectl get pods -A  -o wide
+</code></pre>
+<p>如果全是runing代表成功</p>
+<h1 id="安装work节点">安装work节点</h1>
+<p>work节点执行完脚本，之后执行这个</p>
+<pre><code>kubeadm join 192.168.254.100:6443 --token eehowx.9lau2dfgsga63qgb --discovery-token-ca-cert-hash sha256:eeabf48bb9043f9517d9d4430dd4ea24f111f865e9d0383e24008b3510934214
+</code></pre>
+<p>将master节点/etc/kubernetes/admin.conf复制到work节点的/etc/kubernetes/下</p>
+<pre><code>scp /etc/kubernetes/admin.conf root@192.168.136.135:/etc/kubernetes/
+</code></pre>
+<p>和master节点一样执行如下命令</p>
+<pre><code>mkdir -p $HOME/.kube
+
+cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+
+chown root.root /root/.kube/config
+</code></pre>
+
+        </div>
+        
+        
+        
+        
+        
+        
+        
+<div class="flex flex-col md:flex-row md:justify-between -mx-2 mt-4 px-2 pt-4 border-t">
+    <div>
+        
+        <span class="block font-bold">上一页</span>
+        <a href="/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_docker/docker%E5%AE%B9%E5%99%A8%E8%B7%A8%E4%B8%BB%E6%9C%BA%E9%80%9A%E4%BF%A1overlay%E7%BD%91%E7%BB%9C/" class="block">Docker跨主机通信</a>
+        
+    </div>
+    <div class="md:text-right mt-4 md:mt-0">
+        
+        <span class="block font-bold">下一页</span>
+        <a href="/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/2.-%E7%AD%BE%E5%8F%91%E8%AF%81%E4%B9%A6/" class="block">证书</a>
+        
+    </div>
+</div>
+
+        
+    </div>
+    
+
+    
+    
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', ()=>{
+        hljs.initHighlightingOnLoad();
+    })
+</script>
+
+      </div>
+    </div>
+    
+  </main>
+  <footer class="pl-scrollbar">
+    <div class="w-full max-w-screen-xl mx-auto"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 2021 <a href="https://www.songjinfeng.com/">SonJinfeng</a> 
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+  </footer>
+</body>
+
+</html>

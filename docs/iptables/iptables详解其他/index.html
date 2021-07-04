@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang='zh' ><meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+
+
+<title>Songjinfeng&#39;s BLOG</title>
+<link rel="stylesheet" href="/css/eureka.min.css">
+<script defer src="/js/eureka.min.js"></script>
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Noto+Serif+SC:wght@400;600;700&display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/styles/solarized-light.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/highlight.min.js"
+   crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/dart.min.js"
+     crossorigin></script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/js/all.min.js"
+   integrity="sha256-uNYoXefWRqv&#43;PsIF/OflNmwtKM4lStn9yrz2gVl6ymo="  crossorigin></script>
+
+
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css"
+   integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3&#43;Aro6EYUG4&#43;cU&#43;KJWu/X"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js" 
+  integrity="sha384-g7c&#43;Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI&#43;sEnkvrMWph2EDg4"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js"
+   integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC&#43;Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.9.2/dist/mermaid.min.js" 
+  integrity="sha256-Zmpaaj&#43;GXFsPF5WdPArSrnW3b30dovldeKsW00xBVwE="  crossorigin></script>
+
+
+<link rel="icon" type="image/png" sizes="32x32" href="/images/icon_hucfa16751ac9c82c06b84c3502c0db793_16378_32x32_fill_box_center_2.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hucfa16751ac9c82c06b84c3502c0db793_16378_180x180_fill_box_center_2.png">
+
+<meta name="description"
+  content="title: limit hashlimit https://blog.51cto.com/lvsheat/142567
+利用hashlimit来限速需要包括两个步骤。 1.对符合hashlimit匹配规则包放行 2.丢弃/拒绝未放行的包 下面是一个简单的例子： iptables -A INPUT -p tcp --dport 22 -m hashlimit --hashlimit-name ssh --hashlimit 5/sec --hashlimit-burst 10 --hashlimit-mode srcip --hashlimit-htable-expire 90000 -j ACCEPT iptables -A INPUT -p tcp --dport 22 -j DROP  hashlimit的匹配是基于令牌桶(Token bucket）模型的。
+只要令牌桶中的令牌数量少于n，它就会以速率s来产生新的令牌，直到令牌数量到达n为止。
+通过令牌桶机制，即可以有效的控制单位时间内通过（匹配）的数据包数量，又可以容许短时间内突发的大量数据包的通过（只要数据包数量不超过令牌桶n）。
+hashlimit模块提供了两个参数&ndash;hashlimit和&ndash;hashlimit-burst，分别对应于令牌产生速率和令牌桶容量。
+除了令牌桶模型外，hashlimit匹配的另外一个重要概念是匹配项。 在hashlimit中，每个匹配项拥有一个单独的令牌桶，执行独立的匹配计算。 通过hashlimit的&ndash;hashlimit-mode参数，你可以指定四种匹配项及其组合
+ srcip（每个源地址IP为一个匹配项） dstip(每个目的地址IP为一个匹配项） srcport(每个源端口为一个匹配项） dstport（每个目的端口为一个匹配项）  除了前面介绍的三个参数外，hashlimit还有一个必须要用的参数，即&ndash;hashlimit-name。
+hashlimit会在/proc/net/ipt_hashlimit目录中，为每个调用了hashlimit模块的iptables命令建立一个文件，其中保存着各匹配项的信息。&ndash;hashlimit-name参数即用来指定该文件的文件名。
+再来我们看一个复杂点的限速。假设我们现在在一台NAT网关上，想限制内部网某个网段 192.168.1.2/24对外的访问频率。（这个的主要作用是限制内部中毒主机对外的flood攻击 ） 那我们可以这么做： iptables -N DEFLOOD iptables -A FORWARD -s 192.168.1.2/24 -m state --state NEW -j DEFLOOD iptables -A DEFLOOD -m hashlimit --hashlimit-name deflood --hashlimit 10/sec --hashlimit-burst 10 --hashlimit-mode srcip -j ACCEPT iptables -P DEFLOOD -j DROP 第一条命令建立了一个自定义的处理链 第二条命令，所有来自192.">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"文档笔记",
+      "item":"/docs/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"Iptables详解",
+      "item":"/docs/iptables/"},{
+      "@type": "ListItem",
+      "position": 3 ,
+      "name":"",
+      "item":"/docs/iptables/iptables%E8%AF%A6%E8%A7%A3%E5%85%B6%E4%BB%96/"}]
+}
+</script>
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/docs/iptables/iptables%E8%AF%A6%E8%A7%A3%E5%85%B6%E4%BB%96/"
+    },
+    "headline": "Songjinfeng\u0027s BLOG","wordCount":  2659 ,
+    "publisher": {
+        "@type": "Person",
+        "name": "JF. Song",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "/images/icon.png"
+        }
+        },
+    "description": "title: limit hashlimit https:\/\/blog.51cto.com\/lvsheat\/142567\n利用hashlimit来限速需要包括两个步骤。 1.对符合hashlimit匹配规则包放行 2.丢弃\/拒绝未放行的包 下面是一个简单的例子： iptables -A INPUT -p tcp --dport 22 -m hashlimit --hashlimit-name ssh --hashlimit 5\/sec --hashlimit-burst 10 --hashlimit-mode srcip --hashlimit-htable-expire 90000 -j ACCEPT iptables -A INPUT -p tcp --dport 22 -j DROP  hashlimit的匹配是基于令牌桶(Token bucket）模型的。\n只要令牌桶中的令牌数量少于n，它就会以速率s来产生新的令牌，直到令牌数量到达n为止。\n通过令牌桶机制，即可以有效的控制单位时间内通过（匹配）的数据包数量，又可以容许短时间内突发的大量数据包的通过（只要数据包数量不超过令牌桶n）。\nhashlimit模块提供了两个参数\u0026ndash;hashlimit和\u0026ndash;hashlimit-burst，分别对应于令牌产生速率和令牌桶容量。\n除了令牌桶模型外，hashlimit匹配的另外一个重要概念是匹配项。 在hashlimit中，每个匹配项拥有一个单独的令牌桶，执行独立的匹配计算。 通过hashlimit的\u0026ndash;hashlimit-mode参数，你可以指定四种匹配项及其组合\n srcip（每个源地址IP为一个匹配项） dstip(每个目的地址IP为一个匹配项） srcport(每个源端口为一个匹配项） dstport（每个目的端口为一个匹配项）  除了前面介绍的三个参数外，hashlimit还有一个必须要用的参数，即\u0026ndash;hashlimit-name。\nhashlimit会在\/proc\/net\/ipt_hashlimit目录中，为每个调用了hashlimit模块的iptables命令建立一个文件，其中保存着各匹配项的信息。\u0026ndash;hashlimit-name参数即用来指定该文件的文件名。\n再来我们看一个复杂点的限速。假设我们现在在一台NAT网关上，想限制内部网某个网段 192.168.1.2\/24对外的访问频率。（这个的主要作用是限制内部中毒主机对外的flood攻击 ） 那我们可以这么做： iptables -N DEFLOOD iptables -A FORWARD -s 192.168.1.2\/24 -m state --state NEW -j DEFLOOD iptables -A DEFLOOD -m hashlimit --hashlimit-name deflood --hashlimit 10\/sec --hashlimit-burst 10 --hashlimit-mode srcip -j ACCEPT iptables -P DEFLOOD -j DROP 第一条命令建立了一个自定义的处理链 第二条命令，所有来自192."
+}
+</script><meta property="og:title" content="Songjinfeng&#39;s BLOG" />
+<meta property="og:type" content="article" />
+
+
+<meta property="og:image" content="/images/icon.png">
+
+
+<meta property="og:url" content="/docs/iptables/iptables%E8%AF%A6%E8%A7%A3%E5%85%B6%E4%BB%96/" />
+
+
+
+
+<meta property="og:description" content="title: limit hashlimit https://blog.51cto.com/lvsheat/142567
+利用hashlimit来限速需要包括两个步骤。 1.对符合hashlimit匹配规则包放行 2.丢弃/拒绝未放行的包 下面是一个简单的例子： iptables -A INPUT -p tcp --dport 22 -m hashlimit --hashlimit-name ssh --hashlimit 5/sec --hashlimit-burst 10 --hashlimit-mode srcip --hashlimit-htable-expire 90000 -j ACCEPT iptables -A INPUT -p tcp --dport 22 -j DROP  hashlimit的匹配是基于令牌桶(Token bucket）模型的。
+只要令牌桶中的令牌数量少于n，它就会以速率s来产生新的令牌，直到令牌数量到达n为止。
+通过令牌桶机制，即可以有效的控制单位时间内通过（匹配）的数据包数量，又可以容许短时间内突发的大量数据包的通过（只要数据包数量不超过令牌桶n）。
+hashlimit模块提供了两个参数&ndash;hashlimit和&ndash;hashlimit-burst，分别对应于令牌产生速率和令牌桶容量。
+除了令牌桶模型外，hashlimit匹配的另外一个重要概念是匹配项。 在hashlimit中，每个匹配项拥有一个单独的令牌桶，执行独立的匹配计算。 通过hashlimit的&ndash;hashlimit-mode参数，你可以指定四种匹配项及其组合
+ srcip（每个源地址IP为一个匹配项） dstip(每个目的地址IP为一个匹配项） srcport(每个源端口为一个匹配项） dstport（每个目的端口为一个匹配项）  除了前面介绍的三个参数外，hashlimit还有一个必须要用的参数，即&ndash;hashlimit-name。
+hashlimit会在/proc/net/ipt_hashlimit目录中，为每个调用了hashlimit模块的iptables命令建立一个文件，其中保存着各匹配项的信息。&ndash;hashlimit-name参数即用来指定该文件的文件名。
+再来我们看一个复杂点的限速。假设我们现在在一台NAT网关上，想限制内部网某个网段 192.168.1.2/24对外的访问频率。（这个的主要作用是限制内部中毒主机对外的flood攻击 ） 那我们可以这么做： iptables -N DEFLOOD iptables -A FORWARD -s 192.168.1.2/24 -m state --state NEW -j DEFLOOD iptables -A DEFLOOD -m hashlimit --hashlimit-name deflood --hashlimit 10/sec --hashlimit-burst 10 --hashlimit-mode srcip -j ACCEPT iptables -P DEFLOOD -j DROP 第一条命令建立了一个自定义的处理链 第二条命令，所有来自192." />
+
+
+
+
+<meta property="og:locale" content="zh" />
+
+
+
+
+<meta property="og:site_name" content="Songjinfeng&#39;s BLOG" />
+
+
+
+
+
+
+
+
+
+<meta property="article:section" content="docs" />
+
+
+
+
+<body class="flex flex-col min-h-screen">
+  <header class="fixed flex items-center w-full min-h-16 pl-scrollbar z-50 bg-secondary-bg shadow-sm">
+    <div class="w-full max-w-screen-xl mx-auto"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="mr-6 text-primary-text text-xl font-bold">Songjinfeng&#39;s BLOG</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:flex-grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:flex-grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">技术专栏</a>
+            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  mr-4">文档笔记</a>
+            <a href="/series/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">主题系列</a>
+            <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">标签</a>
+            <a href="/authors/songjinfeng/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">关于</a>
+            <a href="/index.xml" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">RSS</a>
+            <a href="/webstack" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">友链&amp;导航</a>
+        </div>
+
+        <div class="flex">
+            <div class="relative pt-4 md:pt-0">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col left-0 md:left-auto right-auto md:right-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">浅色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">深色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">自动</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            switchMode('Auto')
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+  </header>
+  <main class="flex-grow pt-16">
+    <div class="pl-scrollbar">
+      <div class="w-full max-w-screen-xl lg:px-4 xl:px-8 mx-auto">
+
+
+<div class="lg:pt-12">
+    <div class="flex flex-col md:flex-row bg-secondary-bg rounded">
+        <div class="md:w-1/4 lg:w-1/5 border-r">
+            <div class="sticky top-16 pt-6">
+                
+
+
+
+
+
+
+
+
+
+
+<div id="sidebar-title" class="md:hidden mx-4 px-2 pt-4 pb-2 md:border-b text-tertiary-text md:text-primary-text">
+    <span class="font-semibold">目录</span>
+    <i class="fas fa-caret-right ml-1"></i>
+</div>
+
+<div id="sidebar-toc"
+    class="hidden md:block overflow-y-auto mx-6 md:mx-0 pr-6 pt-2 md:max-h-doc-sidebar bg-primary-bg md:bg-transparent">
+    <div class="flex flex-wrap ml-4 -mr-2 p-2 bg-secondary-bg md:bg-primary-bg rounded">
+        <a class=" hover:text-eureka"
+            href="/docs/iptables/">Iptables详解</a>
+        
+        
+        
+
+
+    </div>
+    
+<ul class="pl-6">
+    
+    
+    
+    <li class="py-2">
+        <div class="">
+            <a class=" hover:text-eureka"
+                href="/docs/iptables/iptables%E8%AF%A6%E8%A7%A31%E6%A6%82%E5%BF%B5/">Iptables详解(1)概念</a>
+        </div>
+        
+    </li>
+    
+    
+    
+    
+    <li class="py-2">
+        <div class="">
+            <a class=" hover:text-eureka"
+                href="/docs/iptables/iptables%E8%AF%A6%E8%A7%A32%E5%9F%BA%E7%A1%80%E7%AE%A1%E7%90%86%E5%91%BD%E4%BB%A4/">Iptables详解(2)管理</a>
+        </div>
+        
+    </li>
+    
+    
+    
+    
+    <li class="py-2">
+        <div class="">
+            <a class=" hover:text-eureka"
+                href="/docs/iptables/iptables%E8%AF%A6%E8%A7%A332%E6%89%A9%E5%B1%95%E5%8C%B9%E9%85%8D%E6%9D%A1%E4%BB%B6%E6%A8%A1%E5%9D%97/">Iptables详解(3)2扩展匹配条件模块</a>
+        </div>
+        
+    </li>
+    
+    
+    
+    
+    <li class="py-2">
+        <div class="">
+            <a class=" hover:text-eureka"
+                href="/docs/iptables/iptables%E8%AF%A6%E8%A7%A333%E5%AE%89%E5%85%A8%E6%A8%A1%E5%9D%97/">Iptables详解(3)3安全模块</a>
+        </div>
+        
+    </li>
+    
+    
+    
+    
+    <li class="py-2">
+        <div class="">
+            <a class=" hover:text-eureka"
+                href="/docs/iptables/iptables%E8%AF%A6%E8%A7%A34%E5%A4%84%E7%90%86%E5%8A%A8%E4%BD%9C/">Iptables详解(4)处理动作</a>
+        </div>
+        
+    </li>
+    
+    
+    
+    
+    <li class="py-2">
+        <div class="">
+            <a class=" hover:text-eureka"
+                href="/docs/iptables/iptables%E8%AF%A6%E8%A7%A37%E8%87%AA%E5%AE%9A%E4%B9%89%E9%93%BE/"></a>
+        </div>
+        
+    </li>
+    
+    
+    
+    
+    <li class="py-2">
+        <div class="">
+            <a class=" text-eureka  hover:text-eureka"
+                href="/docs/iptables/iptables%E8%AF%A6%E8%A7%A3%E5%85%B6%E4%BB%96/"></a>
+        </div>
+        
+    </li>
+    
+    
+    
+    
+    <li class="py-2">
+        <div class="">
+            <a class=" hover:text-eureka"
+                href="/docs/iptables/%E5%88%A9%E7%94%A8-iptables-%E5%8A%A0%E4%B8%8A-recent-%E6%A8%A1%E5%9D%97%E9%98%BB%E6%8C%A1%E5%A4%A7%E9%87%8F%E7%9A%84%E8%AF%B7%E6%B1%82/"></a>
+        </div>
+        
+    </li>
+    
+    
+    
+    
+    <li class="py-2">
+        <div class="">
+            <a class=" hover:text-eureka"
+                href="/docs/iptables/%E6%80%BB%E7%BB%93%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/"></a>
+        </div>
+        
+    </li>
+    
+    
+    
+    
+    <li class="py-2">
+        <div class="">
+            <a class=" hover:text-eureka"
+                href="/docs/iptables/%E6%9C%AA%E5%8F%91%E5%B8%83/iptables-or-nftables/"></a>
+        </div>
+        
+    </li>
+    
+    
+    
+    
+    <li class="py-2">
+        <div class="">
+            <a class=" hover:text-eureka"
+                href="/docs/iptables/cluster%E6%A8%A1%E5%9D%97/">iptables CLUSTERIP模块 负载均衡</a>
+        </div>
+        
+    </li>
+    
+    
+</ul>
+
+</div>
+
+
+
+
+
+            </div>
+
+        </div>
+        <div class="w-full md:w-3/4 lg:w-4/5 pb-8 pt-2 md:pt-8">
+            <div class="w-full lg:w-3/4 pl-6 ml-0 mr-auto">
+                <h1 class="font-bold text-3xl text-primary-text"></h1>
+                <div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>0001-01-01</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>13分钟阅读时长</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="/categories/blog/" class="hover:text-eureka">blog</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/docs/" class="hover:text-eureka">docs</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/iptables/" class="hover:text-eureka">iptables</a>
+        
+    </div>
+    
+
+    
+</div>
+            </div>
+            <div class="flex">
+                <div class="w-full lg:w-3/4 px-6">
+                    
+                    
+                    <div class="content">
+                        <p>title: limit hashlimit       <a href="https://blog.51cto.com/lvsheat/142567">https://blog.51cto.com/lvsheat/142567</a></p>
+<pre><code>利用hashlimit来限速需要包括两个步骤。
+
+1.对符合hashlimit匹配规则包放行
+
+2.丢弃/拒绝未放行的包
+
+下面是一个简单的例子：
+
+iptables -A INPUT -p tcp --dport 22 -m hashlimit --hashlimit-name ssh
+
+--hashlimit 5/sec --hashlimit-burst 10 --hashlimit-mode srcip
+
+--hashlimit-htable-expire 90000 -j ACCEPT
+
+iptables -A INPUT -p tcp --dport 22 -j DROP
+</code></pre>
+<p>hashlimit的匹配是基于令牌桶(Token bucket）模型的。</p>
+<p>只要令牌桶中的令牌数量少于n，它就会以速率s来产生新的令牌，直到令牌数量到达n为止。</p>
+<p>通过令牌桶机制，即可以有效的控制单位时间内通过（匹配）的数据包数量，又可以容许短时间内突发的大量数据包的通过（只要数据包数量不超过令牌桶n）。</p>
+<p>hashlimit模块提供了两个参数&ndash;hashlimit和&ndash;hashlimit-burst，分别对应于令牌产生速率和令牌桶容量。</p>
+<p>除了令牌桶模型外，hashlimit匹配的另外一个重要概念是匹配项。
+在hashlimit中，每个匹配项拥有一个单独的令牌桶，执行独立的匹配计算。
+通过hashlimit的&ndash;hashlimit-mode参数，你可以指定四种匹配项及其组合</p>
+<ul>
+<li>srcip（每个源地址IP为一个匹配项）</li>
+<li>dstip(每个目的地址IP为一个匹配项）</li>
+<li>srcport(每个源端口为一个匹配项）</li>
+<li>dstport（每个目的端口为一个匹配项）</li>
+</ul>
+<p>除了前面介绍的三个参数外，hashlimit还有一个必须要用的参数，即&ndash;hashlimit-name。</p>
+<p>hashlimit会在/proc/net/ipt_hashlimit目录中，为每个调用了hashlimit模块的iptables命令建立一个文件，其中保存着各匹配项的信息。&ndash;hashlimit-name参数即用来指定该文件的文件名。</p>
+<pre><code>再来我们看一个复杂点的限速。假设我们现在在一台NAT网关上，想限制内部网某个网段
+
+192.168.1.2/24对外的访问频率。（这个的主要作用是限制内部中毒主机对外的flood攻击
+
+）
+
+那我们可以这么做：
+
+iptables -N DEFLOOD
+
+iptables -A FORWARD -s 192.168.1.2/24 -m state --state NEW -j DEFLOOD
+
+iptables -A DEFLOOD -m hashlimit --hashlimit-name deflood --hashlimit 10/sec
+
+--hashlimit-burst 10 --hashlimit-mode srcip -j ACCEPT
+
+iptables -P DEFLOOD -j DROP
+
+第一条命令建立了一个自定义的处理链
+
+第二条命令，所有来自192.168.1.2/24网段，并且打算新建网络连接的数据包，都进入
+
+DEFLOOD链处理
+
+第三条命令，在DEFLOOD链中，为每个IP建立一个匹配项，对应令牌桶容量为10,产生速率为
+
+10个每秒。放行通过匹配的数据包。
+
+第四条命令，在DEFLOOD链中丢弃所有其它的数据包
+
+
+</code></pre>
+<p>用iptables的limit或hashlimit模块，目标是ACCEPT。当你设置300/s时，它大约每3ms发出一个令牌，获得令牌的包可以发出去，没有获得令牌的包只能等待下一个令牌到来，这样不会造成一些包丢失，更不会造成所谓“断线”的。</p>
+<p>limit匹配:限制匹配数据包的频率或速率,看清楚了,它是用来限制匹配的数据包的频率和速率的. 这里“limit”这个词经常给别人“限制”的误解，其实准确说，应该是“按一定速率去匹配”</p>
+<p>至于“限制”还是“放行”是后面 -j 动作来实现的</p>
+<p>limit 仅仅是个 match 模块，他的功能是匹配，匹配方式是按一定速率</p>
+<pre><code>以下2条是对icmp的burst限制
+
+iptables -A INPUT -p icmp -m limit --limit 1/sec --limit-burst 10 -j ACCEPT
+
+iptables -A INPUT -p icmp -j DROP
+
+第一条ipables的意思是限制ping包每一秒钟一个，10个后重新开始.
+
+同时可以限制IP碎片，每秒钟只允许100个碎片，用来防止DoS攻击.
+
+iptables -A INPUT -f -m limit --limit 100/sec --limit-burst 100 -j ACCEPT
+</code></pre>
+<p>iptables limit 参数备忘</p>
+<p>? 限制特定封包传入速度</p>
+<p>? 限制特定端口口连入频率</p>
+<p>? iptables Log 记录参数备忘</p>
+<p>? 自定 Chain 使用备忘</p>
+<p>? 防治 SYN-Flood 碎片攻击</p>
+<p>限制 ping (echo-request) 传入的速度</p>
+<p>限制前, 可正常每 0.2 秒 ping 一次</p>
+<p>ping your.linux.ip -i 0.2</p>
+<p>限制每秒只接受一个 icmp echo-request 封包</p>
+<p>iptables -A INPUT -p icmp &ndash;icmp-type echo-request -m limit &ndash;limit 1/s &ndash;limit-burst 1 -j ACCEPT</p>
+<p>iptables -A INPUT -p icmp &ndash;icmp-type echo-request -j DROP</p>
+<p>&ndash;limit 1/s 表示每秒一次; 1/m 则为每分钟一次</p>
+<p>&ndash;limit-burst 表示允许触发 limit 限制的最大次数 (预设 5)</p>
+<p>再以每 0.2 秒 ping 一次, 得到的响应是每秒一次</p>
+<p>ping your.linux.ip -i 0.2</p>
+<p>限制 ssh 连入频率</p>
+<p>建立自订 Chain, 限制 tcp 联机每分钟一次, 超过者触发 Log 记录 (记录在 /var/log/messages)</p>
+<p>iptables -N ratelimit</p>
+<p>iptables -A ratelimit -p tcp -m state &ndash;state ESTABLISHED,RELATED -j ACCEPT</p>
+<p>iptables -A ratelimit -p tcp &ndash;syn -m limit &ndash;limit 1/m &ndash;limit-burst 1 -j ACCEPT</p>
+<p>iptables -A ratelimit -p tcp -j LOG &ndash;log-level &ldquo;NOTICE&rdquo; &ndash;log-prefix &ldquo;[RATELIMIT]&rdquo;</p>
+<p>iptables -A ratelimit -p tcp -j DROP</p>
+<p>引用自订 Chain, 限制 ssh (tcp port 22) 连入频率</p>
+<p>iptables -A INPUT -p tcp &ndash;dport 22 -s 192.168.0.0/16 -j ACCEPT (特定 IP 来源不受限制)</p>
+<p>iptables -A INPUT -p tcp &ndash;dport 22 -j ratelimit</p>
+<p>参考数据: Mike&rsquo;s Blog - How to limit attack attempts in Linux</p>
+<p>sshd_config 设定备忘:</p>
+<p>? LoginGraceTime 30 密码输入时限为 30 秒</p>
+<p>? MaxAuthTries 2 最多只能输入 3 次密码</p>
+<p>同理可证</p>
+<p>iptables -N pinglimit</p>
+<p>iptables -A pinglimit -m limit &ndash;limit 1/s &ndash;limit-burst 1 -j ACCEPT</p>
+<p>iptables -A pinglimit -j DROP</p>
+<p>iptables -A INPUT -p icmp &ndash;icmp-type echo-request -j pinglimit</p>
+<p>亦可达到每秒只接受一个 echo-request 封包</p>
+<p>补充: 清除自订 Chain</p>
+<p>iptables -L -n &ndash;line-number</p>
+<p>iptables -D INPUT n</p>
+<p>iptables -F ratelimit</p>
+<p>iptables -X ratelimit</p>
+<p>防治 SYN-Flood 碎片攻击</p>
+<p>iptables -N syn-flood</p>
+<p>iptables -A syn-flood -m limit &ndash;limit 50/s &ndash;limit-burst 10 -j RETURN</p>
+<p>iptables -A syn-flood -j DROP</p>
+<p>iptables -I INPUT -j syn-flood</p>
+<p>模拟攻击</p>
+<p>wget <a href="http://www.xfocus.net/tools/200102/naptha-1.1.tgz">http://www.xfocus.net/tools/200102/naptha-1.1.tgz</a></p>
+<p>wget <a href="ftp://rpmfind.net/linux/freshrpms/redhat/7.0/libnet/libnet-1.0.1b-1.src.rpm">ftp://rpmfind.net/linux/freshrpms/redhat/7.0/libnet/libnet-1.0.1b-1.src.rpm</a></p>
+<p>tar -zxf naptha-1.1.tgz</p>
+<p>rpmbuild &ndash;recompile libnet-1.0.1b-1.src.rpm</p>
+<p>cp -r /var/tmp/libnet-buildroot/usr/* /usr/local/</p>
+<p>cd naptha-1.1</p>
+<p>make</p>
+<p>./synsend your.linux.host.ip 80 local.host.eth0.ip 0.1</p>
+<p>若成功抵挡, 不久后会出现 Can&rsquo;t send packet!: Operation not permitted 的讯息</p>
+<p>iprange a.b.c.d-a.b.c.d 表示这一段地址还是分别表示每一个包含的地址？</p>
+<p>例 iptables -A -m iprange &ndash;src-range 172.16.1.10-172.16.16.1 -m limit &ndash;limit 300/second -j ACCEPT</p>
+<p>表示172.16.1.10-172.16.16.1这段地址每秒一共匹配300个数据包</p>
+<p>还是表示172.16.1.10-172.16.16.1地址中的每一个ip 分别匹配300个数据包？&mdash;&mdash;-iprange a.b.c.d-a.b.c.d 表示这一段地址还是分别表示每一个包含的地址？</p>
+<p>例 iptables -A -m iprange &ndash;src-range 172.16.1.10-172.16.16.1 -m limit &ndash;limit 300/second -j ACCEPT</p>
+<p>表示172.16.1.10-172.16.16.1这段地址每秒一共匹配300个数据包</p>
+<p>还是表示172.16.1.10-172.16.16.1地址中的每一个ip 分别匹配300个数据包？</p>
+<p>limit</p>
+<p>This module must be explicitly specified with <code>-m limit' or </code>&ndash;match limit'. It is used to restrict the rate of matches, such as for suppressing log messages. It will only match a given number of times per second (by default 3 matches per hour, with a burst of 5). It takes two optional arguments:</p>
+<p>&ndash;limit</p>
+<p>followed by a number; specifies the maximum average number of matches to allow per second. The number can specify units explicitly, using <code>/second', </code>/minute', <code>/hour' or </code>/day', or parts of them (so <code>5/second' is the same as </code>5/s').</p>
+<p>&ndash;limit-burst</p>
+<p>followed by a number, indicating the maximum burst before the above limit kicks in.</p>
+<p>This match can often be used with the LOG target to do rate-limited logging. To understand how it works, let&rsquo;s look at the following rule, which logs packets with the default limit parameters:</p>
+<p># iptables -A FORWARD -m limit -j LOG</p>
+<p>The first time this rule is reached, the packet will be logged; in fact, since the default burst is 5, the first five packets will be logged. After this, it will be twenty minutes before a packet will be logged from this rule, regardless of how many packets reach it. Also, every twenty minutes which passes without matching a packet, one of the burst will be regained; if no packets hit the rule for 100 minutes, the burst will be fully recharged; back where we started.</p>
+<p>iptables -t filter -A INPUT -p icmp &ndash;icmp-type echo-request -m limit &ndash;limit 6/minute &ndash;limit-burst 6 -j LOG &ndash;log-prefix=&ldquo;filter INPUT:&rdquo;</p>
+<p>列：</p>
+<p>#!/bin/bash</p>
+<p>iptables -A INPUT -m state &ndash;state ESTABLISHED,RELATED -j ACCEPT</p>
+<p>iptables -N syn-flood</p>
+<p>iptables -A INPUT -i eth0 -p tcp -m state &ndash;state NEW -j syn-flood</p>
+<p>iptables -A syn-flood -m limit &ndash;limit 1/s &ndash;limit-burst 4 -j RETURN</p>
+<p>iptables -A INPUT -i eth0 -p tcp ! &ndash;syn -m state &ndash;state NEW -j DROP</p>
+<p>iptables -A INPUT -i eth0 -p tcp -d 0/0 &ndash;dport 80 -j ACCEPT</p>
+<p>iptables -A INPUT -i eth0 -p tcp &ndash;dport 22 -j ACCEPT</p>
+<p>iptables -A INPUT -f -m limit &ndash;limit 100/s &ndash;limit-burst 100 -j ACCEPT</p>
+<p>iptables -A INPUT -p icmp -m limit &ndash;limit 1/s &ndash;limit-burst 3 -j ACCEPT</p>
+<p>iptables -A INPUT -i eth0 -p tcp &ndash;dport 21 -j ACCEPT</p>
+<p>iptables -A INPUT -i eth0 -p tcp &ndash;dport 20 -j ACCEPT</p>
+<p>iptables -A INPUT -i eth0 -j DROP</p>
+<p>流量控制</p>
+<p>tc qdisc del dev eth0 root 2&gt;/dev/null</p>
+<p>##定义上传总带宽（用tc语法，这里用的是htb过滤器）</p>
+<p>##define root and default rule</p>
+<p>tc qdisc add dev eth0 root handle 10: htb default 70</p>
+<p>##define uplink max rate</p>
+<p>tc class add dev eth0 parent 10: classid 10:1 htb rate 64kbps ceil 64kbps</p>
+<p>##对不同的业务进行分类，定义不同的数据流量</p>
+<p>##define second leaf</p>
+<p>#tc class add dev eth0 parent 10:1 classid 10:10 htb rate 2kbps ceil 4kbps prio 2</p>
+<p>#tc class add dev eth0 parent 10:1 classid 10:20 htb rate 2kbps ceil 4kbps prio 2</p>
+<p>#tc class add dev eth0 parent 10:1 classid 10:30 htb rate 32kbps ceil 40kbps prio 3</p>
+<p>tc class add dev eth0 parent 10:1 classid 10:40 htb rate 3kbps ceil 13kbps prio 0</p>
+<p>tc class add dev eth0 parent 10:1 classid 10:50 htb rate 1kbps ceil 11kbps prio 1</p>
+<p>tc class add dev eth0 parent 10:1 classid 10:60 htb rate 1kbps ceil 11kbps prio 1</p>
+<p>tc class add dev eth0 parent 10:1 classid 10:70 htb rate 2kbps ceil 5kbps prio 1</p>
+<p>##定义不同数据传输业务的优先级别和优化数据传输方法</p>
+<p>##define rule for second leaf</p>
+<p>#tc qdisc add dev eth0 parent 10:10 handle 101: pfifo</p>
+<p>#tc qdisc add dev eth0 parent 10:20 handle 102: pfifo</p>
+<p>#tc qdisc add dev eth0 parent 10:30 handle 103: pfifo</p>
+<p>#tc qdisc add dev eth0 parent 10:40 handle 104: pfifo</p>
+<p>#tc qdisc add dev eth0 parent 10:50 handle 105: pfifo</p>
+<p>#tc qdisc add dev eth0 parent 10:60 handle 106: pfifo</p>
+<p>#tc qdisc add dev eth0 parent 10:70 handle 107: pfifo</p>
+<p>##tc qdisc add dev eth0 parent 10:10 handle 101: sfq perturb 10</p>
+<p>##tc qdisc add dev eth0 parent 10:20 handle 102: sfq perturb 10</p>
+<p>##tc qdisc add dev eth0 parent 10:30 handle 103: sfq perturb 10</p>
+<p>tc qdisc add dev eth0 parent 10:40 handle 104: sfq perturb 5</p>
+<p>tc qdisc add dev eth0 parent 10:50 handle 105: sfq perturb 10</p>
+<p>tc qdisc add dev eth0 parent 10:60 handle 106: sfq perturb 10</p>
+<p>tc qdisc add dev eth0 parent 10:70 handle 107: sfq perturb 10</p>
+<p>##为netfilter链中的mangle链打标记做好准备（做句柄标示）</p>
+<p>##define fw for ipfilter</p>
+<p>#tc filter add dev eth0 parent 10: protocol ip prio 100 handle 10 fw classid 10:10</p>
+<p>#tc filter add dev eth0 parent 10: protocol ip prio 100 handle 20 fw classid 10:20</p>
+<p>#tc filter add dev eth0 parent 10: protocol ip prio 100 handle 30 fw classid 10:30</p>
+<p>tc filter add dev eth0 parent 10: protocol ip prio 100 handle 40 fw classid 10:40</p>
+<p>tc filter add dev eth0 parent 10: protocol ip prio 100 handle 50 fw classid 10:50</p>
+<p>tc filter add dev eth0 parent 10: protocol ip prio 100 handle 60 fw classid 10:60</p>
+<p>tc filter add dev eth0 parent 10: protocol ip prio 100 handle 70 fw classid 10:70</p>
+<p>###################################################################################</p>
+<p>##下载端口配置（方法同上传配置，只是在速率定义上有调整）</p>
+<p>echo &ldquo;Enabling downlink limit&rdquo;</p>
+<p>#downlink limit</p>
+<p>##clear dev eth1 rule</p>
+<p>tc qdisc del dev eth1 root 2&gt;/dev/null</p>
+<p>##define root and default rule</p>
+<p>tc qdisc add dev eth1 root handle 10: htb default 70</p>
+<p>##define downlink max rate</p>
+<p>tc class add dev eth1 parent 10: classid 10:1 htb rate 128kbps ceil 128kbps</p>
+<p>##define second leaf</p>
+<p>#tc class add dev eth1 parent 10:1 classid 10:10 htb rate 2kbps ceil 32kbps prio 2</p>
+<p>#tc class add dev eth1 parent 10:1 classid 10:20 htb rate 2kbps ceil 32kbps prio 2</p>
+<p>#tc class add dev eth1 parent 10:1 classid 10:30 htb rate 32kbps ceil 212kbps prio 3</p>
+<p>tc class add dev eth1 parent 10:1 classid 10:40 htb rate 5kbps ceil 20kbps prio 0</p>
+<p>tc class add dev eth1 parent 10:1 classid 10:50 htb rate 2kbps ceil 17kbps prio 1</p>
+<p>tc class add dev eth1 parent 10:1 classid 10:60 htb rate 2kbps ceil 17kbps prio 1</p>
+<p>tc class add dev eth1 parent 10:1 classid 10:70 htb rate 3kbps ceil 5kbps prio 1</p>
+<p>##define rule for second leaf</p>
+<p>#tc qdisc add dev eth1 parent 10:10 handle 101: pfifo</p>
+<p>#tc qdisc add dev eth1 parent 10:20 handle 102: pfifo</p>
+<p>#tc qdisc add dev eth1 parent 10:30 handle 103: pfifo</p>
+<p>#tc qdisc add dev eth1 parent 10:40 handle 104: pfifo</p>
+<p>#tc qdisc add dev eth1 parent 10:50 handle 105: pfifo</p>
+<p>#tc qdisc add dev eth1 parent 10:60 handle 106: pfifo</p>
+<p>#tc qdisc add dev eth1 parent 10:70 handle 107: pfifo</p>
+<p>##tc qdisc add dev eth1 parent 10:10 handle 101: sfq perturb 10</p>
+<p>##tc qdisc add dev eth1 parent 10:20 handle 102: sfq perturb 10</p>
+<p>##tc qdisc add dev eth1 parent 10:30 handle 103: sfq perturb 10</p>
+<p>tc qdisc add dev eth1 parent 10:40 handle 104: sfq perturb 5</p>
+<p>tc qdisc add dev eth1 parent 10:50 handle 105: sfq perturb 10</p>
+<p>tc qdisc add dev eth1 parent 10:60 handle 106: sfq perturb 10</p>
+<p>tc qdisc add dev eth1 parent 10:70 handle 107: sfq perturb 10</p>
+<p>##define fw for ipfilter</p>
+<p>#tc filter add dev eth1 parent 10: protocol ip prio 100 handle 10 fw classid 10:10</p>
+<p>#tc filter add dev eth1 parent 10: protocol ip prio 100 handle 20 fw classid 10:20</p>
+<p>#tc filter add dev eth1 parent 10: protocol ip prio 100 handle 30 fw classid 10:30</p>
+<p>tc filter add dev eth1 parent 10: protocol ip prio 100 handle 40 fw classid 10:40</p>
+<p>tc filter add dev eth1 parent 10: protocol ip prio 100 handle 50 fw classid 10:50</p>
+<p>tc filter add dev eth1 parent 10: protocol ip prio 100 handle 60 fw classid 10:60</p>
+<p>tc filter add dev eth1 parent 10: protocol ip prio 100 handle 70 fw classid 10:70</p>
+<p>echo &ldquo;Enabling mangle &quot;</p>
+<p># uploads</p>
+<p>#iptables -t mangle -A PREROUTING -s 192.168.0.6 -m layer7 &ndash;l7proto dns -j MARK &ndash;set-mark 10</p>
+<p>#iptables -t mangle -A PREROUTING -s 192.168.0.6 -m layer7 &ndash;l7proto smtp -j MARK &ndash;set-mark 20</p>
+<p>#iptables -t mangle -A PREROUTING -s 192.168.0.6 -m layer7 &ndash;l7proto http -j MARK &ndash;set-mark 30</p>
+<p>##为ip地址打标记以便进行流量控制&ndash;上传</p>
+<p>#iptables -t mangle -A PREROUTING -s 192.168.0.52 -j MARK &ndash;set-mark 40</p>
+<p>#iptables -t mangle -A PREROUTING -s 192.168.0.0/24 -j MARK &ndash;set-mark 70</p>
+<p>#iptables -t mangle -A PREROUTING -s 192.168.0.3 -j MARK &ndash;set-mark 60</p>
+<p># downloads</p>
+<p>#iptables -t mangle -A POSTROUTING -d 192.168.0.6 -m layer7 &ndash;l7proto dns -j MARK &ndash;set-mark 10</p>
+<p>#iptables -t mangle -A POSTROUTING -d 192.168.0.6 -m layer7 &ndash;l7proto smtp -j MARK &ndash;set-mark 20</p>
+<p>#iptables -t mangle -A POSTROUTING -d 192.168.0.6 -m layer7 &ndash;l7proto http -j MARK &ndash;set-mark 30</p>
+<p>##为ip地址打标记以便进行流量控制&ndash;下载</p>
+<p>#iptables -t mangle -A POSTROUTING -d 192.168.0.52 -j MARK &ndash;set-mark 40</p>
+<p>#iptables -t mangle -A POSTROUTING -d 192.168.0.0/24 -j MARK &ndash;set-mark 70</p>
+<p>#iptables -t mangle -A POSTROUTING -d 192.168.0.3 -j MARK &ndash;set-mark 60</p>
+<p>DDOS Protection Script</p>
+<p>#!/bin/sh</p>
+<p># Firewall script made by Magarus for verlihubforums.com and adminzone.ro</p>
+<p># Copyright @ 2007 - Saftoiu Mihai, All rights reserved.</p>
+<p># The distribution of this script without Saftoiu Mihai&rsquo;s</p>
+<p># approval is a violation of copyright and will be persued to the</p>
+<p># full extent of the law. You may use it ONLY for non-commercial use,</p>
+<p># except without the author&rsquo;s explicit approval.</p>
+<p># Define constants - Leave them alone</p>
+<p>IPTABLES=<code>which iptables</code></p>
+<p>MODPROBE=<code>which modprobe</code></p>
+<p>$MODPROBE ip_conntrack</p>
+<p>$MODPROBE ipt_recent</p>
+<p>NR_IP=&rdquo;&quot;</p>
+<p>IP_LOOP=&quot;&quot;</p>
+<p>PORT_LOOP=&quot;&quot;</p>
+<p># Modify tcp/ip parameters</p>
+<p># Reduce timeout</p>
+<p>echo &ldquo;15&rdquo; &gt; /proc/sys/net/ipv4/tcp_fin_timeout</p>
+<p># Increase backlog and max conn</p>
+<p>echo &ldquo;3000&rdquo; &gt; /proc/sys/net/core/netdev_max_backlog</p>
+<p>echo &ldquo;3000&rdquo; &gt; /proc/sys/net/core/somaxconn</p>
+<p># Reduce timeouts and retransmissions</p>
+<p>echo &ldquo;300&rdquo; &gt; /proc/sys/net/ipv4/tcp_keepalive_time</p>
+<p>echo &ldquo;15&rdquo; &gt; /proc/sys/net/ipv4/tcp_keepalive_intvl</p>
+<p>echo &ldquo;1&rdquo; &gt; /proc/sys/net/ipv4/tcp_keepalive_probes</p>
+<p>echo &ldquo;1&rdquo; &gt; /proc/sys/net/ipv4/tcp_syncookies</p>
+<p>echo &ldquo;2&rdquo; &gt; /proc/sys/net/ipv4/tcp_synack_retries</p>
+<p>echo &ldquo;1&rdquo; &gt; /proc/sys/net/ipv4/tcp_syn_retries</p>
+<p># Increase SYN backlog</p>
+<p>echo &ldquo;28000&rdquo; &gt; /proc/sys/net/ipv4/tcp_max_syn_backlog</p>
+<p># Decrease timeouts</p>
+<p>echo &ldquo;10&rdquo; &gt; /proc/sys/net/ipv4/netfilter/ip_conntrack_tcp_timeout_syn_recv</p>
+<p>echo &ldquo;40&rdquo; &gt; /proc/sys/net/ipv4/netfilter/ip_conntrack_tcp_timeout_syn_sent</p>
+<p># Check for spoofing / Use 2 instead of 1 bellow if it doesn&rsquo;t fix it</p>
+<p>echo &ldquo;1&rdquo; &gt; /proc/sys/net/ipv4/conf/all/rp_filter</p>
+<p># See that conntrack doesn&rsquo;t get overflowed</p>
+<p>echo &ldquo;220000&rdquo; &gt; /proc/sys/net/ipv4/ip_conntrack_max</p>
+<p># Use scaling</p>
+<p>echo &ldquo;1&rdquo; &gt; /proc/sys/net/ipv4/tcp_window_scaling</p>
+<p># Remove overhead and unnecessary tcp/icmp params.</p>
+<p>echo &ldquo;0&rdquo; &gt; /proc/sys/net/ipv4/tcp_sack</p>
+<p>echo &ldquo;0&rdquo; &gt; /proc/sys/net/ipv4/conf/all/accept_source_route</p>
+<p>echo &ldquo;1&rdquo; &gt; /proc/sys/net/ipv4/icmp_echo_ignore_broadcasts</p>
+<p>echo &ldquo;1&rdquo; &gt; /proc/sys/net/ipv4/icmp_ignore_bogus_error_responses</p>
+<p>echo &ldquo;1&rdquo; &gt; /proc/sys/net/ipv4/conf/all/log_martians</p>
+<p>echo &ldquo;0&rdquo; &gt; /proc/sys/net/ipv4/tcp_timestamps</p>
+<p># Increase available memory</p>
+<p>echo &ldquo;16777216&rdquo; &gt; /proc/sys/net/core/rmem_max</p>
+<p>echo &ldquo;16777216&rdquo; &gt; /proc/sys/net/core/wmem_max</p>
+<p>echo &ldquo;4096 87380 16777216&rdquo; &gt; /proc/sys/net/ipv4/tcp_rmem</p>
+<p>echo &ldquo;4096 87380 16777216&rdquo; &gt; /proc/sys/net/ipv4/tcp_wmem</p>
+<p>echo &ldquo;1&rdquo; &gt; /proc/sys/net/ipv4/tcp_no_metrics_save</p>
+<p># Increase number of ports available (this is a must for future apache fix)</p>
+<p>echo &ldquo;1024 65000&rdquo; &gt; /proc/sys/net/ipv4/ip_local_port_range</p>
+<p># Function for protection/hub/ip</p>
+<p>protect_hub(){</p>
+<p>$IPTABLES -A OUTPUT -s $IP_LOOP -p tcp &ndash;sport $PORT_LOOP &ndash;tcp-flags ALL PSH,ACK -m string &ndash;algo bm &ndash;string Pk=version &ndash;to 300 -j RST_LOOP_OUT</p>
+<p>$IPTABLES -A INPUT -d $IP_LOOP -p tcp &ndash;dport $PORT_LOOP &ndash;syn -j SYN_CHECK</p>
+<p>$IPTABLES -A INPUT -d $IP_LOOP -p tcp &ndash;dport $PORT_LOOP &ndash;tcp-flags ALL PSH,ACK -m string &ndash;algo bm &ndash;string MyNick &ndash;to 100 -j REJECT &ndash;reject-with tcp-reset</p>
+<p>$IPTABLES -A INPUT -d $IP_LOOP -p tcp &ndash;dport $PORT_LOOP -m state &ndash;state RELATED,ESTABLISHED -j ACCEPT</p>
+<p>$IPTABLES -A INPUT -d $IP_LOOP -p tcp &ndash;dport $PORT_LOOP -j DROP</p>
+<p>$IPTABLES -A INPUT -d $IP_LOOP -p udp &ndash;dport $PORT_LOOP -j DROP</p>
+<p>$IPTABLES -A SYN_CHECK -d $IP_LOOP -p tcp &ndash;dport $PORT_LOOP -m hashlimit &ndash;hashlimit 2/min &ndash;hashlimit-mode srcip,dstip</p>
+<p>&ndash;hashlimit-name dcclients &ndash;hashlimit-burst 1 &ndash;hashlimit-htable-expire 30000 &ndash;hashlimit-htable-gcinterval 1000 -j ACCEPT</p>
+<p>$IPTABLES -A SYN_CHECK -d $IP_LOOP -p tcp &ndash;dport $PORT_LOOP -j REJECT &ndash;reject-with tcp-reset</p>
+<p>$IPTABLES -A RST_LOOP_OUT -d $IP_LOOP -p tcp &ndash;sport $PORT_LOOP &ndash;tcp-flags ALL PSH,ACK -m conntrack &ndash;ctexpire 1:1000 -j REJECT &ndash;reject-with tcp-reset</p>
+<p>$IPTABLES -A RST_LOOP_OUT -d $IP_LOOP -p tcp &ndash;sport $PORT_LOOP &ndash;tcp-flags ALL FIN,PSH,ACK -m conntrack &ndash;ctexpire 1:1000 -j REJECT &ndash;reject-with tcp-reset</p>
+<p>}</p>
+<p># Main()</p>
+<p>firewall_run(){</p>
+<p>clear</p>
+<p>echo -e &ldquo;n Anti DDOS firewall for verlihub software, Copyright @ 2007 Saftoiu Mihai nn&rdquo;</p>
+<p>echo -e &quot; How many ip addresses do you have allocated for your running hubs? c&quot; &amp;&amp; read NR_IP</p>
+<p>NR_IP=<code>expr $NR_IP + 1</code></p>
+<p>ctl=&ldquo;1&rdquo;</p>
+<p>while [ &ldquo;$ctl&rdquo; -lt &ldquo;$NR_IP&rdquo; ]; do</p>
+<p>echo -e &ldquo;n Input ip no. $ctl = c&rdquo;</p>
+<p>read IP[$ctl]</p>
+<p>let &ldquo;ctl += 1&rdquo;</p>
+<p>done</p>
+<p>echo -e &ldquo;n&rdquo;</p>
+<p>ctl=&ldquo;1&rdquo;</p>
+<p># Define custom chains</p>
+<p># Check syn chain frequency drops anyway</p>
+<p>$IPTABLES -N SYN_CHECK</p>
+<p># Reset output packets so hub doesn&rsquo;t get locked up on output</p>
+<p>$IPTABLES -N RST_LOOP_OUT</p>
+<p># Drop all junk data</p>
+<p>$IPTABLES -A INPUT -p tcp ! &ndash;syn -m state &ndash;state NEW -j DROP</p>
+<p>$IPTABLES -A INPUT -p tcp -m state &ndash;state INVALID,UNTRACKED -j DROP</p>
+<p># Enter loop</p>
+<p>while [ &ldquo;$ctl&rdquo; -lt &ldquo;$NR_IP&rdquo; ]; do</p>
+<p>IP_LOOP=&quot;${IP[$ctl]}&quot;</p>
+<p>echo -e &ldquo;n How many hub ports are there on this ip ${IP[$ctl]}? c&rdquo;</p>
+<p>read NR_PORTS &amp;&amp; NR_PORTS=<code>expr $NR_PORTS + 1</code> &amp;&amp; ctlx=&ldquo;1&rdquo;</p>
+<p>while [ &ldquo;$ctlx&rdquo; -lt &ldquo;$NR_PORTS&rdquo; ]; do</p>
+<p>echo -e &ldquo;n Input port $ctlx for ${IP[$ctl]} : c&rdquo;</p>
+<p>read PORT[$ctlx] &amp;&amp; PORT_LOOP=&quot;${PORT[$ctlx]}&quot;</p>
+<p>protect_hub</p>
+<p>let &ldquo;ctlx += 1&rdquo;</p>
+<p>done</p>
+<p>let &ldquo;ctl += 1&rdquo;</p>
+<p>done</p>
+<p>}</p>
+<p># Clear the rules and any i might add</p>
+<p>firewall_clear(){</p>
+<p>clear</p>
+<p>echo -e &ldquo;nn Firewall rules are now being cleared&hellip;n&rdquo;</p>
+<p>$IPTABLES -t mangle -F</p>
+<p>$IPTABLES -t filter -F</p>
+<p>$IPTABLES -t raw -F</p>
+<p>$IPTABLES -Z</p>
+<p>$IPTABLES -X</p>
+<p>$IPTABLES -P INPUT ACCEPT</p>
+<p>$IPTABLES -P OUTPUT ACCEPT</p>
+<p>$IPTABLES -P FORWARD ACCEPT</p>
+<p>$IPTABLES -L</p>
+<p>echo -e &ldquo;n Firewall CLEARED!&rdquo;</p>
+<p>}</p>
+<p># Run-time options</p>
+<p>case &ldquo;$1&rdquo; in</p>
+<p>&lsquo;start&rsquo;) firewall_run ;;</p>
+<p>&lsquo;stop&rsquo;) firewall_clear ;;</p>
+<p>*) echo -e &ldquo;nUsage: $0 [OPTION]&hellip;&rdquo;</p>
+<p>echo -e &ldquo;nOPTIONS:&rdquo;</p>
+<p>echo -e &quot; start Run the firewall.&quot;</p>
+<p>echo -e &quot; stop Stop the firewall.&quot;</p>
+<p>echo -e &ldquo;n &quot; ;;</p>
+<p>esac</p>
+
+                    </div>
+                    
+                    
+
+                    
+
+                    
+<div class="flex flex-col md:flex-row md:justify-between -mx-2 mt-4 px-2 pt-4 border-t">
+    <div>
+        
+        <span class="block font-bold">上一页</span>
+        <a href="/docs/iptables/iptables%E8%AF%A6%E8%A7%A37%E8%87%AA%E5%AE%9A%E4%B9%89%E9%93%BE/" class="block"></a>
+        
+    </div>
+    <div class="md:text-right mt-4 md:mt-0">
+        
+        <span class="block font-bold">下一页</span>
+        <a href="/docs/iptables/%E5%88%A9%E7%94%A8-iptables-%E5%8A%A0%E4%B8%8A-recent-%E6%A8%A1%E5%9D%97%E9%98%BB%E6%8C%A1%E5%A4%A7%E9%87%8F%E7%9A%84%E8%AF%B7%E6%B1%82/" class="block"></a>
+        
+    </div>
+</div>
+
+                    
+                </div>
+                
+            </div>
+
+        </div>
+
+
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        hljs.initHighlightingOnLoad();
+        changeSidebarHeight();
+        switchDocToc();
+    })
+</script>
+
+
+
+
+
+
+
+
+
+      </div>
+    </div>
+    
+  </main>
+  <footer class="pl-scrollbar">
+    <div class="w-full max-w-screen-xl mx-auto"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 2021 <a href="https://www.songjinfeng.com/">SonJinfeng</a> 
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+  </footer>
+</body>
+
+</html>

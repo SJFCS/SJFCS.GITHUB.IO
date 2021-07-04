@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang='zh' ><meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+
+
+<title>Iptables详解(2)管理 | Iptables详解 | Songjinfeng&#39;s BLOG</title>
+<link rel="stylesheet" href="/css/eureka.min.css">
+<script defer src="/js/eureka.min.js"></script>
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Noto+Serif+SC:wght@400;600;700&display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/styles/solarized-light.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/highlight.min.js"
+   crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/dart.min.js"
+     crossorigin></script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/js/all.min.js"
+   integrity="sha256-uNYoXefWRqv&#43;PsIF/OflNmwtKM4lStn9yrz2gVl6ymo="  crossorigin></script>
+
+
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css"
+   integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3&#43;Aro6EYUG4&#43;cU&#43;KJWu/X"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js" 
+  integrity="sha384-g7c&#43;Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI&#43;sEnkvrMWph2EDg4"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js"
+   integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC&#43;Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.9.2/dist/mermaid.min.js" 
+  integrity="sha256-Zmpaaj&#43;GXFsPF5WdPArSrnW3b30dovldeKsW00xBVwE="  crossorigin></script>
+
+
+<link rel="icon" type="image/png" sizes="32x32" href="/images/icon_hucfa16751ac9c82c06b84c3502c0db793_16378_32x32_fill_box_center_2.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hucfa16751ac9c82c06b84c3502c0db793_16378_180x180_fill_box_center_2.png">
+
+<meta name="description"
+  content="iptables 增删改查 常用语句
+iptables -t 表名 -[ A | I | D] 链名 (规则编号) 匹配规则 -j 动作
+iptables [-t 表名] 选项 [链名] [匹配条件] [-j 控制类型]">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"文档笔记",
+      "item":"/docs/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"Iptables详解",
+      "item":"/docs/iptables/"},{
+      "@type": "ListItem",
+      "position": 3 ,
+      "name":"Iptables详解(2)管理",
+      "item":"/docs/iptables/iptables%E8%AF%A6%E8%A7%A32%E5%9F%BA%E7%A1%80%E7%AE%A1%E7%90%86%E5%91%BD%E4%BB%A4/"}]
+}
+</script>
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/docs/iptables/iptables%E8%AF%A6%E8%A7%A32%E5%9F%BA%E7%A1%80%E7%AE%A1%E7%90%86%E5%91%BD%E4%BB%A4/"
+    },
+    "headline": "Iptables详解(2)管理 | Iptables详解 | Songjinfeng\u0027s BLOG","datePublished": "2021-04-21T00:00:00+00:00",
+    "dateModified": "2021-04-21T00:00:00+00:00",
+    "wordCount":  409 ,
+    "author": {
+        "@type": "Person",
+        "name": ["songjinfeng"]
+    },
+    "publisher": {
+        "@type": "Person",
+        "name": "JF. Song",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "/images/icon.png"
+        }
+        },
+    "description": "\u003cp\u003eiptables 增删改查 常用语句\u003c\/p\u003e\n\u003cp\u003eiptables -t 表名 -[ A | I | D] 链名 (规则编号) 匹配规则 -j 动作\u003c\/p\u003e\n\u003cp\u003eiptables [-t 表名] 选项 [链名] [匹配条件] [-j 控制类型]\u003c\/p\u003e"
+}
+</script><meta property="og:title" content="Iptables详解(2)管理 | Iptables详解 | Songjinfeng&#39;s BLOG" />
+<meta property="og:type" content="article" />
+
+
+<meta property="og:image" content="/images/icon.png">
+
+
+<meta property="og:url" content="/docs/iptables/iptables%E8%AF%A6%E8%A7%A32%E5%9F%BA%E7%A1%80%E7%AE%A1%E7%90%86%E5%91%BD%E4%BB%A4/" />
+
+
+
+
+<meta property="og:description" content="iptables 增删改查 常用语句
+iptables -t 表名 -[ A | I | D] 链名 (规则编号) 匹配规则 -j 动作
+iptables [-t 表名] 选项 [链名] [匹配条件] [-j 控制类型]" />
+
+
+
+
+<meta property="og:locale" content="zh" />
+
+
+
+
+<meta property="og:site_name" content="Songjinfeng&#39;s BLOG" />
+
+
+
+
+
+
+<meta property="article:published_time" content="2021-04-21T00:00:00&#43;00:00" />
+
+
+<meta property="article:modified_time" content="2021-04-21T00:00:00&#43;00:00" />
+
+
+
+<meta property="article:section" content="docs" />
+
+
+<meta property="article:tag" content="Iptables" />
+
+<meta property="article:tag" content="Linux网络安全" />
+
+
+
+
+
+
+
+
+
+<meta property="og:see_also" content="/docs/iptables/iptables%E8%AF%A6%E8%A7%A31%E6%A6%82%E5%BF%B5/" />
+
+
+
+
+
+<meta property="og:see_also" content="/docs/iptables/iptables%E8%AF%A6%E8%A7%A332%E6%89%A9%E5%B1%95%E5%8C%B9%E9%85%8D%E6%9D%A1%E4%BB%B6%E6%A8%A1%E5%9D%97/" />
+
+
+
+<meta property="og:see_also" content="/docs/iptables/iptables%E8%AF%A6%E8%A7%A333%E5%AE%89%E5%85%A8%E6%A8%A1%E5%9D%97/" />
+
+
+
+<meta property="og:see_also" content="/docs/iptables/iptables%E8%AF%A6%E8%A7%A34%E5%A4%84%E7%90%86%E5%8A%A8%E4%BD%9C/" />
+
+
+
+
+
+<body class="flex flex-col min-h-screen">
+  <header class="fixed flex items-center w-full min-h-16 pl-scrollbar z-50 bg-secondary-bg shadow-sm">
+    <div class="w-full max-w-screen-xl mx-auto"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="mr-6 text-primary-text text-xl font-bold">Songjinfeng&#39;s BLOG</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:flex-grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:flex-grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">技术专栏</a>
+            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  mr-4">文档笔记</a>
+            <a href="/series/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">主题系列</a>
+            <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">标签</a>
+            <a href="/authors/songjinfeng/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">关于</a>
+            <a href="/index.xml" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">RSS</a>
+            <a href="/webstack" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">友链&amp;导航</a>
+        </div>
+
+        <div class="flex">
+            <div class="relative pt-4 md:pt-0">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col left-0 md:left-auto right-auto md:right-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">浅色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">深色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">自动</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            switchMode('Auto')
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+  </header>
+  <main class="flex-grow pt-16">
+    <div class="pl-scrollbar">
+      <div class="w-full max-w-screen-xl lg:px-4 xl:px-8 mx-auto">
+
+
+<div class="lg:pt-12">
+    <div class="flex flex-col md:flex-row bg-secondary-bg rounded">
+        <div class="md:w-1/4 lg:w-1/5 border-r">
+            <div class="sticky top-16 pt-6">
+                
+
+
+
+
+
+
+
+
+
+
+<div id="sidebar-title" class="md:hidden mx-4 px-2 pt-4 pb-2 md:border-b text-tertiary-text md:text-primary-text">
+    <span class="font-semibold">目录</span>
+    <i class="fas fa-caret-right ml-1"></i>
+</div>
+
+<div id="sidebar-toc"
+    class="hidden md:block overflow-y-auto mx-6 md:mx-0 pr-6 pt-2 md:max-h-doc-sidebar bg-primary-bg md:bg-transparent">
+    <div class="flex flex-wrap ml-4 -mr-2 p-2 bg-secondary-bg md:bg-primary-bg rounded">
+        <a class=" hover:text-eureka"
+            href="/docs/iptables/">Iptables详解</a>
+        
+        
+        
+
+
+    </div>
+    
+<ul class="pl-6">
+    
+    
+    
+    <li class="py-2">
+        <div class="">
+            <a class=" hover:text-eureka"
+                href="/docs/iptables/iptables%E8%AF%A6%E8%A7%A31%E6%A6%82%E5%BF%B5/">Iptables详解(1)概念</a>
+        </div>
+        
+    </li>
+    
+    
+    
+    
+    <li class="py-2">
+        <div class="">
+            <a class=" text-eureka  hover:text-eureka"
+                href="/docs/iptables/iptables%E8%AF%A6%E8%A7%A32%E5%9F%BA%E7%A1%80%E7%AE%A1%E7%90%86%E5%91%BD%E4%BB%A4/">Iptables详解(2)管理</a>
+        </div>
+        
+    </li>
+    
+    
+    
+    
+    <li class="py-2">
+        <div class="">
+            <a class=" hover:text-eureka"
+                href="/docs/iptables/iptables%E8%AF%A6%E8%A7%A332%E6%89%A9%E5%B1%95%E5%8C%B9%E9%85%8D%E6%9D%A1%E4%BB%B6%E6%A8%A1%E5%9D%97/">Iptables详解(3)2扩展匹配条件模块</a>
+        </div>
+        
+    </li>
+    
+    
+    
+    
+    <li class="py-2">
+        <div class="">
+            <a class=" hover:text-eureka"
+                href="/docs/iptables/iptables%E8%AF%A6%E8%A7%A333%E5%AE%89%E5%85%A8%E6%A8%A1%E5%9D%97/">Iptables详解(3)3安全模块</a>
+        </div>
+        
+    </li>
+    
+    
+    
+    
+    <li class="py-2">
+        <div class="">
+            <a class=" hover:text-eureka"
+                href="/docs/iptables/iptables%E8%AF%A6%E8%A7%A34%E5%A4%84%E7%90%86%E5%8A%A8%E4%BD%9C/">Iptables详解(4)处理动作</a>
+        </div>
+        
+    </li>
+    
+    
+    
+    
+    <li class="py-2">
+        <div class="">
+            <a class=" hover:text-eureka"
+                href="/docs/iptables/iptables%E8%AF%A6%E8%A7%A37%E8%87%AA%E5%AE%9A%E4%B9%89%E9%93%BE/"></a>
+        </div>
+        
+    </li>
+    
+    
+    
+    
+    <li class="py-2">
+        <div class="">
+            <a class=" hover:text-eureka"
+                href="/docs/iptables/iptables%E8%AF%A6%E8%A7%A3%E5%85%B6%E4%BB%96/"></a>
+        </div>
+        
+    </li>
+    
+    
+    
+    
+    <li class="py-2">
+        <div class="">
+            <a class=" hover:text-eureka"
+                href="/docs/iptables/%E5%88%A9%E7%94%A8-iptables-%E5%8A%A0%E4%B8%8A-recent-%E6%A8%A1%E5%9D%97%E9%98%BB%E6%8C%A1%E5%A4%A7%E9%87%8F%E7%9A%84%E8%AF%B7%E6%B1%82/"></a>
+        </div>
+        
+    </li>
+    
+    
+    
+    
+    <li class="py-2">
+        <div class="">
+            <a class=" hover:text-eureka"
+                href="/docs/iptables/%E6%80%BB%E7%BB%93%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/"></a>
+        </div>
+        
+    </li>
+    
+    
+    
+    
+    <li class="py-2">
+        <div class="">
+            <a class=" hover:text-eureka"
+                href="/docs/iptables/%E6%9C%AA%E5%8F%91%E5%B8%83/iptables-or-nftables/"></a>
+        </div>
+        
+    </li>
+    
+    
+    
+    
+    <li class="py-2">
+        <div class="">
+            <a class=" hover:text-eureka"
+                href="/docs/iptables/cluster%E6%A8%A1%E5%9D%97/">iptables CLUSTERIP模块 负载均衡</a>
+        </div>
+        
+    </li>
+    
+    
+</ul>
+
+</div>
+
+
+
+
+
+            </div>
+
+        </div>
+        <div class="w-full md:w-3/4 lg:w-4/5 pb-8 pt-2 md:pt-8">
+            <div class="w-full lg:w-3/4 pl-6 ml-0 mr-auto">
+                <h1 class="font-bold text-3xl text-primary-text">Iptables详解(2)管理</h1>
+                <div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>2021-04-21</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>2分钟阅读时长</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="/categories/blog/" class="hover:text-eureka">blog</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/docs/" class="hover:text-eureka">docs</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/iptables/" class="hover:text-eureka">iptables</a>
+        
+    </div>
+    
+
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-th-list mr-1"></i>
+        
+        <a href="/series/iptables%E8%AF%A6%E8%A7%A3/" class="hover:text-eureka">Iptables详解</a>
+        
+    </div>
+    
+</div>
+            </div>
+            <div class="flex">
+                <div class="w-full lg:w-3/4 px-6">
+                    
+                    
+                    <div class="content">
+                        <p>iptables 增删改查 常用语句</p>
+<p>iptables -t 表名 -[ A | I | D] 链名 (规则编号) 匹配规则 -j 动作</p>
+<p>iptables [-t 表名] 选项 [链名] [匹配条件] [-j 控制类型]</p>
+<h2 id="查询表链规则">查询表链规则</h2>
+<p>首先我们来回顾一下表链关系</p>
+<table>
+<thead>
+<tr>
+<th>表</th>
+<th>表中的规则可以被哪些链使用：</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>raw</td>
+<td>PREROUTING，OUTPUT</td>
+</tr>
+<tr>
+<td>mangle</td>
+<td>PREROUTING，INPUT，FORWARD，OUTPUT，POSTROUTING</td>
+</tr>
+<tr>
+<td>nat</td>
+<td>PREROUTING，OUTPUT，POSTROUTING（centos7中还有INPUT，centos6中没有）</td>
+</tr>
+<tr>
+<td>filter</td>
+<td>INPUT，FORWARD，OUTPUT</td>
+</tr>
+</tbody>
+</table>
+<h3 id="命令">命令</h3>
+<pre><code class="language-bash">iptables ( --line-numbers ) -t {表名} ( -n | -v| -x ) -L {链名}
+
+实际使用中，为了方便，往往会将短选项进行合并
+iptables --line-numbers -t 表名 -nvxL 链名
+
+-t 指定表名，当没有使用-t选项指定表时，默认为操作filter表
+-L 列出规则，后可跟指定表所在链名
+-v 显示详细参数
+--line-numbers 显示规则的编号，centos中可缩写成–line
+-n 禁止地址反解析
+	iptables默认为我们进行了名称解析0.0.0.0的源地址与目标地址会反解为anywhere，但是在规则非常多的情况下如果进行名称解析，效率会比较低，我们可以使用-n选项，不对IP地址进行名称反解，直接显示IP地址。
+-x 显示精确的计数值
+	当被匹配到的包达到一定数量时，计数器会自动将匹配到的包的大小转换为可读性较高的单位（Kb Mb）
+如果你想要查看精确的计数值，而不是经过可读性优化过的计数值，那么你可以使用-x选项，表示显示精确的计数值单位是byte，
+</code></pre>
+<p><img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/iptables%E5%91%BD%E4%BB%A4/2021.04.15-11:06:38-D-assets-iptables%E5%91%BD%E4%BB%A4-041317_0547_1.png" alt="img"></p>
+<p>图中显示的规则（绿色标注的部分为规则）是Centos6启动iptables以后默认设置的规则，我们暂且不用在意它们，上图中，显示出了3条链（蓝色标注部分为链），INPUT链、FORWARD链、OUTPUT链，每条链中都有自己的规则。</p>
+<p>场景：我们需要禁止某个IP地址访问我们的主机，我们则需要在INPUT链上定义规则。因为，我们在理论总结中已经提到过，报文发往本机时，会经过PREROUTING链与INPUT链（如果你没有明白，请回顾前文），所以，如果我们想要禁止某些报文发往本机，我们只能在PREROUTING链和INPUT链中定义规则，但是PREROUTING链并不存在于filter表中，换句话说就是，PREROUTING天生就没有过滤的能力，所以，我们只能在INPUT链中定义。</p>
+<h3 id="字段解释">字段解释</h3>
+<p><img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/iptables%E5%91%BD%E4%BB%A4/2021.04.15-11:33:04-D-assets-iptables%E5%91%BD%E4%BB%A4-041317_0547_3.png" alt="img"></p>
+<p>其实，这些字段就是规则对应的属性，说白了就是规则的各种信息，那么我们来总结一下这些字段的含义。</p>
+<blockquote>
+<p><strong>字段含义</strong></p>
+<p>pkts:对应规则匹配到的报文的个数。
+bytes:对应匹配到的报文包的大小总和。
+target:规则对应的target，往往表示规则对应的”动作”，即规则匹配成功后需要采取的措施。
+prot:表示规则对应的协议，是否只针对某些协议应用此规则。
+opt:表示规则对应的选项。
+in:表示数据包由哪个接口(网卡)流入，我们可以设置通过哪块网卡流入的报文需要匹配当前规则。
+out:表示数据包由哪个接口(网卡)流出，我们可以设置通过哪块网卡流出的报文需要匹配当前规则。
+source:表示规则对应的源头地址，可以是一个IP，也可以是一个网段。
+destination:表示规则对应的目标地址。可以是一个IP，也可以是一个网段。</p>
+<p><strong>链后面的括号中包含policy ACCEPT ，0 packets，0bytes 三部分</strong></p>
+<p>policy:表示当前链的默认策略
+在配置IPTABLES白名单时，往往会将链的默认策略设置为ACCEPT，通过在链的最后设置REJECT规则实现白名单机制，而不是将链的默认策略设置为DROP，如果将链的默认策略设置为DROP，当链中的规则被清空时，管理员的请求也将会被DROP掉。</p>
+<p>我们可以把packets与bytes称作”计数器”
+packets:表示当前链默认策略匹配到的包的数量，0 packets表示默认策略匹配到0个包。
+bytes:表示当前链默认策略匹配到的所有包的大小总和。</p>
+</blockquote>
+<h2 id="添加">添加</h2>
+<pre><code>iptables -t 表名 -[A,I] 链名 [规则编号] -s源地址 -j 动作
+-t指定表，缺省默认操作filter表。
+-A表示在链的尾部追加规则+链名
+-I表示在链的首部插入规则+链名，链名后面加上空格数字，表示新增规则按编号插入
+-s为source之意，表示源地址。
+-j选项，指明当”匹配条件”被满足时，所对应的动作
+</code></pre>
+<p>如下命令在filter表的INPUT链中追加一条规则，这条规则表示接受所有来自192.168.1.146的发往本机的报文。</p>
+<p><img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/2.iptables%E7%AE%A1%E7%90%86/2021.04.19-10:18:30-D-assets-2.iptables%E7%AE%A1%E7%90%86-041517_1436_7.png" alt="img"></p>
+<p>在filter表的INPUT链的前端添加新规则。</p>
+<p><img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/2.iptables%E7%AE%A1%E7%90%86/2021.04.19-10:17:05-D-assets-2.iptables%E7%AE%A1%E7%90%86-041517_1436_9.png" alt="img"></p>
+<p>我们也可以在添加规则时，指定新增规则的编号，这样我们就能在任意位置插入规则了，我们只要把刚才的命令稍作修改即可，如下。</p>
+<p>仍然使用-I选项进行插入规则操作，-I INPUT 2表示在INPUT链中新增规则，新增的规则的编号为2，</p>
+<p><img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/2.iptables%E7%AE%A1%E7%90%86/2021.04.19-11:20:53-D-assets-2.iptables%E7%AE%A1%E7%90%86-041517_1436_13.png" alt="img"></p>
+<h2 id="删除">删除</h2>
+<pre><code>按编号删除:
+iptables -t 表名 -D 链名 [规则编号]
+按规则匹配删除:
+iptables -t 表名 -D 规则 动作
+
+-F选项为flush之意，即冲刷指定的链，即删除指定链中的所有规则，
+	注意，此操作相当于删除操作，在没有保存iptables规则的情况下，请慎用。
+删除指定表中某条链中的所有规则	
+iptables -t 表名 -F 链名
+不指定链名，只指定表名即可删除表中所有链上的所有规则，命令如下
+iptables -t 表名 -F
+</code></pre>
+<p><strong>方法一：根据规则的编号去删除规则</strong></p>
+<p>先查看一下filter表中INPUT链中的规则</p>
+<p><img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/2.iptables%E7%AE%A1%E7%90%86/2021.04.19-11:20:53-D-assets-2.iptables%E7%AE%A1%E7%90%86-041517_1436_12.png" alt="img"></p>
+<p>假如我们想要删除上图中的第3条规则，则可以使用如下命令。</p>
+<p><img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/2.iptables%E7%AE%A1%E7%90%86/2021.04.19-11:20:53-D-assets-2.iptables%E7%AE%A1%E7%90%86-041517_1436_14.png" alt="img"></p>
+<p>上例中，使用了-t选项指定了要操作的表（没错，省略-t默认表示操作filter表），使用-D选项表示删除指定链中的某条规则，-D INPUT 3表示删除INPUT链中的第3条规则。</p>
+<p><strong>方法二：根据具体的匹配条件与动作删除规则</strong></p>
+<p>当然，我们也可以根据具体的匹配条件与动作去删除规则，比如，删除下图中源地址为192.168.1.146，动作为ACCEPT的规则，于是，删除规则的命令如下。</p>
+<p><img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/2.iptables%E7%AE%A1%E7%90%86/2021.04.19-11:20:53-D-assets-2.iptables%E7%AE%A1%E7%90%86-041517_1436_15.png" alt="img"></p>
+<h2 id="修改">修改</h2>
+<p>那么，我们怎样修改某条规则中的动作呢？比如，我想把如下规则中的动作从DROP改为REJECT，改怎么办呢？</p>
+<p><img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/2.iptables%E7%AE%A1%E7%90%86/2021.04.19-11:20:53-D-assets-2.iptables%E7%AE%A1%E7%90%86-041517_1436_16.png" alt="img"></p>
+<p>我们可以使用-R选项修改指定的链中的规则，在修改规则时指定规则对应的编号即可，示例命令如下</p>
+<p><img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/2.iptables%E7%AE%A1%E7%90%86/2021.04.19-11:20:53-D-assets-2.iptables%E7%AE%A1%E7%90%86-041517_1436_17.png" alt="img"></p>
+<blockquote>
+<p>注意：上例中， -s选项以及对应的源地址不可省略，即使我们已经指定了规则对应的编号，但是在使用-R选项修改某个规则时，<strong>必须指定规则对应的原本的匹配条件</strong>（如果有多个匹配条件，都需要指定）。</p>
+<p>如果上例中的命令没有使用-s指定对应规则中原本的源地址，会采用缺省值0.0.0.0/0匹配所有网段的IP地址
+而此时，-j对应的动作又为REJECT，所以在执行上述命令时如果没有指明规则原本的源地址，那么所有IP的请求都被拒绝了</p>
+</blockquote>
+<h2 id="默认策略">默认策略</h2>
+<p>当链中没有任何规则时，防火墙会按照默认动作处理报文，我们可以修改指定链的默认策略，使用如下命令即可。</p>
+<p><img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/2.iptables%E7%AE%A1%E7%90%86/2021.04.19-11:40:53-D-assets-2.iptables%E7%AE%A1%E7%90%86-041517_1436_20.png" alt="img"></p>
+<p>使用-t指定要操作的表，使用-P选项指定要修改的链，上例中，-P FORWARD DROP表示将表中FORWRD链的默认策略改为DROP。</p>
+<h2 id="保存">保存</h2>
+<p><strong>centos6中</strong>，使用<code>service iptables save</code>命令即可保存规则，规则默认保存在<code>/etc/sysconfig/iptables</code>文件中</p>
+<p><img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/2.iptables%E7%AE%A1%E7%90%86/2021.04.19-16:14:16-D-assets-2.iptables%E7%AE%A1%E7%90%86-041517_1436_21.png" alt="img"></p>
+<p>当我们对规则进行了修改以后，如果想要修改永久生效，必须使用service iptables save保存规则，当然，如果你误操作了规则，但是并没有保存，那么使用service iptables restart命令重启iptables以后，规则会再次回到上次保存/etc/sysconfig/iptables文件时的模样。</p>
+<p><strong>centos7中</strong>，已经不再使用init风格的脚本启动服务，而是使用unit文件，所以，在centos7中已经不能再使用类似service iptables start这样的命令了，所以service iptables save也无法执行，同时，在centos7中，使用firewall替代了原来的iptables service，不过不用担心，我们只要通过yum源安装iptables与iptables-services即可（iptables一般会被默认安装，但是iptables-services在centos7中一般不会被默认安装），在centos7中安装完iptables-services后，即可像centos6中一样，通过service iptables save命令保存规则了，规则同样保存在/etc/sysconfig/iptables文件中。</p>
+<p><strong>方法一</strong></p>
+<p>此处给出centos7中配置iptables-service的步骤</p>
+<pre><code>##配置好yum源以后安装iptables-service
+## yum install -y iptables-services
+##停止firewalld
+## systemctl stop firewalld
+##禁止firewalld自动启动
+## systemctl disable firewalld
+##启动iptables
+## systemctl start iptables
+##将iptables设置为开机自动启动，以后即可通过iptables-service控制iptables服务
+## systemctl enable iptables
+</code></pre>
+<p><strong>方法二</strong></p>
+<p>还可以使用另一种方法保存iptables规则，就是使用iptables-save命令</p>
+<p>使用iptables-save并不能保存当前的iptables规则，但是可以将当前的iptables规则以”保存后的格式”输出到屏幕上。</p>
+<p>所以，我们可以使用iptables-save命令，再配合重定向，将规则重定向到/etc/sysconfig/iptables文件中即可。</p>
+<p>iptables-save &gt; /etc/sysconfig/iptables</p>
+<p>我们也可以将/etc/sysconfig/iptables中的规则重新载入为当前的iptables规则，但是注意，未保存入/etc/sysconfig/iptables文件中的修改将会丢失或者被覆盖。</p>
+<p>使用iptables-restore命令可以从指定文件中重载规则，示例如下</p>
+<p>iptables-restore &lt; /etc/sysconfig/iptables</p>
+<p>再次提醒：重载规则时，现有规则将会被覆盖。</p>
+<h2 id="命令小结">命令小结</h2>
+<p>为方便复习将常用命令做了总结</p>
+<h3 id="添加规则">添加规则</h3>
+<p>在指定表的指定链的尾部添加一条规则，-A选项表示在对应链的末尾添加规则，省略-t选项时，表示默认操作filter表中的规则</p>
+<pre><code class="language-bash">命令语法：iptables -t 表名 -A 链名 匹配条件 -j 动作
+
+示例：iptables -t filter -A INPUT -s 192.168.1.146 -j DROP
+</code></pre>
+<p>在指定表的指定链的首部添加一条规则，-I选型表示在对应链的开头添加规则</p>
+<pre><code>命令语法：iptables -t 表名 -I 链名 匹配条件 -j 动作
+
+示例：iptables -t filter -I INPUT -s 192.168.1.146 -j ACCEPT
+</code></pre>
+<p>在指定表的指定链的指定位置添加一条规则</p>
+<pre><code class="language-bash">命令语法：iptables -t 表名 -I 链名 规则序号 匹配条件 -j 动作
+
+示例：iptables -t filter -I INPUT 5 -s 192.168.1.146 -j REJECT
+</code></pre>
+<p>设置指定表的指定链的默认策略（默认动作），并非添加规则。</p>
+<pre><code>命令语法：iptables -t 表名 -P 链名 动作
+
+示例：iptables -t filter -P FORWARD ACCEPT
+</code></pre>
+<p>上例表示将filter表中FORWARD链的默认策略设置为ACCEPT</p>
+<h3 id="删除规则">删除规则</h3>
+<p>注意点：如果没有保存规则，删除规则时请慎重</p>
+<p>按照规则序号删除规则，删除指定表的指定链的指定规则，-D选项表示删除对应链中的规则。</p>
+<pre><code>命令语法：iptables -t 表名 -D 链名 规则序号
+
+示例：iptables -t filter -D INPUT 3
+</code></pre>
+<p>上述示例表示删除filter表中INPUT链中序号为3的规则。</p>
+<p>按照具体的匹配条件与动作删除规则，删除指定表的指定链的指定规则。</p>
+<pre><code>命令语法：iptables -t 表名 -D 链名 匹配条件 -j 动作
+
+示例：iptables -t filter -D INPUT -s 192.168.1.146 -j DROP
+</code></pre>
+<p>上述示例表示删除filter表中INPUT链中源地址为192.168.1.146并且动作为DROP的规则。</p>
+<p>删除指定表的指定链中的所有规则，-F选项表示清空对应链中的规则，执行时需三思。</p>
+<pre><code>命令语法：iptables -t 表名 -F 链名
+
+示例：iptables -t filter -F INPUT
+</code></pre>
+<p>删除指定表中的所有规则，执行时需三思。</p>
+<pre><code>命令语法：iptables -t 表名 -F
+
+示例：iptables -t filter -F
+</code></pre>
+<h3 id="修改规则">修改规则</h3>
+<p>注意点：如果使用-R选项修改规则中的动作，那么必须指明原规则中的原匹配条件，例如源IP，目标IP等。</p>
+<p>修改指定表中指定链的指定规则，-R选项表示修改对应链中的规则，使用-R选项时要同时指定对应的链以及规则对应的序号，并且规则中原本的匹配条件不可省略。</p>
+<pre><code>命令语法：iptables -t 表名 -R 链名 规则序号 规则原本的匹配条件 -j 动作
+
+示例：iptables -t filter -R INPUT 3 -s 192.168.1.146 -j ACCEPT
+</code></pre>
+<p>上述示例表示修改filter表中INPUT链的第3条规则，将这条规则的动作修改为ACCEPT， -s 192.168.1.146为这条规则中原本的匹配条件，如果省略此匹配条件，修改后的规则中的源地址可能会变为0.0.0.0/0。</p>
+<p>其他修改规则的方法：先通过编号删除规则，再在原编号位置添加一条规则。</p>
+<p>修改指定表的指定链的默认策略（默认动作），并非修改规则，可以使用如下命令。</p>
+<pre><code>命令语法：iptables -t 表名 -P 链名 动作
+
+示例：iptables -t filter -P FORWARD ACCEPT
+</code></pre>
+<p>上例表示将filter表中FORWARD链的默认策略修改为ACCEPT</p>
+<h3 id="保存规则">保存规则</h3>
+<p>保存规则命令如下，表示将iptables规则保存至/etc/sysconfig/iptables文件中，如果对应的操作没有保存，那么当重启iptables服务以后</p>
+<pre><code>service iptables save
+</code></pre>
+<p>注意点：centos7中使用默认使用firewalld，如果想要使用上述命令保存规则，需要安装iptables-services，具体配置过程请回顾上文。</p>
+<p>或者使用如下方法保存规则</p>
+<pre><code>iptables-save &gt; /etc/sysconfig/iptables
+</code></pre>
+<p>可以使用如下命令从指定的文件载入规则，注意：重载规则时，文件中的规则将会覆盖现有规则。</p>
+<pre><code>iptables-restore &lt; /etc/sysconfig/iptables
+</code></pre>
+                    </div>
+                    
+                    <div class="my-4">
+    
+    <a href="/tags/iptables/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#Iptables</a>
+    
+    <a href="/tags/linux%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#Linux网络安全</a>
+    
+</div>
+                    
+                    
+                    <div class="py-2">
+    
+    <div class="flex flex-col md:flex-row items-center my-8">
+        <a href="/authors/songjinfeng/" class="w-24 h-24 md:mr-4">
+            
+            
+            <img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/images/2021.04.22-14:35:19-D-assets-images-sjf.png" class="w-full bg-primary-bg rounded-full" alt="Avatar">
+            
+        </a>
+        <div class="w-full md:w-auto mt-4 md:mt-0">
+            <a href="/authors/songjinfeng/" class="block font-bold text-lg pb-1 mb-2 border-b">宋锦丰</a>
+            <span class="block pb-2">一名运维技术爱好者，专注于 Kubernetes 、 Linux 等技术干货分享。</span>
+            
+            
+            
+            
+            
+            <a href="mailto:GW.songjinfengzc@h3c.com" class="mr-1">
+                <i class="fas fa-envelope"></i>
+            </a>
+            
+            
+            
+            
+            
+            <a href="https://github.com/SJFCS/SJFCS.GITHUB.IO" class="mr-1">
+                <i class="fab fa-github"></i>
+            </a>
+            
+            
+            
+            
+            
+            <a href="/index.xml" class="mr-1">
+                <i class="fas fa-rss"></i>
+            </a>
+            
+        </div>
+    </div>
+    
+</div>
+                    
+
+                    
+
+                    
+<div class="flex flex-col md:flex-row md:justify-between -mx-2 mt-4 px-2 pt-4 border-t">
+    <div>
+        
+        <span class="block font-bold">上一页</span>
+        <a href="/docs/iptables/iptables%E8%AF%A6%E8%A7%A31%E6%A6%82%E5%BF%B5/" class="block">Iptables详解(1)概念</a>
+        
+    </div>
+    <div class="md:text-right mt-4 md:mt-0">
+        
+        <span class="block font-bold">下一页</span>
+        <a href="/docs/iptables/iptables%E8%AF%A6%E8%A7%A332%E6%89%A9%E5%B1%95%E5%8C%B9%E9%85%8D%E6%9D%A1%E4%BB%B6%E6%A8%A1%E5%9D%97/" class="block">Iptables详解(3)2扩展匹配条件模块</a>
+        
+    </div>
+</div>
+
+                    
+                </div>
+                
+                <div class="hidden lg:block lg:w-1/4">
+                    
+                    <div class="sticky top-16 z-10 hidden lg:block px-6 py-4  bg-secondary-bg pt-16 -mt-16 ">
+    <span class="text-lg font-semibold">本页内容</span>
+</div>
+<div class="sticky-toc hidden lg:block px-6 pb-6  pt-10 -mt-10 border-l ">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#查询表链规则">查询表链规则</a>
+      <ul>
+        <li><a href="#命令">命令</a></li>
+        <li><a href="#字段解释">字段解释</a></li>
+      </ul>
+    </li>
+    <li><a href="#添加">添加</a></li>
+    <li><a href="#删除">删除</a></li>
+    <li><a href="#修改">修改</a></li>
+    <li><a href="#默认策略">默认策略</a></li>
+    <li><a href="#保存">保存</a></li>
+    <li><a href="#命令小结">命令小结</a>
+      <ul>
+        <li><a href="#添加规则">添加规则</a></li>
+        <li><a href="#删除规则">删除规则</a></li>
+        <li><a href="#修改规则">修改规则</a></li>
+        <li><a href="#保存规则">保存规则</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+</div>
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        enableStickyToc();
+    });
+</script>
+                    
+                </div>
+                
+            </div>
+
+        </div>
+
+
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        hljs.initHighlightingOnLoad();
+        changeSidebarHeight();
+        switchDocToc();
+    })
+</script>
+
+
+
+
+
+
+
+
+
+      </div>
+    </div>
+    
+  </main>
+  <footer class="pl-scrollbar">
+    <div class="w-full max-w-screen-xl mx-auto"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 2021 <a href="https://www.songjinfeng.com/">SonJinfeng</a> 
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+  </footer>
+</body>
+
+</html>

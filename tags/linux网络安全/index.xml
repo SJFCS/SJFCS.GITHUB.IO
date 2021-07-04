@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Linux网络安全 on Songjinfeng&#39;s BLOG</title>
+    <link>/tags/linux%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/</link>
+    <description>Recent content in Linux网络安全 on Songjinfeng&#39;s BLOG</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language>
+    <copyright>&amp;copy; 2021 &lt;a href=&#34;https://www.songjinfeng.com/&#34;&gt;SonJinfeng&lt;/a&gt; 
+</copyright>
+    <lastBuildDate>Wed, 21 Apr 2021 00:00:00 +0000</lastBuildDate><atom:link href="/tags/linux%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Iptables详解(1)概念</title>
+      <link>/docs/iptables/iptables%E8%AF%A6%E8%A7%A31%E6%A6%82%E5%BF%B5/</link>
+      <pubDate>Wed, 21 Apr 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/docs/iptables/iptables%E8%AF%A6%E8%A7%A31%E6%A6%82%E5%BF%B5/</guid>
+      <description>&lt;p&gt;iptables/netfilter的关系，五链四表的关系，数据转发流程。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Iptables详解(2)管理</title>
+      <link>/docs/iptables/iptables%E8%AF%A6%E8%A7%A32%E5%9F%BA%E7%A1%80%E7%AE%A1%E7%90%86%E5%91%BD%E4%BB%A4/</link>
+      <pubDate>Wed, 21 Apr 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/docs/iptables/iptables%E8%AF%A6%E8%A7%A32%E5%9F%BA%E7%A1%80%E7%AE%A1%E7%90%86%E5%91%BD%E4%BB%A4/</guid>
+      <description>&lt;p&gt;iptables 增删改查 常用语句&lt;/p&gt;
+&lt;p&gt;iptables -t 表名 -[ A | I | D] 链名 (规则编号) 匹配规则 -j 动作&lt;/p&gt;
+&lt;p&gt;iptables [-t 表名] 选项 [链名] [匹配条件] [-j 控制类型]&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Iptables详解(3)2扩展匹配条件模块</title>
+      <link>/docs/iptables/iptables%E8%AF%A6%E8%A7%A332%E6%89%A9%E5%B1%95%E5%8C%B9%E9%85%8D%E6%9D%A1%E4%BB%B6%E6%A8%A1%E5%9D%97/</link>
+      <pubDate>Wed, 21 Apr 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/docs/iptables/iptables%E8%AF%A6%E8%A7%A332%E6%89%A9%E5%B1%95%E5%8C%B9%E9%85%8D%E6%9D%A1%E4%BB%B6%E6%A8%A1%E5%9D%97/</guid>
+      <description>&lt;p&gt;1&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;基本匹配&lt;/li&gt;
+&lt;li&gt;拓展匹配模块&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;s d p i o&lt;/p&gt;
+&lt;p&gt;tcp udp icmp&lt;/p&gt;
+&lt;p&gt;iprange  multiport mac&lt;/p&gt;
+&lt;p&gt;string time connlimit limit&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Iptables详解(3)3安全模块</title>
+      <link>/docs/iptables/iptables%E8%AF%A6%E8%A7%A333%E5%AE%89%E5%85%A8%E6%A8%A1%E5%9D%97/</link>
+      <pubDate>Wed, 21 Apr 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/docs/iptables/iptables%E8%AF%A6%E8%A7%A333%E5%AE%89%E5%85%A8%E6%A8%A1%E5%9D%97/</guid>
+      <description>&lt;p&gt;未完待续。。。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Iptables详解(4)处理动作</title>
+      <link>/docs/iptables/iptables%E8%AF%A6%E8%A7%A34%E5%A4%84%E7%90%86%E5%8A%A8%E4%BD%9C/</link>
+      <pubDate>Wed, 21 Apr 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/docs/iptables/iptables%E8%AF%A6%E8%A7%A34%E5%A4%84%E7%90%86%E5%8A%A8%E4%BD%9C/</guid>
+      <description>参考链接：http://www.faqs.org/docs/iptables/targets.html
+常用的处理动作： (-j 指定对满足条件包的处理，常用动作有ACCEPT接受报、DROP丢弃报、REJECT丢弃报并通知对方、REDIRECT重定向包等)
+-j 参数用来指定要进行的处理动作，常用的处理动作包括：ACCEPT、REJECT、DROP、REDIRECT、MASQUERADE、LOG、DNAT、SNAT、MIRROR、QUEUE、RETURN、MARK，分别说明如下：
+ACCEPT 将封包放行，进行完此处理动作后，将不再比对其它规则，直接跳往下一个规则链（natostrouting）。
+REJECT 拦阻该封包，并传送封包通知对方，可以传送的封包有几个选择：ICMP port-unreachable、ICMP echo-reply 或是 tcp-reset（这个封包会要求对方关闭联机），进行完此处理动作后，将不再比对其它规则，直接中断过滤程序。
+例如：iptables -A FORWARD -p TCP &amp;ndash;dport 22 -j REJECT &amp;ndash;reject-with tcp-reset
+DROP 丢弃封包不予处理，进行完此处理动作后，将不再比对其它规则，直接中断过滤程序。
+REDIRECT 将封包重新导向到另一个端口（PNAT），进行完此处理动作后，将会继续比对其它规则。
+​ 这个功能可以用来实作通透式porxy 或用来保护 web 服务器。
+​ 例如：iptables -t nat -A PREROUTING -p tcp &amp;ndash;dport 80 -j REDIRECT &amp;ndash;to-ports 8080
+MASQUERADE 改写封包来源 IP 为防火墙 NIC IP，可以指定 port 对应的范围，进行完此处理动作后，直接跳往下一个规则（mangleostrouting）。这个功能与 SNAT 略有不同，当进行 IP 伪装时，不需指定要伪装成哪个 IP，IP 会从网卡直接读，当使用拨接连线时，IP 通常是由 ISP 公司的 DHCP 服务器指派的，这个时候 MASQUERADE 特别有用。
+ 例如：iptables -t nat -A POSTROUTING -p TCP -j MASQUERADE --to-ports 1024-31000  LOG 使用LOG动作，可以将符合条件的报文的相关信息记录到日志中，但当前报文具体是被”接受”，还是被”拒绝”，都由后面的规则控制，换句话说，LOG动作只负责记录匹配到的报文的相关信息，不负责对报文的其他处理，如果想要对报文进行进一步的处理，可以在之后设置具体规则，进行进一步的处理。</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang='zh' ><meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+
+
+<title>posts | Songjinfeng&#39;s BLOG</title>
+<link rel="stylesheet" href="/css/eureka.min.css">
+<script defer src="/js/eureka.min.js"></script>
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Noto+Serif+SC:wght@400;600;700&display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/styles/solarized-light.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/highlight.min.js"
+   crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/dart.min.js"
+     crossorigin></script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/js/all.min.js"
+   integrity="sha256-uNYoXefWRqv&#43;PsIF/OflNmwtKM4lStn9yrz2gVl6ymo="  crossorigin></script>
+
+
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css"
+   integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3&#43;Aro6EYUG4&#43;cU&#43;KJWu/X"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js" 
+  integrity="sha384-g7c&#43;Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI&#43;sEnkvrMWph2EDg4"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js"
+   integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC&#43;Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.9.2/dist/mermaid.min.js" 
+  integrity="sha256-Zmpaaj&#43;GXFsPF5WdPArSrnW3b30dovldeKsW00xBVwE="  crossorigin></script>
+
+
+<link rel="icon" type="image/png" sizes="32x32" href="/images/icon_hucfa16751ac9c82c06b84c3502c0db793_16378_32x32_fill_box_center_2.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hucfa16751ac9c82c06b84c3502c0db793_16378_180x180_fill_box_center_2.png">
+
+<meta name="description"
+  content="Eureka is a elegant and powerful theme for Hugo.">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"Categories",
+      "item":"/categories/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"posts",
+      "item":"/categories/posts/"}]
+}
+</script>
+
+
+
+
+<script type="application/ld+json">
+{
+    "@context":"https://schema.org",
+    "@type":"ItemList",
+    "itemListElement":[{
+            "@type":"ListItem",
+            "position":  1 ,
+            "name": "03. 安装和配置 kubectl",
+            "description": "本文档介绍安装和配置 kubernetes 命令行管理工具 kubectl 的步骤。\n注意：\n 本文档只需要部署一次，生成的 kubeconfig 文件是通用的，可以拷贝到需要执行 kubectl 命令的机器的 ·、~/.kube/config 位置；  kubectl二进制分发部署 #[/opt/k8s-deploy/]# # 下载 wget -P /opt/k8s-deploy/ https://dl.k8s.io/v1.16.6/kubernetes-client-linux-amd64.tar.gz # 分发部署 source /opt/k8s-deploy/environment.sh for node_ip in ${NODE_IPS[@]} do echo \u0026quot;\u0026gt;\u0026gt;\u0026gt; ${node_ip}\u0026quot; echo \u0026quot;\u0026gt;\u0026gt;\u0026gt; 检查目录\u0026quot; ssh root@${node_ip} \u0026quot;[ -d /opt/k8s-deploy ] \u0026amp;\u0026amp; echo Check /opt/k8s-deploy Exist OK || (mkdir -p /opt/k8s-deploy \u0026amp;\u0026amp; echo /opt/k8s-deploy Created)\u0026quot; ssh root@${node_ip} \u0026quot;[ -d /usr/local/kubernetes1.16.6/ ] \u0026amp;\u0026amp; (rm -rf /usr/local/kubernetes1.16.6/ \u0026amp;\u0026amp; echo /usr/local/kubernetes1.16.6/ Deleted) || echo check /usr/local/kubernetes1.",
+            "url": "/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/3.-kubectl/"
+        },{
+            "@type":"ListItem",
+            "position":  2 ,
+            "name": "DNS主从备份",
+            "description": "简介 安装Bind # Master \u0026amp; Slave yum install bind -y 或 yum install -y bind-utils bind bind-devel bind-chroot  主配置文件  编辑 vi /etc/named.conf\noptions{} 中添加修改如下\n   主节点：\nvi /etc/named.conf listen-on port 53 { 10.4.7.101; }; allow-query { any; }; forwarders { 8.8.8.8;114.114.114.114; };    从节点：\nvi /etc/named.conf listen-on port 53 { 10.4.7.102; }; allow-query { any; }; forwarders { 8.8.8.8;114.114.114.114; };     字段含义：主节点示例 cat /etc/named.conf\n cat /etc/named.",
+            "url": "/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/3.-dns%E4%B8%BB%E4%BB%8E%E5%A4%87%E4%BB%BD/"
+        },{
+            "@type":"ListItem",
+            "position":  3 ,
+            "name": "Docker时间宿主机同步",
+            "description": "在Docker容器创建好之后，可能会发现容器时间跟宿主机时间不一致，此时需要同步它们的时间，让容器时间跟宿主机时间保持一致。 一、分析时间不一致的原因 宿主机采用了CST时区，CST应该是指（China Shanghai Time，东八区时间）\n容器采用了UTC时区，UTC应该是指（Coordinated Universal Time，标准时间）\n此时，容器与宿主机之间采用的时区不一致，两个时区之间相隔8小时。\n二、同步时间的方法 方案1：共享主机localtime 在创建容器的时候指定启动参数，挂载宿主机的localtime文件到容器内，以此来保证宿主机和容器的时区一致。\ndocker run --privileged --name=qinjiaxi --net=host -it -v ~:/share /etc/localtime:/etc/localtime:ro docker.xxx.xxx.com.cn/robotframework:2.7.14 bash  方案2：复制宿主机localtime到容器中 docker cp /etc/localtime \u0026lt;container_id\u0026gt;:/etc/  方案3：在创建dockerfile时自定义镜像的时间格式与时区 在dockerfile创建初期增加一行内容，内容规定了该镜像的时间格式以及时区。\n#设置时区 RUN /bin/cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \u0026amp;\u0026amp; echo 'Asia/Shanghai' \u0026gt;/etc/timezone  ",
+            "url": "/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_docker/docker%E6%97%B6%E9%97%B4%E5%AE%BF%E4%B8%BB%E5%90%8C%E6%AD%A5/"
+        },{
+            "@type":"ListItem",
+            "position":  4 ,
+            "name": "kubernetes1.16.2部署",
+            "description": "初始化系统 以下操作两个节点都要做并且是root用户安装 #/bin/bash ###################################################### # Written By:Shsnc # Author:direnjie \u0026lt;direnjie@shsnc.com\u0026gt; # Date:2019-10-17 01:32 ##################################################### echo \u0026quot;正在输出结果，请按回车键继续查看... ... ... ... ... ... ...\u0026quot; { echo \u0026quot;####################关闭防火墙和设置防火墙开机不自启#####################\u0026quot; systemctl stop firewalld \u0026amp; systemctl disable firewalld echo \u0026quot;###########################关闭selinux###################################\u0026quot; sed -i 's/enforcing/disabled/g' /etc/selinux/config sed -i 's/permissive/disabled/g' /etc/selinux/config echo \u0026quot;##########################添加本地hosts##################################\u0026quot; echo '192.168.136.134 pinpoint01' \u0026gt;\u0026gt; /etc/hosts echo '192.168.217.135 pinpoint02' \u0026gt;\u0026gt; /etc/hosts echo \u0026quot;###########################关闭swap分区#################################\u0026quot; swapoff -a sed -i '/ swap / s/^/#/' /etc/fstab sed -i 's/.*swap.*/#\u0026amp;/' /etc/fstab free -m echo \u0026quot;###########################配置阿里源#####################################\u0026quot; cat \u0026lt;\u0026lt;EOF \u0026gt; /etc/yum.",
+            "url": "/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/kubernetes1.16.2-%E5%AE%89%E8%A3%85/"
+        },{
+            "@type":"ListItem",
+            "position":  5 ,
+            "name": "Linux索引节点(Inode)用满导致空间不足",
+            "description": "k8s容器调度失败，容器处于创建中，发现提示no space left on device，服务器/var/log分区被占满\n通过du查看/var/log下的日志，发现是有一个gnocchi_wsgi_error.log占用了大量的空间。 查看gnocchi_wsgi_error.log日志，提示/var/lib/gnocchi/tmp下没有空间了。\n这个gnocchi是给ceilometer容器用的，这个容器所使用的共享存储是gnocchi存储卷。\ndf -h查看，发现该存储卷还有空间；但是df -i查看发现inode被占满。 因此可以确认，问题是由于gnocchi存储卷的inode被占满，导致ceilometer容器一直打印错误日志，最终导致/var/log被占满。\n这个问题属于一个配置优化问题。需要及时更改gnocchi的inode配置，需要重新格式化存储，增加inode的数目。操作方法如下：\nkubectl scale rc ceilometerrc \u0026ndash;replicas=0 mkfs.ext4 -N 200000000 /dev/mapper/openstack-gnocchi kubectl scale rc ceilometerrc \u0026ndash;replicas=1\nmkfs.ext4 [-I inode-size] 指定inode size大小，默认配置文件在/etc/mke2fs.conf，inode_size = 256 Inode size: 256 [-N number-of-inodes] 指定inode个数，最大创建文件个数 [-i bytes-per-inode] 指定\u0026quot;字节/inode\u0026quot;的比例 增大-i参数，从而减小inode总数，可以减小inode占用的磁盘空间，减少磁盘浪费。   问题原因分析：\nInode译成中文就是索引节点，每个存储设备（例如硬盘）或存储设备的分区被格式化为文件系统后，应该有两部份，一部份是inode，另一部份是 Block，Block是用来存储数据用的。而inode呢，就是用来存储这些数据的信息，这些信息包括文件大小、属主、归属的用户组、读写权限等。 inode为每个文件进行信息索引，所以就有了inode的数值。操作系统根据指令，能通过inode值最快的找到相对应的文件。 而这台服务器的Block虽然还有剩余，但inode已经用满，因此在创建新目录或文件时，系统提示磁盘空间不足。 Inode的数量是有限制的，每个文件对应一个Inode，df -i可以看到Inode的总量，已经使用的Inode数量，和剩余数量。\n3、解决：\n1）查找满的目录：\n[root@abc sbin]# for i in /*; do echo $i; find $i | wc -l; done  然后找到inode占用最多额目录下，再用上面命令查看。\n2）删除文件占用多的目录：\n进入目录直接rm -rf 可能会卡死，可以使用下面方式：",
+            "url": "/posts/1.linux/linux%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/%E6%95%85%E9%9A%9C%E5%88%86%E6%9E%90inode/"
+        },{
+            "@type":"ListItem",
+            "position":  6 ,
+            "name": "Linux网卡绑定",
+            "description": "[root@master ~]# uname -r 3.10.0-1160.el7.x86_64 [root@master ~]# cat /etc/redhat-release CentOS Linux release 7.9.2009 (Core)  双网卡绑定各模式配置文件示例 对于各种双网卡绑定配置模式，请参考系统中的示例文件，文件位置：\n/usr/share/doc/teamd-xx/example_configs/\n前言 服务器常有多块网卡，为了提高冗余可靠性和数据传输带宽，引入了两项技术Bond和Team，通过多张网卡绑定为一个逻辑网卡，实现本地网卡的冗余，带宽扩容和负载均衡，提供链路级别的故障保护，在生产场景中是常用的技术。\n网卡Bond是Kernels 2.4.12及以后的版本均供bonding模块，以前的版本可以通过patch实现。\nCentOS6及之前都是使用bond机制来实现多网络绑定同一个IP地址，来对网络提供访问，并按不同的模式来负载均衡或者轮回接替管理处理数据。 而到了ContOS7之后，引入NetworkManager来管理网络，通过命令行工具nmcli进行配置，nmcli会根据命令参数的配置来重新生成特定的配置文件来供网络接口使用，nmcli支持bond技术和新的team机制。在Centos7有这两种技术可供选择。 本文将从技术原理和应用实践两方面对这两项技术展开讲解。\n、、、、、、、、、、、、、、、、、、、、、、\n虚拟交换机xxx\nBond、Team对比 “Bonding” 和 “nmcli的网络组Network Teaming”二者实现的功能一样，但从某种角度，网络组要比Bonding的技术要好\nBond详解 bonding的详细帮助\n/usr/share/doc/kernel-doc- version/Documentation/networking/bonding.txt https://www.kernel.org/doc/Documentation/networking/bonding.txt\nBond模式七模式 https://zhiliao.h3c.com/Theme/details/24694\n交换机多端口和服务器对接时，需要确定是否需要配置聚合或者不配置聚合，并且配置聚合的时候还需要确认是静态聚合还是动态聚合，当然这和当前服务器网卡的bond模式有关。下面我们了解下Linux服务器的7种bond模式，说明如下：\n ==mod=0 (balance-rr) Round-robin policy（平衡抡循环策略）==   轮询策略：按照顺序轮流使用每个接口来发送和接收数据包，提高了负载均衡和冗余的能力，带宽翻倍。 该模式所有端口的mac地址相同 ==交换机侧做静态链路聚合==  H3C V3平台交换机侧的静态典型配置 [H3C] link-aggregation group 1 mode manual [H3C] interface ethernet2/1/1 [H3C-Ethernet2/1/1] port link-aggregation group 1 H3C V5/V7交换机侧的静态典型配置 [DeviceA] interface Bridge-Aggregation 1 //默认静态 [DeviceA] interface GigabitEthernet 4/0/1 [DeviceA-GigabitEthernet4/0/1] port link-aggregation group 1   ==mod=1 (active-backup) Active-backup policy（主-备份策略）==   冗余性高：只有一个设备处于活动状态，当一个宕掉另一个马上由备份转换为主设备。 链路利用率低：只有一个接口处于工作状态。 bond的MAC地址是唯一的，切换主备时交换机侧会存在MAC漂移的记录 ==交换机无需配置或建议在同一VLAN下==   ==mod=2 (balance-xor) XOR policy（平衡策略）==【load balancing】    XOR Hash负载分担：基于指定的传输HASH策略传输数据包。缺省的策略是：(源MAC地址 XOR 目标MAC地址) % slave数量。其他的传输策略可以通过xmit_hash_policy选项指定，此模式提供负载平衡和容错能力",
+            "url": "/posts/1.linux/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/3.linux%E7%BD%91%E5%8D%A1%E7%BB%91%E5%AE%9A/"
+        },{
+            "@type":"ListItem",
+            "position":  7 ,
+            "name": "Linux网络基础",
+            "description": "https://segmentfault.com/a/1190000015476963\nhttps://segmentfault.com/a/1190000011954814\nbond mode为0,1,2,3,4时，bond口的MAC地址和成员口MAC地址相同；bond mode为5和6时，bond口的MAC地址不同于成员口的MAC地址。\n网卡配置详解 默认网卡配置 /etc/sysconfig/network-scripts/ifcfg-*\nTYPE=Ethernet # 网络类型（通常是Ethemet） PROXY_METHOD=none BROWSR_ONLY=no BOOTPROTO=dhcp # IP的配置方法[none|static|bootp|dhcp]（引导时不使用协议|静态分配IP|BOOTP协议|DHCP协议） DEFROUTE=yes IPV4_FAILURE_FATAL=no IPV6INIT=yes # IPV6是否有效（yes/no） IPV6_AUTOCONF=yes IPV6_DEFROUTE=yes IPV6_FAILURE_FATAL=no IPV6_ADDR_GEN_MODE=stable-privacy NAME=ens33 UUID=ac9b66bf-74fb-4bda-b89f-c66ff84c9571 # 获取新的UUID # uuidgen ens33 将获取的UUID填入配置文件后重启网卡服务 # 验证UUID # nmcli con | sed -n '1,2p' DEVICE=ens33 # 接口名（设备,网卡） ONBOOT=yes #ONBOOT是指明在系统启动时是否激活网卡，只有在激活状态的网卡才能去连接网络，进行网络通讯  永久生效-设置静态地址 上述默认配置文件修改加入如下配置，配置完成后systemctl restart network重启网卡服务生效\nBOOTPROTO=static #静态IP IPADDR= #本机地址 NETMASK= #子网掩码 GATEWAY= #默认网关 # DNS1= # DNS2=  临时生效-详见工具包对比 也可以通过 ip、nmlic、ifconfig管理命令进行配置，后续会展开介绍\nifconfig eth0 192.168.0.2 netmask 255.255.255.0  vi /etc/resolv.",
+            "url": "/posts/1.linux/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/1.linux%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80/"
+        },{
+            "@type":"ListItem",
+            "position":  8 ,
+            "name": "LVM管理",
+            "description": "参考链接：https://www.cnblogs.com/diantong/p/10554831.html\n LVM的工作原理 　LVM（Logical Volume Manager）逻辑卷管理，是在硬盘分区和文件系统之间添加的一个逻辑层，为文件系统屏蔽下层硬盘分区布局，并提供一个抽象的盘卷，在盘卷上建立文件系统。管理员利用LVM可以在硬盘不用重新分区的情况下动态调整文件系统的大小，并且利用LVM管理的文件系统可以跨越物理硬盘。当服务器添加了新的硬盘后，管理员不必将原有的文件移动到新的硬盘上，而是通过LVM直接扩展文件系统来跨越物理硬盘。\n　LVM就是通过将底层的物理硬盘封装，然后以逻辑卷的方式呈现给上层应用。当我们对底层的物理硬盘进行操作时，不再是针对分区进行操作，而是通过逻辑卷对底层硬盘进行管理操作。\n基础术语   物理存储介质（The physical media）： LVM存储介质，可以是硬盘分区、整个硬盘、raid阵列或SAN硬盘。设备必须初始化为LVM物理卷，才能与LVM结合使用。\n  物理卷PV（physical volume）： 物理卷就是LVM的基本存储逻辑块，但和基本的物理存储介质比较却包含与LVM相关的管理参数，创建物理卷可以用硬盘分区，也可以用硬盘本身。\n  卷组VG（Volume Group）： LVM卷组类似于非LVM系统中的物理硬盘，一个卷组VG由一个或多个物理卷PV组成。可以在卷组VG上建立逻辑卷LV。\n  逻辑卷LV（logical volume）： 类似于非LVM系统中的硬盘分区，逻辑卷LV建立在卷组VG之上。在逻辑卷LV之上建立文件系统。\n  物理块PE（physical Extent）： 物理卷PV中可以分配的最小存储单元，PE的大小可以指定，默认为4MB\n  逻辑块LE（Logical Extent）：逻辑卷LV中可以分配的最小存储单元，在同一卷组VG中LE的大小和PE是相同的，并且一一相对。\n   总结：多个磁盘/分区/raid\u0026ndash;\u0026gt;多个物理卷PV\u0026ndash;\u0026gt;合成卷组VG\u0026ndash;\u0026gt;从VG划分出逻辑卷LV\u0026ndash;\u0026gt;格式化LV，挂载使用。\n注意：老的Linux在创建PV时，需要将分区类型改为Linux LVM（8e）。但新的系统已经非常智能，即使默认的Linux分区（83），也可以创建PV。\n LVM的优点   卷组VG可以使多个硬盘空间看起来像是一个大硬盘。\n  逻辑卷LV可以创建跨多个硬盘空间的分区。\n  在使用逻辑卷LV时，可以在空间不足时动态调整大小，不需要考虑逻辑卷LV在硬盘上的位置，不用担心没有可用的连续的空间。\n  可以在线对卷组VG、逻辑卷LV进行创建、删除、调整大小等操作。但LVM上的文件系统也需要重新调整大小。\n  LVM允许创建快照，用来保存文件系统的备份。\n   注意：LVM是软件的卷管理方式，RAID是磁盘管理的方法。对于重要的数据使，用RAID保护物理硬盘不会因为故障而中断业务，再用LVM来实现对卷的良性管理，更好的利用硬盘资源。\nLVM有两种写入机制：线性（写完一个PV再写下一个PV，默认）、条带（平均）\n LVM常用的管理命令    功能 PV管理命令 VG管理命令 LV管理命令     scan 扫描 pvscan vgscan lvscan   create 创建 pvcreate vgcreate lvcreate   display 显示 pvdisplay vgdisplay lvdisplay   remove 移除 pvremove vgremove lvremove   extend 扩展  vgextend lvextend   reduce 减少  vgreduce lvreduce     注意：查看命令有scan、display和s（pvs、vgs、lvs）。s是简单查看对应卷信息，display是详细查看对应卷信息。而scan是扫描所有的相关的对应卷。",
+            "url": "/posts/1.linux/linux%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/lvm%E7%AE%A1%E7%90%86/"
+        },{
+            "@type":"ListItem",
+            "position":  9 ,
+            "name": "TCPdump",
+            "description": "参考链接： tcpdump命令详解 万字长文 实例参考\n 配合ssh通道传入wireshark  ssh当通道让tcpdump远程抓包，再将数据实时传送到本地，再用wireshark图形化界面实时打开 https://blog.csdn.net/koalazoo/article/details/84958752\n准备工作 本地PC机上得有命令行版的ssh，图形化的SecureCRT应该不行 本地PC机上有wireshark 远程主机上有tcpdump 你有远程主机的root权限（否则你也抓不了包啊） 找到本地PC机上ssh和wireshark的路径（或者加入PATH，用于执行命令） 工作思路 基本的想法就是用ssh登录到远程主机上，发起tcpdump抓包，并将tcpdump抓到的结果输出到stdout，再传回本地PC机，而本地PC机上的wireshark以stdin为输入，两者以管道连接传输。\n命令示例\nssh root@some.host 'tcpdump -i eth0 port 80 -s 0 -l -w -' | wireshark -k -i -  命令执行后会弹出wireshark界面，这时需要切回刚刚的命令行，因为需要输入密码以登录远程主机（已经配置免密另说），连接成功后即开始抓包，并在本地PC的wireshark上实时显示抓包结果。\n参数解释 tcpdump中 ‘-l ’ （这里是小写的字母L）是指line-buffer，即不使用缓存，直接输出，否则就会一段段的输出。’-w -\u0026lsquo;是指写文件，目标文件为标准输出。至于tcpdump另外的参数，想抓什么端口，这个请搜下度娘，一搜一大把。\nwireshark中 ‘-k’ 是指马上开始捕获数据，’-i -’ 是指从指定接口获取，源为标准输入。\n或者可以用plink（putty的命令行版本）\nplink -ssh USER@HOST -pw PASS \u0026quot;tcpdump -s 0 -U -n -i br-lan -w - not port 22\u0026quot; | wireshark -k -i -   前言 tcpdump 的参数非常的多，初学者在没有掌握 tcpdump 时，会对这个命令的众多参数产生很多的疑惑。",
+            "url": "/posts/1.linux/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/tcpdump/"
+        },{
+            "@type":"ListItem",
+            "position":  10 ,
+            "name": "基础命令",
+            "description": "\u003ch1 id=\"日志\"\u003e日志\u003c/h1\u003e\n\u003cp\u003etailf 跟踪日志文件增长，作用跟tail –f相同。tailf将输出文件的最后10行，然后等待文件增长。\u003c/p\u003e",
+            "url": "/posts/7.%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4/shell/%E5%9F%BA%E7%A1%80%E5%91%BD%E4%BB%A4/"
+        }
+    ]
+}
+</script><meta property="og:title" content="posts | Songjinfeng&#39;s BLOG" />
+<meta property="og:type" content="website" />
+
+
+<meta property="og:image" content="/images/icon.png">
+
+
+<meta property="og:url" content="/categories/posts/" />
+
+
+
+
+
+<meta property="og:description" content="Eureka is a elegant and powerful theme for Hugo." />
+
+
+
+
+
+<meta property="og:locale" content="zh" />
+
+
+
+
+<meta property="og:site_name" content="Songjinfeng&#39;s BLOG" />
+
+
+
+
+
+
+<meta property="og:updated_time" content="2021-05-15T00:00:00&#43;00:00" />
+
+
+
+<meta property="article:section" content="categories" />
+
+
+<link rel="alternate" type="application/rss+xml" href="/categories/posts/index.xml" title="Songjinfeng's BLOG" />
+
+<body class="flex flex-col min-h-screen">
+  <header class="fixed flex items-center w-full min-h-16 pl-scrollbar z-50 bg-secondary-bg shadow-sm">
+    <div class="w-full max-w-screen-xl mx-auto"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="mr-6 text-primary-text text-xl font-bold">Songjinfeng&#39;s BLOG</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:flex-grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:flex-grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">技术专栏</a>
+            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">文档笔记</a>
+            <a href="/series/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">主题系列</a>
+            <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">标签</a>
+            <a href="/authors/songjinfeng/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">关于</a>
+            <a href="/index.xml" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">RSS</a>
+            <a href="/webstack" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">友链&amp;导航</a>
+        </div>
+
+        <div class="flex">
+            <div class="relative pt-4 md:pt-0">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col left-0 md:left-auto right-auto md:right-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">浅色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">深色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">自动</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            switchMode('Auto')
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+  </header>
+  <main class="flex-grow pt-16">
+    <div class="pl-scrollbar">
+      <div class="w-full max-w-screen-xl lg:px-4 xl:px-8 mx-auto">
+<article class="mx-6 my-8">
+    <h1 class="font-bold text-3xl text-primary-text">posts</h1>
+    
+</article>
+<div class="bg-secondary-bg rounded px-6">
+    <div class="overflow-hidden divide-y">
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="mb-4">
+  <a href="/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/3.-kubectl/" class="font-bold text-xl hover:text-eureka">03. 安装和配置 kubectl</a>
+</div>
+<div class="content">
+  本文档介绍安装和配置 kubernetes 命令行管理工具 kubectl 的步骤。
+注意：
+ 本文档只需要部署一次，生成的 kubeconfig 文件是通用的，可以拷贝到需要执行 kubectl 命令的机器的 ·、~/.kube/config 位置；  kubectl二进制分发部署 #[/opt/k8s-deploy/]# # 下载 wget -P /opt/k8s-deploy/ https://dl.k8s.io/v1.16.6/kubernetes-client-linux-amd64.tar.gz # 分发部署 source /opt/k8s-deploy/environment.sh for node_ip in ${NODE_IPS[@]} do echo &amp;quot;&amp;gt;&amp;gt;&amp;gt; ${node_ip}&amp;quot; echo &amp;quot;&amp;gt;&amp;gt;&amp;gt; 检查目录&amp;quot; ssh root@${node_ip} &amp;quot;[ -d /opt/k8s-deploy ] &amp;amp;&amp;amp; echo Check /opt/k8s-deploy Exist OK || (mkdir -p /opt/k8s-deploy &amp;amp;&amp;amp; echo /opt/k8s-deploy Created)&amp;quot; ssh root@${node_ip} &amp;quot;[ -d /usr/local/kubernetes1.16.6/ ] &amp;amp;&amp;amp; (rm -rf /usr/local/kubernetes1.16.6/ &amp;amp;&amp;amp; echo /usr/local/kubernetes1.16.6/ Deleted) || echo check /usr/local/kubernetes1.
+</div>
+
+<div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>0001-01-01</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>2分钟阅读时长</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="/categories/blog/" class="hover:text-eureka">blog</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/posts/" class="hover:text-eureka">posts</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/%E4%BA%91%E8%AE%A1%E7%AE%97/" class="hover:text-eureka">云计算</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/kubernetes/" class="hover:text-eureka">Kubernetes</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/" class="hover:text-eureka">K8S二进制部署</a>
+        
+    </div>
+    
+
+    
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="mb-4">
+  <a href="/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/3.-dns%E4%B8%BB%E4%BB%8E%E5%A4%87%E4%BB%BD/" class="font-bold text-xl hover:text-eureka">DNS主从备份</a>
+</div>
+<div class="content">
+  简介 安装Bind # Master &amp;amp; Slave yum install bind -y 或 yum install -y bind-utils bind bind-devel bind-chroot  主配置文件  编辑 vi /etc/named.conf
+options{} 中添加修改如下
+   主节点：
+vi /etc/named.conf listen-on port 53 { 10.4.7.101; }; allow-query { any; }; forwarders { 8.8.8.8;114.114.114.114; };    从节点：
+vi /etc/named.conf listen-on port 53 { 10.4.7.102; }; allow-query { any; }; forwarders { 8.8.8.8;114.114.114.114; };     字段含义：主节点示例 cat /etc/named.conf
+ cat /etc/named.
+</div>
+
+<div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>0001-01-01</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>3分钟阅读时长</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="/categories/blog/" class="hover:text-eureka">blog</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/posts/" class="hover:text-eureka">posts</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/%E4%BA%91%E8%AE%A1%E7%AE%97/" class="hover:text-eureka">云计算</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/kubernetes/" class="hover:text-eureka">Kubernetes</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/" class="hover:text-eureka">K8S二进制部署</a>
+        
+    </div>
+    
+
+    
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="mb-4">
+  <a href="/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_docker/docker%E6%97%B6%E9%97%B4%E5%AE%BF%E4%B8%BB%E5%90%8C%E6%AD%A5/" class="font-bold text-xl hover:text-eureka">Docker时间宿主机同步</a>
+</div>
+<div class="content">
+  在Docker容器创建好之后，可能会发现容器时间跟宿主机时间不一致，此时需要同步它们的时间，让容器时间跟宿主机时间保持一致。 一、分析时间不一致的原因 宿主机采用了CST时区，CST应该是指（China Shanghai Time，东八区时间）
+容器采用了UTC时区，UTC应该是指（Coordinated Universal Time，标准时间）
+此时，容器与宿主机之间采用的时区不一致，两个时区之间相隔8小时。
+二、同步时间的方法 方案1：共享主机localtime 在创建容器的时候指定启动参数，挂载宿主机的localtime文件到容器内，以此来保证宿主机和容器的时区一致。
+docker run --privileged --name=qinjiaxi --net=host -it -v ~:/share /etc/localtime:/etc/localtime:ro docker.xxx.xxx.com.cn/robotframework:2.7.14 bash  方案2：复制宿主机localtime到容器中 docker cp /etc/localtime &amp;lt;container_id&amp;gt;:/etc/  方案3：在创建dockerfile时自定义镜像的时间格式与时区 在dockerfile创建初期增加一行内容，内容规定了该镜像的时间格式以及时区。
+#设置时区 RUN /bin/cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime &amp;amp;&amp;amp; echo &#39;Asia/Shanghai&#39; &amp;gt;/etc/timezone  
+</div>
+
+<div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>0001-01-01</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>1分钟阅读时长</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="/categories/blog/" class="hover:text-eureka">blog</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/posts/" class="hover:text-eureka">posts</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/%E4%BA%91%E8%AE%A1%E7%AE%97/" class="hover:text-eureka">云计算</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/docker/" class="hover:text-eureka">Docker</a>
+        
+    </div>
+    
+
+    
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="mb-4">
+  <a href="/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/kubernetes1.16.2-%E5%AE%89%E8%A3%85/" class="font-bold text-xl hover:text-eureka">kubernetes1.16.2部署</a>
+</div>
+<div class="content">
+  初始化系统 以下操作两个节点都要做并且是root用户安装 #/bin/bash ###################################################### # Written By:Shsnc # Author:direnjie &amp;lt;direnjie@shsnc.com&amp;gt; # Date:2019-10-17 01:32 ##################################################### echo &amp;quot;正在输出结果，请按回车键继续查看... ... ... ... ... ... ...&amp;quot; { echo &amp;quot;####################关闭防火墙和设置防火墙开机不自启#####################&amp;quot; systemctl stop firewalld &amp;amp; systemctl disable firewalld echo &amp;quot;###########################关闭selinux###################################&amp;quot; sed -i &#39;s/enforcing/disabled/g&#39; /etc/selinux/config sed -i &#39;s/permissive/disabled/g&#39; /etc/selinux/config echo &amp;quot;##########################添加本地hosts##################################&amp;quot; echo &#39;192.168.136.134 pinpoint01&#39; &amp;gt;&amp;gt; /etc/hosts echo &#39;192.168.217.135 pinpoint02&#39; &amp;gt;&amp;gt; /etc/hosts echo &amp;quot;###########################关闭swap分区#################################&amp;quot; swapoff -a sed -i &#39;/ swap / s/^/#/&#39; /etc/fstab sed -i &#39;s/.*swap.*/#&amp;amp;/&#39; /etc/fstab free -m echo &amp;quot;###########################配置阿里源#####################################&amp;quot; cat &amp;lt;&amp;lt;EOF &amp;gt; /etc/yum.
+</div>
+
+<div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>0001-01-01</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>2分钟阅读时长</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="/categories/blog/" class="hover:text-eureka">blog</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/posts/" class="hover:text-eureka">posts</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/%E4%BA%91%E8%AE%A1%E7%AE%97/" class="hover:text-eureka">云计算</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/kubernetes/" class="hover:text-eureka">Kubernetes</a>
+        
+    </div>
+    
+
+    
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="mb-4">
+  <a href="/posts/1.linux/linux%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/%E6%95%85%E9%9A%9C%E5%88%86%E6%9E%90inode/" class="font-bold text-xl hover:text-eureka">Linux索引节点(Inode)用满导致空间不足</a>
+</div>
+<div class="content">
+  k8s容器调度失败，容器处于创建中，发现提示no space left on device，服务器/var/log分区被占满
+通过du查看/var/log下的日志，发现是有一个gnocchi_wsgi_error.log占用了大量的空间。 查看gnocchi_wsgi_error.log日志，提示/var/lib/gnocchi/tmp下没有空间了。
+这个gnocchi是给ceilometer容器用的，这个容器所使用的共享存储是gnocchi存储卷。
+df -h查看，发现该存储卷还有空间；但是df -i查看发现inode被占满。 因此可以确认，问题是由于gnocchi存储卷的inode被占满，导致ceilometer容器一直打印错误日志，最终导致/var/log被占满。
+这个问题属于一个配置优化问题。需要及时更改gnocchi的inode配置，需要重新格式化存储，增加inode的数目。操作方法如下：
+kubectl scale rc ceilometerrc &amp;ndash;replicas=0 mkfs.ext4 -N 200000000 /dev/mapper/openstack-gnocchi kubectl scale rc ceilometerrc &amp;ndash;replicas=1
+mkfs.ext4 [-I inode-size] 指定inode size大小，默认配置文件在/etc/mke2fs.conf，inode_size = 256 Inode size: 256 [-N number-of-inodes] 指定inode个数，最大创建文件个数 [-i bytes-per-inode] 指定&amp;quot;字节/inode&amp;quot;的比例 增大-i参数，从而减小inode总数，可以减小inode占用的磁盘空间，减少磁盘浪费。   问题原因分析：
+Inode译成中文就是索引节点，每个存储设备（例如硬盘）或存储设备的分区被格式化为文件系统后，应该有两部份，一部份是inode，另一部份是 Block，Block是用来存储数据用的。而inode呢，就是用来存储这些数据的信息，这些信息包括文件大小、属主、归属的用户组、读写权限等。 inode为每个文件进行信息索引，所以就有了inode的数值。操作系统根据指令，能通过inode值最快的找到相对应的文件。 而这台服务器的Block虽然还有剩余，但inode已经用满，因此在创建新目录或文件时，系统提示磁盘空间不足。 Inode的数量是有限制的，每个文件对应一个Inode，df -i可以看到Inode的总量，已经使用的Inode数量，和剩余数量。
+3、解决：
+1）查找满的目录：
+[root@abc sbin]# for i in /*; do echo $i; find $i | wc -l; done  然后找到inode占用最多额目录下，再用上面命令查看。
+2）删除文件占用多的目录：
+进入目录直接rm -rf 可能会卡死，可以使用下面方式：
+</div>
+
+<div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>0001-01-01</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>1分钟阅读时长</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="/categories/blog/" class="hover:text-eureka">blog</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/posts/" class="hover:text-eureka">posts</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/linux/" class="hover:text-eureka">Linux</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/linux%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/" class="hover:text-eureka">Linux文件系统</a>
+        
+    </div>
+    
+
+    
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="mb-4">
+  <a href="/posts/1.linux/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/3.linux%E7%BD%91%E5%8D%A1%E7%BB%91%E5%AE%9A/" class="font-bold text-xl hover:text-eureka">Linux网卡绑定</a>
+</div>
+<div class="content">
+  [root@master ~]# uname -r 3.10.0-1160.el7.x86_64 [root@master ~]# cat /etc/redhat-release CentOS Linux release 7.9.2009 (Core)  双网卡绑定各模式配置文件示例 对于各种双网卡绑定配置模式，请参考系统中的示例文件，文件位置：
+/usr/share/doc/teamd-xx/example_configs/
+前言 服务器常有多块网卡，为了提高冗余可靠性和数据传输带宽，引入了两项技术Bond和Team，通过多张网卡绑定为一个逻辑网卡，实现本地网卡的冗余，带宽扩容和负载均衡，提供链路级别的故障保护，在生产场景中是常用的技术。
+网卡Bond是Kernels 2.4.12及以后的版本均供bonding模块，以前的版本可以通过patch实现。
+CentOS6及之前都是使用bond机制来实现多网络绑定同一个IP地址，来对网络提供访问，并按不同的模式来负载均衡或者轮回接替管理处理数据。 而到了ContOS7之后，引入NetworkManager来管理网络，通过命令行工具nmcli进行配置，nmcli会根据命令参数的配置来重新生成特定的配置文件来供网络接口使用，nmcli支持bond技术和新的team机制。在Centos7有这两种技术可供选择。 本文将从技术原理和应用实践两方面对这两项技术展开讲解。
+、、、、、、、、、、、、、、、、、、、、、、
+虚拟交换机xxx
+Bond、Team对比 “Bonding” 和 “nmcli的网络组Network Teaming”二者实现的功能一样，但从某种角度，网络组要比Bonding的技术要好
+Bond详解 bonding的详细帮助
+/usr/share/doc/kernel-doc- version/Documentation/networking/bonding.txt https://www.kernel.org/doc/Documentation/networking/bonding.txt
+Bond模式七模式 https://zhiliao.h3c.com/Theme/details/24694
+交换机多端口和服务器对接时，需要确定是否需要配置聚合或者不配置聚合，并且配置聚合的时候还需要确认是静态聚合还是动态聚合，当然这和当前服务器网卡的bond模式有关。下面我们了解下Linux服务器的7种bond模式，说明如下：
+ ==mod=0 (balance-rr) Round-robin policy（平衡抡循环策略）==   轮询策略：按照顺序轮流使用每个接口来发送和接收数据包，提高了负载均衡和冗余的能力，带宽翻倍。 该模式所有端口的mac地址相同 ==交换机侧做静态链路聚合==  H3C V3平台交换机侧的静态典型配置 [H3C] link-aggregation group 1 mode manual [H3C] interface ethernet2/1/1 [H3C-Ethernet2/1/1] port link-aggregation group 1 H3C V5/V7交换机侧的静态典型配置 [DeviceA] interface Bridge-Aggregation 1 //默认静态 [DeviceA] interface GigabitEthernet 4/0/1 [DeviceA-GigabitEthernet4/0/1] port link-aggregation group 1   ==mod=1 (active-backup) Active-backup policy（主-备份策略）==   冗余性高：只有一个设备处于活动状态，当一个宕掉另一个马上由备份转换为主设备。 链路利用率低：只有一个接口处于工作状态。 bond的MAC地址是唯一的，切换主备时交换机侧会存在MAC漂移的记录 ==交换机无需配置或建议在同一VLAN下==   ==mod=2 (balance-xor) XOR policy（平衡策略）==【load balancing】    XOR Hash负载分担：基于指定的传输HASH策略传输数据包。缺省的策略是：(源MAC地址 XOR 目标MAC地址) % slave数量。其他的传输策略可以通过xmit_hash_policy选项指定，此模式提供负载平衡和容错能力
+</div>
+
+<div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>0001-01-01</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>12分钟阅读时长</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="/categories/blog/" class="hover:text-eureka">blog</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/posts/" class="hover:text-eureka">posts</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/linux/" class="hover:text-eureka">Linux</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/" class="hover:text-eureka">Linux网络管理</a>
+        
+    </div>
+    
+
+    
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="mb-4">
+  <a href="/posts/1.linux/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/1.linux%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80/" class="font-bold text-xl hover:text-eureka">Linux网络基础</a>
+</div>
+<div class="content">
+  https://segmentfault.com/a/1190000015476963
+https://segmentfault.com/a/1190000011954814
+bond mode为0,1,2,3,4时，bond口的MAC地址和成员口MAC地址相同；bond mode为5和6时，bond口的MAC地址不同于成员口的MAC地址。
+网卡配置详解 默认网卡配置 /etc/sysconfig/network-scripts/ifcfg-*
+TYPE=Ethernet # 网络类型（通常是Ethemet） PROXY_METHOD=none BROWSR_ONLY=no BOOTPROTO=dhcp # IP的配置方法[none|static|bootp|dhcp]（引导时不使用协议|静态分配IP|BOOTP协议|DHCP协议） DEFROUTE=yes IPV4_FAILURE_FATAL=no IPV6INIT=yes # IPV6是否有效（yes/no） IPV6_AUTOCONF=yes IPV6_DEFROUTE=yes IPV6_FAILURE_FATAL=no IPV6_ADDR_GEN_MODE=stable-privacy NAME=ens33 UUID=ac9b66bf-74fb-4bda-b89f-c66ff84c9571 # 获取新的UUID # uuidgen ens33 将获取的UUID填入配置文件后重启网卡服务 # 验证UUID # nmcli con | sed -n &#39;1,2p&#39; DEVICE=ens33 # 接口名（设备,网卡） ONBOOT=yes #ONBOOT是指明在系统启动时是否激活网卡，只有在激活状态的网卡才能去连接网络，进行网络通讯  永久生效-设置静态地址 上述默认配置文件修改加入如下配置，配置完成后systemctl restart network重启网卡服务生效
+BOOTPROTO=static #静态IP IPADDR= #本机地址 NETMASK= #子网掩码 GATEWAY= #默认网关 # DNS1= # DNS2=  临时生效-详见工具包对比 也可以通过 ip、nmlic、ifconfig管理命令进行配置，后续会展开介绍
+ifconfig eth0 192.168.0.2 netmask 255.255.255.0  vi /etc/resolv.
+</div>
+
+<div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>0001-01-01</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>6分钟阅读时长</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="/categories/blog/" class="hover:text-eureka">blog</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/posts/" class="hover:text-eureka">posts</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/linux/" class="hover:text-eureka">Linux</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/" class="hover:text-eureka">Linux网络管理</a>
+        
+    </div>
+    
+
+    
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="mb-4">
+  <a href="/posts/1.linux/linux%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/lvm%E7%AE%A1%E7%90%86/" class="font-bold text-xl hover:text-eureka">LVM管理</a>
+</div>
+<div class="content">
+  参考链接：https://www.cnblogs.com/diantong/p/10554831.html
+ LVM的工作原理 　LVM（Logical Volume Manager）逻辑卷管理，是在硬盘分区和文件系统之间添加的一个逻辑层，为文件系统屏蔽下层硬盘分区布局，并提供一个抽象的盘卷，在盘卷上建立文件系统。管理员利用LVM可以在硬盘不用重新分区的情况下动态调整文件系统的大小，并且利用LVM管理的文件系统可以跨越物理硬盘。当服务器添加了新的硬盘后，管理员不必将原有的文件移动到新的硬盘上，而是通过LVM直接扩展文件系统来跨越物理硬盘。
+　LVM就是通过将底层的物理硬盘封装，然后以逻辑卷的方式呈现给上层应用。当我们对底层的物理硬盘进行操作时，不再是针对分区进行操作，而是通过逻辑卷对底层硬盘进行管理操作。
+基础术语   物理存储介质（The physical media）： LVM存储介质，可以是硬盘分区、整个硬盘、raid阵列或SAN硬盘。设备必须初始化为LVM物理卷，才能与LVM结合使用。
+  物理卷PV（physical volume）： 物理卷就是LVM的基本存储逻辑块，但和基本的物理存储介质比较却包含与LVM相关的管理参数，创建物理卷可以用硬盘分区，也可以用硬盘本身。
+  卷组VG（Volume Group）： LVM卷组类似于非LVM系统中的物理硬盘，一个卷组VG由一个或多个物理卷PV组成。可以在卷组VG上建立逻辑卷LV。
+  逻辑卷LV（logical volume）： 类似于非LVM系统中的硬盘分区，逻辑卷LV建立在卷组VG之上。在逻辑卷LV之上建立文件系统。
+  物理块PE（physical Extent）： 物理卷PV中可以分配的最小存储单元，PE的大小可以指定，默认为4MB
+  逻辑块LE（Logical Extent）：逻辑卷LV中可以分配的最小存储单元，在同一卷组VG中LE的大小和PE是相同的，并且一一相对。
+   总结：多个磁盘/分区/raid&amp;ndash;&amp;gt;多个物理卷PV&amp;ndash;&amp;gt;合成卷组VG&amp;ndash;&amp;gt;从VG划分出逻辑卷LV&amp;ndash;&amp;gt;格式化LV，挂载使用。
+注意：老的Linux在创建PV时，需要将分区类型改为Linux LVM（8e）。但新的系统已经非常智能，即使默认的Linux分区（83），也可以创建PV。
+ LVM的优点   卷组VG可以使多个硬盘空间看起来像是一个大硬盘。
+  逻辑卷LV可以创建跨多个硬盘空间的分区。
+  在使用逻辑卷LV时，可以在空间不足时动态调整大小，不需要考虑逻辑卷LV在硬盘上的位置，不用担心没有可用的连续的空间。
+  可以在线对卷组VG、逻辑卷LV进行创建、删除、调整大小等操作。但LVM上的文件系统也需要重新调整大小。
+  LVM允许创建快照，用来保存文件系统的备份。
+   注意：LVM是软件的卷管理方式，RAID是磁盘管理的方法。对于重要的数据使，用RAID保护物理硬盘不会因为故障而中断业务，再用LVM来实现对卷的良性管理，更好的利用硬盘资源。
+LVM有两种写入机制：线性（写完一个PV再写下一个PV，默认）、条带（平均）
+ LVM常用的管理命令    功能 PV管理命令 VG管理命令 LV管理命令     scan 扫描 pvscan vgscan lvscan   create 创建 pvcreate vgcreate lvcreate   display 显示 pvdisplay vgdisplay lvdisplay   remove 移除 pvremove vgremove lvremove   extend 扩展  vgextend lvextend   reduce 减少  vgreduce lvreduce     注意：查看命令有scan、display和s（pvs、vgs、lvs）。s是简单查看对应卷信息，display是详细查看对应卷信息。而scan是扫描所有的相关的对应卷。
+</div>
+
+<div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>0001-01-01</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>9分钟阅读时长</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="/categories/blog/" class="hover:text-eureka">blog</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/posts/" class="hover:text-eureka">posts</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/linux/" class="hover:text-eureka">Linux</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/linux%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/" class="hover:text-eureka">Linux文件系统</a>
+        
+    </div>
+    
+
+    
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="mb-4">
+  <a href="/posts/1.linux/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/tcpdump/" class="font-bold text-xl hover:text-eureka">TCPdump</a>
+</div>
+<div class="content">
+  参考链接： tcpdump命令详解 万字长文 实例参考
+ 配合ssh通道传入wireshark  ssh当通道让tcpdump远程抓包，再将数据实时传送到本地，再用wireshark图形化界面实时打开 https://blog.csdn.net/koalazoo/article/details/84958752
+准备工作 本地PC机上得有命令行版的ssh，图形化的SecureCRT应该不行 本地PC机上有wireshark 远程主机上有tcpdump 你有远程主机的root权限（否则你也抓不了包啊） 找到本地PC机上ssh和wireshark的路径（或者加入PATH，用于执行命令） 工作思路 基本的想法就是用ssh登录到远程主机上，发起tcpdump抓包，并将tcpdump抓到的结果输出到stdout，再传回本地PC机，而本地PC机上的wireshark以stdin为输入，两者以管道连接传输。
+命令示例
+ssh root@some.host &#39;tcpdump -i eth0 port 80 -s 0 -l -w -&#39; | wireshark -k -i -  命令执行后会弹出wireshark界面，这时需要切回刚刚的命令行，因为需要输入密码以登录远程主机（已经配置免密另说），连接成功后即开始抓包，并在本地PC的wireshark上实时显示抓包结果。
+参数解释 tcpdump中 ‘-l ’ （这里是小写的字母L）是指line-buffer，即不使用缓存，直接输出，否则就会一段段的输出。’-w -&amp;lsquo;是指写文件，目标文件为标准输出。至于tcpdump另外的参数，想抓什么端口，这个请搜下度娘，一搜一大把。
+wireshark中 ‘-k’ 是指马上开始捕获数据，’-i -’ 是指从指定接口获取，源为标准输入。
+或者可以用plink（putty的命令行版本）
+plink -ssh USER@HOST -pw PASS &amp;quot;tcpdump -s 0 -U -n -i br-lan -w - not port 22&amp;quot; | wireshark -k -i -   前言 tcpdump 的参数非常的多，初学者在没有掌握 tcpdump 时，会对这个命令的众多参数产生很多的疑惑。
+</div>
+
+<div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>0001-01-01</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>9分钟阅读时长</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="/categories/blog/" class="hover:text-eureka">blog</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/posts/" class="hover:text-eureka">posts</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/linux/" class="hover:text-eureka">Linux</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/" class="hover:text-eureka">Linux网络管理</a>
+        
+    </div>
+    
+
+    
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="mb-4">
+  <a href="/posts/7.%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4/shell/%E5%9F%BA%E7%A1%80%E5%91%BD%E4%BB%A4/" class="font-bold text-xl hover:text-eureka">基础命令</a>
+</div>
+<div class="content">
+  日志 tailf 跟踪日志文件增长，作用跟tail –f相同。tailf将输出文件的最后10行，然后等待文件增长。
+
+</div>
+
+<div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>0001-01-01</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>2分钟阅读时长</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="/categories/blog/" class="hover:text-eureka">blog</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/posts/" class="hover:text-eureka">posts</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/linux/" class="hover:text-eureka">Linux</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/shell/" class="hover:text-eureka">shell</a>
+        
+    </div>
+    
+
+    
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
+  
+</div>
+
+
+</div>
+
+<ul class="pagination">
+  <li class="page-item">
+    <a href="/categories/posts/" class="page-link" aria-label="First"><span aria-hidden="true">&laquo;&laquo;</span></a>
+  </li>
+  <li class="page-item">
+    <a href="/categories/posts/page/3/" class="page-link" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
+  </li>
+  <li class="page-item">
+    <a class="page-link" href="/categories/posts/">1</a>
+  </li>
+  <li class="page-item">
+    <a class="page-link" href="/categories/posts/page/2/">2</a>
+  </li>
+  <li class="page-item">
+    <a class="page-link" href="/categories/posts/page/3/">3</a>
+  </li>
+  <li class="page-item active">
+    <a class="page-link" href="/categories/posts/page/4/">4</a>
+  </li>
+  <li class="page-item">
+    <a class="page-link" href="/categories/posts/page/5/">5</a>
+  </li>
+  <li class="page-item">
+    <a href="/categories/posts/page/5/" class="page-link" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
+  </li>
+  <li class="page-item">
+    <a href="/categories/posts/page/5/" class="page-link" aria-label="Last"><span aria-hidden="true">&raquo;&raquo;</span></a>
+  </li>
+</ul>
+
+
+
+      </div>
+    </div>
+    
+  </main>
+  <footer class="pl-scrollbar">
+    <div class="w-full max-w-screen-xl mx-auto"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 2021 <a href="https://www.songjinfeng.com/">SonJinfeng</a> 
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+  </footer>
+</body>
+
+</html>

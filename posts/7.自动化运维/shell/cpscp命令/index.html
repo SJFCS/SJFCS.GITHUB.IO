@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang='zh' ><meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+
+
+<title>Songjinfeng&#39;s BLOG</title>
+<link rel="stylesheet" href="/css/eureka.min.css">
+<script defer src="/js/eureka.min.js"></script>
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Noto+Serif+SC:wght@400;600;700&display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/styles/solarized-light.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/highlight.min.js"
+   crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/dart.min.js"
+     crossorigin></script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/js/all.min.js"
+   integrity="sha256-uNYoXefWRqv&#43;PsIF/OflNmwtKM4lStn9yrz2gVl6ymo="  crossorigin></script>
+
+
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css"
+   integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3&#43;Aro6EYUG4&#43;cU&#43;KJWu/X"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js" 
+  integrity="sha384-g7c&#43;Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI&#43;sEnkvrMWph2EDg4"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js"
+   integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC&#43;Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.9.2/dist/mermaid.min.js" 
+  integrity="sha256-Zmpaaj&#43;GXFsPF5WdPArSrnW3b30dovldeKsW00xBVwE="  crossorigin></script>
+
+
+<link rel="icon" type="image/png" sizes="32x32" href="/images/icon_hucfa16751ac9c82c06b84c3502c0db793_16378_32x32_fill_box_center_2.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hucfa16751ac9c82c06b84c3502c0db793_16378_180x180_fill_box_center_2.png">
+
+<meta name="description"
+  content="SCP scp 命令将目录从一个远程服务器复制到另一个远程服务器上的新目录，命令如下：
+$ scp -r server1:dir1 server2:dir2  如果在 server2 上不存在 dir2，这可以正常工作，它会创建一个名为 dir2 的新目录，其中包含 server1 上 dir1 的所有内容。
+但是当 dir2 已经存在于 server2 上时，就会出现问题，已经存在的文件不会被覆盖。
+解决办法：
+$ scp -prq server1:dir1/. server2:dir2/  在文件目录后面加个点 .，将复制该目录的内容，而不是目录本身。
+CP 如果知道多个文件的名字时，可以使用 cp {filename1,filename2,&hellip;} 目标/，目标必须是个文件夹
+ -a：此参数的效果和同时指定&quot;-dpR&quot;参数相同； -d：当复制符号连接时，把目标文件或目录也建立为符号连接，并指向与源文件或目录连接的原始文件或目录； -f：强行复制文件或目录，不论目标文件或目录是否已存在； -i：覆盖既有文件之前先询问用户； -l：对源文件建立硬连接，而非复制文件； -p：保留源文件或目录的属性； -R/r：递归处理，将指定目录下的所有文件与子目录一并处理； -s：对源文件建立符号连接，而非复制文件； -u：使用这项参数后只会在源文件的更改时间较目标文件更新时或是名称相互对应的目标文件并不存在时，才复制文件； -S：在备份文件时，用指定的后缀“SUFFIX”代替文件的默认后缀； -b：覆盖已存在的文件目标前将目标文件备份； -v：详细显示命令执行的操作。
+ 一.通配符的使用
+ 通配符是一种特殊语句，主要有星号(*)和问号(?)，用来模糊搜索文件。主要的通配符有：
+ * 匹配任意长度的字符串
+? 匹配一个长度的字符
+[&hellip;] 匹配其中指定的字符
+[a-z] 匹配指定的字符范围
+[^&hellip;] 除了其中指定的字符，其他均可匹配
+ 例1：可以代替0个或多个字符。如果需要拷贝以ABC开头的文件，可以输入ABC，拷贝以ABC开头的所有文件类型的文件，如ABCD.txt、ABCDEFG.exe、ABCZH.dll等。如果只需要拷贝txt文件，则可以输入ABC*.txt，拷贝以ABC为开头的TXT类型的文件，如ABC.txt、ABC12.txt。
+例2：？则只匹配一个字符，[1,b,8]就匹配括号中的1，b和8，这些都可以混搭使用。在linux2.6.14内核中，ls可以看到如图：
+  如果需要将.IAB .IAD .IMB .IMD和.WK3 这5个文件拷贝到根目录的tmp下，可以使用如下命令：">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"技术专栏",
+      "item":"/posts/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"自动化运维",
+      "item":"/posts/7.%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4/"},{
+      "@type": "ListItem",
+      "position": 3 ,
+      "name":"",
+      "item":"/posts/7.%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4/shell/cpscp%E5%91%BD%E4%BB%A4/"}]
+}
+</script>
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/posts/7.%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4/shell/cpscp%E5%91%BD%E4%BB%A4/"
+    },
+    "headline": "Songjinfeng\u0027s BLOG","wordCount":  109 ,
+    "publisher": {
+        "@type": "Person",
+        "name": "JF. Song",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "/images/icon.png"
+        }
+        },
+    "description": "SCP scp 命令将目录从一个远程服务器复制到另一个远程服务器上的新目录，命令如下：\n$ scp -r server1:dir1 server2:dir2  如果在 server2 上不存在 dir2，这可以正常工作，它会创建一个名为 dir2 的新目录，其中包含 server1 上 dir1 的所有内容。\n但是当 dir2 已经存在于 server2 上时，就会出现问题，已经存在的文件不会被覆盖。\n解决办法：\n$ scp -prq server1:dir1\/. server2:dir2\/  在文件目录后面加个点 .，将复制该目录的内容，而不是目录本身。\nCP 如果知道多个文件的名字时，可以使用 cp {filename1,filename2,\u0026hellip;} 目标\/，目标必须是个文件夹\n -a：此参数的效果和同时指定\u0026quot;-dpR\u0026quot;参数相同； -d：当复制符号连接时，把目标文件或目录也建立为符号连接，并指向与源文件或目录连接的原始文件或目录； -f：强行复制文件或目录，不论目标文件或目录是否已存在； -i：覆盖既有文件之前先询问用户； -l：对源文件建立硬连接，而非复制文件； -p：保留源文件或目录的属性； -R\/r：递归处理，将指定目录下的所有文件与子目录一并处理； -s：对源文件建立符号连接，而非复制文件； -u：使用这项参数后只会在源文件的更改时间较目标文件更新时或是名称相互对应的目标文件并不存在时，才复制文件； -S：在备份文件时，用指定的后缀“SUFFIX”代替文件的默认后缀； -b：覆盖已存在的文件目标前将目标文件备份； -v：详细显示命令执行的操作。\n 一.通配符的使用\n 通配符是一种特殊语句，主要有星号(*)和问号(?)，用来模糊搜索文件。主要的通配符有：\n * 匹配任意长度的字符串\n? 匹配一个长度的字符\n[\u0026hellip;] 匹配其中指定的字符\n[a-z] 匹配指定的字符范围\n[^\u0026hellip;] 除了其中指定的字符，其他均可匹配\n 例1：可以代替0个或多个字符。如果需要拷贝以ABC开头的文件，可以输入ABC，拷贝以ABC开头的所有文件类型的文件，如ABCD.txt、ABCDEFG.exe、ABCZH.dll等。如果只需要拷贝txt文件，则可以输入ABC*.txt，拷贝以ABC为开头的TXT类型的文件，如ABC.txt、ABC12.txt。\n例2：？则只匹配一个字符，[1,b,8]就匹配括号中的1，b和8，这些都可以混搭使用。在linux2.6.14内核中，ls可以看到如图：\n  如果需要将.IAB .IAD .IMB .IMD和.WK3 这5个文件拷贝到根目录的tmp下，可以使用如下命令："
+}
+</script><meta property="og:title" content="Songjinfeng&#39;s BLOG" />
+<meta property="og:type" content="article" />
+
+
+<meta property="og:image" content="/images/icon.png">
+
+
+<meta property="og:url" content="/posts/7.%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4/shell/cpscp%E5%91%BD%E4%BB%A4/" />
+
+
+
+
+<meta property="og:description" content="SCP scp 命令将目录从一个远程服务器复制到另一个远程服务器上的新目录，命令如下：
+$ scp -r server1:dir1 server2:dir2  如果在 server2 上不存在 dir2，这可以正常工作，它会创建一个名为 dir2 的新目录，其中包含 server1 上 dir1 的所有内容。
+但是当 dir2 已经存在于 server2 上时，就会出现问题，已经存在的文件不会被覆盖。
+解决办法：
+$ scp -prq server1:dir1/. server2:dir2/  在文件目录后面加个点 .，将复制该目录的内容，而不是目录本身。
+CP 如果知道多个文件的名字时，可以使用 cp {filename1,filename2,&hellip;} 目标/，目标必须是个文件夹
+ -a：此参数的效果和同时指定&quot;-dpR&quot;参数相同； -d：当复制符号连接时，把目标文件或目录也建立为符号连接，并指向与源文件或目录连接的原始文件或目录； -f：强行复制文件或目录，不论目标文件或目录是否已存在； -i：覆盖既有文件之前先询问用户； -l：对源文件建立硬连接，而非复制文件； -p：保留源文件或目录的属性； -R/r：递归处理，将指定目录下的所有文件与子目录一并处理； -s：对源文件建立符号连接，而非复制文件； -u：使用这项参数后只会在源文件的更改时间较目标文件更新时或是名称相互对应的目标文件并不存在时，才复制文件； -S：在备份文件时，用指定的后缀“SUFFIX”代替文件的默认后缀； -b：覆盖已存在的文件目标前将目标文件备份； -v：详细显示命令执行的操作。
+ 一.通配符的使用
+ 通配符是一种特殊语句，主要有星号(*)和问号(?)，用来模糊搜索文件。主要的通配符有：
+ * 匹配任意长度的字符串
+? 匹配一个长度的字符
+[&hellip;] 匹配其中指定的字符
+[a-z] 匹配指定的字符范围
+[^&hellip;] 除了其中指定的字符，其他均可匹配
+ 例1：可以代替0个或多个字符。如果需要拷贝以ABC开头的文件，可以输入ABC，拷贝以ABC开头的所有文件类型的文件，如ABCD.txt、ABCDEFG.exe、ABCZH.dll等。如果只需要拷贝txt文件，则可以输入ABC*.txt，拷贝以ABC为开头的TXT类型的文件，如ABC.txt、ABC12.txt。
+例2：？则只匹配一个字符，[1,b,8]就匹配括号中的1，b和8，这些都可以混搭使用。在linux2.6.14内核中，ls可以看到如图：
+  如果需要将.IAB .IAD .IMB .IMD和.WK3 这5个文件拷贝到根目录的tmp下，可以使用如下命令：" />
+
+
+
+
+<meta property="og:locale" content="zh" />
+
+
+
+
+<meta property="og:site_name" content="Songjinfeng&#39;s BLOG" />
+
+
+
+
+
+
+
+
+
+<meta property="article:section" content="posts" />
+
+
+
+
+<body class="flex flex-col min-h-screen">
+  <header class="fixed flex items-center w-full min-h-16 pl-scrollbar z-50 bg-secondary-bg shadow-sm">
+    <div class="w-full max-w-screen-xl mx-auto"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="mr-6 text-primary-text text-xl font-bold">Songjinfeng&#39;s BLOG</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:flex-grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:flex-grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  mr-4">技术专栏</a>
+            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">文档笔记</a>
+            <a href="/series/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">主题系列</a>
+            <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">标签</a>
+            <a href="/authors/songjinfeng/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">关于</a>
+            <a href="/index.xml" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">RSS</a>
+            <a href="/webstack" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">友链&amp;导航</a>
+        </div>
+
+        <div class="flex">
+            <div class="relative pt-4 md:pt-0">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col left-0 md:left-auto right-auto md:right-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">浅色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">深色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">自动</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            switchMode('Auto')
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+  </header>
+  <main class="flex-grow pt-16">
+    <div class="pl-scrollbar">
+      <div class="w-full max-w-screen-xl lg:px-4 xl:px-8 mx-auto">
+
+
+<div class="grid grid-cols-2 lg:grid-cols-8 gap-4 lg:pt-12">
+    <div
+        class="col-span-2 lg:col-start-2 lg:col-span-6 bg-secondary-bg rounded px-6 py-8">
+        <h1 class="font-bold text-3xl text-primary-text"></h1>
+        <div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>0001-01-01</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>1分钟阅读时长</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="/categories/blog/" class="hover:text-eureka">blog</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/posts/" class="hover:text-eureka">posts</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/linux/" class="hover:text-eureka">Linux</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/shell/" class="hover:text-eureka">shell</a>
+        
+    </div>
+    
+
+    
+</div>
+        
+        
+        
+
+        <div class="content">
+            <h2 id="scp">SCP</h2>
+<p><code>scp</code> 命令将目录从一个远程服务器复制到另一个远程服务器上的新目录，命令如下：</p>
+<pre><code class="language-shell">$ scp -r server1:dir1 server2:dir2
+</code></pre>
+<p>如果在 <code>server2</code> 上不存在 <code>dir2</code>，这可以正常工作，它会创建一个名为 <code>dir2</code> 的新目录，其中包含 <code>server1</code> 上 <code>dir1</code> 的所有内容。</p>
+<p>但是当 <code>dir2</code> 已经存在于 <code>server2</code> 上时，就会出现问题，已经存在的文件不会被覆盖。</p>
+<p><strong>解决办法：</strong></p>
+<pre><code class="language-shell">$ scp -prq server1:dir1/. server2:dir2/
+</code></pre>
+<p>在文件目录后面加个点 <code>.</code>，将复制该目录的内容，而不是目录本身。</p>
+<h2 id="cp">CP</h2>
+<p>如果知道多个文件的名字时，可以使用 cp {filename1,filename2,&hellip;} 目标/，目标必须是个文件夹</p>
+<blockquote>
+<p>-a：此参数的效果和同时指定&quot;-dpR&quot;参数相同；
+-d：当复制符号连接时，把目标文件或目录也建立为符号连接，并指向与源文件或目录连接的原始文件或目录；
+-f：强行复制文件或目录，不论目标文件或目录是否已存在；
+-i：覆盖既有文件之前先询问用户；
+-l：对源文件建立硬连接，而非复制文件；
+-p：保留源文件或目录的属性；
+-R/r：递归处理，将指定目录下的所有文件与子目录一并处理；
+-s：对源文件建立符号连接，而非复制文件；
+-u：使用这项参数后只会在源文件的更改时间较目标文件更新时或是名称相互对应的目标文件并不存在时，才复制文件；
+-S：在备份文件时，用指定的后缀“SUFFIX”代替文件的默认后缀；
+-b：覆盖已存在的文件目标前将目标文件备份；
+-v：详细显示命令执行的操作。</p>
+</blockquote>
+<p><strong>一.通配符的使用</strong></p>
+<blockquote>
+<p>通配符是一种特殊语句，主要有星号(*)和问号(?)，用来模糊搜索文件。主要的通配符有：</p>
+<blockquote>
+<p>*     匹配任意长度的字符串</p>
+<p>?     匹配一个长度的字符</p>
+<p>[&hellip;]   匹配其中指定的字符</p>
+<p>[a-z]  匹配指定的字符范围</p>
+<p>[^&hellip;]   除了其中指定的字符，其他均可匹配</p>
+</blockquote>
+<p><strong>例</strong>1：<em>可以代替0个或多个字符。如果需要拷贝以ABC开头的文件，可以输入ABC</em>，拷贝以ABC开头的所有文件类型的文件，如ABCD.txt、ABCDEFG.exe、ABCZH.dll等。如果只需要拷贝txt文件，则可以输入ABC*.txt，拷贝以ABC为开头的TXT类型的文件，如ABC.txt、ABC12.txt。</p>
+<p><strong>例</strong>2：？则只匹配一个字符，[1,b,8]就匹配括号中的1，b和8，这些都可以混搭使用。在linux2.6.14内核中，ls可以看到如图：</p>
+</blockquote>
+<blockquote>
+<p>如果需要将.IAB .IAD .IMB .IMD和.WK3 这5个文件拷贝到根目录的tmp下，可以使用如下命令：</p>
+<p>cp fs2410_kernel_2614.[I,W]?? /tmp</p>
+<p>[a-z]就是匹配字母a到z的所有字符，也就是所有小写字母。[^A]就是除了A字符之外，其他字符均可匹配。灵活运用通配符可以方便的拷贝多个文件</p>
+</blockquote>
+<p><strong>二.管道的使用</strong></p>
+<blockquote>
+<p>如果你只是想拷贝最后的10个文件，或者你拷贝的文件没有共同字符，管道或许可以帮的上忙。</p>
+<p>命令行中的 | 就是管道，可以把第一个命令输出作为第二个命令的输入</p>
+<blockquote>
+<p><strong>例</strong>1： ls /usr/bin/ | wc -w</p>
+<p>显示/usr/bin/中有多少个文件（不包括隐藏文件，要显示隐藏文件则应该 ls -a /usr/bin/ | wc -w）</p>
+<p><strong>例</strong>2： ls | tail -11| xargs -i cp -r {} /tmp/</p>
+<p>拷贝最后11个文件到根目录的/tmp/下（如要拷贝头5个文件，则将tail -11 换成 head -5）</p>
+</blockquote>
+<p>wc head tail xargs这些就请自行man手册一下。</p>
+</blockquote>
+
+        </div>
+        
+        
+        
+        
+        
+        
+        
+<div class="flex flex-col md:flex-row md:justify-between -mx-2 mt-4 px-2 pt-4 border-t">
+    <div>
+        
+    </div>
+    <div class="md:text-right mt-4 md:mt-0">
+        
+        <span class="block font-bold">下一页</span>
+        <a href="/posts/7.%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4/shell/ssh%E5%90%8E%E6%89%A7%E8%A1%8C%E5%A4%9A%E6%9D%A1%E5%91%BD%E4%BB%A4/" class="block"></a>
+        
+    </div>
+</div>
+
+        
+    </div>
+    
+
+    
+    
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', ()=>{
+        hljs.initHighlightingOnLoad();
+    })
+</script>
+
+      </div>
+    </div>
+    
+  </main>
+  <footer class="pl-scrollbar">
+    <div class="w-full max-w-screen-xl mx-auto"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 2021 <a href="https://www.songjinfeng.com/">SonJinfeng</a> 
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+  </footer>
+</body>
+
+</html>

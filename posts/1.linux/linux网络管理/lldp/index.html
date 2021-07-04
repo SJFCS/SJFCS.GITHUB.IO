@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang='zh' ><meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+
+
+<title>Songjinfeng&#39;s BLOG</title>
+<link rel="stylesheet" href="/css/eureka.min.css">
+<script defer src="/js/eureka.min.js"></script>
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Noto+Serif+SC:wght@400;600;700&display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/styles/solarized-light.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/highlight.min.js"
+   crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/dart.min.js"
+     crossorigin></script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/js/all.min.js"
+   integrity="sha256-uNYoXefWRqv&#43;PsIF/OflNmwtKM4lStn9yrz2gVl6ymo="  crossorigin></script>
+
+
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css"
+   integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3&#43;Aro6EYUG4&#43;cU&#43;KJWu/X"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js" 
+  integrity="sha384-g7c&#43;Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI&#43;sEnkvrMWph2EDg4"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js"
+   integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC&#43;Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.9.2/dist/mermaid.min.js" 
+  integrity="sha256-Zmpaaj&#43;GXFsPF5WdPArSrnW3b30dovldeKsW00xBVwE="  crossorigin></script>
+
+
+<link rel="icon" type="image/png" sizes="32x32" href="/images/icon_hucfa16751ac9c82c06b84c3502c0db793_16378_32x32_fill_box_center_2.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hucfa16751ac9c82c06b84c3502c0db793_16378_180x180_fill_box_center_2.png">
+
+<meta name="description"
+  content="CentOS7配置LLDP服务 https://blog.csdn.net/BK_sys/article/details/88554593 https://vincentbernat.github.io/lldpd/usage.html
+lldpad(2010年停更)：https://github.com/jrfastab/lldpad
+lldpd（lldpd可以输出json格式）：https://github.com/vincentbernat/lldpd
+第一种方式：lldpd 1、软件lldpd和lldpcli
+yum install lldpd -y
+2、服务启动后，相关信息可以通过如下命令获取
+lldpcli show neighbors
+将结果处理成json格式，只需要在命令后加上：lldpcli show neighbors -f json
+第二种方式：lldpad 1、安装相关服务软件和工具
+软件lldpad和lldptool
+yum install lldpad -y
+2、配置服务器端口用于接收和发送相关LLDP信息，包括端口，主机名，mac地址和ip地址
+（1）查看系统本地网卡设备：
+##因为网卡设备名称包含eth，eno，em，p1p1 ……，默认都是以e或者p开头
+ls /sys/class/net/ |egrep ‘e|p’
+（2）分别配置每个端口，以eno1为例，如下：
+lldptool set-lldp -i eno1 adminStatus=rxtx lldptool -T -i eno1 -V sysName enableTx=yes lldptool -T -i eno1 -V portDesc enableTx=yes lldptool -T -i eno1 -V sysDesc enableTx=yes lldptool -T -i eno1 -V mngAddr enableTx=yes  ##每个端口都配置的原因是防止已经down的端口遗漏掉，新部署服务器可以只配置up状态的接口，具体配置请根据实际需求配置。
+4、完成端口配置后，相关信息可以通过如下命令获取
+lldptool -t -n -i eno1">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"技术专栏",
+      "item":"/posts/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"Linux",
+      "item":"/posts/1.linux/"},{
+      "@type": "ListItem",
+      "position": 3 ,
+      "name":"",
+      "item":"/posts/1.linux/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/lldp/"}]
+}
+</script>
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/posts/1.linux/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/lldp/"
+    },
+    "headline": "Songjinfeng\u0027s BLOG","wordCount":  486 ,
+    "publisher": {
+        "@type": "Person",
+        "name": "JF. Song",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "/images/icon.png"
+        }
+        },
+    "description": "CentOS7配置LLDP服务 https:\/\/blog.csdn.net\/BK_sys\/article\/details\/88554593 https:\/\/vincentbernat.github.io\/lldpd\/usage.html\nlldpad(2010年停更)：https:\/\/github.com\/jrfastab\/lldpad\nlldpd（lldpd可以输出json格式）：https:\/\/github.com\/vincentbernat\/lldpd\n第一种方式：lldpd 1、软件lldpd和lldpcli\nyum install lldpd -y\n2、服务启动后，相关信息可以通过如下命令获取\nlldpcli show neighbors\n将结果处理成json格式，只需要在命令后加上：lldpcli show neighbors -f json\n第二种方式：lldpad 1、安装相关服务软件和工具\n软件lldpad和lldptool\nyum install lldpad -y\n2、配置服务器端口用于接收和发送相关LLDP信息，包括端口，主机名，mac地址和ip地址\n（1）查看系统本地网卡设备：\n##因为网卡设备名称包含eth，eno，em，p1p1 ……，默认都是以e或者p开头\nls \/sys\/class\/net\/ |egrep ‘e|p’\n（2）分别配置每个端口，以eno1为例，如下：\nlldptool set-lldp -i eno1 adminStatus=rxtx lldptool -T -i eno1 -V sysName enableTx=yes lldptool -T -i eno1 -V portDesc enableTx=yes lldptool -T -i eno1 -V sysDesc enableTx=yes lldptool -T -i eno1 -V mngAddr enableTx=yes  ##每个端口都配置的原因是防止已经down的端口遗漏掉，新部署服务器可以只配置up状态的接口，具体配置请根据实际需求配置。\n4、完成端口配置后，相关信息可以通过如下命令获取\nlldptool -t -n -i eno1"
+}
+</script><meta property="og:title" content="Songjinfeng&#39;s BLOG" />
+<meta property="og:type" content="article" />
+
+
+<meta property="og:image" content="/images/icon.png">
+
+
+<meta property="og:url" content="/posts/1.linux/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/lldp/" />
+
+
+
+
+<meta property="og:description" content="CentOS7配置LLDP服务 https://blog.csdn.net/BK_sys/article/details/88554593 https://vincentbernat.github.io/lldpd/usage.html
+lldpad(2010年停更)：https://github.com/jrfastab/lldpad
+lldpd（lldpd可以输出json格式）：https://github.com/vincentbernat/lldpd
+第一种方式：lldpd 1、软件lldpd和lldpcli
+yum install lldpd -y
+2、服务启动后，相关信息可以通过如下命令获取
+lldpcli show neighbors
+将结果处理成json格式，只需要在命令后加上：lldpcli show neighbors -f json
+第二种方式：lldpad 1、安装相关服务软件和工具
+软件lldpad和lldptool
+yum install lldpad -y
+2、配置服务器端口用于接收和发送相关LLDP信息，包括端口，主机名，mac地址和ip地址
+（1）查看系统本地网卡设备：
+##因为网卡设备名称包含eth，eno，em，p1p1 ……，默认都是以e或者p开头
+ls /sys/class/net/ |egrep ‘e|p’
+（2）分别配置每个端口，以eno1为例，如下：
+lldptool set-lldp -i eno1 adminStatus=rxtx lldptool -T -i eno1 -V sysName enableTx=yes lldptool -T -i eno1 -V portDesc enableTx=yes lldptool -T -i eno1 -V sysDesc enableTx=yes lldptool -T -i eno1 -V mngAddr enableTx=yes  ##每个端口都配置的原因是防止已经down的端口遗漏掉，新部署服务器可以只配置up状态的接口，具体配置请根据实际需求配置。
+4、完成端口配置后，相关信息可以通过如下命令获取
+lldptool -t -n -i eno1" />
+
+
+
+
+<meta property="og:locale" content="zh" />
+
+
+
+
+<meta property="og:site_name" content="Songjinfeng&#39;s BLOG" />
+
+
+
+
+
+
+
+
+
+<meta property="article:section" content="posts" />
+
+
+
+
+<body class="flex flex-col min-h-screen">
+  <header class="fixed flex items-center w-full min-h-16 pl-scrollbar z-50 bg-secondary-bg shadow-sm">
+    <div class="w-full max-w-screen-xl mx-auto"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="mr-6 text-primary-text text-xl font-bold">Songjinfeng&#39;s BLOG</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:flex-grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:flex-grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  mr-4">技术专栏</a>
+            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">文档笔记</a>
+            <a href="/series/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">主题系列</a>
+            <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">标签</a>
+            <a href="/authors/songjinfeng/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">关于</a>
+            <a href="/index.xml" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">RSS</a>
+            <a href="/webstack" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">友链&amp;导航</a>
+        </div>
+
+        <div class="flex">
+            <div class="relative pt-4 md:pt-0">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col left-0 md:left-auto right-auto md:right-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">浅色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">深色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">自动</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            switchMode('Auto')
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+  </header>
+  <main class="flex-grow pt-16">
+    <div class="pl-scrollbar">
+      <div class="w-full max-w-screen-xl lg:px-4 xl:px-8 mx-auto">
+
+
+<div class="grid grid-cols-2 lg:grid-cols-8 gap-4 lg:pt-12">
+    <div
+        class="col-span-2 lg:col-start-2 lg:col-span-6 bg-secondary-bg rounded px-6 py-8">
+        <h1 class="font-bold text-3xl text-primary-text"></h1>
+        <div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>0001-01-01</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>3分钟阅读时长</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="/categories/blog/" class="hover:text-eureka">blog</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/posts/" class="hover:text-eureka">posts</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/linux/" class="hover:text-eureka">Linux</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/" class="hover:text-eureka">Linux网络管理</a>
+        
+    </div>
+    
+
+    
+</div>
+        
+        
+        
+
+        <div class="content">
+            <h1 id="centos7配置lldp服务-httpsblogcsdnnetbk_sysarticledetails88554593">CentOS7配置LLDP服务 <a href="https://blog.csdn.net/BK_sys/article/details/88554593">https://blog.csdn.net/BK_sys/article/details/88554593</a></h1>
+<p><a href="https://vincentbernat.github.io/lldpd/usage.html">https://vincentbernat.github.io/lldpd/usage.html</a></p>
+<p>lldpad(2010年停更)：https://github.com/jrfastab/lldpad</p>
+<p>lldpd（lldpd可以输出json格式）：https://github.com/vincentbernat/lldpd</p>
+<h2 id="第一种方式lldpd">第一种方式：lldpd</h2>
+<p><strong>1、软件lldpd和lldpcli</strong></p>
+<p><code>yum install lldpd -y</code></p>
+<p><strong>2、服务启动后，相关信息可以通过如下命令获取</strong></p>
+<p><code>lldpcli show neighbors</code></p>
+<p><em>将结果处理成json格式，只需要在命令后加上：lldpcli show neighbors -f json</em></p>
+<p>第二种方式：lldpad
+1、安装相关服务软件和工具</p>
+<p>软件lldpad和lldptool</p>
+<p><code>yum install lldpad -y</code></p>
+<p>2、配置服务器端口用于接收和发送相关LLDP信息，包括端口，主机名，mac地址和ip地址</p>
+<p>（1）查看系统本地网卡设备：</p>
+<p>##因为网卡设备名称包含eth，eno，em，p1p1 ……，默认都是以e或者p开头</p>
+<p><code>ls /sys/class/net/ |egrep ‘e|p’</code></p>
+<p>（2）分别配置每个端口，以eno1为例，如下：</p>
+<pre><code>lldptool set-lldp -i eno1 adminStatus=rxtx
+lldptool -T -i eno1 -V sysName enableTx=yes
+lldptool -T -i eno1 -V portDesc enableTx=yes
+lldptool -T -i eno1 -V sysDesc enableTx=yes
+lldptool -T -i eno1 -V mngAddr enableTx=yes
+</code></pre>
+<p>##每个端口都配置的原因是防止已经down的端口遗漏掉，新部署服务器可以只配置up状态的接口，具体配置请根据实际需求配置。</p>
+<p>4、完成端口配置后，相关信息可以通过如下命令获取</p>
+<p><code>lldptool -t -n -i eno1</code></p>
+<p>5、脚本</p>
+<pre><code>#!/bin/bash
+
+function ins_lldp(){
+#installation lldpad and lldptool
+yum install -y lldpad &amp; &gt;/dev/null
+
+#Start service
+systemctl start lldpad.service
+
+systemctl enable lldpad.service
+
+#set dev
+for dev in `ls /sys/class/net/ |egrep 'e|p'`
+do
+    echo &quot;enabling lldp for interface: $dev&quot;
+    lldptool set-lldp -i $dev adminStatus=rxtx
+    lldptool -T -i $dev -V sysName enableTx=yes
+    lldptool -T -i $dev -V portDesc enableTx=yes
+    lldptool -T -i $dev -V sysDesc enableTx=yes
+    lldptool -T -i $dev -V mngAddr enableTx=yes
+done
+}
+
+#show SW info
+function show_info() {
+    local se_dev=$1
+    local ld_tool=&quot;lldptool -t -n -i $se_dev&quot;
+    local sw_mac=`$ld_tool |grep 'MAC:' |awk -F ': ' '{print $NF}'`
+    local sw_If=`$ld_tool |grep 'Ifname:' |awk -F ': ' '{print $NF}'`
+    local sw_name=`$ld_tool |grep 'System Name TLV' -A1 |tail -n1 |sed 's/\t//g'`
+    local sw_ip=`$ld_tool |grep 'Management Address TLV' -A1 |tail -n1 |awk -F ': ' '{print $NF}' |sed 's/\t//g'`
+    echo &quot;se_dev: $se_dev
+sw_name: $sw_name
+sw_ip: $sw_ip
+sw_mac: $sw_mac
+sw_If: $sw_If&quot;
+}
+
+function get_info() {
+for up_dev in `ip a |grep 'state UP' |awk -F ': ' '{print $2}'`
+do
+    show_info $up_dev
+done
+}
+
+function check_lldp() {
+if [[ -n `lldptool -p` ]]; then
+    echo &quot;lldp install success&quot;
+fi
+}
+
+function main() {
+if [[ $1 == &quot;install&quot; ]]; then
+    if [[ -f &quot;/var/lib/lldpad/lldpad.conf&quot; ]]; then
+        echo &quot;lldp installed,exit!&quot;
+    else
+        ins_lldp
+        check_lldp
+    fi
+elif [[ $1 == &quot;get&quot; ]]; then
+    get_info
+else
+    echo &quot;install:install lldp
+get:get lldp info&quot;
+fi
+}
+main &quot;$@&quot;
+</code></pre>
+<h1 id="i40e驱动收不到lldp包问题">i40e驱动收不到LLDP包问题</h1>
+<p><a href="https://blog.csdn.net/weixin_39932939/article/details/111832953">https://blog.csdn.net/weixin_39932939/article/details/111832953</a></p>
+<p>在我们的机房服务器上，启用了LLDPD服务，通过LLDP协议实现网络层的自动发现，从而根据收到的消息绘制网络拓扑关系。</p>
+<p>之前的大部分机器一直工作正常，也没有多关注，然而今天突然发现有一批机器工作不太正常，因为后期的工作依赖这个拓扑关系，如果关系不正确，后面的工作就没办法进行，所以遇到不正常的机器还是需要具体分析一下为什么。</p>
+<p>正常情况下，启动lldpd服务，并调用lldpctl可以看到网卡连接到的交换机信息：</p>
+<p>可以看到机器的eth0网口连接到了sw1.ichenfu.com这个交换机的Twenty-FiveGigE1/0/10这个口。</p>
+<p>但是在出问题的机器上，执行lldpctl却什么也不会显示，第一反应，先重启试试，于是重启了lldpd进程，发现也不行，又尝试重启机器，还是不行。更奇怪的是，让网络组看了一下这台交换机底下其他的机器，都是正常的，这就很奇怪了。既然不知道怎么回事，那就抓个包试试：</p>
+<p>出问题的机器，发现抓包只能看到本机发出去的LLDP包，看不到交换机发出的LLDP包。</p>
+<p>正常的机器上，可以看到本机发出去的和交换机发出来的LLDP包。</p>
+<p>难不成交换机发的包被丢了？在这个时候，注意到了一个细节，出问题的机器，网卡是Intel Corporation Ethernet Connection X722，而没有问题的网卡是Intel Corporation 82599ES 10-Gigabit，难道是网卡问题？</p>
+<p>于是打开Google，先用X722 LLDP类似关键词搜索了一下，好像没有搜到什么有用的信息，想了想，是不是和驱动有关呢？因为Intel在X700系列使用的驱动是i40e，所以尝试用关键词i40e LLDP再搜索，搜到了关键的信息，来自Redhat的知识库Intel X710 series NICs (i40e) do not receive LLDP frames。看了一下其中的内容：</p>
+<blockquote>
+<p>Intel 700 series NICs run an LLDP agent in firmware that will process and “absorb” any LLDPDU frames received from the switch. The frames are therefore never visible to the OS.</p>
+</blockquote>
+<p>Intel 700 系列网卡在固件中会运行一个LLDP agent，这个agent会处理所有从交换发出的LLDP报文，这样在操作系统层面就再也看不到这个报文了。</p>
+<p>好吧，这个特性确实有点坑啊。不过，Redhat也提供了相应的解决方案：</p>
+<p>当Kernel版本大于等于kernel-3.10.0-957.el7，也就是CentOS 7.6版本的默认内核时，可以调用ethtool &ndash;set-priv-flags eth0 disable-fw-lldp on通知网卡驱动关闭内置的LLDP agent。</p>
+<p>如果内核小于这个版本，那就需要tricky一点的做法了：echo &ldquo;lldp stop&rdquo; &gt; /sys/kernel/debug/i40e//command。</p>
+<p>由于我们的系统版本刚好是CentOS 7.6，所以直接执行ethtool &ndash;set-priv-flags eth0 disable-fw-lldp on，再执行ethtool &ndash;show-priv-flags eth0|grep disable-fw-lldp确认生效。</p>
+<p>执行完成，发现恢复了：在我们的机房服务器上，启用了LLDPD服务，通过LLDP协议实现网络层的自动发现，从而根据收到的消息绘制网络拓扑关系。</p>
+<p>之前的大部分机器一直工作正常，也没有多关注，然而今天突然发现有一批机器工作不太正常，因为后期的工作依赖这个拓扑关系，如果关系不正确，后面的工作就没办法进行，所以遇到不正常的机器还是需要具体分析一下为什么。</p>
+<p>正常情况下，启动lldpd服务，并调用lldpctl可以看到网卡连接到的交换机信息：</p>
+<p>可以看到机器的eth0网口连接到了sw1.ichenfu.com这个交换机的Twenty-FiveGigE1/0/10这个口。</p>
+<p>但是在出问题的机器上，执行lldpctl却什么也不会显示，第一反应，先重启试试，于是重启了lldpd进程，发现也不行，又尝试重启机器，还是不行。更奇怪的是，让网络组看了一下这台交换机底下其他的机器，都是正常的，这就很奇怪了。既然不知道怎么回事，那就抓个包试试：</p>
+<p>出问题的机器，发现抓包只能看到本机发出去的LLDP包，看不到交换机发出的LLDP包。</p>
+<p>正常的机器上，可以看到本机发出去的和交换机发出来的LLDP包。</p>
+<p>难不成交换机发的包被丢了？在这个时候，注意到了一个细节，出问题的机器，网卡是Intel Corporation Ethernet Connection X722，而没有问题的网卡是Intel Corporation 82599ES 10-Gigabit，难道是网卡问题？</p>
+<p>于是打开Google，先用X722 LLDP类似关键词搜索了一下，好像没有搜到什么有用的信息，想了想，是不是和驱动有关呢？因为Intel在X700系列使用的驱动是i40e，所以尝试用关键词i40e LLDP再搜索，搜到了关键的信息，来自Redhat的知识库Intel X710 series NICs (i40e) do not receive LLDP frames。看了一下其中的内容：</p>
+<blockquote>
+<p>Intel 700 series NICs run an LLDP agent in firmware that will process and “absorb” any LLDPDU frames received from the switch. The frames are therefore never visible to the OS.</p>
+</blockquote>
+<p>Intel 700 系列网卡在固件中会运行一个LLDP agent，这个agent会处理所有从交换发出的LLDP报文，这样在操作系统层面就再也看不到这个报文了。</p>
+<p>好吧，这个特性确实有点坑啊。不过，Redhat也提供了相应的解决方案：</p>
+<p>当Kernel版本大于等于kernel-3.10.0-957.el7，也就是CentOS 7.6版本的默认内核时，可以调用ethtool &ndash;set-priv-flags eth0 disable-fw-lldp on通知网卡驱动关闭内置的LLDP agent。</p>
+<p>如果内核小于这个版本，那就需要tricky一点的做法了：echo &ldquo;lldp stop&rdquo; &gt; /sys/kernel/debug/i40e//command。</p>
+<pre><code>mount -t debugfs none /sys/kernel/debug
+
+echo “lldp stop” &gt; /sys/kernel/debug/i40e/xxxx:xx:xx:.x/command
+
+umount /sys/kernel/debug
+</code></pre>
+<p><img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/Untitled/2021.04.06-09:09:23-D-assets-Untitled-image-20210406090914027.png" alt="image-20210406090914027"></p>
+<p>由于我们的系统版本刚好是CentOS 7.6，所以直接执行ethtool &ndash;set-priv-flags eth0 disable-fw-lldp on，再执行ethtool &ndash;show-priv-flags eth0|grep disable-fw-lldp确认生效。</p>
+<p>执行完成，发现恢复了：</p>
+
+        </div>
+        
+        
+        
+        
+        
+        
+        
+<div class="flex flex-col md:flex-row md:justify-between -mx-2 mt-4 px-2 pt-4 border-t">
+    <div>
+        
+        <span class="block font-bold">上一页</span>
+        <a href="/posts/1.linux/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/ethtool/" class="block"></a>
+        
+    </div>
+    <div class="md:text-right mt-4 md:mt-0">
+        
+        <span class="block font-bold">下一页</span>
+        <a href="/posts/1.linux/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/nmcli/" class="block"></a>
+        
+    </div>
+</div>
+
+        
+    </div>
+    
+
+    
+    
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', ()=>{
+        hljs.initHighlightingOnLoad();
+    })
+</script>
+
+      </div>
+    </div>
+    
+  </main>
+  <footer class="pl-scrollbar">
+    <div class="w-full max-w-screen-xl mx-auto"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 2021 <a href="https://www.songjinfeng.com/">SonJinfeng</a> 
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+  </footer>
+</body>
+
+</html>

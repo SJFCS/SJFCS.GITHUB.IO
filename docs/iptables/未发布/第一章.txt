@@ -1,0 +1,26 @@
+
+
+> 推荐文章:
+>
+> [iptables详解-朱双印](https://www.zsythink.net/archives/category/%e8%bf%90%e7%bb%b4%e7%9b%b8%e5%85%b3/iptables)
+>
+> [企业防火墙之iptables-惨绿少年](https://www.cnblogs.com/clsn/p/8308678.html#auto-id-35)
+
+
+
+命令格式 按个说明列举原理  详细解释看后面章节  修正： 动作、 匹配规则
+
+ 20: 表示20以后的所有端口
+ 20:100 表示20到100的端口
+:20 表示20之前的所有端口 
+
+！取反
+
+https://www.cnblogs.com/liang2580/articles/8400140.html
+http://www.yunweipai.com/35035.html
+
+https://wiki.nftables.org/wiki-nftables/index.php/Netfilter_hooks
+
+https://www.cnblogs.com/liuhongru/p/11428095.html
+
+https://www.cnblogs.com/benjamin77/p/8630295.html

@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang='zh' ><meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+
+
+<title>posts | Songjinfeng&#39;s BLOG</title>
+<link rel="stylesheet" href="/css/eureka.min.css">
+<script defer src="/js/eureka.min.js"></script>
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Noto+Serif+SC:wght@400;600;700&display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/styles/solarized-light.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/highlight.min.js"
+   crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/dart.min.js"
+     crossorigin></script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/js/all.min.js"
+   integrity="sha256-uNYoXefWRqv&#43;PsIF/OflNmwtKM4lStn9yrz2gVl6ymo="  crossorigin></script>
+
+
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css"
+   integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3&#43;Aro6EYUG4&#43;cU&#43;KJWu/X"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js" 
+  integrity="sha384-g7c&#43;Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI&#43;sEnkvrMWph2EDg4"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js"
+   integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC&#43;Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.9.2/dist/mermaid.min.js" 
+  integrity="sha256-Zmpaaj&#43;GXFsPF5WdPArSrnW3b30dovldeKsW00xBVwE="  crossorigin></script>
+
+
+<link rel="icon" type="image/png" sizes="32x32" href="/images/icon_hucfa16751ac9c82c06b84c3502c0db793_16378_32x32_fill_box_center_2.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hucfa16751ac9c82c06b84c3502c0db793_16378_180x180_fill_box_center_2.png">
+
+<meta name="description"
+  content="Eureka is a elegant and powerful theme for Hugo.">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"Categories",
+      "item":"/categories/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"posts",
+      "item":"/categories/posts/"}]
+}
+</script>
+
+
+
+
+<script type="application/ld+json">
+{
+    "@context":"https://schema.org",
+    "@type":"ItemList",
+    "itemListElement":[{
+            "@type":"ListItem",
+            "position":  1 ,
+            "name": "",
+            "description": "SCP scp 命令将目录从一个远程服务器复制到另一个远程服务器上的新目录，命令如下：\n$ scp -r server1:dir1 server2:dir2  如果在 server2 上不存在 dir2，这可以正常工作，它会创建一个名为 dir2 的新目录，其中包含 server1 上 dir1 的所有内容。\n但是当 dir2 已经存在于 server2 上时，就会出现问题，已经存在的文件不会被覆盖。\n解决办法：\n$ scp -prq server1:dir1/. server2:dir2/  在文件目录后面加个点 .，将复制该目录的内容，而不是目录本身。\nCP 如果知道多个文件的名字时，可以使用 cp {filename1,filename2,\u0026hellip;} 目标/，目标必须是个文件夹\n -a：此参数的效果和同时指定\u0026quot;-dpR\u0026quot;参数相同； -d：当复制符号连接时，把目标文件或目录也建立为符号连接，并指向与源文件或目录连接的原始文件或目录； -f：强行复制文件或目录，不论目标文件或目录是否已存在； -i：覆盖既有文件之前先询问用户； -l：对源文件建立硬连接，而非复制文件； -p：保留源文件或目录的属性； -R/r：递归处理，将指定目录下的所有文件与子目录一并处理； -s：对源文件建立符号连接，而非复制文件； -u：使用这项参数后只会在源文件的更改时间较目标文件更新时或是名称相互对应的目标文件并不存在时，才复制文件； -S：在备份文件时，用指定的后缀“SUFFIX”代替文件的默认后缀； -b：覆盖已存在的文件目标前将目标文件备份； -v：详细显示命令执行的操作。\n 一.通配符的使用\n 通配符是一种特殊语句，主要有星号(*)和问号(?)，用来模糊搜索文件。主要的通配符有：\n * 匹配任意长度的字符串\n? 匹配一个长度的字符\n[\u0026hellip;] 匹配其中指定的字符\n[a-z] 匹配指定的字符范围\n[^\u0026hellip;] 除了其中指定的字符，其他均可匹配\n 例1：可以代替0个或多个字符。如果需要拷贝以ABC开头的文件，可以输入ABC，拷贝以ABC开头的所有文件类型的文件，如ABCD.txt、ABCDEFG.exe、ABCZH.dll等。如果只需要拷贝txt文件，则可以输入ABC*.txt，拷贝以ABC为开头的TXT类型的文件，如ABC.txt、ABC12.txt。\n例2：？则只匹配一个字符，[1,b,8]就匹配括号中的1，b和8，这些都可以混搭使用。在linux2.6.14内核中，ls可以看到如图：\n  如果需要将.IAB .IAD .IMB .IMD和.WK3 这5个文件拷贝到根目录的tmp下，可以使用如下命令：",
+            "url": "/posts/7.%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4/shell/cpscp%E5%91%BD%E4%BB%A4/"
+        },{
+            "@type":"ListItem",
+            "position":  2 ,
+            "name": "",
+            "description": "SSH连接服务器后执行多条命令 https://stackoverflow.com/a/4412338/4884227\n大家平时有没有遇到自己连接云服务器，ssh 连接上去之后，发现自己的一些小工具用不了\n例如go build无法使用 ，由于我们安装配置golang 环境的时候，是在文件/etc/profile中写了配置，因此需要source 一下/etc/profile\n那么是否可以在ssh 连接上服务器的时候就可以立即自动执行这一类命令呢？\n我们的智慧无穷无尽，小工具也是非常的多，今天来讲述一下SSH连接服务器后执行多条命令可以如何做\n1 使用分号隔开 使用 分号 ;来隔开命令\n  附带1条命令\nssh User@Host 'source /etc/profile'    附带多条命令\nssh User@Host 'source /etc/profile ; uptime'    2 使用管道符号隔开 使用管道|来隔开命令\n  附带1条命令\nssh User@Host 'source /etc/profile'    附带多条命令\nssh User@Host 'source /etc/profile | uptime'    3 使用写EOF的方式 同样适用于一条 / 多条命令\nssh User@Host /bin/bash \u0026lt;\u0026lt; EOF \u0026gt; ls -al \u0026gt; source /etc/profile \u0026gt; EOF  4 使用脚本的方式 使用脚本的方式花样就更多了，例如有一个脚本myinit.",
+            "url": "/posts/7.%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4/shell/ssh%E5%90%8E%E6%89%A7%E8%A1%8C%E5%A4%9A%E6%9D%A1%E5%91%BD%E4%BB%A4/"
+        },{
+            "@type":"ListItem",
+            "position":  3 ,
+            "name": "",
+            "description": "推荐阅读 advance bash scripting guide http://www.linuxplus.org/kb/special-chars.html\nman手册 https://linux.die.net/man/1/bash\n官方手册 https://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html\n变量 XXX 在linux的shell里，${name}可以表示变量，也可以表示数组。\nname后面加[ ]的，一般是数组， ${name[*]}是数组所有元素(all of the elements) ${name[@]}是数组每一个元素(each of the elements)  其实这两个几乎一样，差别主要在于当加上引号时，\u0026quot;${name[*]}\u0026quot;等于所有数组元素及其分隔符（一般是空格）排成的字符串，而\u0026quot;${name[@]}\u0026quot;仍然表示每一个元素。 ${#name[*]}是数组元素的个数，也可以写成${#name[@]}\n${name:-Hello} 是指，如果${name}没有赋值，那么它等于Hello,如果赋值了，就保持原值，不用管这个Hello了。(可为空，语句结束后变量销毁)\n自定义变量 将命令结果赋值给变量\ntest=$(ls -l /root/)  变量是由任何字母、数字和下划线组成的字符串，且不能以数字开头 区分字母大小写，例如Var1和var1是不同的 变量、等号、值中间不能出现任何空格\n变量位置 执行命令脚本时后可跟变量参数\n   - - -     $n n为数字$0代表脚本本身，$1-$9代表1-9个参数，10以上需要用大括号，如$｛10｝    $@ $@命令行所有参数，每个参数都看作独立个体    $* $*命令行所有参数，所有的参数从整体上看作一个整体    $# 参数个数     Shell $*和$@的区别:http://c.biancheng.net/view/807.html\n环境变量 https://blog.csdn.net/jiangyanting2011/article/details/78875928\nhttps://www.cnblogs.com/x_wukong/p/4771316.html",
+            "url": "/posts/7.%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4/shell/untitled/"
+        },{
+            "@type":"ListItem",
+            "position":  4 ,
+            "name": "",
+            "description": "Eureka is a elegant and powerful theme for Hugo.",
+            "url": "/posts/7.%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4/shell/%E5%88%A4%E6%96%AD%E6%9D%A1%E4%BB%B6/"
+        },{
+            "@type":"ListItem",
+            "position":  5 ,
+            "name": "",
+            "description": "Eureka is a elegant and powerful theme for Hugo.",
+            "url": "/posts/7.%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4/shell/%E5%8F%98%E9%87%8F/"
+        },{
+            "@type":"ListItem",
+            "position":  6 ,
+            "name": "",
+            "description": "Eureka is a elegant and powerful theme for Hugo.",
+            "url": "/posts/7.%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4/shell/%E5%AD%97%E7%AC%A6%E4%B8%B2/"
+        },{
+            "@type":"ListItem",
+            "position":  7 ,
+            "name": "",
+            "description": "Eureka is a elegant and powerful theme for Hugo.",
+            "url": "/posts/7.%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4/shell/%E6%95%B0%E7%BB%84/"
+        },{
+            "@type":"ListItem",
+            "position":  8 ,
+            "name": "",
+            "description": "Eureka is a elegant and powerful theme for Hugo.",
+            "url": "/posts/7.%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4/shell/%E8%AF%AD%E5%8F%A5%E8%AF%AD%E6%B3%95/"
+        },{
+            "@type":"ListItem",
+            "position":  9 ,
+            "name": "",
+            "description": "Eureka is a elegant and powerful theme for Hugo.",
+            "url": "/posts/7.%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4/shell/%E9%80%80%E5%87%BA%E7%8A%B6%E6%80%81%E7%A0%81/"
+        },{
+            "@type":"ListItem",
+            "position":  10 ,
+            "name": "",
+            "description": "Eureka is a elegant and powerful theme for Hugo.",
+            "url": "/posts/7.%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4/shell/%E9%80%BB%E8%BE%91%E8%BF%90%E7%AE%97%E7%AC%A6/"
+        }
+    ]
+}
+</script><meta property="og:title" content="posts | Songjinfeng&#39;s BLOG" />
+<meta property="og:type" content="website" />
+
+
+<meta property="og:image" content="/images/icon.png">
+
+
+<meta property="og:url" content="/categories/posts/" />
+
+
+
+
+
+<meta property="og:description" content="Eureka is a elegant and powerful theme for Hugo." />
+
+
+
+
+
+<meta property="og:locale" content="zh" />
+
+
+
+
+<meta property="og:site_name" content="Songjinfeng&#39;s BLOG" />
+
+
+
+
+
+
+<meta property="og:updated_time" content="2021-05-15T00:00:00&#43;00:00" />
+
+
+
+<meta property="article:section" content="categories" />
+
+
+<link rel="alternate" type="application/rss+xml" href="/categories/posts/index.xml" title="Songjinfeng's BLOG" />
+
+<body class="flex flex-col min-h-screen">
+  <header class="fixed flex items-center w-full min-h-16 pl-scrollbar z-50 bg-secondary-bg shadow-sm">
+    <div class="w-full max-w-screen-xl mx-auto"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="mr-6 text-primary-text text-xl font-bold">Songjinfeng&#39;s BLOG</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:flex-grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:flex-grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">技术专栏</a>
+            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">文档笔记</a>
+            <a href="/series/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">主题系列</a>
+            <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">标签</a>
+            <a href="/authors/songjinfeng/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">关于</a>
+            <a href="/index.xml" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">RSS</a>
+            <a href="/webstack" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">友链&amp;导航</a>
+        </div>
+
+        <div class="flex">
+            <div class="relative pt-4 md:pt-0">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col left-0 md:left-auto right-auto md:right-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">浅色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">深色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">自动</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            switchMode('Auto')
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+  </header>
+  <main class="flex-grow pt-16">
+    <div class="pl-scrollbar">
+      <div class="w-full max-w-screen-xl lg:px-4 xl:px-8 mx-auto">
+<article class="mx-6 my-8">
+    <h1 class="font-bold text-3xl text-primary-text">posts</h1>
+    
+</article>
+<div class="bg-secondary-bg rounded px-6">
+    <div class="overflow-hidden divide-y">
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="mb-4">
+  <a href="/posts/7.%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4/shell/cpscp%E5%91%BD%E4%BB%A4/" class="font-bold text-xl hover:text-eureka"></a>
+</div>
+<div class="content">
+  SCP scp 命令将目录从一个远程服务器复制到另一个远程服务器上的新目录，命令如下：
+$ scp -r server1:dir1 server2:dir2  如果在 server2 上不存在 dir2，这可以正常工作，它会创建一个名为 dir2 的新目录，其中包含 server1 上 dir1 的所有内容。
+但是当 dir2 已经存在于 server2 上时，就会出现问题，已经存在的文件不会被覆盖。
+解决办法：
+$ scp -prq server1:dir1/. server2:dir2/  在文件目录后面加个点 .，将复制该目录的内容，而不是目录本身。
+CP 如果知道多个文件的名字时，可以使用 cp {filename1,filename2,&amp;hellip;} 目标/，目标必须是个文件夹
+ -a：此参数的效果和同时指定&amp;quot;-dpR&amp;quot;参数相同； -d：当复制符号连接时，把目标文件或目录也建立为符号连接，并指向与源文件或目录连接的原始文件或目录； -f：强行复制文件或目录，不论目标文件或目录是否已存在； -i：覆盖既有文件之前先询问用户； -l：对源文件建立硬连接，而非复制文件； -p：保留源文件或目录的属性； -R/r：递归处理，将指定目录下的所有文件与子目录一并处理； -s：对源文件建立符号连接，而非复制文件； -u：使用这项参数后只会在源文件的更改时间较目标文件更新时或是名称相互对应的目标文件并不存在时，才复制文件； -S：在备份文件时，用指定的后缀“SUFFIX”代替文件的默认后缀； -b：覆盖已存在的文件目标前将目标文件备份； -v：详细显示命令执行的操作。
+ 一.通配符的使用
+ 通配符是一种特殊语句，主要有星号(*)和问号(?)，用来模糊搜索文件。主要的通配符有：
+ * 匹配任意长度的字符串
+? 匹配一个长度的字符
+[&amp;hellip;] 匹配其中指定的字符
+[a-z] 匹配指定的字符范围
+[^&amp;hellip;] 除了其中指定的字符，其他均可匹配
+ 例1：可以代替0个或多个字符。如果需要拷贝以ABC开头的文件，可以输入ABC，拷贝以ABC开头的所有文件类型的文件，如ABCD.txt、ABCDEFG.exe、ABCZH.dll等。如果只需要拷贝txt文件，则可以输入ABC*.txt，拷贝以ABC为开头的TXT类型的文件，如ABC.txt、ABC12.txt。
+例2：？则只匹配一个字符，[1,b,8]就匹配括号中的1，b和8，这些都可以混搭使用。在linux2.6.14内核中，ls可以看到如图：
+  如果需要将.IAB .IAD .IMB .IMD和.WK3 这5个文件拷贝到根目录的tmp下，可以使用如下命令：
+</div>
+
+<div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>0001-01-01</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>1分钟阅读时长</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="/categories/blog/" class="hover:text-eureka">blog</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/posts/" class="hover:text-eureka">posts</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/linux/" class="hover:text-eureka">Linux</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/shell/" class="hover:text-eureka">shell</a>
+        
+    </div>
+    
+
+    
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="mb-4">
+  <a href="/posts/7.%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4/shell/ssh%E5%90%8E%E6%89%A7%E8%A1%8C%E5%A4%9A%E6%9D%A1%E5%91%BD%E4%BB%A4/" class="font-bold text-xl hover:text-eureka"></a>
+</div>
+<div class="content">
+  SSH连接服务器后执行多条命令 https://stackoverflow.com/a/4412338/4884227
+大家平时有没有遇到自己连接云服务器，ssh 连接上去之后，发现自己的一些小工具用不了
+例如go build无法使用 ，由于我们安装配置golang 环境的时候，是在文件/etc/profile中写了配置，因此需要source 一下/etc/profile
+那么是否可以在ssh 连接上服务器的时候就可以立即自动执行这一类命令呢？
+我们的智慧无穷无尽，小工具也是非常的多，今天来讲述一下SSH连接服务器后执行多条命令可以如何做
+1 使用分号隔开 使用 分号 ;来隔开命令
+  附带1条命令
+ssh User@Host &#39;source /etc/profile&#39;    附带多条命令
+ssh User@Host &#39;source /etc/profile ; uptime&#39;    2 使用管道符号隔开 使用管道|来隔开命令
+  附带1条命令
+ssh User@Host &#39;source /etc/profile&#39;    附带多条命令
+ssh User@Host &#39;source /etc/profile | uptime&#39;    3 使用写EOF的方式 同样适用于一条 / 多条命令
+ssh User@Host /bin/bash &amp;lt;&amp;lt; EOF &amp;gt; ls -al &amp;gt; source /etc/profile &amp;gt; EOF  4 使用脚本的方式 使用脚本的方式花样就更多了，例如有一个脚本myinit.
+</div>
+
+<div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>0001-01-01</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>1分钟阅读时长</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="/categories/blog/" class="hover:text-eureka">blog</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/posts/" class="hover:text-eureka">posts</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/linux/" class="hover:text-eureka">Linux</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/shell/" class="hover:text-eureka">shell</a>
+        
+    </div>
+    
+
+    
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="mb-4">
+  <a href="/posts/7.%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4/shell/untitled/" class="font-bold text-xl hover:text-eureka"></a>
+</div>
+<div class="content">
+  推荐阅读 advance bash scripting guide http://www.linuxplus.org/kb/special-chars.html
+man手册 https://linux.die.net/man/1/bash
+官方手册 https://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html
+变量 XXX 在linux的shell里，${name}可以表示变量，也可以表示数组。
+name后面加[ ]的，一般是数组， ${name[*]}是数组所有元素(all of the elements) ${name[@]}是数组每一个元素(each of the elements)  其实这两个几乎一样，差别主要在于当加上引号时，&amp;quot;${name[*]}&amp;quot;等于所有数组元素及其分隔符（一般是空格）排成的字符串，而&amp;quot;${name[@]}&amp;quot;仍然表示每一个元素。 ${#name[*]}是数组元素的个数，也可以写成${#name[@]}
+${name:-Hello} 是指，如果${name}没有赋值，那么它等于Hello,如果赋值了，就保持原值，不用管这个Hello了。(可为空，语句结束后变量销毁)
+自定义变量 将命令结果赋值给变量
+test=$(ls -l /root/)  变量是由任何字母、数字和下划线组成的字符串，且不能以数字开头 区分字母大小写，例如Var1和var1是不同的 变量、等号、值中间不能出现任何空格
+变量位置 执行命令脚本时后可跟变量参数
+   - - -     $n n为数字$0代表脚本本身，$1-$9代表1-9个参数，10以上需要用大括号，如$｛10｝    $@ $@命令行所有参数，每个参数都看作独立个体    $* $*命令行所有参数，所有的参数从整体上看作一个整体    $# 参数个数     Shell $*和$@的区别:http://c.biancheng.net/view/807.html
+环境变量 https://blog.csdn.net/jiangyanting2011/article/details/78875928
+https://www.cnblogs.com/x_wukong/p/4771316.html
+</div>
+
+<div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>0001-01-01</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>3分钟阅读时长</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="/categories/blog/" class="hover:text-eureka">blog</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/posts/" class="hover:text-eureka">posts</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/linux/" class="hover:text-eureka">Linux</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/shell/" class="hover:text-eureka">shell</a>
+        
+    </div>
+    
+
+    
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="mb-4">
+  <a href="/posts/7.%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4/shell/%E5%88%A4%E6%96%AD%E6%9D%A1%E4%BB%B6/" class="font-bold text-xl hover:text-eureka"></a>
+</div>
+<div class="content">
+  
+</div>
+
+<div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>0001-01-01</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>0分钟阅读时长</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="/categories/blog/" class="hover:text-eureka">blog</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/posts/" class="hover:text-eureka">posts</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/linux/" class="hover:text-eureka">Linux</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/shell/" class="hover:text-eureka">shell</a>
+        
+    </div>
+    
+
+    
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="mb-4">
+  <a href="/posts/7.%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4/shell/%E5%8F%98%E9%87%8F/" class="font-bold text-xl hover:text-eureka"></a>
+</div>
+<div class="content">
+  
+</div>
+
+<div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>0001-01-01</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>0分钟阅读时长</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="/categories/blog/" class="hover:text-eureka">blog</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/posts/" class="hover:text-eureka">posts</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/linux/" class="hover:text-eureka">Linux</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/shell/" class="hover:text-eureka">shell</a>
+        
+    </div>
+    
+
+    
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="mb-4">
+  <a href="/posts/7.%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4/shell/%E5%AD%97%E7%AC%A6%E4%B8%B2/" class="font-bold text-xl hover:text-eureka"></a>
+</div>
+<div class="content">
+  
+</div>
+
+<div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>0001-01-01</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>0分钟阅读时长</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="/categories/blog/" class="hover:text-eureka">blog</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/posts/" class="hover:text-eureka">posts</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/linux/" class="hover:text-eureka">Linux</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/shell/" class="hover:text-eureka">shell</a>
+        
+    </div>
+    
+
+    
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="mb-4">
+  <a href="/posts/7.%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4/shell/%E6%95%B0%E7%BB%84/" class="font-bold text-xl hover:text-eureka"></a>
+</div>
+<div class="content">
+  
+</div>
+
+<div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>0001-01-01</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>0分钟阅读时长</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="/categories/blog/" class="hover:text-eureka">blog</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/posts/" class="hover:text-eureka">posts</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/linux/" class="hover:text-eureka">Linux</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/shell/" class="hover:text-eureka">shell</a>
+        
+    </div>
+    
+
+    
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="mb-4">
+  <a href="/posts/7.%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4/shell/%E8%AF%AD%E5%8F%A5%E8%AF%AD%E6%B3%95/" class="font-bold text-xl hover:text-eureka"></a>
+</div>
+<div class="content">
+  
+</div>
+
+<div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>0001-01-01</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>0分钟阅读时长</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="/categories/blog/" class="hover:text-eureka">blog</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/posts/" class="hover:text-eureka">posts</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/linux/" class="hover:text-eureka">Linux</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/shell/" class="hover:text-eureka">shell</a>
+        
+    </div>
+    
+
+    
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="mb-4">
+  <a href="/posts/7.%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4/shell/%E9%80%80%E5%87%BA%E7%8A%B6%E6%80%81%E7%A0%81/" class="font-bold text-xl hover:text-eureka"></a>
+</div>
+<div class="content">
+  
+</div>
+
+<div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>0001-01-01</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>0分钟阅读时长</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="/categories/blog/" class="hover:text-eureka">blog</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/posts/" class="hover:text-eureka">posts</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/linux/" class="hover:text-eureka">Linux</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/shell/" class="hover:text-eureka">shell</a>
+        
+    </div>
+    
+
+    
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="mb-4">
+  <a href="/posts/7.%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4/shell/%E9%80%BB%E8%BE%91%E8%BF%90%E7%AE%97%E7%AC%A6/" class="font-bold text-xl hover:text-eureka"></a>
+</div>
+<div class="content">
+  
+</div>
+
+<div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>0001-01-01</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>0分钟阅读时长</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="/categories/blog/" class="hover:text-eureka">blog</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/posts/" class="hover:text-eureka">posts</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/linux/" class="hover:text-eureka">Linux</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/shell/" class="hover:text-eureka">shell</a>
+        
+    </div>
+    
+
+    
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
+  
+</div>
+
+
+</div>
+
+<ul class="pagination">
+  <li class="page-item">
+    <a href="/categories/posts/" class="page-link" aria-label="First"><span aria-hidden="true">&laquo;&laquo;</span></a>
+  </li>
+  <li class="page-item">
+    <a href="/categories/posts/page/2/" class="page-link" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
+  </li>
+  <li class="page-item">
+    <a class="page-link" href="/categories/posts/">1</a>
+  </li>
+  <li class="page-item">
+    <a class="page-link" href="/categories/posts/page/2/">2</a>
+  </li>
+  <li class="page-item active">
+    <a class="page-link" href="/categories/posts/page/3/">3</a>
+  </li>
+  <li class="page-item">
+    <a class="page-link" href="/categories/posts/page/4/">4</a>
+  </li>
+  <li class="page-item">
+    <a class="page-link" href="/categories/posts/page/5/">5</a>
+  </li>
+  <li class="page-item">
+    <a href="/categories/posts/page/4/" class="page-link" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
+  </li>
+  <li class="page-item">
+    <a href="/categories/posts/page/5/" class="page-link" aria-label="Last"><span aria-hidden="true">&raquo;&raquo;</span></a>
+  </li>
+</ul>
+
+
+
+      </div>
+    </div>
+    
+  </main>
+  <footer class="pl-scrollbar">
+    <div class="w-full max-w-screen-xl mx-auto"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 2021 <a href="https://www.songjinfeng.com/">SonJinfeng</a> 
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+  </footer>
+</body>
+
+</html>

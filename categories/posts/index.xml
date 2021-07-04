@@ -1,0 +1,641 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>posts on Songjinfeng&#39;s BLOG</title>
+    <link>/categories/posts/</link>
+    <description>Recent content in posts on Songjinfeng&#39;s BLOG</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language>
+    <copyright>&amp;copy; 2021 &lt;a href=&#34;https://www.songjinfeng.com/&#34;&gt;SonJinfeng&lt;/a&gt; 
+</copyright>
+    <lastBuildDate>Sat, 15 May 2021 00:00:00 +0000</lastBuildDate><atom:link href="/categories/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>4.1. 部署ETCD集群</title>
+      <link>/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/4.-%E9%83%A8%E7%BD%B2etcd%E9%9B%86%E7%BE%A4/</link>
+      <pubDate>Sat, 15 May 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/4.-%E9%83%A8%E7%BD%B2etcd%E9%9B%86%E7%BE%A4/</guid>
+      <description>&lt;p&gt;本文将引导您使用二进制文件部署ETCD集群，从 证书创建 到 服务管理 以及涉及一小部分调优参数.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>4.1. 部署etcd集群</title>
+      <link>/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/3.0.0-%E9%83%A8%E7%BD%B2etcd%E9%9B%86%E7%BE%A4/</link>
+      <pubDate>Sat, 15 May 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/3.0.0-%E9%83%A8%E7%BD%B2etcd%E9%9B%86%E7%BE%A4/</guid>
+      <description>&lt;p&gt;本文将引导您使用二进制文件部署ETCD集群，从 证书创建 到 服务管理 以及涉及一小部分调优参数.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>4.2. 部署kube-apiserver集群</title>
+      <link>/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/5.1.-kube-apiserver%E9%9B%86%E7%BE%A4/</link>
+      <pubDate>Fri, 14 May 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/5.1.-kube-apiserver%E9%9B%86%E7%BE%A4/</guid>
+      <description>&lt;p&gt;本文将引导您使用二进制文件部署kub-apiserver，从 证书创建 到 服务管理.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>/posts/1.linux/linux%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/inode/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/1.linux/linux%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/inode/</guid>
+      <description>转载：http://www.ruanyifeng.com/blog/2011/12/inode.html
+作者： 阮一峰
+一、inode是什么？ 理解inode，要从文件储存说起。
+文件储存在硬盘上，硬盘的最小存储单位叫做&amp;quot;扇区&amp;quot;（Sector）。每个扇区储存512字节（相当于0.5KB）。
+操作系统读取硬盘的时候，不会一个个扇区地读取，这样效率太低，而是一次性连续读取多个扇区，即一次性读取一个&amp;quot;块&amp;quot;（block）。这种由多个扇区组成的&amp;quot;块&amp;quot;，是文件存取的最小单位。&amp;ldquo;块&amp;quot;的大小，最常见的是4KB，即连续八个 sector组成一个 block。
+文件数据都储存在&amp;quot;块&amp;quot;中，那么很显然，我们还必须找到一个地方储存文件的元信息，比如文件的创建者、文件的创建日期、文件的大小等等。这种储存文件元信息的区域就叫做inode，中文译名为&amp;quot;索引节点&amp;rdquo;。
+每一个文件都有对应的inode，里面包含了与该文件有关的一些信息。
+二、inode的内容 inode包含文件的元信息，具体来说有以下内容：
+ 　* 文件的字节数
+　* 文件拥有者的User ID
+　* 文件的Group ID
+　* 文件的读、写、执行权限
+　* 文件的时间戳，共有三个：ctime指inode上一次变动的时间，mtime指文件内容上一次变动的时间，atime指文件上一次打开的时间。
+　* 链接数，即有多少文件名指向这个inode
+　* 文件数据block的位置
+ 可以用stat命令，查看某个文件的inode信息：
+ 　stat example.txt
+ 总之，除了文件名以外的所有文件信息，都存在inode之中。至于为什么没有文件名，下文会有详细解释。
+三、inode的大小 inode也会消耗硬盘空间，所以硬盘格式化的时候，操作系统自动将硬盘分成两个区域。一个是数据区，存放文件数据；另一个是inode区（inode table），存放inode所包含的信息。
+每个inode节点的大小，一般是128字节或256字节。inode节点的总数，在格式化时就给定，一般是每1KB或每2KB就设置一个inode。假定在一块1GB的硬盘中，每个inode节点的大小为128字节，每1KB就设置一个inode，那么inode table的大小就会达到128MB，占整块硬盘的12.8%。
+查看每个硬盘分区的inode总数和已经使用的数量，可以使用df命令。
+ 　df -i
+ 查看每个inode节点的大小，可以用如下命令：
+ 　sudo dumpe2fs -h /dev/hda | grep &amp;ldquo;Inode size&amp;rdquo;
+ 由于每个文件都必须有一个inode，因此有可能发生inode已经用光，但是硬盘还未存满的情况。这时，就无法在硬盘上创建新文件。
+四、inode号码 每个inode都有一个号码，操作系统用inode号码来识别不同的文件。
+这里值得重复一遍，Unix/Linux系统内部不使用文件名，而使用inode号码来识别文件。对于系统来说，文件名只是inode号码便于识别的别称或者绰号。
+表面上，用户通过文件名，打开文件。实际上，系统内部这个过程分成三步：首先，系统找到这个文件名对应的inode号码；其次，通过inode号码，获取inode信息；最后，根据inode信息，找到文件数据所在的block，读出数据。
+使用ls -i命令，可以看到文件名对应的inode号码：</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>/posts/1.linux/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/ethtool/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/1.linux/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/ethtool/</guid>
+      <description>ethtool http://www.voidcn.com/article/p-reuwslap-brm.html
+命令描述： ethtool 是用于查询及设置网卡参数的命令。
+使用概要：
+ethtool ethx //查询ethx网口基本设置，其中 x 是对应网卡的编号，如eth0、eth1等等 ethtool –h //显示ethtool的命令帮助(help) ethtool –i ethX //查询ethX网口的相关信息 ethtool –d ethX //查询ethX网口注册性信息 ethtool –r ethX //重置ethX网口到自适应模式 ethtool –S ethX //查询ethX网口收发包统计 ethtool –s ethX [speed 10|100|1000] [duplex half|full] [autoneg on|off] //设置网口速率10/100/1000M、设置网口半/全双工、设置网口是否自协商  使用举例：
+1）查询eth0网口基本设置（网卡速率是百兆还是千兆等）:
+# ethtool eth0 Settings for eth0: Supported ports: [ TP ] Supported link modes: 10baseT/Half 10baseT/Full 100baseT/Half 100baseT/Full 1000baseT/Full Supported pause frame use: No //是否支持热插拔 Supports auto-negotiation: Yes //是否支持自动协商 Advertised link modes: 10baseT/Half 10baseT/Full 100baseT/Half 100baseT/Full 1000baseT/Full Advertised pause frame use: No Advertised auto-negotiation: Yes Speed: 1000Mb/s //速率 Duplex: Full //全双工 Port: Twisted Pair //电口 PHYAD: 0 Transceiver: internal Auto-negotiation: on MDI-X: Unknown Supports Wake-on: d Wake-on: d Current message level: 0x00000007 (7) drv probe link Link detected: yes  2）查看网卡的驱动信息：</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>/posts/1.linux/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/lldp/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/1.linux/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/lldp/</guid>
+      <description>CentOS7配置LLDP服务 https://blog.csdn.net/BK_sys/article/details/88554593 https://vincentbernat.github.io/lldpd/usage.html
+lldpad(2010年停更)：https://github.com/jrfastab/lldpad
+lldpd（lldpd可以输出json格式）：https://github.com/vincentbernat/lldpd
+第一种方式：lldpd 1、软件lldpd和lldpcli
+yum install lldpd -y
+2、服务启动后，相关信息可以通过如下命令获取
+lldpcli show neighbors
+将结果处理成json格式，只需要在命令后加上：lldpcli show neighbors -f json
+第二种方式：lldpad 1、安装相关服务软件和工具
+软件lldpad和lldptool
+yum install lldpad -y
+2、配置服务器端口用于接收和发送相关LLDP信息，包括端口，主机名，mac地址和ip地址
+（1）查看系统本地网卡设备：
+##因为网卡设备名称包含eth，eno，em，p1p1 ……，默认都是以e或者p开头
+ls /sys/class/net/ |egrep ‘e|p’
+（2）分别配置每个端口，以eno1为例，如下：
+lldptool set-lldp -i eno1 adminStatus=rxtx lldptool -T -i eno1 -V sysName enableTx=yes lldptool -T -i eno1 -V portDesc enableTx=yes lldptool -T -i eno1 -V sysDesc enableTx=yes lldptool -T -i eno1 -V mngAddr enableTx=yes  ##每个端口都配置的原因是防止已经down的端口遗漏掉，新部署服务器可以只配置up状态的接口，具体配置请根据实际需求配置。
+4、完成端口配置后，相关信息可以通过如下命令获取
+lldptool -t -n -i eno1</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>/posts/1.linux/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/nmcli/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/1.linux/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/nmcli/</guid>
+      <description>https://blog.51cto.com/14012942/2432243
+ https://blog.csdn.net/cuichongxin/article/details/106473581
+ </description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>/posts/1.linux/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/snmp/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/1.linux/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/snmp/</guid>
+      <description>https://www.cnblogs.com/oloroso/p/4844907.html https://www.cnblogs.com/xdp-gacl/p/4016524.html https://www.cnblogs.com/smillepro/articles/9948253.html
+​	https://blog.csdn.net/lqy461929569/article/details/79881269
+​	https://www.cnblogs.com/xdp-gacl/p/3978825.html
+​	https://wenku.baidu.com/view/cf0efc335a8102d276a22f6d.html?sxts=1541989059623
+snmp简介 https://www.cnblogs.com/xdp-gacl/p/3978825.html　​	SNMP采用UDP协议在管理端和agent之间传输信息。 ==SNMP采用UDP 161端口接收和发送请求，162端口接收trap==，执行SNMP的设备缺省都必须采用这些端口。SNMP消息全部通过UDP端口161接收，只有Trap信息采用UDP端口162。
+snmp安装与卸载 安装包介绍&amp;hellip;&amp;hellip;
+yum安装 yum install -y net-snmp yum install -y net-snmp-utils yum install -y net-snmp-devel yum install -y net-snmp-libs yum install -y net-snmp-perl yum install -y mrtg 可使用iptables -L -n 查看当前iptables规则,放udp 161端口的访问权限  源码编译安装 https://www.cnblogs.com/xdp-gacl/p/4016524.html
+1.下载 下载Net-SNMP的源代码,选择一个SNMP版本，比如5.7.1，下载地址如下：
+http://www.net-snmp.org/download.html http://sourceforge.net/projects/net-snmp/files/net-snmp/5.7.1/，如下图所示：
+2. 解压编译 tar xzvf net-snmp-5.7.1.tar.gz解压后``cd net-snmp-5.7.1`通过configure来生成编译规则
+ net-snmp-5.7.1目录下的configure是可执行文件，如果想指定程序包的安装路径，那么首先建立相应的文件夹来存放安装信息，可以写成./configure –-prefix=/指定的路径名。参数&amp;ndash;prefix用来告诉系统安装信息存放的路径，如果没有指定路径，直接执行./configure，那么程序包都会安装在系统默认的目录下，通常为：/usr/local下
+ 执行命令
+./configure --prefix=/usr/local/snmp --with-mib-modules=&#39;ucd-snmp/diskio ip-mib/ipv4InterfaceTable&#39;
+::: info 请注意参数：
+–prefix=/usr/local/snmp 选项，选择snmp的安装路径。
+–with-mib-modules=ucd-snmp/diskio 选项，可以让服务器支持磁盘I/O监控。</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>/posts/1.linux/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/wireshark/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/1.linux/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/wireshark/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_docker/docker%E7%AC%94%E8%AE%B0/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_docker/docker%E7%AC%94%E8%AE%B0/</guid>
+      <description>docker daemon 内核
+docker login docker.io 之后用户密码保存目录
+login
+search
+pull
+push
+tag
+rmi -f
+ps -a
+run
+-i
+-t
+-d
+&amp;ndash;rm
+&amp;ndash;name
+image
+command
+exec -it /bin/sh
+strat restart stop
+rm -f
+-f bujia
+docker commit -p text1 xx/xx/xx:v1
+export xx &amp;gt; xx.tar
+save xx &amp;gt; xx.tar
+load -i
+import
+logs -f
+  docker save保存的是镜像（image），docker export保存的是容器（container）；
+  docker load用来载入镜像包，docker import用来载入容器包，但两者都会恢复为镜像；
+  docker load不能对载入的镜像重命名，而docker import可以为镜像指定新名称。
+ -p 容器外端口：内
+-v 容器外目录：内
+-e 环境变量 key=value</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/k8s/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/k8s/</guid>
+      <description>containerd https://github.com/containerd/containerd/releases/download/v1.4.3/cri-containerd-cni-1.4.3-linux-amd64.tar.gz
+tar
+find . -type f
+rm -rf ./opt ./etc/cni
+mkdir /etc/containerd/ &amp;amp;&amp;amp; containerd config default &amp;gt; /etc/containerd/config.toml
+修改oom_score = -999 系统内存不足时不至于杀掉此守护进程
+ctr i list ctr i pull docker.io/livrary/redis:alpine redis ctr -t -d docker.io/livrary/redis:alpine redis ctr c ls ctr t ls ctr t kill redis ctr t rm redis ctr c rm redis 查看docker容器 ctr -n moby t ls k8s node节点 crictl ps crictl pods alias docker=crictl  镜像pull目录
+containerd：du -sm /var/lib/containerd
+docker：du -sm /var/lib/docker</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/0000/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/0000/</guid>
+      <description>4. 部署master节点 4.1. 部署etcd集群 部署方法以hdss7-12.host.com为例
+集群架构    主机名 角色 ip地址     hdss7-12.host.com lead 10.4.7.12   hdss7-21.host.com follow 10.4.7.21   hdss7-22.host.com follow 10.4.7.22    创建基于根证书的config配置文件(hdss7-200上) [root@hdss7-200 ~]# vi /opt/certs/ca-config.json { &amp;quot;signing&amp;quot;: { &amp;quot;default&amp;quot;: { &amp;quot;expiry&amp;quot;: &amp;quot;175200h&amp;quot; }, &amp;quot;profiles&amp;quot;: { &amp;quot;server&amp;quot;: { &amp;quot;expiry&amp;quot;: &amp;quot;175200h&amp;quot;, &amp;quot;usages&amp;quot;: [ &amp;quot;signing&amp;quot;, &amp;quot;key encipherment&amp;quot;, &amp;quot;server auth&amp;quot; ] }, &amp;quot;client&amp;quot;: { &amp;quot;expiry&amp;quot;: &amp;quot;175200h&amp;quot;, &amp;quot;usages&amp;quot;: [ &amp;quot;signing&amp;quot;, &amp;quot;key encipherment&amp;quot;, &amp;quot;client auth&amp;quot; ] }, &amp;quot;peer&amp;quot;: { &amp;quot;expiry&amp;quot;: &amp;quot;175200h&amp;quot;, &amp;quot;usages&amp;quot;: [ &amp;quot;signing&amp;quot;, &amp;quot;key encipherment&amp;quot;, &amp;quot;server auth&amp;quot;, &amp;quot;client auth&amp;quot; ] } } } } # 注意： # peer： 互相通信 # client： 客户端去找服务器需要证书，服务端找客户端不需要 # server： 在启动server的时候需要配置证书  创建生成自签发证书的csr的json配置文件 [root@hdss7-200 ~]# vi /opt/certs/etcd-peer-csr.</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/1.-%E9%9B%86%E7%BE%A4%E6%9E%B6%E6%9E%84%E5%92%8C%E5%9F%BA%E7%A1%80%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/1.-%E9%9B%86%E7%BE%A4%E6%9E%B6%E6%9E%84%E5%92%8C%E5%9F%BA%E7%A1%80%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/</guid>
+      <description>1. 集群架构    主机名 IP地址     hdss7-11.host.com 10.4.7.11   hdss7-12.host.com 10.4.7.12   hdss7-21.host.com 10.4.7.21   hdss7-22.host.com 10.4.7.22   hdss7-200.host.com 10.4.7.200    master节点的三个组件** kube-apiserver 整个集群的唯一入口，并提供认证、授权、访问控制、API注册和发现等机制。  kube-controller-manager 控制器管理器 负责维护集群的状态，比如故障检测、自动扩展、滚动更新等。保证资源到达期望值。  kube-scheduler 调度器 经过策略调度POD到合适的节点上面运行。分别有预选策略和优选策略。  node节点的两个组件 kubelet 在集群节点上运行的代理，kubelet会通过各种机制来确保容器处于运行状态且健康。kubelet不会管理不是由kubernetes创建的容器。kubelet接收POD的期望状态（副本数、镜像、网络等），并调用容器运行环境来实现预期状态。 kubelet会定时汇报节点的状态给apiserver，作为scheduler调度的基础。kubelet会对镜像和容器进行清理，避免不必要的文件资源占用。  kube-proxy kube-proxy是集群中节点上运行的网络代理，是实现service资源功能组件之一。kube-proxy建立了POD网络和集群网络之间的关系。不同node上的service流量转发规则会通过kube-proxy来调用apiserver访问etcd进行规则更新。 service流量调度方式有三种方式：userspace（废弃，性能很差）、iptables（性能差，复杂，即将废弃）、ipvs（性能好，转发方式清晰）。  1.2. kubernetes的三条网络 节点网络 就是宿主机网络 地址段：10.4.7.0/24
+Pod网络 容器运行的网络 建议172.7.21.0/24 ,并建议POD网段与节点IP绑定 如: 节点IP为10.4.7.21，则POD网络为172.7.21.0/24
+Service 网络 也叫集群网络(cluster server)，用于内部集群间通信 构建于POD网络之上, 主要是解决服务发现和负载均衡 通过kube-proxy连接POD网络和service网络 地址段：`192.168.0.0/16
+2. 基础环境准备 k8s组件介绍：https://blog.csdn.net/fajing_feiyue/article/details/107732453</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/5.2-controller-manager/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/5.2-controller-manager/</guid>
+      <description>4.4. 部署controller-manager  FQA:
+1、 默认apiserver 只开启了安全端口6443的访问，非安全端口（&amp;ndash;insecure-port）8080方式默认是关闭的。在此版本中已停用
+链接apiserver时，报错提示 dail tcp 127.0.0.1:8080: connect: connection refused
+当尝试添加8080端口，提示此字段只能为0，&amp;ndash;insecure-port字段值为0，表示默认禁用了8080端口，同时&amp;ndash;insecure-bind-address字段 不再提供 Error: invalid port value 8080: only zero is allowed
+2、 不用 &amp;ndash;leader-elect true \ 会报错 &amp;ndash;leader-elect \ #此版本默认开启
+ 集群架构    主机名 角色 IP地址     hdss7-21.host.com controller-manager 10.4.7.21   hdss7-22.host.com controller-manager 10.4.7.22    部署方法以hdss7-21.host.com为例
+创建启动脚本 hdss7-21.host.com上
+[root@hdss7-21 bin]# vi /opt/kubernetes/server/bin/kube-controller-manager.sh #!/bin/sh ./kube-controller-manager \ --cluster-cidr 172.7.0.0/16 \ --leader-elect true \ --log-dir /data/logs/kubernetes/kube-controller-manager \ --master http://127.</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/5.3.-kube-scheduler/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/5.3.-kube-scheduler/</guid>
+      <description>4.5. 部署kube-scheduler 集群架构    主机名 角色 IP地址     hdss7-21.host.com kube-scheduler 10.4.7.21   hdss7-22.host.com kube-scheduler 10.4.7.22    部署方法以hdss7-21.host.com为例
+创建启动脚本 hdss7-21.host.com上
+[root@hdss7-21 bin]# vi /opt/kubernetes/server/bin/kube-scheduler.sh #!/bin/sh ./kube-scheduler \ --leader-elect \ --log-dir /data/logs/kubernetes/kube-scheduler \ --master http://127.0.0.1:8080 \ --v 2  授权文件权限，创建目录 [root@hdss7-21 bin]# chmod +x /opt/kubernetes/server/bin/kube-scheduler.sh [root@hdss7-21 bin]# mkdir -p /data/logs/kubernetes/kube-scheduler  创建supervisor配置 [root@hdss7-21 bin]# vi /etc/supervisord.d/kube-scheduler.ini [program:kube-scheduler-7-21] command=/opt/kubernetes/server/bin/kube-scheduler.sh ; the program (relative uses PATH, can take args) numprocs=1 ; number of processes copies to start (def 1) directory=/opt/kubernetes/server/bin ; directory to cwd to before exec (def no cwd) autostart=true ; start at supervisord start (default: true) autorestart=true ; retstart at unexpected quit (default: true) startsecs=30 ; number of secs prog must stay running (def.</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/6.0.-docker/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/6.0.-docker/</guid>
+      <description>安装 curl -fsSL https://get.docker.com | bash -s docker --mirror Aliyun  配置 mkdir /etc/docker vi /etc/docker/daemon.json { &amp;quot;graph&amp;quot;: &amp;quot;/data/docker&amp;quot;, &amp;quot;storage-driver&amp;quot;: &amp;quot;overlay2&amp;quot;, &amp;quot;insecure-registries&amp;quot;: [&amp;quot;registry.access.redhat.com&amp;quot;,&amp;quot;quay.io&amp;quot;,&amp;quot;harbor.od.com&amp;quot;], &amp;quot;registry-mirrors&amp;quot;: [&amp;quot;https://q2gr04ke.mirror.aliyuncs.com&amp;quot;], &amp;quot;bip&amp;quot;: &amp;quot;172.7.21.1/24&amp;quot;, &amp;quot;exec-opts&amp;quot;: [&amp;quot;native.cgroupdriver=systemd&amp;quot;], &amp;quot;live-restore&amp;quot;: true } ########## bip要根据宿主机ip变化 注意：hdss7-21.host.com bip 172.7.21.1/24 hdss7-22.host.com bip 172.7.22.1/24 hdss7-200.host.com bip 172.7.200.1/24  启动 mkdir -p /data/docker systemctl start docker systemctl enable docker docker version docker info  </description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/6.1.-node-kubelet/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/6.1.-node-kubelet/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/6.2.-node-kube-proxy/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/6.2.-node-kube-proxy/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/7.-%E9%AA%8C%E8%AF%81k8s%E9%9B%86%E7%BE%A4/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/7.-%E9%AA%8C%E8%AF%81k8s%E9%9B%86%E7%BE%A4/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/8.-harbor%E9%9B%86%E7%BE%A4/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/8.-harbor%E9%9B%86%E7%BE%A4/</guid>
+      <description>3.11. 部署docker镜像私有仓库harbor hdss7-200.host.com 上 下载软件并解压 harbor官网github地址: https://github.com/goharbor/harbor [root@hdss7-200 src]# tar xf harbor-offline-installer-v1.8.3.tgz -C /opt/ [root@hdss7-200 opt]# mv harbor/ harbor-v1.8.3 [root@hdss7-200 opt]# ln -s /opt/harbor-v1.8.3/ /opt/harbor  配置 [root@hdss7-200 opt]# vi /opt/harbor/harbor.yml hostname: harbor.od.com http: port: 180 harbor_admin_password:Harbor12345 data_volume: /data/harbor log: level: info rotate_count: 50 rotate_size:200M location: /data/harbor/logs [root@hdss7-200 opt]# mkdir -p /data/harbor/logs  安装docker-compose [root@hdss7-200 opt]# yum install docker-compose -y  安装harbor [root@hdss7-200 harbor]# /opt/harbor/install.sh  检查harbor启动情况 [root@hdss7-200 harbor]# docker-compose ps [root@hdss7-200 harbor]# docker ps -a  配置harbor的dns内网解析(注意： 在10.</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>/posts/7.%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4/shell/cpscp%E5%91%BD%E4%BB%A4/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/7.%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4/shell/cpscp%E5%91%BD%E4%BB%A4/</guid>
+      <description>SCP scp 命令将目录从一个远程服务器复制到另一个远程服务器上的新目录，命令如下：
+$ scp -r server1:dir1 server2:dir2  如果在 server2 上不存在 dir2，这可以正常工作，它会创建一个名为 dir2 的新目录，其中包含 server1 上 dir1 的所有内容。
+但是当 dir2 已经存在于 server2 上时，就会出现问题，已经存在的文件不会被覆盖。
+解决办法：
+$ scp -prq server1:dir1/. server2:dir2/  在文件目录后面加个点 .，将复制该目录的内容，而不是目录本身。
+CP 如果知道多个文件的名字时，可以使用 cp {filename1,filename2,&amp;hellip;} 目标/，目标必须是个文件夹
+ -a：此参数的效果和同时指定&amp;quot;-dpR&amp;quot;参数相同； -d：当复制符号连接时，把目标文件或目录也建立为符号连接，并指向与源文件或目录连接的原始文件或目录； -f：强行复制文件或目录，不论目标文件或目录是否已存在； -i：覆盖既有文件之前先询问用户； -l：对源文件建立硬连接，而非复制文件； -p：保留源文件或目录的属性； -R/r：递归处理，将指定目录下的所有文件与子目录一并处理； -s：对源文件建立符号连接，而非复制文件； -u：使用这项参数后只会在源文件的更改时间较目标文件更新时或是名称相互对应的目标文件并不存在时，才复制文件； -S：在备份文件时，用指定的后缀“SUFFIX”代替文件的默认后缀； -b：覆盖已存在的文件目标前将目标文件备份； -v：详细显示命令执行的操作。
+ 一.通配符的使用
+ 通配符是一种特殊语句，主要有星号(*)和问号(?)，用来模糊搜索文件。主要的通配符有：
+ * 匹配任意长度的字符串
+? 匹配一个长度的字符
+[&amp;hellip;] 匹配其中指定的字符
+[a-z] 匹配指定的字符范围
+[^&amp;hellip;] 除了其中指定的字符，其他均可匹配
+ 例1：可以代替0个或多个字符。如果需要拷贝以ABC开头的文件，可以输入ABC，拷贝以ABC开头的所有文件类型的文件，如ABCD.txt、ABCDEFG.exe、ABCZH.dll等。如果只需要拷贝txt文件，则可以输入ABC*.txt，拷贝以ABC为开头的TXT类型的文件，如ABC.txt、ABC12.txt。
+例2：？则只匹配一个字符，[1,b,8]就匹配括号中的1，b和8，这些都可以混搭使用。在linux2.6.14内核中，ls可以看到如图：
+  如果需要将.IAB .IAD .IMB .IMD和.WK3 这5个文件拷贝到根目录的tmp下，可以使用如下命令：</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>/posts/7.%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4/shell/ssh%E5%90%8E%E6%89%A7%E8%A1%8C%E5%A4%9A%E6%9D%A1%E5%91%BD%E4%BB%A4/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/7.%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4/shell/ssh%E5%90%8E%E6%89%A7%E8%A1%8C%E5%A4%9A%E6%9D%A1%E5%91%BD%E4%BB%A4/</guid>
+      <description>SSH连接服务器后执行多条命令 https://stackoverflow.com/a/4412338/4884227
+大家平时有没有遇到自己连接云服务器，ssh 连接上去之后，发现自己的一些小工具用不了
+例如go build无法使用 ，由于我们安装配置golang 环境的时候，是在文件/etc/profile中写了配置，因此需要source 一下/etc/profile
+那么是否可以在ssh 连接上服务器的时候就可以立即自动执行这一类命令呢？
+我们的智慧无穷无尽，小工具也是非常的多，今天来讲述一下SSH连接服务器后执行多条命令可以如何做
+1 使用分号隔开 使用 分号 ;来隔开命令
+  附带1条命令
+ssh User@Host &#39;source /etc/profile&#39;    附带多条命令
+ssh User@Host &#39;source /etc/profile ; uptime&#39;    2 使用管道符号隔开 使用管道|来隔开命令
+  附带1条命令
+ssh User@Host &#39;source /etc/profile&#39;    附带多条命令
+ssh User@Host &#39;source /etc/profile | uptime&#39;    3 使用写EOF的方式 同样适用于一条 / 多条命令
+ssh User@Host /bin/bash &amp;lt;&amp;lt; EOF &amp;gt; ls -al &amp;gt; source /etc/profile &amp;gt; EOF  4 使用脚本的方式 使用脚本的方式花样就更多了，例如有一个脚本myinit.</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>/posts/7.%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4/shell/untitled/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/7.%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4/shell/untitled/</guid>
+      <description>推荐阅读 advance bash scripting guide http://www.linuxplus.org/kb/special-chars.html
+man手册 https://linux.die.net/man/1/bash
+官方手册 https://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html
+变量 XXX 在linux的shell里，${name}可以表示变量，也可以表示数组。
+name后面加[ ]的，一般是数组， ${name[*]}是数组所有元素(all of the elements) ${name[@]}是数组每一个元素(each of the elements)  其实这两个几乎一样，差别主要在于当加上引号时，&amp;quot;${name[*]}&amp;quot;等于所有数组元素及其分隔符（一般是空格）排成的字符串，而&amp;quot;${name[@]}&amp;quot;仍然表示每一个元素。 ${#name[*]}是数组元素的个数，也可以写成${#name[@]}
+${name:-Hello} 是指，如果${name}没有赋值，那么它等于Hello,如果赋值了，就保持原值，不用管这个Hello了。(可为空，语句结束后变量销毁)
+自定义变量 将命令结果赋值给变量
+test=$(ls -l /root/)  变量是由任何字母、数字和下划线组成的字符串，且不能以数字开头 区分字母大小写，例如Var1和var1是不同的 变量、等号、值中间不能出现任何空格
+变量位置 执行命令脚本时后可跟变量参数
+   - - -     $n n为数字$0代表脚本本身，$1-$9代表1-9个参数，10以上需要用大括号，如$｛10｝    $@ $@命令行所有参数，每个参数都看作独立个体    $* $*命令行所有参数，所有的参数从整体上看作一个整体    $# 参数个数     Shell $*和$@的区别:http://c.biancheng.net/view/807.html
+环境变量 https://blog.csdn.net/jiangyanting2011/article/details/78875928
+https://www.cnblogs.com/x_wukong/p/4771316.html</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>/posts/7.%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4/shell/%E5%88%A4%E6%96%AD%E6%9D%A1%E4%BB%B6/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/7.%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4/shell/%E5%88%A4%E6%96%AD%E6%9D%A1%E4%BB%B6/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>/posts/7.%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4/shell/%E5%8F%98%E9%87%8F/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/7.%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4/shell/%E5%8F%98%E9%87%8F/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>/posts/7.%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4/shell/%E5%AD%97%E7%AC%A6%E4%B8%B2/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/7.%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4/shell/%E5%AD%97%E7%AC%A6%E4%B8%B2/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>/posts/7.%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4/shell/%E6%95%B0%E7%BB%84/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/7.%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4/shell/%E6%95%B0%E7%BB%84/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>/posts/7.%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4/shell/%E8%AF%AD%E5%8F%A5%E8%AF%AD%E6%B3%95/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/7.%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4/shell/%E8%AF%AD%E5%8F%A5%E8%AF%AD%E6%B3%95/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>/posts/7.%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4/shell/%E9%80%80%E5%87%BA%E7%8A%B6%E6%80%81%E7%A0%81/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/7.%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4/shell/%E9%80%80%E5%87%BA%E7%8A%B6%E6%80%81%E7%A0%81/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>/posts/7.%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4/shell/%E9%80%BB%E8%BE%91%E8%BF%90%E7%AE%97%E7%AC%A6/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/7.%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4/shell/%E9%80%BB%E8%BE%91%E8%BF%90%E7%AE%97%E7%AC%A6/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>03. 安装和配置 kubectl</title>
+      <link>/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/3.-kubectl/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/3.-kubectl/</guid>
+      <description>本文档介绍安装和配置 kubernetes 命令行管理工具 kubectl 的步骤。
+注意：
+ 本文档只需要部署一次，生成的 kubeconfig 文件是通用的，可以拷贝到需要执行 kubectl 命令的机器的 ·、~/.kube/config 位置；  kubectl二进制分发部署 #[/opt/k8s-deploy/]# # 下载 wget -P /opt/k8s-deploy/ https://dl.k8s.io/v1.16.6/kubernetes-client-linux-amd64.tar.gz # 分发部署 source /opt/k8s-deploy/environment.sh for node_ip in ${NODE_IPS[@]} do echo &amp;quot;&amp;gt;&amp;gt;&amp;gt; ${node_ip}&amp;quot; echo &amp;quot;&amp;gt;&amp;gt;&amp;gt; 检查目录&amp;quot; ssh root@${node_ip} &amp;quot;[ -d /opt/k8s-deploy ] &amp;amp;&amp;amp; echo Check /opt/k8s-deploy Exist OK || (mkdir -p /opt/k8s-deploy &amp;amp;&amp;amp; echo /opt/k8s-deploy Created)&amp;quot; ssh root@${node_ip} &amp;quot;[ -d /usr/local/kubernetes1.16.6/ ] &amp;amp;&amp;amp; (rm -rf /usr/local/kubernetes1.16.6/ &amp;amp;&amp;amp; echo /usr/local/kubernetes1.16.6/ Deleted) || echo check /usr/local/kubernetes1.</description>
+    </item>
+    
+    <item>
+      <title>DNS主从备份</title>
+      <link>/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/3.-dns%E4%B8%BB%E4%BB%8E%E5%A4%87%E4%BB%BD/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/3.-dns%E4%B8%BB%E4%BB%8E%E5%A4%87%E4%BB%BD/</guid>
+      <description>简介 安装Bind # Master &amp;amp; Slave yum install bind -y 或 yum install -y bind-utils bind bind-devel bind-chroot  主配置文件  编辑 vi /etc/named.conf
+options{} 中添加修改如下
+   主节点：
+vi /etc/named.conf listen-on port 53 { 10.4.7.101; }; allow-query { any; }; forwarders { 8.8.8.8;114.114.114.114; };    从节点：
+vi /etc/named.conf listen-on port 53 { 10.4.7.102; }; allow-query { any; }; forwarders { 8.8.8.8;114.114.114.114; };     字段含义：主节点示例 cat /etc/named.conf
+ cat /etc/named.</description>
+    </item>
+    
+    <item>
+      <title>Docker时间宿主机同步</title>
+      <link>/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_docker/docker%E6%97%B6%E9%97%B4%E5%AE%BF%E4%B8%BB%E5%90%8C%E6%AD%A5/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_docker/docker%E6%97%B6%E9%97%B4%E5%AE%BF%E4%B8%BB%E5%90%8C%E6%AD%A5/</guid>
+      <description>在Docker容器创建好之后，可能会发现容器时间跟宿主机时间不一致，此时需要同步它们的时间，让容器时间跟宿主机时间保持一致。 一、分析时间不一致的原因 宿主机采用了CST时区，CST应该是指（China Shanghai Time，东八区时间）
+容器采用了UTC时区，UTC应该是指（Coordinated Universal Time，标准时间）
+此时，容器与宿主机之间采用的时区不一致，两个时区之间相隔8小时。
+二、同步时间的方法 方案1：共享主机localtime 在创建容器的时候指定启动参数，挂载宿主机的localtime文件到容器内，以此来保证宿主机和容器的时区一致。
+docker run --privileged --name=qinjiaxi --net=host -it -v ~:/share /etc/localtime:/etc/localtime:ro docker.xxx.xxx.com.cn/robotframework:2.7.14 bash  方案2：复制宿主机localtime到容器中 docker cp /etc/localtime &amp;lt;container_id&amp;gt;:/etc/  方案3：在创建dockerfile时自定义镜像的时间格式与时区 在dockerfile创建初期增加一行内容，内容规定了该镜像的时间格式以及时区。
+#设置时区 RUN /bin/cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime &amp;amp;&amp;amp; echo &#39;Asia/Shanghai&#39; &amp;gt;/etc/timezone  </description>
+    </item>
+    
+    <item>
+      <title>kubernetes1.16.2部署</title>
+      <link>/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/kubernetes1.16.2-%E5%AE%89%E8%A3%85/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/kubernetes1.16.2-%E5%AE%89%E8%A3%85/</guid>
+      <description>初始化系统 以下操作两个节点都要做并且是root用户安装 #/bin/bash ###################################################### # Written By:Shsnc # Author:direnjie &amp;lt;direnjie@shsnc.com&amp;gt; # Date:2019-10-17 01:32 ##################################################### echo &amp;quot;正在输出结果，请按回车键继续查看... ... ... ... ... ... ...&amp;quot; { echo &amp;quot;####################关闭防火墙和设置防火墙开机不自启#####################&amp;quot; systemctl stop firewalld &amp;amp; systemctl disable firewalld echo &amp;quot;###########################关闭selinux###################################&amp;quot; sed -i &#39;s/enforcing/disabled/g&#39; /etc/selinux/config sed -i &#39;s/permissive/disabled/g&#39; /etc/selinux/config echo &amp;quot;##########################添加本地hosts##################################&amp;quot; echo &#39;192.168.136.134 pinpoint01&#39; &amp;gt;&amp;gt; /etc/hosts echo &#39;192.168.217.135 pinpoint02&#39; &amp;gt;&amp;gt; /etc/hosts echo &amp;quot;###########################关闭swap分区#################################&amp;quot; swapoff -a sed -i &#39;/ swap / s/^/#/&#39; /etc/fstab sed -i &#39;s/.*swap.*/#&amp;amp;/&#39; /etc/fstab free -m echo &amp;quot;###########################配置阿里源#####################################&amp;quot; cat &amp;lt;&amp;lt;EOF &amp;gt; /etc/yum.</description>
+    </item>
+    
+    <item>
+      <title>Linux索引节点(Inode)用满导致空间不足</title>
+      <link>/posts/1.linux/linux%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/%E6%95%85%E9%9A%9C%E5%88%86%E6%9E%90inode/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/1.linux/linux%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/%E6%95%85%E9%9A%9C%E5%88%86%E6%9E%90inode/</guid>
+      <description>k8s容器调度失败，容器处于创建中，发现提示no space left on device，服务器/var/log分区被占满
+通过du查看/var/log下的日志，发现是有一个gnocchi_wsgi_error.log占用了大量的空间。 查看gnocchi_wsgi_error.log日志，提示/var/lib/gnocchi/tmp下没有空间了。
+这个gnocchi是给ceilometer容器用的，这个容器所使用的共享存储是gnocchi存储卷。
+df -h查看，发现该存储卷还有空间；但是df -i查看发现inode被占满。 因此可以确认，问题是由于gnocchi存储卷的inode被占满，导致ceilometer容器一直打印错误日志，最终导致/var/log被占满。
+这个问题属于一个配置优化问题。需要及时更改gnocchi的inode配置，需要重新格式化存储，增加inode的数目。操作方法如下：
+kubectl scale rc ceilometerrc &amp;ndash;replicas=0 mkfs.ext4 -N 200000000 /dev/mapper/openstack-gnocchi kubectl scale rc ceilometerrc &amp;ndash;replicas=1
+mkfs.ext4 [-I inode-size] 指定inode size大小，默认配置文件在/etc/mke2fs.conf，inode_size = 256 Inode size: 256 [-N number-of-inodes] 指定inode个数，最大创建文件个数 [-i bytes-per-inode] 指定&amp;quot;字节/inode&amp;quot;的比例 增大-i参数，从而减小inode总数，可以减小inode占用的磁盘空间，减少磁盘浪费。   问题原因分析：
+Inode译成中文就是索引节点，每个存储设备（例如硬盘）或存储设备的分区被格式化为文件系统后，应该有两部份，一部份是inode，另一部份是 Block，Block是用来存储数据用的。而inode呢，就是用来存储这些数据的信息，这些信息包括文件大小、属主、归属的用户组、读写权限等。 inode为每个文件进行信息索引，所以就有了inode的数值。操作系统根据指令，能通过inode值最快的找到相对应的文件。 而这台服务器的Block虽然还有剩余，但inode已经用满，因此在创建新目录或文件时，系统提示磁盘空间不足。 Inode的数量是有限制的，每个文件对应一个Inode，df -i可以看到Inode的总量，已经使用的Inode数量，和剩余数量。
+3、解决：
+1）查找满的目录：
+[root@abc sbin]# for i in /*; do echo $i; find $i | wc -l; done  然后找到inode占用最多额目录下，再用上面命令查看。
+2）删除文件占用多的目录：
+进入目录直接rm -rf 可能会卡死，可以使用下面方式：</description>
+    </item>
+    
+    <item>
+      <title>Linux网卡绑定</title>
+      <link>/posts/1.linux/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/3.linux%E7%BD%91%E5%8D%A1%E7%BB%91%E5%AE%9A/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/1.linux/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/3.linux%E7%BD%91%E5%8D%A1%E7%BB%91%E5%AE%9A/</guid>
+      <description>[root@master ~]# uname -r 3.10.0-1160.el7.x86_64 [root@master ~]# cat /etc/redhat-release CentOS Linux release 7.9.2009 (Core)  双网卡绑定各模式配置文件示例 对于各种双网卡绑定配置模式，请参考系统中的示例文件，文件位置：
+/usr/share/doc/teamd-xx/example_configs/
+前言 服务器常有多块网卡，为了提高冗余可靠性和数据传输带宽，引入了两项技术Bond和Team，通过多张网卡绑定为一个逻辑网卡，实现本地网卡的冗余，带宽扩容和负载均衡，提供链路级别的故障保护，在生产场景中是常用的技术。
+网卡Bond是Kernels 2.4.12及以后的版本均供bonding模块，以前的版本可以通过patch实现。
+CentOS6及之前都是使用bond机制来实现多网络绑定同一个IP地址，来对网络提供访问，并按不同的模式来负载均衡或者轮回接替管理处理数据。 而到了ContOS7之后，引入NetworkManager来管理网络，通过命令行工具nmcli进行配置，nmcli会根据命令参数的配置来重新生成特定的配置文件来供网络接口使用，nmcli支持bond技术和新的team机制。在Centos7有这两种技术可供选择。 本文将从技术原理和应用实践两方面对这两项技术展开讲解。
+、、、、、、、、、、、、、、、、、、、、、、
+虚拟交换机xxx
+Bond、Team对比 “Bonding” 和 “nmcli的网络组Network Teaming”二者实现的功能一样，但从某种角度，网络组要比Bonding的技术要好
+Bond详解 bonding的详细帮助
+/usr/share/doc/kernel-doc- version/Documentation/networking/bonding.txt https://www.kernel.org/doc/Documentation/networking/bonding.txt
+Bond模式七模式 https://zhiliao.h3c.com/Theme/details/24694
+交换机多端口和服务器对接时，需要确定是否需要配置聚合或者不配置聚合，并且配置聚合的时候还需要确认是静态聚合还是动态聚合，当然这和当前服务器网卡的bond模式有关。下面我们了解下Linux服务器的7种bond模式，说明如下：
+ ==mod=0 (balance-rr) Round-robin policy（平衡抡循环策略）==   轮询策略：按照顺序轮流使用每个接口来发送和接收数据包，提高了负载均衡和冗余的能力，带宽翻倍。 该模式所有端口的mac地址相同 ==交换机侧做静态链路聚合==  H3C V3平台交换机侧的静态典型配置 [H3C] link-aggregation group 1 mode manual [H3C] interface ethernet2/1/1 [H3C-Ethernet2/1/1] port link-aggregation group 1 H3C V5/V7交换机侧的静态典型配置 [DeviceA] interface Bridge-Aggregation 1 //默认静态 [DeviceA] interface GigabitEthernet 4/0/1 [DeviceA-GigabitEthernet4/0/1] port link-aggregation group 1   ==mod=1 (active-backup) Active-backup policy（主-备份策略）==   冗余性高：只有一个设备处于活动状态，当一个宕掉另一个马上由备份转换为主设备。 链路利用率低：只有一个接口处于工作状态。 bond的MAC地址是唯一的，切换主备时交换机侧会存在MAC漂移的记录 ==交换机无需配置或建议在同一VLAN下==   ==mod=2 (balance-xor) XOR policy（平衡策略）==【load balancing】    XOR Hash负载分担：基于指定的传输HASH策略传输数据包。缺省的策略是：(源MAC地址 XOR 目标MAC地址) % slave数量。其他的传输策略可以通过xmit_hash_policy选项指定，此模式提供负载平衡和容错能力</description>
+    </item>
+    
+    <item>
+      <title>Linux网络基础</title>
+      <link>/posts/1.linux/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/1.linux%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/1.linux/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/1.linux%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80/</guid>
+      <description>https://segmentfault.com/a/1190000015476963
+https://segmentfault.com/a/1190000011954814
+bond mode为0,1,2,3,4时，bond口的MAC地址和成员口MAC地址相同；bond mode为5和6时，bond口的MAC地址不同于成员口的MAC地址。
+网卡配置详解 默认网卡配置 /etc/sysconfig/network-scripts/ifcfg-*
+TYPE=Ethernet # 网络类型（通常是Ethemet） PROXY_METHOD=none BROWSR_ONLY=no BOOTPROTO=dhcp # IP的配置方法[none|static|bootp|dhcp]（引导时不使用协议|静态分配IP|BOOTP协议|DHCP协议） DEFROUTE=yes IPV4_FAILURE_FATAL=no IPV6INIT=yes # IPV6是否有效（yes/no） IPV6_AUTOCONF=yes IPV6_DEFROUTE=yes IPV6_FAILURE_FATAL=no IPV6_ADDR_GEN_MODE=stable-privacy NAME=ens33 UUID=ac9b66bf-74fb-4bda-b89f-c66ff84c9571 # 获取新的UUID # uuidgen ens33 将获取的UUID填入配置文件后重启网卡服务 # 验证UUID # nmcli con | sed -n &#39;1,2p&#39; DEVICE=ens33 # 接口名（设备,网卡） ONBOOT=yes #ONBOOT是指明在系统启动时是否激活网卡，只有在激活状态的网卡才能去连接网络，进行网络通讯  永久生效-设置静态地址 上述默认配置文件修改加入如下配置，配置完成后systemctl restart network重启网卡服务生效
+BOOTPROTO=static #静态IP IPADDR= #本机地址 NETMASK= #子网掩码 GATEWAY= #默认网关 # DNS1= # DNS2=  临时生效-详见工具包对比 也可以通过 ip、nmlic、ifconfig管理命令进行配置，后续会展开介绍
+ifconfig eth0 192.168.0.2 netmask 255.255.255.0  vi /etc/resolv.</description>
+    </item>
+    
+    <item>
+      <title>LVM管理</title>
+      <link>/posts/1.linux/linux%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/lvm%E7%AE%A1%E7%90%86/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/1.linux/linux%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/lvm%E7%AE%A1%E7%90%86/</guid>
+      <description>参考链接：https://www.cnblogs.com/diantong/p/10554831.html
+ LVM的工作原理 　LVM（Logical Volume Manager）逻辑卷管理，是在硬盘分区和文件系统之间添加的一个逻辑层，为文件系统屏蔽下层硬盘分区布局，并提供一个抽象的盘卷，在盘卷上建立文件系统。管理员利用LVM可以在硬盘不用重新分区的情况下动态调整文件系统的大小，并且利用LVM管理的文件系统可以跨越物理硬盘。当服务器添加了新的硬盘后，管理员不必将原有的文件移动到新的硬盘上，而是通过LVM直接扩展文件系统来跨越物理硬盘。
+　LVM就是通过将底层的物理硬盘封装，然后以逻辑卷的方式呈现给上层应用。当我们对底层的物理硬盘进行操作时，不再是针对分区进行操作，而是通过逻辑卷对底层硬盘进行管理操作。
+基础术语   物理存储介质（The physical media）： LVM存储介质，可以是硬盘分区、整个硬盘、raid阵列或SAN硬盘。设备必须初始化为LVM物理卷，才能与LVM结合使用。
+  物理卷PV（physical volume）： 物理卷就是LVM的基本存储逻辑块，但和基本的物理存储介质比较却包含与LVM相关的管理参数，创建物理卷可以用硬盘分区，也可以用硬盘本身。
+  卷组VG（Volume Group）： LVM卷组类似于非LVM系统中的物理硬盘，一个卷组VG由一个或多个物理卷PV组成。可以在卷组VG上建立逻辑卷LV。
+  逻辑卷LV（logical volume）： 类似于非LVM系统中的硬盘分区，逻辑卷LV建立在卷组VG之上。在逻辑卷LV之上建立文件系统。
+  物理块PE（physical Extent）： 物理卷PV中可以分配的最小存储单元，PE的大小可以指定，默认为4MB
+  逻辑块LE（Logical Extent）：逻辑卷LV中可以分配的最小存储单元，在同一卷组VG中LE的大小和PE是相同的，并且一一相对。
+   总结：多个磁盘/分区/raid&amp;ndash;&amp;gt;多个物理卷PV&amp;ndash;&amp;gt;合成卷组VG&amp;ndash;&amp;gt;从VG划分出逻辑卷LV&amp;ndash;&amp;gt;格式化LV，挂载使用。
+注意：老的Linux在创建PV时，需要将分区类型改为Linux LVM（8e）。但新的系统已经非常智能，即使默认的Linux分区（83），也可以创建PV。
+ LVM的优点   卷组VG可以使多个硬盘空间看起来像是一个大硬盘。
+  逻辑卷LV可以创建跨多个硬盘空间的分区。
+  在使用逻辑卷LV时，可以在空间不足时动态调整大小，不需要考虑逻辑卷LV在硬盘上的位置，不用担心没有可用的连续的空间。
+  可以在线对卷组VG、逻辑卷LV进行创建、删除、调整大小等操作。但LVM上的文件系统也需要重新调整大小。
+  LVM允许创建快照，用来保存文件系统的备份。
+   注意：LVM是软件的卷管理方式，RAID是磁盘管理的方法。对于重要的数据使，用RAID保护物理硬盘不会因为故障而中断业务，再用LVM来实现对卷的良性管理，更好的利用硬盘资源。
+LVM有两种写入机制：线性（写完一个PV再写下一个PV，默认）、条带（平均）
+ LVM常用的管理命令    功能 PV管理命令 VG管理命令 LV管理命令     scan 扫描 pvscan vgscan lvscan   create 创建 pvcreate vgcreate lvcreate   display 显示 pvdisplay vgdisplay lvdisplay   remove 移除 pvremove vgremove lvremove   extend 扩展  vgextend lvextend   reduce 减少  vgreduce lvreduce     注意：查看命令有scan、display和s（pvs、vgs、lvs）。s是简单查看对应卷信息，display是详细查看对应卷信息。而scan是扫描所有的相关的对应卷。</description>
+    </item>
+    
+    <item>
+      <title>TCPdump</title>
+      <link>/posts/1.linux/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/tcpdump/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/1.linux/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/tcpdump/</guid>
+      <description>参考链接： tcpdump命令详解 万字长文 实例参考
+ 配合ssh通道传入wireshark  ssh当通道让tcpdump远程抓包，再将数据实时传送到本地，再用wireshark图形化界面实时打开 https://blog.csdn.net/koalazoo/article/details/84958752
+准备工作 本地PC机上得有命令行版的ssh，图形化的SecureCRT应该不行 本地PC机上有wireshark 远程主机上有tcpdump 你有远程主机的root权限（否则你也抓不了包啊） 找到本地PC机上ssh和wireshark的路径（或者加入PATH，用于执行命令） 工作思路 基本的想法就是用ssh登录到远程主机上，发起tcpdump抓包，并将tcpdump抓到的结果输出到stdout，再传回本地PC机，而本地PC机上的wireshark以stdin为输入，两者以管道连接传输。
+命令示例
+ssh root@some.host &#39;tcpdump -i eth0 port 80 -s 0 -l -w -&#39; | wireshark -k -i -  命令执行后会弹出wireshark界面，这时需要切回刚刚的命令行，因为需要输入密码以登录远程主机（已经配置免密另说），连接成功后即开始抓包，并在本地PC的wireshark上实时显示抓包结果。
+参数解释 tcpdump中 ‘-l ’ （这里是小写的字母L）是指line-buffer，即不使用缓存，直接输出，否则就会一段段的输出。’-w -&amp;lsquo;是指写文件，目标文件为标准输出。至于tcpdump另外的参数，想抓什么端口，这个请搜下度娘，一搜一大把。
+wireshark中 ‘-k’ 是指马上开始捕获数据，’-i -’ 是指从指定接口获取，源为标准输入。
+或者可以用plink（putty的命令行版本）
+plink -ssh USER@HOST -pw PASS &amp;quot;tcpdump -s 0 -U -n -i br-lan -w - not port 22&amp;quot; | wireshark -k -i -   前言 tcpdump 的参数非常的多，初学者在没有掌握 tcpdump 时，会对这个命令的众多参数产生很多的疑惑。</description>
+    </item>
+    
+    <item>
+      <title>基础命令</title>
+      <link>/posts/7.%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4/shell/%E5%9F%BA%E7%A1%80%E5%91%BD%E4%BB%A4/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/7.%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4/shell/%E5%9F%BA%E7%A1%80%E5%91%BD%E4%BB%A4/</guid>
+      <description>&lt;h1 id=&#34;日志&#34;&gt;日志&lt;/h1&gt;
+&lt;p&gt;tailf 跟踪日志文件增长，作用跟tail –f相同。tailf将输出文件的最后10行，然后等待文件增长。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>网络服务和工具集</title>
+      <link>/posts/1.linux/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/2.%E7%BD%91%E7%BB%9C%E6%9C%8D%E5%8A%A1%E5%92%8C%E5%B7%A5%E5%85%B7%E9%9B%86/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/1.linux/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/2.%E7%BD%91%E7%BB%9C%E6%9C%8D%E5%8A%A1%E5%92%8C%E5%B7%A5%E5%85%B7%E9%9B%86/</guid>
+      <description>网络服务和工具集&amp;mdash;&amp;ndash;network&amp;ndash;&amp;raquo;NetworkManager net-tool&amp;ndash;&amp;raquo;iproute
+https://ywnz.com/linuxml/4388.html
+https://linuxtechlab.com/managing-network-using-ifconfig-nmcli-commands/
+https://www.tecmint.com/ifconfig-vs-ip-command-comparing-network-configuration/
+从RHEL/CentOS6开始，NetworkManager服务就是其组成部分； 从RHEL/CentOS7开始，默认开机后就启用NetworkManager服务，非传统的network服务，它不需要重启，从而可以实现动态管理配置； nmcli是一个用于控制NetworkManager和报告网络状态的命令行工具，它用于创建、显示、编辑、删除、激活和停用网络连接以及显示网络状态。
+在CentOS系统上，目前有NetworkManager和network两种网络管理工具。如果两种都配置会引起冲突，而且NetworkManager在网络断开的时候，会清理路由，如果一些自定义的路由，没有加入到NetworkManager的配置文件中，路由就被清理掉，网络连接后需要自定义添加上去。
+常用网络工具的使用： net-tool、route2、nmcli、进行对比总结命令
+ethtool、TCPdump、端口lsot
+lldp、 SNMP、Nmap、简单的网卡流量监控、路由
+ 如今很多系统管理员依然通过组合使用诸如ifconfig、route、arp和netstat等命令行工具（统称为net-tools）来配置网络功能，解决网络故障。net-tools起源于BSD的TCP/IP工具箱，后来成为老版本Linux内核中配置网络功能的工具。**但自2001年起，Linux社区已经对其停止维护。**同时，一些Linux发行版比如Arch Linux和CentOS/RHEL 7则已经完全抛弃了net-tools，只支持iproute2。
+作为网络配置工具的一份子，iproute2的出现旨在从功能上取代net-tools。net-tools通过procfs(/proc)和ioctl系统调用去访问和改变内核网络配置，而iproute2则通过netlink套接字接口与内核通讯。抛开性能而言，iproute2的用户接口比net-tools显得更加直观。比如，各种网络资源（如link、IP地址、路由和隧道等）均使用合适的对象抽象去定义，使得用户可使用一致的语法去管理不同的对象。更重要的是，到目前为止，iproute2仍处在持续开发中。
+如果你仍在使用net-tools，而且尤其需要跟上新版Linux内核中的最新最重要的网络特性的话，那么是时候转到iproute2的阵营了。原因就在于使用iproute2可以做很多net-tools无法做到的事情。
+对于那些想要转到使用iproute2的用户，有必要了解下面有关net-tools和iproute2的众多对比。
+https://blog.csdn.net/leshami/article/details/78021859
+https://linux.cn/article-4326-1</description>
+    </item>
+    
+    <item>
+      <title>证书</title>
+      <link>/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/2.-%E7%AD%BE%E5%8F%91%E8%AF%81%E4%B9%A6/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/2.-%E7%AD%BE%E5%8F%91%E8%AF%81%E4%B9%A6/</guid>
+      <description>为确保安全，kubernetes 系统各组件需要使用 x509 证书对通信进行加密和认证。
+CA (Certificate Authority) 是自签名的根证书，用来签名后续创建的其它证书。
+CA 证书是集群所有节点共享的，只需要创建一次，后续用它签名其它所有证书。
+本文档使用 CloudFlare&#39;s 的 PKI 工具集 cfssl 来配置 PKI Infrastructure，然后使用它去创建 Certificate Authority（CA）， 并为 各服务 创建 TLS 证书。
+签发证书即可使用cfssl也可openssl生成证书 。关于openssl 请阅读：
+https://www.cnblogs.com/centos-python/articles/11043570.html
+安装cfssl # 安装cfssl、cfssl-json、cfssl-certinfo wget https://pkg.cfssl.org/R1.2/cfssl_linux-amd64 -O /usr/bin/cfssl wget https://pkg.cfssl.org/R1.2/cfssljson_linux-amd64 -O /usr/bin/cfssl-json wget https://pkg.cfssl.org/R1.2/cfssl-certinfo_linux-amd64 -O /usr/bin/cfssl-certinfo chmod +x /usr/local/bin/cfssl* # 检查 which cfssl cfssl-json cfssl-certinfo ## 正常返回结果如下 /usr/local/bin/cfssl /usr/local/bin/cfssl-json /usr/local/bin/cfssl-certinfo   工作目录 mkdir /opt/k8s-deploy/certs  创建根证书 (CA)和密钥 CA 证书是集群所有节点共享的，只需要创建一个 CA 证书，后续创建的所有证书都由它签名。
+创建证书签名请求文件 #[/opt/k8s-deploy/certs]# cat &amp;gt; ca-csr.</description>
+    </item>
+    
+  </channel>
+</rss>

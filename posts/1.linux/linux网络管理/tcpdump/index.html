@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang='zh' ><meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+
+
+<title>TCPdump | Songjinfeng&#39;s BLOG</title>
+<link rel="stylesheet" href="/css/eureka.min.css">
+<script defer src="/js/eureka.min.js"></script>
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Noto+Serif+SC:wght@400;600;700&display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/styles/solarized-light.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/highlight.min.js"
+   crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/dart.min.js"
+     crossorigin></script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/js/all.min.js"
+   integrity="sha256-uNYoXefWRqv&#43;PsIF/OflNmwtKM4lStn9yrz2gVl6ymo="  crossorigin></script>
+
+
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css"
+   integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3&#43;Aro6EYUG4&#43;cU&#43;KJWu/X"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js" 
+  integrity="sha384-g7c&#43;Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI&#43;sEnkvrMWph2EDg4"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js"
+   integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC&#43;Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.9.2/dist/mermaid.min.js" 
+  integrity="sha256-Zmpaaj&#43;GXFsPF5WdPArSrnW3b30dovldeKsW00xBVwE="  crossorigin></script>
+
+
+<link rel="icon" type="image/png" sizes="32x32" href="/images/icon_hucfa16751ac9c82c06b84c3502c0db793_16378_32x32_fill_box_center_2.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hucfa16751ac9c82c06b84c3502c0db793_16378_180x180_fill_box_center_2.png">
+
+<meta name="description"
+  content="参考链接： tcpdump命令详解 万字长文 实例参考
+ 配合ssh通道传入wireshark  ssh当通道让tcpdump远程抓包，再将数据实时传送到本地，再用wireshark图形化界面实时打开 https://blog.csdn.net/koalazoo/article/details/84958752
+准备工作 本地PC机上得有命令行版的ssh，图形化的SecureCRT应该不行 本地PC机上有wireshark 远程主机上有tcpdump 你有远程主机的root权限（否则你也抓不了包啊） 找到本地PC机上ssh和wireshark的路径（或者加入PATH，用于执行命令） 工作思路 基本的想法就是用ssh登录到远程主机上，发起tcpdump抓包，并将tcpdump抓到的结果输出到stdout，再传回本地PC机，而本地PC机上的wireshark以stdin为输入，两者以管道连接传输。
+命令示例
+ssh root@some.host &#39;tcpdump -i eth0 port 80 -s 0 -l -w -&#39; | wireshark -k -i -  命令执行后会弹出wireshark界面，这时需要切回刚刚的命令行，因为需要输入密码以登录远程主机（已经配置免密另说），连接成功后即开始抓包，并在本地PC的wireshark上实时显示抓包结果。
+参数解释 tcpdump中 ‘-l ’ （这里是小写的字母L）是指line-buffer，即不使用缓存，直接输出，否则就会一段段的输出。’-w -&lsquo;是指写文件，目标文件为标准输出。至于tcpdump另外的参数，想抓什么端口，这个请搜下度娘，一搜一大把。
+wireshark中 ‘-k’ 是指马上开始捕获数据，’-i -’ 是指从指定接口获取，源为标准输入。
+或者可以用plink（putty的命令行版本）
+plink -ssh USER@HOST -pw PASS &quot;tcpdump -s 0 -U -n -i br-lan -w - not port 22&quot; | wireshark -k -i -   前言 tcpdump 的参数非常的多，初学者在没有掌握 tcpdump 时，会对这个命令的众多参数产生很多的疑惑。">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"技术专栏",
+      "item":"/posts/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"Linux",
+      "item":"/posts/1.linux/"},{
+      "@type": "ListItem",
+      "position": 3 ,
+      "name":"TCPdump",
+      "item":"/posts/1.linux/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/tcpdump/"}]
+}
+</script>
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/posts/1.linux/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/tcpdump/"
+    },
+    "headline": "TCPdump | Songjinfeng\u0027s BLOG","wordCount":  1852 ,
+    "publisher": {
+        "@type": "Person",
+        "name": "JF. Song",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "/images/icon.png"
+        }
+        },
+    "description": "参考链接： tcpdump命令详解 万字长文 实例参考\n 配合ssh通道传入wireshark  ssh当通道让tcpdump远程抓包，再将数据实时传送到本地，再用wireshark图形化界面实时打开 https:\/\/blog.csdn.net\/koalazoo\/article\/details\/84958752\n准备工作 本地PC机上得有命令行版的ssh，图形化的SecureCRT应该不行 本地PC机上有wireshark 远程主机上有tcpdump 你有远程主机的root权限（否则你也抓不了包啊） 找到本地PC机上ssh和wireshark的路径（或者加入PATH，用于执行命令） 工作思路 基本的想法就是用ssh登录到远程主机上，发起tcpdump抓包，并将tcpdump抓到的结果输出到stdout，再传回本地PC机，而本地PC机上的wireshark以stdin为输入，两者以管道连接传输。\n命令示例\nssh root@some.host \u0027tcpdump -i eth0 port 80 -s 0 -l -w -\u0027 | wireshark -k -i -  命令执行后会弹出wireshark界面，这时需要切回刚刚的命令行，因为需要输入密码以登录远程主机（已经配置免密另说），连接成功后即开始抓包，并在本地PC的wireshark上实时显示抓包结果。\n参数解释 tcpdump中 ‘-l ’ （这里是小写的字母L）是指line-buffer，即不使用缓存，直接输出，否则就会一段段的输出。’-w -\u0026lsquo;是指写文件，目标文件为标准输出。至于tcpdump另外的参数，想抓什么端口，这个请搜下度娘，一搜一大把。\nwireshark中 ‘-k’ 是指马上开始捕获数据，’-i -’ 是指从指定接口获取，源为标准输入。\n或者可以用plink（putty的命令行版本）\nplink -ssh USER@HOST -pw PASS \u0026quot;tcpdump -s 0 -U -n -i br-lan -w - not port 22\u0026quot; | wireshark -k -i -   前言 tcpdump 的参数非常的多，初学者在没有掌握 tcpdump 时，会对这个命令的众多参数产生很多的疑惑。"
+}
+</script><meta property="og:title" content="TCPdump | Songjinfeng&#39;s BLOG" />
+<meta property="og:type" content="article" />
+
+
+<meta property="og:image" content="/images/icon.png">
+
+
+<meta property="og:url" content="/posts/1.linux/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/tcpdump/" />
+
+
+
+
+<meta property="og:description" content="参考链接： tcpdump命令详解 万字长文 实例参考
+ 配合ssh通道传入wireshark  ssh当通道让tcpdump远程抓包，再将数据实时传送到本地，再用wireshark图形化界面实时打开 https://blog.csdn.net/koalazoo/article/details/84958752
+准备工作 本地PC机上得有命令行版的ssh，图形化的SecureCRT应该不行 本地PC机上有wireshark 远程主机上有tcpdump 你有远程主机的root权限（否则你也抓不了包啊） 找到本地PC机上ssh和wireshark的路径（或者加入PATH，用于执行命令） 工作思路 基本的想法就是用ssh登录到远程主机上，发起tcpdump抓包，并将tcpdump抓到的结果输出到stdout，再传回本地PC机，而本地PC机上的wireshark以stdin为输入，两者以管道连接传输。
+命令示例
+ssh root@some.host &#39;tcpdump -i eth0 port 80 -s 0 -l -w -&#39; | wireshark -k -i -  命令执行后会弹出wireshark界面，这时需要切回刚刚的命令行，因为需要输入密码以登录远程主机（已经配置免密另说），连接成功后即开始抓包，并在本地PC的wireshark上实时显示抓包结果。
+参数解释 tcpdump中 ‘-l ’ （这里是小写的字母L）是指line-buffer，即不使用缓存，直接输出，否则就会一段段的输出。’-w -&lsquo;是指写文件，目标文件为标准输出。至于tcpdump另外的参数，想抓什么端口，这个请搜下度娘，一搜一大把。
+wireshark中 ‘-k’ 是指马上开始捕获数据，’-i -’ 是指从指定接口获取，源为标准输入。
+或者可以用plink（putty的命令行版本）
+plink -ssh USER@HOST -pw PASS &quot;tcpdump -s 0 -U -n -i br-lan -w - not port 22&quot; | wireshark -k -i -   前言 tcpdump 的参数非常的多，初学者在没有掌握 tcpdump 时，会对这个命令的众多参数产生很多的疑惑。" />
+
+
+
+
+<meta property="og:locale" content="zh" />
+
+
+
+
+<meta property="og:site_name" content="Songjinfeng&#39;s BLOG" />
+
+
+
+
+
+
+
+
+
+<meta property="article:section" content="posts" />
+
+
+
+
+<body class="flex flex-col min-h-screen">
+  <header class="fixed flex items-center w-full min-h-16 pl-scrollbar z-50 bg-secondary-bg shadow-sm">
+    <div class="w-full max-w-screen-xl mx-auto"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="mr-6 text-primary-text text-xl font-bold">Songjinfeng&#39;s BLOG</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:flex-grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:flex-grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  mr-4">技术专栏</a>
+            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">文档笔记</a>
+            <a href="/series/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">主题系列</a>
+            <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">标签</a>
+            <a href="/authors/songjinfeng/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">关于</a>
+            <a href="/index.xml" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">RSS</a>
+            <a href="/webstack" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">友链&amp;导航</a>
+        </div>
+
+        <div class="flex">
+            <div class="relative pt-4 md:pt-0">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col left-0 md:left-auto right-auto md:right-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">浅色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">深色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">自动</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            switchMode('Auto')
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+  </header>
+  <main class="flex-grow pt-16">
+    <div class="pl-scrollbar">
+      <div class="w-full max-w-screen-xl lg:px-4 xl:px-8 mx-auto">
+
+
+<div class="grid grid-cols-2 lg:grid-cols-8 gap-4 lg:pt-12">
+    <div
+        class="col-span-2  lg:col-span-6 bg-secondary-bg rounded px-6 py-8">
+        <h1 class="font-bold text-3xl text-primary-text">TCPdump</h1>
+        <div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>0001-01-01</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>9分钟阅读时长</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="/categories/blog/" class="hover:text-eureka">blog</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/posts/" class="hover:text-eureka">posts</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/linux/" class="hover:text-eureka">Linux</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/" class="hover:text-eureka">Linux网络管理</a>
+        
+    </div>
+    
+
+    
+</div>
+        
+        
+        
+
+        <div class="content">
+            <blockquote>
+<p>参考链接：
+<a href="https://www.cnblogs.com/ggjucheng/archive/2012/01/14/2322659.html">tcpdump命令详解</a>
+<a href="https://baijiahao.baidu.com/s?id=1671144485218215170&amp;wfr=spider&amp;for=pc">万字长文</a>
+<a href="https://fuckcloudnative.io/posts/tcpdump-examples/">实例参考</a></p>
+</blockquote>
+<h2 id="配合ssh通道传入wireshark">配合ssh通道传入wireshark</h2>
+<blockquote>
+<p>ssh当通道让tcpdump远程抓包，再将数据实时传送到本地，再用wireshark图形化界面实时打开
+<a href="https://blog.csdn.net/koalazoo/article/details/84958752">https://blog.csdn.net/koalazoo/article/details/84958752</a></p>
+<p>准备工作
+本地PC机上得有命令行版的ssh，图形化的SecureCRT应该不行
+本地PC机上有wireshark
+远程主机上有tcpdump
+你有远程主机的root权限（否则你也抓不了包啊）
+找到本地PC机上ssh和wireshark的路径（或者加入PATH，用于执行命令）
+工作思路
+基本的想法就是用ssh登录到远程主机上，发起tcpdump抓包，并将tcpdump抓到的结果输出到stdout，再传回本地PC机，而本地PC机上的wireshark以stdin为输入，两者以管道连接传输。</p>
+<p><strong>命令示例</strong></p>
+<pre><code>ssh root@some.host 'tcpdump -i eth0 port 80 -s 0 -l -w -' | wireshark -k -i -
+</code></pre>
+<p>命令执行后会弹出wireshark界面，这时需要切回刚刚的命令行，因为需要输入密码以登录远程主机（已经配置免密另说），连接成功后即开始抓包，并在本地PC的wireshark上实时显示抓包结果。</p>
+<p><strong>参数解释</strong>
+tcpdump中 ‘-l ’ （这里是小写的字母L）是指line-buffer，即不使用缓存，直接输出，否则就会一段段的输出。’-w -&lsquo;是指写文件，目标文件为标准输出。至于tcpdump另外的参数，想抓什么端口，这个请搜下度娘，一搜一大把。</p>
+<p>wireshark中 ‘-k’ 是指马上开始捕获数据，’-i -’ 是指从指定接口获取，源为标准输入。</p>
+<p>或者可以用plink（putty的命令行版本）</p>
+<pre><code>plink -ssh USER@HOST -pw PASS &quot;tcpdump -s 0 -U -n -i br-lan -w - not port 22&quot; | wireshark -k -i -
+</code></pre>
+</blockquote>
+<h2 id="前言">前言</h2>
+<p>tcpdump 的参数非常的多，初学者在没有掌握 tcpdump 时，会对这个命令的众多参数产生很多的疑惑。</p>
+<p>就比如下面这个命令，我们要通过 host 参数指定 host ip 进行过滤
+$ tcpdump host 192.168.10.100</p>
+<p>主程序 + 参数名+ 参数值 这样的组合才是我们正常认知里面命令行该有的样子。
+可 tcpdump 却不走寻常路，可以在 host 前再加一个限定词，来缩小过滤的范围
+$ tcpdump src host 192.168.10.100</p>
+<p>前面还可以加更多的条件，如 tcp, udp, icmp 等词，在之前的基础上再过滤一层。
+$ tcpdump tcp src host 192.168.10.100</p>
+<p>这种参数的不确定性，让大多数人对 tcpdump 的学习始终无法得其精髓。
+如果你在网上看到有关 tcpdump 的博客、教程，无一不是给你一个参数组合，告诉你这是实现了怎样的一个过滤器？这样的教学方式，很容易让你依赖别人的文章来使用 tcpdump，而不能将 tcpdump 这样神器消化，达到灵活应用，灵活搭配过滤器的效果。</p>
+<p>了解<strong>tcpdump 的参数是如何组成的？这非常重要。</strong></p>
+<blockquote>
+<p><img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/TCPdump/2021.04.25-16:57:57-D-assets-TCPdump-908fa0ec08fa513ddc9fa0046821bcfdb3fbd983.png" alt="img"></p>
+<ol>
+<li>option 可选参数：对应本文 <strong>第四节：可选参数解析</strong></li>
+<li>proto 类过滤器：根据协议进行过滤，关键词协议号/协议名：upd, udp, icmp, ip, ip6, arp, rarp,ether,wlan, fddi, tr, decnet</li>
+<li>type 类过滤器：可识别的关键词有：host, net, port, portrange，这些词后边需要再接参数。</li>
+<li>direction 类过滤器：根据数据流向进行过滤，可识别的关键字有：src, dst，同时你可以使用逻辑运算符进行组合，比如 src or dst</li>
+<li>proto、type、direction 这三类过滤器的内容比较简单，也最常用，因此我将其放在最前面，也就是 <strong>第三节：常规过滤规则</strong>一起介绍。</li>
+<li><strong>第六节：特殊过滤规则</strong> ， tcpdump 还有一些过滤关键词，它不符合以上四种过滤规则</li>
+</ol>
+</blockquote>
+<h2 id="理解-tcpdump-的输出">理解 tcpdump 的输出</h2>
+<blockquote>
+<p><strong>2.1 输出内容结构</strong></p>
+<p>tcpdump 输出的内容虽然多，却很规律。</p>
+<p>这里以我随便抓取的一个 tcp 包为例来看一下</p>
+<p>21:26:49.013621 IP 172.20.20.1.15605 &gt; 172.20.20.2.5920: Flags [P.], seq 49:97, ack 106048, win 4723, length 48</p>
+<p>从上面的输出来看，可以总结出：</p>
+<p>第一列：时分秒毫秒 21:26:49.013621
+第二列：网络协议 IP
+第三列：发送方的ip地址+端口号，其中172.20.20.1是 ip，而15605 是端口号
+第四列：箭头 &gt;， 表示数据流向
+第五列：接收方的ip地址+端口号，其中 172.20.20.2 是 ip，而5920 是端口号
+第六列：冒号第
+七列：数据包内容，包括Flags 标识符，seq 号，ack 号，win 窗口，数据长度 length，其中 [P.] 表示 PUSH 标志位为 1，更多标识符见下面</p>
+<p><strong>2.2 Flags 标识符</strong></p>
+<p>使用 tcpdump 抓包后，会遇到的 TCP 报文 Flags，有以下几种：</p>
+<p>[S] : SYN（开始连接）
+[P] : PSH（推送数据）
+[F] : FIN （结束连接）
+[R] : RST（重置连接）
+[.] : 没有 Flag，由于除了 SYN 包外所有的数据包都有ACK，所以一般这个标志也可表示 ACK</p>
+</blockquote>
+<h2 id="常规directiontype过滤规则">常规direction+type过滤规则</h2>
+<blockquote>
+<p><img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/TCPdump/2021.04.25-16:57:57-D-assets-TCPdump-908fa0ec08fa513ddc9fa0046821bcfdb3fbd983.png" alt="img"></p>
+<p>tcpdump [option参数选项] [protocol协议] [direction方向] [type类型]</p>
+<p>[option参数选项] 为tcpdump 输出格式、选择网卡、保存抓包结果等动作</p>
+<p>tcpdump 通过过滤器（filter）灵活的语法可以精确地截取关心的数据报，简化分析的工作量。</p>
+<p>[protocol协议] [direction方向] [type类型]都属于过滤器，下面来详细介绍一下它们。</p>
+<p>组合示例</p>
+</blockquote>
+<h2 id="2-tcpdump常用参数">2. tcpdump常用参数</h2>
+<pre><code class="language-bash">$ tcpdump -i eth0 -nn -s0 -v port 80
+</code></pre>
+<ul>
+<li>
+<p><strong>-i</strong> : 选择要捕获的接口，通常是以太网卡或无线网卡，也可以是 <code>vlan</code> 或其他特殊接口。如果该系统上只有一个网络接口，则无需指定。</p>
+</li>
+<li>
+<p><strong>-nn</strong> :  <code>-n</code> 表示不解析域名，直接显示 IP；<code>-nn</code> 表示不解析域名和端口。这样不仅方便查看 IP 和端口号，而且在抓取大量数据时非常高效，因为域名解析会降低抓取速度。</p>
+</li>
+<li>
+<p><strong>-s0</strong> : tcpdump 默认只会截取前 <code>96</code> 字节的内容，要想截取所有的报文内容，可以使用 <code>-s number</code>， <code>number</code> 就是你要截取的报文字节数，如果是 0 的话，表示截取报文全部内容。</p>
+</li>
+<li>
+<p><strong>-v</strong> : 使用 <code>-v</code>，<code>-vv</code> 和 <code>-vvv</code> 来显示更多的详细信息，通常会显示更多与特定协议相关的信息。</p>
+<p>额外再介绍几个常用参数：</p>
+</li>
+<li>
+<p><strong>-p</strong> : 不让网络接口进入混杂模式。默认情况下使用 tcpdump 抓包时，会让网络接口进入混杂模式。一般计算机网卡都工作在非混杂模式下，此时网卡只接受来自网络端口的目的地址指向自己的数据。当网卡工作在混杂模式下时，网卡将来自接口的所有数据都捕获并交给相应的驱动程序。如果设备接入的交换机开启了混杂模式，使用 <code>-p</code> 选项可以有效地过滤噪声。</p>
+</li>
+<li>
+<p>将抓取的数据写入文件</p>
+<p>使用 tcpdump 截取数据报文的时候，默认会打印到屏幕的默认输出，你会看到按照顺序和格式，很多的数据一行行快速闪过，根本来不及看清楚所有的内容。不过，tcpdump 提供了把截取的数据保存到文件的功能，以便后面使用其他图形工具（比如 wireshark，Snort）来分析。</p>
+<p><code>-w</code> 选项用来把数据报文输出到文件：</p>
+<pre><code class="language-bash">$ tcpdump -i eth0 -s0 -w test.pcap
+</code></pre>
+</li>
+<li>
+<p>行缓冲模式</p>
+<p>如果想实时将抓取到的数据通过管道传递给其他工具来处理，需要使用 <code>-l</code> 选项来开启行缓冲模式（或使用 <code>-c</code> 选项来开启数据包缓冲模式）。使用 <code>-l</code> 选项可以将输出通过立即发送给其他命令，其他命令会立即响应。</p>
+<pre><code class="language-bash">$ tcpdump -i eth0 -s0 -l port 80 | grep 'Server:'
+</code></pre>
+</li>
+<li>
+<p><strong>-e</strong> : 显示数据链路层信息。默认情况下 tcpdump 不会显示数据链路层信息，使用 <code>-e</code> 选项可以显示源和目的 MAC 地址，以及 VLAN tag 信息。例如：</p>
+</li>
+</ul>
+<pre><code class="language-bash">$ tcpdump -n -e -c 5 not ip6
+
+tcpdump: verbose output suppressed, use -v or -vv for full protocol decode
+listening on br-lan, link-type EN10MB (Ethernet), capture size 262144 bytes
+18:27:53.619865 24:5e:be:0c:17:af &gt; 00:e2:69:23:d3:3b, ethertype IPv4 (0x0800), length 1162: 192.168.100.20.51410 &gt; 180.176.26.193.58695: Flags [.], seq 2045333376:2045334484, ack 3398690514, win 751, length 1108
+18:27:53.626490 00:e2:69:23:d3:3b &gt; 24:5e:be:0c:17:af, ethertype IPv4 (0x0800), length 68: 220.173.179.66.36017 &gt; 192.168.100.20.51410: UDP, length 26
+18:27:53.626893 24:5e:be:0c:17:af &gt; 00:e2:69:23:d3:3b, ethertype IPv4 (0x0800), length 1444: 192.168.100.20.51410 &gt; 220.173.179.66.36017: UDP, length 1402
+18:27:53.628837 00:e2:69:23:d3:3b &gt; 24:5e:be:0c:17:af, ethertype IPv4 (0x0800), length 1324: 46.97.169.182.6881 &gt; 192.168.100.20.59145: Flags [P.], seq 3058450381:3058451651, ack 14349180, win 502, length 1270
+18:27:53.629096 24:5e:be:0c:17:af &gt; 00:e2:69:23:d3:3b, ethertype IPv4 (0x0800), length 54: 192.168.100.20.59145 &gt; 192.168.100.1.12345: Flags [.], ack 3058451651, win 6350, length 0
+5 packets captured
+</code></pre>
+<h3 id="显示-ascii-字符串">显示 ASCII 字符串</h3>
+<p><code>-A</code> 表示使用 <code>ASCII</code> 字符串打印报文的全部数据，这样可以使读取更加简单，方便使用 <code>grep</code> 等工具解析输出内容。<code>-X</code> 表示同时使用十六进制和 <code>ASCII</code> 字符串打印报文的全部数据。这两个参数不能一起使用。例如：</p>
+<pre><code class="language-bash">$ tcpdump -A -s0 port 80
+</code></pre>
+<h2 id="3-tcpdump过滤器">3. tcpdump过滤器</h2>
+<h3 id="protocol-抓取特定协议的数据">[protocol]-抓取特定协议的数据</h3>
+<p>在<code>tcpdump [option参数选项]</code> 后面可以跟上协议名称或协议号来过滤特定协议的流量常用协议号对应表</p>
+<table>
+<thead>
+<tr>
+<th>协议</th>
+<th>协议号</th>
+<th>ether type 号</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>IP</td>
+<td>4</td>
+<td></td>
+</tr>
+<tr>
+<td>IPV6</td>
+<td>41</td>
+<td>0x86dd</td>
+</tr>
+<tr>
+<td>TCP</td>
+<td>6</td>
+<td></td>
+</tr>
+<tr>
+<td>UDP</td>
+<td>17</td>
+<td></td>
+</tr>
+<tr>
+<td>ICMP</td>
+<td>1</td>
+<td></td>
+</tr>
+<tr>
+<td>OSPF</td>
+<td>89</td>
+<td></td>
+</tr>
+<tr>
+<td>VRRP</td>
+<td>112</td>
+<td></td>
+</tr>
+<tr>
+<td>ISIS</td>
+<td>124</td>
+<td></td>
+</tr>
+<tr>
+<td>L2IP</td>
+<td>115</td>
+<td></td>
+</tr>
+<tr>
+<td>ipv4</td>
+<td></td>
+<td>0x0800</td>
+</tr>
+<tr>
+<td>tags vlan</td>
+<td></td>
+<td>0x8100</td>
+</tr>
+<tr>
+<td>arp</td>
+<td></td>
+<td>0x0806</td>
+</tr>
+<tr>
+<td>0x8863</td>
+<td></td>
+<td>pppoe discovery 发现帧</td>
+</tr>
+<tr>
+<td>0x8864</td>
+<td></td>
+<td>pppoe session 会话帧</td>
+</tr>
+</tbody>
+</table>
+<ol>
+<li>直接加协议</li>
+<li>Proto 过滤器</li>
+<li>protocol 简写proto 加协议/号   ipv4 ipv6</li>
+<li>ether type头  ip proto?</li>
+<li>wlan</li>
+</ol>
+<p>例：以 UDP 为例，可以加上参数 <code>udp</code> 或 <code>protocol 17</code>，这两个命令意思相同。</p>
+<pre><code>tcpdump -i eth0 udp
+tcpdump -i eth0 proto 17
+同理，tcp 与 protocol 6 意思相同。
+</code></pre>
+<p>二层以太网帧ether type头，占两个字节，指示了帧的类别</p>
+<p>这个ether type在tcpdump上，用ether proto来表示。</p>
+<p>比如ipv4的另一个表示法：
+# tcpdump -i eth0 ether proto 0x0800</p>
+<p>抓vlan包:
+# tcpdump -i eth0 ether proto 0x8100</p>
+<p>抓pppoe包:
+# tcpdump -i eth0 -n ether proto 0x8863 &lsquo;||&rsquo; ether proto 0x8864</p>
+<h3 id="direction-抓取特定方向的数据">[direction]-抓取特定方向的数据</h3>
+<ol>
+<li>
+<p>src</p>
+</li>
+<li>
+<p>dst</p>
+</li>
+<li>
+<p>也可以使用 <code>src</code> 或 <code>dst</code> 只抓取源或目的地：</p>
+<pre><code class="language-bash">$ tcpdump -i eth0 dst 10.10.1.20
+</code></pre>
+</li>
+<li></li>
+</ol>
+<h3 id="type-抓取特定类型的数据">[type]-抓取特定类型的数据</h3>
+<ol>
+<li>
+<p>Host 过滤器</p>
+<p>Host 过滤器可以抓取特定 IP 地址的出站入站流量。</p>
+<pre><code class="language-bash">$ tcpdump -i eth0 host 10.10.1.1
+</code></pre>
+</li>
+<li>
+<p>Network 过滤器</p>
+<p>Network 过滤器用来过滤某个网段的数据，使用的是 <a href="https://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing">CIDR</a> 模式。</p>
+<p>可以使用：</p>
+<ul>
+<li>四元组（x.x.x.x）子网掩码为 <code>255.255.255.0</code></li>
+<li>三元组（x.x.x）子网掩码为 <code>255.255.255.0</code></li>
+<li>二元组（x.x）子网掩码为 <code>255.255.0.0</code></li>
+<li>一元组（x）子网掩码为 <code>255.0.0.0</code></li>
+</ul>
+</li>
+</ol>
+<p><strong>例如：</strong></p>
+<ul>
+<li>
+<p>抓取所有发往网段 <code>192.168.1.x</code> 或从网段 <code>192.168.1.x</code> 发出的流量：</p>
+<pre><code class="language-bash">$ tcpdump net 192.168.1
+</code></pre>
+</li>
+<li>
+<p>也可以使用 CIDR 格式：</p>
+<pre><code class="language-bash">$ tcpdump src net 172.16.0.0/12
+</code></pre>
+</li>
+</ul>
+<ol start="3">
+<li>
+<p>Port 过滤器</p>
+<p>port</p>
+</li>
+<li>
+<p>portrange</p>
+</li>
+</ol>
+<h3 id="组合过滤器-逻辑运算符">组合过滤器-逻辑运算符</h3>
+<p>过滤的真正强大之处在于你可以随意组合它们.
+连接它们常用逻辑符 <code>与：AND/&amp;&amp;</code> 、<code>或：OR/||</code> 、<code>非：not/!</code>。</p>
+<pre><code class="language-bash">&quot;and&quot; or &quot;&amp;&amp;&quot;
+&quot;or&quot; or &quot;||&quot;
+&quot;not&quot; or &quot;!&quot;
+</code></pre>
+<blockquote>
+<p><strong>3.2 基于网段进行过滤：net</strong></p>
+<p>$ tcpdump net 192.168.10.0/24</p>
+<p><strong>3.3 基于端口进行过滤：port</strong></p>
+<pre><code class="language-bash">tcpdump port 端口号
+
+如果你想要同时指定两个端口你可以这样写
+
+tcpdump port 80 or port 8088 可以简写成这样 tcpdump port 80 or 8088
+
+指定端口范围
+
+tcpdump portrange 端口号-端口号
+
+对于一些常见协议的默认端口，我们还可以直接使用协议名，而不用具体的端口号
+
+比如 http == 80，https == 443 等
+
+$ tcpdump tcp port http
+</code></pre>
+</blockquote>
+<h2 id="基于协议进行过滤proto">基于协议进行过滤：proto</h2>
+<h3 id="协议号和端口号的区别">协议号和端口号的区别</h3>
+<p><img src="D:%5Cassets%5CTCPdump%5Cseo-1255598498.file.myqcloud.com&amp;app=2002&amp;size=f9999,10000&amp;q=a80&amp;n=0&amp;g=0n&amp;fmt=jpeg" alt="img"></p>
+<p><img src="D:%5Cassets%5CTCPdump%5Caliyunzixunbucket.oss-cn-beijing.aliyuncs.com&amp;app=2002&amp;size=f9999,10000&amp;q=a80&amp;n=0&amp;g=0n&amp;fmt=jpeg" alt="img"></p>
+<p><img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/TCPdump/2021.04.26-17:05:29-D-assets-TCPdump-image-20210426170528356.png" alt="image-20210426170528356"></p>
+<p>IP协议是网络层协议，协议号是IP包头中的一个字段，标识IP报文中承载的是哪种协议</p>
+<p>eg：17号表示是上层即传输层是udp协议，6号表示上层即传输层是tcp协议，89标识上层是ospf协议等等。</p>
+<p>tcp/udp是传输层协议，UDP和TCP报文的首部的端口号标识了在应用层的具体应用</p>
+<p>eg：80 http服务，23 telnet服务，53 dns服务。</p>
+<p>IP数据报则是将UDP或者TCP报文做为其数据部分，再加上IP数据报首部，封装成IP数据报。而协议号则是存在这个IP数据报的首部，端口号在TCP/UDP报文首部。</p>
+<p>目的主机收到IP包后，根据IP协议号确定送给哪个模块（TCP/UDP/ICMP&hellip;）处理，送给TCP/UDP模块的报文根据端口号确定送给哪个应用程序处理。</p>
+<blockquote>
+<p>protocol 可选值：tcp, udp, icmp, http, ip, ip6, arp, rarp, atalk, aarp, decnet, sca, lat, mopdl, moprc, iso, stp, ipx, or netbeui&hellip;&hellip;或者相应的协议号</p>
+<p>若你只想查看 icmp 的包，可以直接这样写</p>
+<p>$ tcpdump icmp</p>
+</blockquote>
+<h2 id="基本ip协议的版本进行过滤">基本IP协议的版本进行过滤</h2>
+<blockquote>
+<p>当你想查看 tcp 的包，你也许会这样子写</p>
+<p>$ tcpdump tcp</p>
+<p>这样子写也没问题，就是不够精准，为什么这么说呢？</p>
+<p>ip 根据版本的不同，可以再细分为 IPv4 和 IPv6 两种，如果你只指定了 tcp，这两种其实都会包含在内。</p>
+<p>那有什么办法，能够将 IPv4 和 IPv6 区分开来呢？</p>
+<p>很简单，如果是 IPv4 的 tcp 包 ，就这样写（友情提示：数字 6 表示的是 tcp 在ip报文中的编号。）</p>
+<pre><code>$ tcpdump 'ip proto tcp'
+$ tcpdump ip proto 6
+$ tcpdump 'ip protochain tcp'
+$ tcpdump ip protochain 6
+</code></pre>
+<p>而如果是 IPv6 的 tcp 包 ，就这样写</p>
+<pre><code>$ tcpdump 'ip6 proto tcp'
+$ tcpdump ip6 proto 6
+$ tcpdump 'ip6 protochain tcp'
+$ tcpdump ip6 protochain 6
+</code></pre>
+<p>关于上面这几个命令示例，有两点需要注意：</p>
+<p>跟在 proto 和 protochain 后面的如果是 tcp, udp, icmp ，那么过滤器需要用引号包含，这是因为 tcp,udp, icmp 是 tcpdump 的关键字。</p>
+<p>跟在ip 和 ip6 关键字后面的 proto 和 protochain 是两个新面孔，看起来用法类似，它们是否等价，又有什么区别呢？关于第二点，网络上没有找到很具体的答案，我只能通过 man tcpdump 的提示， 给出自己的个人猜测，但不保证正确。</p>
+<p>proto 后面跟的 <protocol> 的关键词是固定的，只能是 ip, ip6, arp, rarp, atalk, aarp, decnet, sca, lat, mopdl, moprc, iso, stp, ipx, or netbeui 这里面的其中一个。</p>
+<p>而 protochain 后面跟的 protocol 要求就没有那么严格，它可以是任意词，只要 tcpdump 的 IP 报文头部里的 protocol 字段为 <protocol> 就能匹配上。</p>
+<p>理论上来讲，下面两种写法效果是一样的</p>
+<pre><code>$ tcpdump 'ip &amp;&amp; tcp'
+$ tcpdump 'ip proto tcp'
+</code></pre>
+<p>同样的，这两种写法也是一样的</p>
+<pre><code>$ tcpdump 'ip6 &amp;&amp; tcp'
+$ tcpdump 'ip6 proto tcp'
+</code></pre>
+</blockquote>
+<h2 id="可选参数解析">可选参数解析</h2>
+<blockquote>
+<p><strong>4.1 设置不解析域名提升速度</strong></p>
+<p>-n：显示 ip，不把ip转化成域名，避免执行 DNS lookups 的过程
+-nn：不把协议和端口号转化成名字。
+-N：不打印出host 的域名部分.。比如,，如果设置了此选现，tcpdump 将会打印&rsquo;nic&rsquo; 而不是 &lsquo;nic.ddn.mil&rsquo;.</p>
+<p><strong>4.2 过滤结果输出到文件</strong></p>
+<p>使用 tcpdump 工具抓到包后，往往需要再借助其他的工具进行分析，比如常见的 wireshark 。</p>
+<p>而要使用wireshark ，我们得将 tcpdump 抓到的包数据生成到文件中，最后再使用 wireshark 打开它即可。</p>
+<p>使用 -w 参数后接一个以 .pcap 后缀命令的文件名，就可以将 tcpdump 抓到的数据保存到文件中。</p>
+<p>$ tcpdump icmp -w icmp.pcap</p>
+<p><strong>4.3 从文件中读取包数据</strong></p>
+<p>使用 -w 是写入数据到文件，而使用 -r 是从文件中读取数据。</p>
+<p>读取后，我们照样可以使用上述的过滤器语法进行过滤分析。</p>
+<p>$ tcpdump icmp -r all.pcap</p>
+<p><strong>4.4 控制详细内容的输出</strong></p>
+<p>-v：产生详细的输出. 比如包的TTL，id标识，数据包长度，以及IP包的一些选项。同时它还会打开一些附加的包完整性检测，比如对IP或ICMP包头部的校验和。-vv：产生比-v更详细的输出. 比如NFS回应包中的附加域将会被打印, SMB数据包也会被完全解码。（摘自网络，目前我还未使用过）-vvv：产生比-vv更详细的输出。比如 telent 时所使用的SB, SE 选项将会被打印, 如果telnet同时使用的是图形界面，其相应的图形选项将会以16进制的方式打印出来（摘自网络，目前我还未使用过）<strong>4.5 控制时间的显示</strong></p>
+<p>-t：在每行的输出中不输出时间-tt：在每行的输出中会输出时间戳-ttt：输出每两行打印的时间间隔(以毫秒为单位)-tttt：在每行打印的时间戳之前添加日期的打印（此种选项，输出的时间最直观）<strong>4.6 显示数据包的头部</strong></p>
+<p>-x：以16进制的形式打印每个包的头部数据（但不包括数据链路层的头部）-xx：以16进制的形式打印每个包的头部数据（包括数据链路层的头部）-X：以16进制和 ASCII码形式打印出每个包的数据(但不包括连接层的头部)，这在分析一些新协议的数据包很方便。-XX：以16进制和 ASCII码形式打印出每个包的数据(包括连接层的头部)，这在分析一些新协议的数据包很方便。<strong>4.7 过滤指定网卡的数据包</strong></p>
+<p>-i：指定要过滤的网卡接口，如果要查看所有网卡，可以 -i any<strong>4.8 过滤特定流向的数据包</strong></p>
+<p>-Q：选择是入方向还是出方向的数据包，可选项有：in, out, inout，也可以使用 &ndash;direction=[direction] 这种写法<strong>4.9 其他常用的一些参数</strong></p>
+<p>-A：以ASCII码方式显示每一个数据包(不显示链路层头部信息). 在抓取包含网页数据的数据包时, 可方便查看数据-l : 基于行的输出，便于你保存查看，或者交给其它工具分析-q : 简洁地打印输出。即打印很少的协议相关信息, 从而输出行都比较简短.-c : 捕获 count 个包 tcpdump 就退出-s : tcpdump 默认只会截取前 96 字节的内容，要想截取所有的报文内容，可以使用 -s number， number 就是你要截取的报文字节数，如果是 0 的话，表示截取报文全部内容。-S : 使用绝对序列号，而不是相对序列号-C：file-size，tcpdump 在把原始数据包直接保存到文件中之前, 检查此文件大小是否超过file-size. 如果超过了, 将关闭此文件,另创一个文件继续用于原始数据包的记录. 新创建的文件名与-w 选项指定的文件名一致, 但文件名后多了一个数字.该数字会从1开始随着新创建文件的增多而增加. file-size的单位是百万字节(nt: 这里指1,000,000个字节,并非1,048,576个字节, 后者是以1024字节为1k, 1024k字节为1M计算所得, 即1M=1024 ＊ 1024 ＝ 1,048,576)-F：使用file 文件作为过滤条件表达式的输入, 此时命令行上的输入将被忽略.<strong>4.10 对输出内容进行控制的参数</strong></p>
+<p>-D : 显示所有可用网络接口的列表-e : 每行的打印输出中将包括数据包的数据链路层头部信息-E : 揭秘IPSEC数据-L ：列出指定网络接口所支持的数据链路层的类型后退出-Z：后接用户名，在抓包时会受到权限的限制。如果以root用户启动tcpdump，tcpdump将会有超级用户权限。-d：打印出易读的包匹配码-dd：以C语言的形式打印出包匹配码.-ddd：以十进制数的形式打印出包匹配码</p>
+</blockquote>
+<h2 id="过滤规则组合">过滤规则组合</h2>
+<blockquote>
+<p>有编程基础的同学，对于下面三个逻辑运算符应该不陌生了吧</p>
+<p>and：所有的条件都需要满足，也可以表示为 &amp;&amp;
+or：只要有一个条件满足就可以，也可以表示为 ||
+not：取反，也可以使用 !
+举个例子，我想需要抓一个来自10.5.2.3，发往任意主机的3389端口的包</p>
+<p>$ tcpdump src 10.5.2.3 and dst port 3389</p>
+<p>当你在使用多个过滤器进行组合时，有可能需要用到括号，而括号在 shell 中是特殊符号，因为你需要使用引号将其包含。例子如下：</p>
+<p>$ tcpdump &lsquo;src 10.0.2.4 and (dst port 3389 or 22)&rsquo;</p>
+<p>而在单个过滤器里，常常会判断一条件是否成立，这时候，就要使用下面两个符号</p>
+<p>=：判断二者相等
+==：判断二者相等
+!=：判断二者不相等当你使用这两个符号时，tcpdump 还提供了一些关键字的接口来方便我们进行判断，比如</p>
+<p>if：表示网卡接口名、proc：表示进程名pid：表示进程 idsvc：表示 service classdir：表示方向，in 和 outeproc：表示 effective process nameepid：表示 effective process ID
+比如我现在要过滤来自进程名为 nc 发出的流经 en0 网卡的数据包，或者不流经 en0 的入方向数据包，可以这样子写</p>
+<p>$ tcpdump &ldquo;( if=en0 and proc =nc ) || (if != en0 and dir=in)&rdquo;</p>
+<p>4、抓取主机10.37.63.255和主机10.37.63.61或10.37.63.95的通信：</p>
+<p><img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/TCPdump/2021.04.27-14:15:46-D-assets-TCPdump-image-20210427141544830.png" alt="image-20210427141544830"></p>
+<p>tcpdump抓TCP三次握手抓包分析：</p>
+<p>sudotcpdump-n-S-ilo0host10.37.63.3andtcpport8080</p>
+<p><img src="D:%5Cassets%5CTCPdump%5C1760830-76e3c0d065f35b35" alt="技术分享"></p>
+<hr>
+</blockquote>
+<h2 id="特殊过滤规则">特殊过滤规则</h2>
+<blockquote>
+<p><strong>5.1 根据 tcpflags 进行过滤</strong></p>
+<p>通过上一篇文章，我们知道了 tcp 的首部有一个标志位。</p>
+<p><img src="D:%5Cassets%5CTCPdump%5C21a4462309f790526c2a7b3d5bbf3ecc7bcbd54b.png" alt="img"></p>
+<p>TCP 报文首部</p>
+<p>tcpdump 支持我们根据数据包的标志位进行过滤</p>
+<p>proto [ expr:size ]</p>
+<p>proto：可以是熟知的协议之一（如ip，arp，tcp，udp，icmp，ipv6）expr：可以是数值，也可以是一个表达式，表示与指定的协议头开始处的字节偏移量。size：是可选的，表示从字节偏移量开始取的字节数量。接下来，我将举几个例子，让人明白它的写法，不过在那之前，有几个点需要你明白，这在后面的例子中会用到：</p>
+<p>**1、**tcpflags 可以理解为是一个别名常量，相当于 13，它代表着与指定的协议头开头相关的字节偏移量，也就是标志位，所以 tcp[tcpflags] 等价于 tcp[13] ，对应下图中的报文位置。</p>
+<p><img src="D:%5Cassets%5CTCPdump%5C4e4a20a4462309f729c9da8c2a42e5f5d6cad659.png" alt="img"></p>
+<p>**2、**tcp-fin, tcp-syn, tcp-rst, tcp-push, tcp-ack, tcp-urg 这些同样可以理解为别名常量，分别代表 1，2，4，8，16，32，64。这些数字是如何计算出来的呢？</p>
+<p>以 tcp-syn 为例，你可以参照下面这张图，计算出来的值 是就是 2</p>
+<p><img src="D:%5Cassets%5CTCPdump%5C09fa513d269759eedc1f418fe7b7aa106c22dffe.png" alt="img"></p>
+<p>由于数字不好记忆，所以一般使用这样的“别名常量”表示。</p>
+<p>因此当下面这个表达式成立时，就代表这个包是一个 syn 包。</p>
+<p>tcp[tcpflags] == tcp-syn</p>
+<p>要抓取特定数据包，方法有很多种。</p>
+<p>下面以最常见的 syn包为例，演示一下如何用 tcpdump 抓取到 syn 包，而其他的类型的包也是同样的道理。</p>
+<p>据我总结，主要有三种写法：</p>
+<p>1、第一种写法：使用数字表示偏移量</p>
+<p>$ tcpdump -i eth0 &ldquo;tcp[13] &amp; 2 != 0&rdquo;</p>
+<p>2、第二种写法：使用别名常量表示偏移量</p>
+<p>$ tcpdump -i eth0 &ldquo;tcp[tcpflags] &amp; tcp-syn != 0&rdquo;</p>
+<p>3、第三种写法：使用混合写法</p>
+<p>$ tcpdump -i eth0 &ldquo;tcp[tcpflags] &amp; 2 != 0&rdquo;# or$ tcpdump -i eth0 &ldquo;tcp[13] &amp; tcp-syn != 0&rdquo;</p>
+<p>如果我想同时捕获多种类型的包呢，比如 syn + ack 包</p>
+<p>1、第一种写法</p>
+<p>$ tcpdump -i eth0 &lsquo;tcp[13] == 2 or tcp[13] == 16&rsquo;</p>
+<p>2、第二种写法</p>
+<p>$ tcpdump -i eth0 &lsquo;tcp[tcpflags] == tcp-syn or tcp[tcpflags] == tcp-ack&rsquo;</p>
+<p>3、第三种写法</p>
+<p>$ tcpdump -i eth0 &ldquo;tcp[tcpflags] &amp; (tcp-syn|tcp-ack) != 0&rdquo;</p>
+<p>4、第四种写法：注意这里是 单个等号，而不是像上面一样两个等号，18（syn+ack） = 2（syn） + 16（ack）</p>
+<p>$ tcpdump -i eth0 &lsquo;tcp[13] = 18&rsquo;# or$ tcpdump -i eth0 &lsquo;tcp[tcpflags] = 18&rsquo;</p>
+<p>tcp 中有 类似 tcp-syn 的别名常量，其他协议也是有的，比如 icmp 协议，可以使用的别名常量有</p>
+<p>icmp-echoreply, icmp-unreach, icmp-sourcequench, icmp-redirect, icmp-echo, icmp-routeradvert,icmp-routersolicit, icmp-timx-ceed, icmp-paramprob, icmp-tstamp, icmp-tstampreply,icmp-ireq, icmp-ireqreply, icmp-maskreq, icmp-maskreply</p>
+<p><strong>5.2 基于包大小进行过滤</strong></p>
+<p>若你想查看指定大小的数据包，也是可以的</p>
+<p>$ tcpdump less 32 $ tcpdump greater 64 $ tcpdump &lt;= 128</p>
+<p><strong>5.3 根据 mac 地址进行过滤</strong></p>
+<p>例子如下，其中 ehost 是记录在 /etc/ethers 里的 name</p>
+<p>$ tcpdump ether host [ehost]$ tcpdump ether dst [ehost]$ tcpdump ether src [ehost]</p>
+<p><strong>5.4 过滤通过指定网关的数据包</strong></p>
+<p>$ tcpdump gateway [host]</p>
+<p><strong>5.5 过滤广播/多播数据包</strong></p>
+<p>$ tcpdump ether broadcast$ tcpdump ether multicast$ tcpdump ip broadcast$ tcpdump ip multicast$ tcpdump ip6 multicast</p>
+<hr>
+<p><strong>如何抓取到更精准的包？</strong></p>
+<p>先给你抛出一个问题：如果我只想抓取 HTTP 的 POST 请求该如何写呢？</p>
+<p>如果只学习了上面的内容，恐怕你还是无法写法满足这个抓取需求的过滤器。</p>
+<p>在学习之前，我先给出答案，然后再剖析一下，这个过滤器是如何生效的，居然能让我们对包内的内容进行判断。</p>
+<p>$ tcpdump -s 0 -A -vv &lsquo;tcp[((tcp[12:1] &amp; 0xf0) &raquo; 2):4]&rsquo;</p>
+<p>命令里的可选参数，在前面的内容里已经详细讲过了。这里不再细讲。</p>
+<p>本节的重点是引号里的内容，看起来很复杂的样子。</p>
+<p>将它逐一分解，我们只要先理解了下面几种用法，就能明白</p>
+<p>tcp[n]：表示 tcp 报文里 第 n 个字节tcp[n:c]：表示 tcp 报文里从第n个字节开始取 c 个字节，tcp[12:1] 表示从报文的第12个字节（因为有第0个字节，所以这里的12其实表示的是13）开始算起取一个字节，也就是 8 个bit。查看 tcp 的报文首部结构，可以得知这 8 个bit 其实就是下图中的红框圈起来的位置，而在这里我们只要前面 4个bit，也就是实际数据在整个报文首部中的偏移量。</p>
+<p><img src="D:%5Cassets%5CTCPdump%5C5d6034a85edf8db187405da75c6f3452574e745d.png" alt="img"></p>
+<p>&amp;：是位运算里的 and 操作符，比如 0011 &amp; 0010 = 0010&raquo;：是位运算里的右移操作，比如 0111 &raquo; 2 = 00110xf0：是 10 进制的 240 的 16 进制表示，但对于位操作来说，10进制和16进制都将毫无意义，我们需要的是二进制，将其转换成二进制后是：11110000，这个数有什么特点呢？前面个 4bit 全部是 1，后面4个bit全部是0，往后看你就知道这个特点有什么用了。分解完后，再慢慢合并起来看</p>
+<p>1、tcp[12:1] &amp; 0xf0 其实并不直观，但是我们将它换一种写法，就好看多了，假设 tcp 报文中的 第12 个字节是这样组成的 10110000，那么这个表达式就可以变成 10110110 &amp;&amp; 11110000 = 10110000，得到了 10110000 后，再进入下一步。</p>
+<p>2、tcp[12:1] &amp; 0xf0) &raquo; 2 ：如果你不理解 tcp 报文首部里的数据偏移，请先点击这个前往我的上一篇文章，搞懂数据偏移的意义，否则我保证你这里会绝对会听懵了。</p>
+<p>tcp[12:1] &amp; 0xf0) &raquo; 2 这个表达式实际是 (tcp[12:1] &amp; 0xf0) &raquo; 4 ) &laquo; 2 的简写形式。所以要搞懂 tcp[12:1] &amp; 0xf0) &raquo; 2 只要理解了(tcp[12:1] &amp; 0xf0) &raquo; 4 ) &laquo; 2 就行了 。</p>
+<p>从上一步我们算出了 tcp[12:1] &amp; 0xf0 的值其实是一个字节，也就是 8 个bit，但是你再回去看下上面的 tcp 报文首部结构图，表示数据偏移量的只有 4个bit，也就是说 上面得到的值 10110000，前面 4 位（1011）才是正确的偏移量，那么为了得到 1011，只需要将 10110000 右移4位即可，也就是 tcp[12:1] &amp; 0xf0) &raquo; 4，至此我们是不是已经得出了实际数据的正确位置呢，很遗憾还没有，前一篇文章里我们讲到 Data Offset 的单位是 4个字节，因为要将 1011 乘以 4才可以，除以4在位运算中相当于左移2位，也就是 &laquo;2，与前面的 &raquo;4 结合起来一起算的话，最终的运算可以简化为 &raquo;2</p>
+<p>至此，我们终于得出了实际数据开始的位置是 tcp[12:1] &amp; 0xf0) &raquo; 2 （单位是字节）。</p>
+<p>找到了数据的起点后，可别忘了我们的目的是从数据中打到 HTTP 请求的方法，是 GET 呢 还是 POST ，或者是其他的？</p>
+<p>有了上面的经验，我们自然懂得使用 tcp[((tcp[12:1] &amp; 0xf0) &raquo; 2):4] 从数据开始的位置再取出四个字节，然后将结果与 GET （注意 GET最后还有个空格）的 16进制写法（也就是 0x47455420）进行比对。</p>
+<p>0x47 &ndash;&gt; 71 &ndash;&gt; G0x45 &ndash;&gt; 69 &ndash;&gt; E0x54 &ndash;&gt; 84 &ndash;&gt; T0x20 &ndash;&gt; 32 &ndash;&gt; 空格</p>
+<p><img src="D:%5Cassets%5CTCPdump%5Cd01373f082025aaf5945f930a3a14262024f1aad.png" alt="img"></p>
+<p>如果相等，则该表达式为True，tcpdump 认为这就是我们所需要抓的数据包，将其输出到我们的终端屏幕上。</p>
+</blockquote>
+<h2 id="前言-1">前言</h2>
+<p>tcpdump是一个用于截取网络分组，并输出分组内容的工具。凭借强大的功能和灵活的截取策略，使其成为类UNIX系统下用于网络分析和问题排查的首选工具。支持针对网络层、协议、主机、网络或端口的过滤，并提供and、or、not等逻辑语句来帮助你去掉无用的信息。</p>
+<p>如果要使用tcpdump抓取其他主机MAC地址的数据包，必须开启网卡混杂模式，所谓混杂模式，用最简单的语言就是让网卡抓取任何经过它的数据包，不管这个数据包是不是发给它或者是它发出的。</p>
+<pre><code class="language-bash">device eth0 left promiscuous mode 网卡 eth0 离开了混杂模式。
+ifconfig eth0 promisc 设置网卡eth0为混杂模式
+ifconfig eth0 -promisc 取消网卡eth0的混杂模式```
+</code></pre>
+<h2 id="命令格式">命令格式</h2>
+<pre><code>tcpdump [ -DenNqvX ] [ -c count ] [ -F file ] [ -i interface ] [ -r file ]
+        [ -s snaplen ] [ -w file ] [ expression ]
+</code></pre>
+<p><img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/TCPdump/2021.04.26-09:43:45-D-assets-TCPdump-10797253-0ac0eb9ebc75adb4.png" alt="img"></p>
+<p><img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/TCPdump/2021.04.25-16:57:57-D-assets-TCPdump-908fa0ec08fa513ddc9fa0046821bcfdb3fbd983.png" alt="img"></p>
+<blockquote>
+<h3 id="抓包选项">抓包选项：</h3>
+<p>-c：指定要抓取的包数量。</p>
+<p>-i interface：指定tcpdump需要监听的接口。默认会抓取第一个网络接口</p>
+<p>-n：对地址以数字方式显式，否则显式为主机名，也就是说-n选项不做主机名解析。</p>
+<p>-nn：除了-n的作用外，还把端口显示为数值，否则显示端口服务名。</p>
+<p>-P：指定要抓取的包是流入还是流出的包。可以给定的值为&quot;in&quot;、&ldquo;out&quot;和&quot;inout&rdquo;，默认为&quot;inout&quot;。</p>
+<p>-s len：设置tcpdump的数据包抓取长度为len，如果不设置默认将会是65535字节。对于要抓取的数据包较大时，长度设置不够可能会产生包截断，若出现包截断，
+：输出行中会出现&quot;[|proto]&ldquo;的标志(proto实际会显示为协议名)。但是抓取len越长，包的处理时间越长，并且会减少tcpdump可缓存的数据包的数量，
+：从而会导致数据包的丢失，所以在能抓取我们想要的包的前提下，抓取长度越小越好。</p>
+<h3 id="输出选项">输出选项：</h3>
+<p>-e：输出的每行中都将包括数据链路层头部信息，例如源MAC和目标MAC。</p>
+<p>-q：快速打印输出。即打印很少的协议相关信息，从而输出行都比较简短。</p>
+<p>-X：输出包的头部数据，会以16进制和ASCII两种方式同时输出。</p>
+<p>-XX：输出包的头部数据，会以16进制和ASCII两种方式同时输出，更详细。</p>
+<p>-v：当分析和打印的时候，产生详细的输出。</p>
+<p>-vv：产生比-v更详细的输出。
+-vvv：产生比-vv更详细的输出。</p>
+<h3 id="其他功能性选项">其他功能性选项：</h3>
+<p>-D：列出可用于抓包的接口。将会列出接口的数值编号和接口名，它们都可以用于&rdquo;-i&quot;后。</p>
+<p>-F：从文件中读取抓包的表达式。若使用该选项，则命令行中给定的其他表达式都将失效。</p>
+<p>-w：将抓包数据输出到文件中而不是标准输出。可以同时配合&quot;-G</p>
+<p>time&quot;选项使得输出文件每time秒就自动切换到另一个文件。可通过&quot;-r&quot;选项载入这些文件以进行分析和打印。</p>
+<p>-r：从给定的数据包文件中读取数据。使用&quot;-&ldquo;表示从标准输入中读取。</p>
+<h3 id="expression-表达式">expression 表达式</h3>
+<p>==<strong>一个基本的表达式单元格式为&quot;proto dir type ID&rdquo;</strong>==</p>
+<p>对于表达式语法，参考  pcap-filter 【pcap-filter - packet filter syntax】</p>
+<ul>
+<li>类型 type</li>
+</ul>
+<p>host, net, port, portrange</p>
+<p>例如：host 192.168.201.128  ,  net 128.3, port 20, portrange 6000-6008'</p>
+<ul>
+<li>目标 dir</li>
+</ul>
+<p>src,  dst,  src  or dst, src and dst</p>
+<ul>
+<li>协议 proto</li>
+</ul>
+<p>tcp， udp ， icmp，若未给定协议类型，则匹配所有可能的类型</p>
+<p>==表达式单元之间可以使用操作符&quot; and / &amp;&amp; / or / || / not / ! &ldquo;进行连接，从而组成复杂的条件表达式==。如&quot;host foo and not port ftp and not port ftp-data&rdquo;，这表示筛选的数据包要满足&quot;主机为foo且端口不是ftp(端口21)和ftp-data(端口20)的包&quot;，常用端口和名字的对应关系可在linux系统中的/etc/service文件中找到。</p>
+<p>另外，同样的修饰符可省略，如&quot;tcp dst port ftp or ftp-data or domain&quot;与&quot;tcp dst port ftp or tcp dst port ftp-data or tcp dst port domain&quot;意义相同，都表示包的协议为tcp且目的端口为ftp或ftp-data或domain(端口53)。</p>
+<p>使用括号&quot;()&ldquo;可以改变表达式的优先级，但需要注意的是括号会被shell解释，所以应该使用反斜线&quot;&ldquo;转义为&rdquo;()&quot;，在需要的时候，还需要包围在引号中。</p>
+<h1 id="tcpdump示例">tcpdump示例</h1>
+<p>==**tcpdump只能抓取流经本机的数据包 **==</p>
+<h3 id="1-默认启动">1. 默认启动</h3>
+<pre><code class="language-undefined">tcpdump
+</code></pre>
+<p>默认情况下，直接启动tcpdump将监视第一个网络接口(非lo口)上所有流通的数据包。这样抓取的结果会非常多，滚动非常快。</p>
+<h3 id="2--监视指定网络接口的数据包">2 . 监视指定网络接口的数据包</h3>
+<pre><code class="language-undefined">tcpdump -i ens33
+</code></pre>
+<h3 id="3-监视指定主机的数据包例如所有进入或离开node1的数据包">3. 监视指定主机的数据包，例如所有进入或离开node1的数据包</h3>
+<pre><code class="language-undefined">tcpdump -i ens33  host node1
+</code></pre>
+<h3 id="4-打印node1--node2或node1--node3之间通信的数据包">4. 打印node1&lt;&ndash;&gt;node2或node1&lt;&ndash;&gt;node3之间通信的数据包</h3>
+<pre><code class="language-undefined">tcpdump -i ens33 host node1 and \(node2 or node3\)
+</code></pre>
+<h3 id="5-打印node1与任何其他主机之间通信的ip数据包但不包括与node4之间的数据包">5. 打印node1与任何其他主机之间通信的IP数据包,但不包括与node4之间的数据包</h3>
+<pre><code class="language-undefined">tcpdump -i ens33 host node1 and not node4
+</code></pre>
+<h3 id="6-截获主机node1-发送的所有数据">6. 截获主机node1 发送的所有数据</h3>
+<pre><code class="language-undefined">tcpdump -i ens33 src host node1
+</code></pre>
+<h3 id="7-监视所有发送到主机node1-的数据包">7. 监视所有发送到主机node1 的数据包</h3>
+<pre><code class="language-undefined">tcpdump -i ens33 dst host node1
+</code></pre>
+<h3 id="8-监视指定主机和端口的数据包">8. 监视指定主机和端口的数据包</h3>
+<pre><code class="language-undefined">tcpdump -i ens33 port 8080 and host node1
+</code></pre>
+<h3 id="9-监视指定网络的数据包如本机与192168网段通信的数据包-c-10表示只抓取10个包">9. 监视指定网络的数据包，如本机与192.168网段通信的数据包，&quot;-c 10&quot;表示只抓取10个包</h3>
+<pre><code class="language-css">tcpdump -i ens33 -c 10 net 192.168
+</code></pre>
+<h3 id="10-打印所有通过网关snup的ftp数据包">10. 打印所有通过网关snup的ftp数据包</h3>
+<pre><code class="language-bash">tcpdump 'gateway snup and (port ftp or ftp-data)'
+</code></pre>
+<p>注意,表达式被单引号括起来了,这可以防止shell对其中的括号进行错误解析</p>
+<h3 id="11-抓取ping包">11. 抓取ping包</h3>
+<pre><code class="language-swift">tcpdump -c 5 -nn -i ens33 
+
+==指定主机抓ping包==
+tcpdump -c 5 -nn -i eth0 icmp and src 192.168.100.62
+</code></pre>
+<h3 id="12-抓取到本机22端口包">12. 抓取到本机22端口包</h3>
+<pre><code class="language-swift">tcpdump -c 10 -nn -i ens33 tcp dst port 22
+</code></pre>
+<h3 id="13-解析包数据">13. 解析包数据</h3>
+<pre><code class="language-swift">tcpdump -c 2 -q -XX -vvv -nn -i ens33 tcp dst port 22
+</code></pre>
+</blockquote>
+
+        </div>
+        
+        
+        
+        
+        
+        
+        
+<div class="flex flex-col md:flex-row md:justify-between -mx-2 mt-4 px-2 pt-4 border-t">
+    <div>
+        
+        <span class="block font-bold">上一页</span>
+        <a href="/posts/1.linux/linux%E5%B8%B8%E7%94%A8%E6%9C%8D%E5%8A%A1/ssh/ssh%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/" class="block">ssh原理应用</a>
+        
+    </div>
+    <div class="md:text-right mt-4 md:mt-0">
+        
+        <span class="block font-bold">下一页</span>
+        <a href="/posts/1.linux/linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86/2.%E7%BD%91%E7%BB%9C%E6%9C%8D%E5%8A%A1%E5%92%8C%E5%B7%A5%E5%85%B7%E9%9B%86/" class="block">网络服务和工具集</a>
+        
+    </div>
+</div>
+
+        
+    </div>
+    
+    <div class="col-span-2">
+        
+        
+        <div class="sticky top-16 z-10 hidden lg:block px-6 py-4  bg-primary-bg ">
+    <span class="text-lg font-semibold">本页内容</span>
+</div>
+<div class="sticky-toc hidden lg:block px-6 pb-6 ">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#配合ssh通道传入wireshark">配合ssh通道传入wireshark</a></li>
+    <li><a href="#前言">前言</a></li>
+    <li><a href="#理解-tcpdump-的输出">理解 tcpdump 的输出</a></li>
+    <li><a href="#常规directiontype过滤规则">常规direction+type过滤规则</a></li>
+    <li><a href="#2-tcpdump常用参数">2. tcpdump常用参数</a>
+      <ul>
+        <li><a href="#显示-ascii-字符串">显示 ASCII 字符串</a></li>
+      </ul>
+    </li>
+    <li><a href="#3-tcpdump过滤器">3. tcpdump过滤器</a>
+      <ul>
+        <li><a href="#protocol-抓取特定协议的数据">[protocol]-抓取特定协议的数据</a></li>
+        <li><a href="#direction-抓取特定方向的数据">[direction]-抓取特定方向的数据</a></li>
+        <li><a href="#type-抓取特定类型的数据">[type]-抓取特定类型的数据</a></li>
+        <li><a href="#组合过滤器-逻辑运算符">组合过滤器-逻辑运算符</a></li>
+      </ul>
+    </li>
+    <li><a href="#基于协议进行过滤proto">基于协议进行过滤：proto</a>
+      <ul>
+        <li><a href="#协议号和端口号的区别">协议号和端口号的区别</a></li>
+      </ul>
+    </li>
+    <li><a href="#基本ip协议的版本进行过滤">基本IP协议的版本进行过滤</a></li>
+    <li><a href="#可选参数解析">可选参数解析</a></li>
+    <li><a href="#过滤规则组合">过滤规则组合</a></li>
+    <li><a href="#特殊过滤规则">特殊过滤规则</a></li>
+    <li><a href="#前言-1">前言</a></li>
+    <li><a href="#命令格式">命令格式</a>
+      <ul>
+        <li><a href="#抓包选项">抓包选项：</a></li>
+        <li><a href="#输出选项">输出选项：</a></li>
+        <li><a href="#其他功能性选项">其他功能性选项：</a></li>
+        <li><a href="#expression-表达式">expression 表达式</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#1-默认启动">1. 默认启动</a></li>
+        <li><a href="#2--监视指定网络接口的数据包">2 . 监视指定网络接口的数据包</a></li>
+        <li><a href="#3-监视指定主机的数据包例如所有进入或离开node1的数据包">3. 监视指定主机的数据包，例如所有进入或离开node1的数据包</a></li>
+        <li><a href="#4-打印node1--node2或node1--node3之间通信的数据包">4. 打印node1&lt;&ndash;&gt;node2或node1&lt;&ndash;&gt;node3之间通信的数据包</a></li>
+        <li><a href="#5-打印node1与任何其他主机之间通信的ip数据包但不包括与node4之间的数据包">5. 打印node1与任何其他主机之间通信的IP数据包,但不包括与node4之间的数据包</a></li>
+        <li><a href="#6-截获主机node1-发送的所有数据">6. 截获主机node1 发送的所有数据</a></li>
+        <li><a href="#7-监视所有发送到主机node1-的数据包">7. 监视所有发送到主机node1 的数据包</a></li>
+        <li><a href="#8-监视指定主机和端口的数据包">8. 监视指定主机和端口的数据包</a></li>
+        <li><a href="#9-监视指定网络的数据包如本机与192168网段通信的数据包-c-10表示只抓取10个包">9. 监视指定网络的数据包，如本机与192.168网段通信的数据包，&quot;-c 10&quot;表示只抓取10个包</a></li>
+        <li><a href="#10-打印所有通过网关snup的ftp数据包">10. 打印所有通过网关snup的ftp数据包</a></li>
+        <li><a href="#11-抓取ping包">11. 抓取ping包</a></li>
+        <li><a href="#12-抓取到本机22端口包">12. 抓取到本机22端口包</a></li>
+        <li><a href="#13-解析包数据">13. 解析包数据</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+</div>
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        enableStickyToc();
+    });
+</script>
+        
+    </div>
+    
+
+    
+    
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', ()=>{
+        hljs.initHighlightingOnLoad();
+    })
+</script>
+
+      </div>
+    </div>
+    
+  </main>
+  <footer class="pl-scrollbar">
+    <div class="w-full max-w-screen-xl mx-auto"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 2021 <a href="https://www.songjinfeng.com/">SonJinfeng</a> 
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+  </footer>
+</body>
+
+</html>

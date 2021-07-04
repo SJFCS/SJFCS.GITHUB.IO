@@ -1,0 +1,1462 @@
+<!DOCTYPE html>
+<html lang='zh' ><meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+
+
+<title>Songjinfeng&#39;s BLOG</title>
+<link rel="stylesheet" href="/css/eureka.min.css">
+<script defer src="/js/eureka.min.js"></script>
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Noto+Serif+SC:wght@400;600;700&display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/styles/solarized-light.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/highlight.min.js"
+   crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/dart.min.js"
+     crossorigin></script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/js/all.min.js"
+   integrity="sha256-uNYoXefWRqv&#43;PsIF/OflNmwtKM4lStn9yrz2gVl6ymo="  crossorigin></script>
+
+
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css"
+   integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3&#43;Aro6EYUG4&#43;cU&#43;KJWu/X"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js" 
+  integrity="sha384-g7c&#43;Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI&#43;sEnkvrMWph2EDg4"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js"
+   integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC&#43;Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.9.2/dist/mermaid.min.js" 
+  integrity="sha256-Zmpaaj&#43;GXFsPF5WdPArSrnW3b30dovldeKsW00xBVwE="  crossorigin></script>
+
+
+<link rel="icon" type="image/png" sizes="32x32" href="/images/icon_hucfa16751ac9c82c06b84c3502c0db793_16378_32x32_fill_box_center_2.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hucfa16751ac9c82c06b84c3502c0db793_16378_180x180_fill_box_center_2.png">
+
+<meta name="description"
+  content="Eureka is a elegant and powerful theme for Hugo.">
+
+
+
+<meta property="og:title" content="Songjinfeng&#39;s BLOG" />
+<meta property="og:type" content="website" />
+
+
+<meta property="og:image" content="/images/icon.png">
+
+
+<meta property="og:url" content="/" />
+
+
+
+
+
+<meta property="og:description" content="Eureka is a elegant and powerful theme for Hugo." />
+
+
+
+
+
+<meta property="og:locale" content="zh" />
+
+
+
+
+<meta property="og:site_name" content="Songjinfeng&#39;s BLOG" />
+
+
+
+
+
+
+<meta property="og:updated_time" content="2021-05-15T00:00:00&#43;00:00" />
+
+
+
+<meta property="article:section" content="" />
+
+
+<link rel="alternate" type="application/rss+xml" href="/index.xml" title="Songjinfeng's BLOG" />
+
+<body class="flex flex-col min-h-screen">
+  <header class="fixed flex items-center w-full min-h-16 pl-scrollbar z-50 bg-secondary-bg shadow-sm">
+    <div class="w-full max-w-screen-xl mx-auto"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="mr-6 text-primary-text text-xl font-bold">Songjinfeng&#39;s BLOG</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:flex-grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:flex-grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">技术专栏</a>
+            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">文档笔记</a>
+            <a href="/series/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">主题系列</a>
+            <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">标签</a>
+            <a href="/authors/songjinfeng/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">关于</a>
+            <a href="/index.xml" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">RSS</a>
+            <a href="/webstack" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">友链&amp;导航</a>
+        </div>
+
+        <div class="flex">
+            <div class="relative pt-4 md:pt-0">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col left-0 md:left-auto right-auto md:right-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">浅色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">深色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">自动</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            switchMode('Auto')
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+  </header>
+  <main class="flex-grow pt-16">
+  
+  
+  
+    
+      
+  
+
+  
+
+  
+  
+  
+
+  
+    
+    
+    
+    
+    
+    
+      
+      
+        
+      
+    
+
+    
+    
+    
+    
+
+    
+    
+    
+    
+
+  
+
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+
+    
+    
+    
+    
+    
+  
+
+  <div class="pl-scrollbar bg-cover" 
+     style="background-image: url(https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/images/banner.jpg);" >
+    <div class="max-w-screen-xl mx-auto">
+      <div id="blank" class="lg:w-3/4 mx-auto px-6 md:px-8 xl:px-12 py-12">
+        
+  
+
+  
+    <!-- 样式         color: rgb(159, 195, 219);  -->
+<style>
+    .text1{
+        font-family: Playball, cursive,Titillium Web,'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;
+        font-size: 2rem;
+        font-weight: bolder;
+        color: rgb(255, 255, 255);
+        text-indent:0em;
+    }
+    .text2{
+        font-family: 'Long Cang', cursive;
+        font-size: 1.2rem;
+        color: rgb(255, 255, 255);
+        text-indent:0em;    
+    }
+    .text3{
+        font-family: 'Long Cang', cursive;
+        font-size: 0.9rem;
+        color: rgb(255, 255, 255);
+        text-indent:0em;    
+    }
+    .text4{
+        font-family: 'Long Cang', cursive;
+        font-size: 1.4rem;
+        color: rgb(255, 255, 255);
+        text-indent:0em;    
+    }
+</style>
+<!-- 时间 -->
+<script>
+    var now = new Date(); 
+    function createtime() { 
+        var grt= new Date("01/01/2021 00:00:00");//在此处修改你的建站时间
+        now.setTime(now.getTime()+250); 
+        days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days); 
+        hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours); 
+        if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum); 
+        mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;} 
+        seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum); 
+        snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;} 
+        document.getElementById("timeDate").innerHTML = "已运行 "+dnum+" 天 "; 
+        document.getElementById("times").innerHTML = hnum + " 小时 " + mnum + " 分 " + snum + " 秒"; 
+    } 
+setInterval("createtime()",250);
+</script>
+<!-- 打字机Url: https://github.com/mattboldt/typed.js -->
+<script>(function(t,e){"object"==typeof exports&&"object"==typeof module?module.exports=e():"function"==typeof define&&define.amd?define([],e):"object"==typeof exports?exports.Typed=e():t.Typed=e()})(this,function(){return function(t){function e(n){if(s[n])return s[n].exports;var i=s[n]={exports:{},id:n,loaded:!1};return t[n].call(i.exports,i,i.exports,e),i.loaded=!0,i.exports}var s={};return e.m=t,e.c=s,e.p="",e(0)}([function(t,e,s){"use strict";function n(t,e){if(!(t instanceof e))throw new TypeError("Cannot call a class as a function")}Object.defineProperty(e,"__esModule",{value:!0});var i=function(){function t(t,e){for(var s=0;s<e.length;s++){var n=e[s];n.enumerable=n.enumerable||!1,n.configurable=!0,"value"in n&&(n.writable=!0),Object.defineProperty(t,n.key,n)}}return function(e,s,n){return s&&t(e.prototype,s),n&&t(e,n),e}}(),r=s(1),o=s(3),a=function(){function t(e,s){n(this,t),r.initializer.load(this,s,e),this.begin()}return i(t,[{key:"toggle",value:function(){this.pause.status?this.start():this.stop()}},{key:"stop",value:function(){this.typingComplete||this.pause.status||(this.toggleBlinking(!0),this.pause.status=!0,this.options.onStop(this.arrayPos,this))}},{key:"start",value:function(){this.typingComplete||this.pause.status&&(this.pause.status=!1,this.pause.typewrite?this.typewrite(this.pause.curString,this.pause.curStrPos):this.backspace(this.pause.curString,this.pause.curStrPos),this.options.onStart(this.arrayPos,this))}},{key:"destroy",value:function(){this.reset(!1),this.options.onDestroy(this)}},{key:"reset",value:function(){var t=arguments.length<=0||void 0===arguments[0]||arguments[0];clearInterval(this.timeout),this.replaceText(""),this.cursor&&this.cursor.parentNode&&(this.cursor.parentNode.removeChild(this.cursor),this.cursor=null),this.strPos=0,this.arrayPos=0,this.curLoop=0,t&&(this.insertCursor(),this.options.onReset(this),this.begin())}},{key:"begin",value:function(){var t=this;this.options.onBegin(this),this.typingComplete=!1,this.shuffleStringsIfNeeded(this),this.insertCursor(),this.bindInputFocusEvents&&this.bindFocusEvents(),this.timeout=setTimeout(function(){t.currentElContent&&0!==t.currentElContent.length?t.backspace(t.currentElContent,t.currentElContent.length):t.typewrite(t.strings[t.sequence[t.arrayPos]],t.strPos)},this.startDelay)}},{key:"typewrite",value:function(t,e){var s=this;this.fadeOut&&this.el.classList.contains(this.fadeOutClass)&&(this.el.classList.remove(this.fadeOutClass),this.cursor&&this.cursor.classList.remove(this.fadeOutClass));var n=this.humanizer(this.typeSpeed),i=1;return this.pause.status===!0?void this.setPauseStatus(t,e,!0):void(this.timeout=setTimeout(function(){e=o.htmlParser.typeHtmlChars(t,e,s);var n=0,r=t.substr(e);if("^"===r.charAt(0)&&/^\^\d+/.test(r)){var a=1;r=/\d+/.exec(r)[0],a+=r.length,n=parseInt(r),s.temporaryPause=!0,s.options.onTypingPaused(s.arrayPos,s),t=t.substring(0,e)+t.substring(e+a),s.toggleBlinking(!0)}if("`"===r.charAt(0)){for(;"`"!==t.substr(e+i).charAt(0)&&(i++,!(e+i>t.length)););var u=t.substring(0,e),l=t.substring(u.length+1,e+i),c=t.substring(e+i+1);t=u+l+c,i--}s.timeout=setTimeout(function(){s.toggleBlinking(!1),e>=t.length?s.doneTyping(t,e):s.keepTyping(t,e,i),s.temporaryPause&&(s.temporaryPause=!1,s.options.onTypingResumed(s.arrayPos,s))},n)},n))}},{key:"keepTyping",value:function(t,e,s){0===e&&(this.toggleBlinking(!1),this.options.preStringTyped(this.arrayPos,this)),e+=s;var n=t.substr(0,e);this.replaceText(n),this.typewrite(t,e)}},{key:"doneTyping",value:function(t,e){var s=this;this.options.onStringTyped(this.arrayPos,this),this.toggleBlinking(!0),this.arrayPos===this.strings.length-1&&(this.complete(),this.loop===!1||this.curLoop===this.loopCount)||(this.timeout=setTimeout(function(){s.backspace(t,e)},this.backDelay))}},{key:"backspace",value:function(t,e){var s=this;if(this.pause.status===!0)return void this.setPauseStatus(t,e,!1);if(this.fadeOut)return this.initFadeOut();this.toggleBlinking(!1);var n=this.humanizer(this.backSpeed);this.timeout=setTimeout(function(){e=o.htmlParser.backSpaceHtmlChars(t,e,s);var n=t.substr(0,e);if(s.replaceText(n),s.smartBackspace){var i=s.strings[s.arrayPos+1];i&&n===i.substr(0,e)?s.stopNum=e:s.stopNum=0}e>s.stopNum?(e--,s.backspace(t,e)):e<=s.stopNum&&(s.arrayPos++,s.arrayPos===s.strings.length?(s.arrayPos=0,s.options.onLastStringBackspaced(),s.shuffleStringsIfNeeded(),s.begin()):s.typewrite(s.strings[s.sequence[s.arrayPos]],e))},n)}},{key:"complete",value:function(){this.options.onComplete(this),this.loop?this.curLoop++:this.typingComplete=!0}},{key:"setPauseStatus",value:function(t,e,s){this.pause.typewrite=s,this.pause.curString=t,this.pause.curStrPos=e}},{key:"toggleBlinking",value:function(t){this.cursor&&(this.pause.status||this.cursorBlinking!==t&&(this.cursorBlinking=t,t?this.cursor.classList.add("typed-cursor--blink"):this.cursor.classList.remove("typed-cursor--blink")))}},{key:"humanizer",value:function(t){return Math.round(Math.random()*t/2)+t}},{key:"shuffleStringsIfNeeded",value:function(){this.shuffle&&(this.sequence=this.sequence.sort(function(){return Math.random()-.5}))}},{key:"initFadeOut",value:function(){var t=this;return this.el.className+=" "+this.fadeOutClass,this.cursor&&(this.cursor.className+=" "+this.fadeOutClass),setTimeout(function(){t.arrayPos++,t.replaceText(""),t.strings.length>t.arrayPos?t.typewrite(t.strings[t.sequence[t.arrayPos]],0):(t.typewrite(t.strings[0],0),t.arrayPos=0)},this.fadeOutDelay)}},{key:"replaceText",value:function(t){this.attr?this.el.setAttribute(this.attr,t):this.isInput?this.el.value=t:"html"===this.contentType?this.el.innerHTML=t:this.el.textContent=t}},{key:"bindFocusEvents",value:function(){var t=this;this.isInput&&(this.el.addEventListener("focus",function(e){t.stop()}),this.el.addEventListener("blur",function(e){t.el.value&&0!==t.el.value.length||t.start()}))}},{key:"insertCursor",value:function(){this.showCursor&&(this.cursor||(this.cursor=document.createElement("span"),this.cursor.className="typed-cursor",this.cursor.setAttribute("aria-hidden",!0),this.cursor.innerHTML=this.cursorChar,this.el.parentNode&&this.el.parentNode.insertBefore(this.cursor,this.el.nextSibling)))}}]),t}();e["default"]=a,t.exports=e["default"]},function(t,e,s){"use strict";function n(t){return t&&t.__esModule?t:{"default":t}}function i(t,e){if(!(t instanceof e))throw new TypeError("Cannot call a class as a function")}Object.defineProperty(e,"__esModule",{value:!0});var r=Object.assign||function(t){for(var e=1;e<arguments.length;e++){var s=arguments[e];for(var n in s)Object.prototype.hasOwnProperty.call(s,n)&&(t[n]=s[n])}return t},o=function(){function t(t,e){for(var s=0;s<e.length;s++){var n=e[s];n.enumerable=n.enumerable||!1,n.configurable=!0,"value"in n&&(n.writable=!0),Object.defineProperty(t,n.key,n)}}return function(e,s,n){return s&&t(e.prototype,s),n&&t(e,n),e}}(),a=s(2),u=n(a),l=function(){function t(){i(this,t)}return o(t,[{key:"load",value:function(t,e,s){if("string"==typeof s?t.el=document.querySelector(s):t.el=s,t.options=r({},u["default"],e),t.isInput="input"===t.el.tagName.toLowerCase(),t.attr=t.options.attr,t.bindInputFocusEvents=t.options.bindInputFocusEvents,t.showCursor=!t.isInput&&t.options.showCursor,t.cursorChar=t.options.cursorChar,t.cursorBlinking=!0,t.elContent=t.attr?t.el.getAttribute(t.attr):t.el.textContent,t.contentType=t.options.contentType,t.typeSpeed=t.options.typeSpeed,t.startDelay=t.options.startDelay,t.backSpeed=t.options.backSpeed,t.smartBackspace=t.options.smartBackspace,t.backDelay=t.options.backDelay,t.fadeOut=t.options.fadeOut,t.fadeOutClass=t.options.fadeOutClass,t.fadeOutDelay=t.options.fadeOutDelay,t.isPaused=!1,t.strings=t.options.strings.map(function(t){return t.trim()}),"string"==typeof t.options.stringsElement?t.stringsElement=document.querySelector(t.options.stringsElement):t.stringsElement=t.options.stringsElement,t.stringsElement){t.strings=[],t.stringsElement.style.display="none";var n=Array.prototype.slice.apply(t.stringsElement.children),i=n.length;if(i)for(var o=0;o<i;o+=1){var a=n[o];t.strings.push(a.innerHTML.trim())}}t.strPos=0,t.arrayPos=0,t.stopNum=0,t.loop=t.options.loop,t.loopCount=t.options.loopCount,t.curLoop=0,t.shuffle=t.options.shuffle,t.sequence=[],t.pause={status:!1,typewrite:!0,curString:"",curStrPos:0},t.typingComplete=!1;for(var o in t.strings)t.sequence[o]=o;t.currentElContent=this.getCurrentElContent(t),t.autoInsertCss=t.options.autoInsertCss,this.appendAnimationCss(t)}},{key:"getCurrentElContent",value:function(t){var e="";return e=t.attr?t.el.getAttribute(t.attr):t.isInput?t.el.value:"html"===t.contentType?t.el.innerHTML:t.el.textContent}},{key:"appendAnimationCss",value:function(t){var e="data-typed-js-css";if(t.autoInsertCss&&(t.showCursor||t.fadeOut)&&!document.querySelector("["+e+"]")){var s=document.createElement("style");s.type="text/css",s.setAttribute(e,!0);var n="";t.showCursor&&(n+="\n        .typed-cursor{\n          opacity: 1;\n        }\n        .typed-cursor.typed-cursor--blink{\n          animation: typedjsBlink 0.7s infinite;\n          -webkit-animation: typedjsBlink 0.7s infinite;\n                  animation: typedjsBlink 0.7s infinite;\n        }\n        @keyframes typedjsBlink{\n          50% { opacity: 0.0; }\n        }\n        @-webkit-keyframes typedjsBlink{\n          0% { opacity: 1; }\n          50% { opacity: 0.0; }\n          100% { opacity: 1; }\n        }\n      "),t.fadeOut&&(n+="\n        .typed-fade-out{\n          opacity: 0;\n          transition: opacity .25s;\n        }\n        .typed-cursor.typed-cursor--blink.typed-fade-out{\n          -webkit-animation: 0;\n          animation: 0;\n        }\n      "),0!==s.length&&(s.innerHTML=n,document.body.appendChild(s))}}}]),t}();e["default"]=l;var c=new l;e.initializer=c},function(t,e){"use strict";Object.defineProperty(e,"__esModule",{value:!0});var s={strings:["These are the default values...","You know what you should do?","Use your own!","Have a great day!"],stringsElement:null,typeSpeed:0,startDelay:0,backSpeed:0,smartBackspace:!0,shuffle:!1,backDelay:700,fadeOut:!1,fadeOutClass:"typed-fade-out",fadeOutDelay:500,loop:!1,loopCount:1/0,showCursor:!0,cursorChar:"|",autoInsertCss:!0,attr:null,bindInputFocusEvents:!1,contentType:"html",onBegin:function(t){},onComplete:function(t){},preStringTyped:function(t,e){},onStringTyped:function(t,e){},onLastStringBackspaced:function(t){},onTypingPaused:function(t,e){},onTypingResumed:function(t,e){},onReset:function(t){},onStop:function(t,e){},onStart:function(t,e){},onDestroy:function(t){}};e["default"]=s,t.exports=e["default"]},function(t,e){"use strict";function s(t,e){if(!(t instanceof e))throw new TypeError("Cannot call a class as a function")}Object.defineProperty(e,"__esModule",{value:!0});var n=function(){function t(t,e){for(var s=0;s<e.length;s++){var n=e[s];n.enumerable=n.enumerable||!1,n.configurable=!0,"value"in n&&(n.writable=!0),Object.defineProperty(t,n.key,n)}}return function(e,s,n){return s&&t(e.prototype,s),n&&t(e,n),e}}(),i=function(){function t(){s(this,t)}return n(t,[{key:"typeHtmlChars",value:function(t,e,s){if("html"!==s.contentType)return e;var n=t.substr(e).charAt(0);if("<"===n||"&"===n){var i="";for(i="<"===n?">":";";t.substr(e+1).charAt(0)!==i&&(e++,!(e+1>t.length)););e++}return e}},{key:"backSpaceHtmlChars",value:function(t,e,s){if("html"!==s.contentType)return e;var n=t.substr(e).charAt(0);if(">"===n||";"===n){var i="";for(i=">"===n?"<":"&";t.substr(e-1).charAt(0)!==i&&(e--,!(e<0)););e--}return e}}]),t}();e["default"]=i;var r=new i;e.htmlParser=r}])});
+//# sourceMappingURL=typed.min.js.map</script>
+<!-- 铺满、垂直居中,水平平铺 -->
+<div style="height:calc(100vh - 161px);display:flex;align-items:center;text-align:center;position:relative;">
+    <!-- DIV水平居中 -->
+    <div  style="margin:0 auto">    
+    <!-- 打字机+标题 -->
+    <div style="margin-top:70%;">
+    <p  class=text1>SongJinfeng's BLOG</p>
+    <br>
+    <span  class=text2 id="subtitle"></span>
+    <script>var typed =new Typed("#subtitle",{strings:['敢于梦想并敢于失败。','Dream big and dare to fail.'],startDelay:300,typeSpeed:100,loop:true,backSpeed:50,showCursor:true});</script>
+    </div>
+    <!-- DIV嵌套置底箭头+时间 -->
+    <div style="margin-top:70%;" class=text4>   
+                    <i class="text3 fa fa-clock" aria-hidden="true"></i> 
+                    <span  class=text3 id="timeDate"></span><span class=text3  id="times"></span>
+                    <br><br>
+                    <a href="#start" >
+                    <i style="margin-bottom:2rem;" class="fa fa-angle-double-down"></i>
+    </div>
+
+    </div>
+</div>
+<!-- 锚点 -->
+<p id="start"></p>
+
+
+
+
+  
+
+      </div>
+    </div>
+  </div>
+
+    
+
+  
+  
+    
+      
+  
+
+  
+
+  
+  
+  
+
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+  
+
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+
+    
+    
+    
+    
+    
+  
+
+  <div class="pl-scrollbar bg-secondary-bg" 
+    >
+    <div class="max-w-screen-xl mx-auto">
+      <div id="about" class="lg:w-3/4 mx-auto px-6 md:px-8 xl:px-12 py-12">
+        
+  
+
+  
+    <div class="flex flex-col md:flex-row items-center justify-center mb-12">
+  
+  
+    <div class="flex-none w-48 mx-auto md:ml-0 md:mr-8 md:pr-8 md:border-r">
+      <img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/images/2021.04.22-14:35:19-D-assets-images-sjf.png" class="rounded-full" alt="Avatar">
+    </div>
+  
+  <div class="flex-grow mt-4 md:mt-0">
+    <div class="text-3xl py-4">SongJinfeng</div>
+    <div class="w-3/12 xl:w-2/12 border-b"></div>
+
+    <div class="flex items-center pt-4">
+      
+        <i class="fas fa-user"></i>
+      
+      <div class="flex flex-wrap">
+        
+          <span class="pl-4"><a href="#start">云计算运维工程师</a></span>
+        
+
+        
+          <a href="./#start" class="pl-4">新华三技术有限公司 [技术服务部]（外协）</a>
+        
+      </div>
+
+    </div>
+
+    
+      <div class="py-8 text-lg leading-normal">
+        一名运维技术爱好者，专注于 Kubernetes 、 Linux 等技术干货分享。
+      </div>
+    
+  </div>
+  <div class="flex md:flex-col justify-center items-end ml-8">
+    
+    
+      
+      
+      
+      
+      
+      <div class="pb-2 pr-4 md:pr-0 pt-4 md:pt-0">
+        <a href="mailto:GW.songjinfengzc@h3c.com"><i class="fas fa-envelope"></i></a>
+      </div>
+    
+      
+      
+      
+      
+      
+      <div class="pb-2 pr-4 md:pr-0 pt-4 md:pt-0">
+        <a href="https://github.com/SJFCS/SJFCS.GITHUB.IO"><i class="fab fa-github"></i></a>
+      </div>
+    
+      
+      
+      
+      
+      
+      <div class="pb-2 pr-4 md:pr-0 pt-4 md:pt-0">
+        <a href="./index.xml"><i class="fas fa-rss"></i></a>
+      </div>
+    
+  </div>
+</div>
+<div class="content">
+  <style>
+  :root {
+    --heo-white: #fff;
+  }
+  div#categoryList {
+    display: flex;
+    width: 100%;
+    justify-content: space-between
+  }
+  .categoryItem {
+    min-width: 24%;
+    overflow: hidden;
+    transform: scale(1);
+    transition: .3s
+  }
+  .categoryItem:hover {
+    transform: scale(1.05);
+    transition: .3s
+  }
+  a.categoryButton {
+  text-decoration:none!important;
+    height: 4em;
+    width: 100%;
+    background: var(--heo-card-bg);
+    border-radius: 12px;
+    display: inline-block;
+    text-align: left;
+    line-height: 4em;
+    font-weight: 700;
+    font-size: .9rem;
+    color: var(--heo-white);
+    transition: all .4s cubic-bezier(.39,.575,.565,1);
+    transform: scale(1);
+    overflow: hidden;
+    font-family: PingFang SC,Hiragino Sans GB,Microsoft YaHei
+  }
+  a.categoryButton:after {
+    top: 80%;
+    width: 40%;
+    left: calc(50% - 20%);
+    height: 2px;
+    background: var(--heo-white);
+    content: "";
+    border-radius: 1px;
+    position: absolute
+  }
+  .categoryButtonText {
+    display:block;
+    margin:0px auto;
+    text-align:center;
+  }
+</style>
+<div class="categoryList" id="categoryList">
+<div class="categoryItem">
+<a class="categoryButton" href="/posts/" style="background:#56ccf2;background:-webkit-linear-gradient(to right,#2f80ed,#56ccf2);background:linear-gradient(to right,#2f80ed,#56ccf2)" data-pjax-state="" one-link-mark="yes"><span     style="color:white;" class="categoryButtonText">技术专栏</span><i style="color:white;" class="fas fa-dove"></i></a>
+</div>
+<div class="categoryItem">
+<a class="categoryButton" href="/docs/" style="background:#f12711;background:-webkit-linear-gradient(to right,#f12711,#f5af19);background:linear-gradient(to right,#f12711,#f5af19)" data-pjax-state="" one-link-mark="yes"><span style="color:white;" class="categoryButtonText">文档笔记</span><i style="color:white;" class="fas fa-burn"></i></a>
+</div>
+<div class="categoryItem">
+<a class="categoryButton" href="/series/" style="background:#f953c6;background:-webkit-linear-gradient(to right,#b91d73,#f953c6);background:linear-gradient(to right,#b91d73,#f953c6)" data-pjax-state="" one-link-mark="yes"><span style="color:white;" class="categoryButtonText">主题系列</span><i style="color:white;" class="fas fa-apple-alt"></i></a>
+</div>
+<div class="categoryItem">
+<a class="categoryButton" href="/webstack/" style="background:#11998e;background:-webkit-linear-gradient(to left,#38ef7d,#11998e);background:linear-gradient(to left,#38ef7d,#11998e)" data-pjax-state="" one-link-mark="yes"><span style="color:white;" class="categoryButtonText">友链&导航</span><i style="color:white;" class="fas fa-lemon"></i></a>
+</div>
+</div>
+<blockquote>
+<h2 id="技能">技能</h2>
+</blockquote>
+<style>
+  p {
+    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
+    margin-top: 0;
+    margin-bottom: 1rem
+
+  }
+
+  .row {
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    margin-right: -15px;
+    margin-left: -15px
+  }
+  .col,.col-1,.col-10,.col-11,.col-12,.col-2,.col-3,.col-4,.col-5,.col-6,.col-7,.col-8,.col-9,.col-auto,.col-lg,.col-lg-1,.col-lg-10,.col-lg-11,.col-lg-12,.col-lg-2,.col-lg-3,.col-lg-4,.col-lg-5,.col-lg-6,.col-lg-7,.col-lg-8,.col-lg-9,.col-lg-auto,.col-md,.col-md-1,.col-md-10,.col-md-11,.col-md-12,.col-md-2,.col-md-3,.col-md-4,.col-md-5,.col-md-6,.col-md-7,.col-md-8,.col-md-9,.col-md-auto,.col-sm,.col-sm-1,.col-sm-10,.col-sm-11,.col-sm-12,.col-sm-2,.col-sm-3,.col-sm-4,.col-sm-5,.col-sm-6,.col-sm-7,.col-sm-8,.col-sm-9,.col-sm-auto,.col-xl,.col-xl-1,.col-xl-10,.col-xl-11,.col-xl-12,.col-xl-2,.col-xl-3,.col-xl-4,.col-xl-5,.col-xl-6,.col-xl-7,.col-xl-8,.col-xl-9,.col-xl-auto {
+    position: relative;
+    width: 100%;
+    min-height: 1px;
+    padding-right: 15px;
+    padding-left: 15px
+  }
+  @media (min-width:1000px) {
+    .col-lg-4 {
+      -ms-flex: 0 0 33.333333%;
+      flex: 0 0 33.333333%;
+      max-width: 33.333333%
+    }
+    .offset-lg-11 {
+      margin-left: 91.666667%
+    }
+  }
+
+  .card {
+    position: relative;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    min-width: 0;
+    word-wrap: break-word;
+    background-color: #fff;
+    background-clip: border-box;
+    border: 1px solid rgba(0,0,0,.125);
+    border-radius: .25rem
+  }
+  .d-flex {
+    display: -ms-flexbox!important;
+    display: flex!important
+  }
+
+
+.card-title {
+  color: #1c2d41;
+}
+.card-text {
+  color: #3c4858;
+}
+.card-img-xs {
+  width: 24px;
+  height: 24px;
+}
+.card:hover,
+.card:focus {
+  box-shadow: 0px 8px 56px rgba(15, 80, 100, 0.16);
+  border: 1px solid #fff;
+  transition: all 0.3s ease-out;
+}
+
+.skills-section .card .card-head {
+  background-color: #f9fafc;
+  height: -webkit-fit-content;
+  height: -moz-fit-content;
+  height: fit-content;
+  padding: 0.7rem;
+  padding-bottom: 0rem;
+  border-bottom: 0.0625rem solid rgba(0, 0, 0, 0.125);
+}
+
+.skills-section .skill-card-link {
+  text-decoration: none;
+  text-decoration:none!important;
+}
+
+.skills-section .card .card-img-xs {
+  margin-right: 0.5rem;
+}
+
+.skills-section .card {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.skills-section .card .card-body {
+  padding-top: 0.2rem;
+  padding-left: 1.4rem;
+}
+</style>
+   <div class="container-fluid anchor pb-5 skills-section" id="skills">
+     <div class="row" id="primary-skills">
+      <div class="col-xs-12 col-sm-6 col-lg-4 pt-2">
+       <a class="skill-card-link" href="javascript:void(0)" one-link-mark="yes">
+        <div class="card" style="min-height: 168px;">
+         <div class="card-head d-flex">
+          <img class="card-img-xs" src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/images/2021.04.22-14:35:48-D-assets-images-linux.png" alt="Kubernetes" />
+          <span class="card-title">Linux</span>
+         </div>
+         <div class="card-body">
+         <p class="card-text"></p>
+         <li class="card-text">熟悉Linux文件系统基本操作（LVM、RAID...）</li>
+         <li class="card-text">熟悉常用服务部署（NDS、NFS、NTP...）</li>
+         </div>
+        </div></a>
+      </div>
+      <div class="col-xs-12 col-sm-6 col-lg-4 pt-2">
+       <a class="skill-card-link" href="javascript:void(0)" one-link-mark="yes">
+        <div class="card" style="min-height: 168px;">
+         <div class="card-head d-flex">
+          <img class="card-img-xs" src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/images/2021.04.22-14:35:34-D-assets-images-docker.svg" alt="Go Development" />
+          <span class="card-title">Docker</span>
+         </div>
+         <div class="card-body">
+         <p class="card-text"></p>
+         <li class="card-text">熟悉Docker容器基本操作</li>
+         <li class="card-text">了解Dockerfile编写</li>
+         <li class="card-text">了解容器数据持久化。</li>
+         </div>
+        </div></a>
+      </div>
+      <div class="col-xs-12 col-sm-6 col-lg-4 pt-2">
+       <a class="skill-card-link" href="javascript:void(0)" one-link-mark="yes">
+        <div class="card" style="min-height: 168px;">
+         <div class="card-head d-flex">
+          <img class="card-img-xs" src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/images/2021.04.22-14:35:45-D-assets-images-kubernetes.png" alt="Cloud Computing" />
+          <span class="card-title">Kubernetes</span>
+         </div>
+         <div class="card-body">
+         <p class="card-text"></p>
+         <li class="card-text">熟悉K8S二进制手动部署</li>
+         <li class="card-text">了解KubeAdmin部署</li>
+         <li class="card-text">熟悉pod固化和yaml编写</li>
+         </div>
+        </div></a>
+      </div>
+      <div class="col-xs-12 col-sm-6 col-lg-4 pt-2">
+        <a class="skill-card-link" href="javascript:void(0)" one-link-mark="yes">
+         <div class="card" style="min-height: 168px;">
+          <div class="card-head d-flex">
+           <img class="card-img-xs" src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/images/2021.04.22-14:35:50-D-assets-images-prometheus.png" alt="Cloud Computing" />
+           <span class="card-title">Prometheus</span>
+          </div>
+          <div class="card-body">
+         <p class="card-text"></p>
+         <li class="card-text">普罗米修斯常用监控</li>
+         <li class="card-text">结合G实现图形化</li>
+         <li class="card-text">了解zabbix</li>
+          </div>
+         </div></a>
+       </div>
+       <div class="col-xs-12 col-sm-6 col-lg-4 pt-2">
+        <a class="skill-card-link" href="javascript:void(0)" one-link-mark="yes">
+         <div class="card" style="min-height: 168px;">
+          <div class="card-head d-flex">
+           <img class="card-img-xs" src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/images/2021.05.20-11:45:13-D-assets-images-u=1696638020,3339435284-fm=26-gp=0.png" alt="Cloud Computing" />
+           <span class="card-title">MySQL</span>
+          </div>
+          <div class="card-body">
+         <p class="card-text"></p>
+         <li class="card-text">熟悉基本sql语句</li>
+         <li class="card-text">了解主从复制</li>
+         <li class="card-text">熟悉数据热备恢复</li>
+          </div>
+         </div></a>
+       </div>
+       <div class="col-xs-12 col-sm-6 col-lg-4 pt-2">
+        <a class="skill-card-link" href="javascript:void(0)" one-link-mark="yes">
+         <div class="card" style="min-height: 168px;">
+          <div class="card-head d-flex">
+           <img class="card-img-xs" src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/images/2021.05.20-11:49:49-D-assets-images-favicon.png" alt="Cloud Computing" />
+           <span class="card-title">Nginx</span>
+          </div>
+          <div class="card-body">
+         <p class="card-text"></p>
+         <li class="card-text">熟悉Nginx反代和Lb负载分担</li>
+         <li class="card-text">了解keepalive、lvs、haproxy</li>
+         <li class="card-text">了解基本优化参数</li>
+          </div>
+         </div></a>
+       </div>
+     </div>
+   </div>
+<blockquote>
+<h2 id="证书">证书：</h2>
+</blockquote>
+<ul>
+<li>ACP</li>
+<li>RHCSA</li>
+<li>H3CNE-RS</li>
+<li>H3CNE-CLOUD</li>
+</ul>
+<blockquote>
+<h2 id="奖项">奖项：</h2>
+</blockquote>
+<ul>
+<li>最佳新人</li>
+<li>云计算省赛</li>
+<li>大数据省赛</li>
+</ul>
+
+</div>
+
+  
+
+      </div>
+    </div>
+  </div>
+
+    
+
+  
+  
+    
+      
+  
+
+  
+
+  
+  
+  
+
+  
+    
+    
+    
+    
+      
+      
+    
+  
+
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+
+    
+    
+    
+    
+    
+  
+
+  <div class="pl-scrollbar bg-primary-bg" 
+    >
+    <div class="max-w-screen-xl mx-auto">
+      <div id="技术专栏" class="lg:w-3/4 mx-auto px-6 md:px-8 xl:px-12 py-12">
+        
+  
+
+  
+    
+  <h2 class=" font-bold text-3xl my-4">技术专栏</h2>
+
+
+  
+  <div class="pb-2 text-right hover:text-eureka">
+    
+  <a href="/posts/" class="font-semibold">阅读更多</a>
+  <i class="fas fa-caret-right ml-1"></i>
+
+  </div>
+  
+  <div class="masonry grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+  
+  <div class="item">
+    <div class="grid-content">
+      <div class="bg-secondary-bg rounded overflow-hidden border hover:shadow-lg transition ease-in-out duration-200">
+  
+  
+  <img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/_index/2021.06.24-15:58:25-D-assets-_index-linux1.jpg" class="w-full" alt="Featured Image">
+  
+  <div class="px-6 pt-6">
+    <div class="font-bold text-xl text-primary-text mb-2">
+      <a href="/posts/1.linux/" class="hover:text-eureka">Linux</a>
+    </div>
+    <div class=""> 介绍Linux系统有关知识，持续更新中。。。
+</div>
+  </div>
+  <div class="px-6 pb-2">
+    <div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>2021-04-21</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>1分钟阅读时长</span>
+    </div>
+    
+    
+
+    
+</div>
+  </div>
+</div>
+    </div>
+  </div>
+  
+  <div class="item">
+    <div class="grid-content">
+      <div class="bg-secondary-bg rounded overflow-hidden border hover:shadow-lg transition ease-in-out duration-200">
+  
+  
+  <img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/_index/2021.04.21-17:29:08-D-assets-_index-aHR0cHM6Ly9waWMxLnpoaW1nLmNvbS92Mi0wYmQzNzVmZjBmZTgyZjU0OGE5MDQyNzkxMzMzZDNlN18xMjAweDUwMC5qcGc.jpg" class="w-full" alt="Featured Image">
+  
+  <div class="px-6 pt-6">
+    <div class="font-bold text-xl text-primary-text mb-2">
+      <a href="/posts/3.web%E5%AE%B9%E5%99%A8/" class="hover:text-eureka">WEB容器</a>
+    </div>
+    <div class=""> 各种常用中间件运维操作。
+</div>
+  </div>
+  <div class="px-6 pb-2">
+    <div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>2020-10-16</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>1分钟阅读时长</span>
+    </div>
+    
+    
+
+    
+</div>
+  </div>
+</div>
+    </div>
+  </div>
+  
+  <div class="item">
+    <div class="grid-content">
+      <div class="bg-secondary-bg rounded overflow-hidden border hover:shadow-lg transition ease-in-out duration-200">
+  
+  
+  <img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/_index/2021.05.05-22:17:13-D-assets-_index-linux.jpg" class="w-full" alt="Featured Image">
+  
+  <div class="px-6 pt-6">
+    <div class="font-bold text-xl text-primary-text mb-2">
+      <a href="/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/" class="hover:text-eureka">容器虚拟化</a>
+    </div>
+    <div class=""> 介绍Linux系统有关知识，持续更新中。。。
+</div>
+  </div>
+  <div class="px-6 pb-2">
+    <div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>2020-10-16</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>1分钟阅读时长</span>
+    </div>
+    
+    
+
+    
+</div>
+  </div>
+</div>
+    </div>
+  </div>
+  
+  <div class="item">
+    <div class="grid-content">
+      <div class="bg-secondary-bg rounded overflow-hidden border hover:shadow-lg transition ease-in-out duration-200">
+  
+  
+  <img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/_index/2021.04.21-17:29:08-D-assets-_index-aHR0cHM6Ly9waWMxLnpoaW1nLmNvbS92Mi0wYmQzNzVmZjBmZTgyZjU0OGE5MDQyNzkxMzMzZDNlN18xMjAweDUwMC5qcGc.jpg" class="w-full" alt="Featured Image">
+  
+  <div class="px-6 pt-6">
+    <div class="font-bold text-xl text-primary-text mb-2">
+      <a href="/posts/5.%E6%95%B0%E6%8D%AE%E5%BA%93/" class="hover:text-eureka">数据库专栏</a>
+    </div>
+    <div class=""> 介绍Linux系统有关知识，持续更新中。。。
+</div>
+  </div>
+  <div class="px-6 pb-2">
+    <div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>2020-10-16</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>1分钟阅读时长</span>
+    </div>
+    
+    
+
+    
+</div>
+  </div>
+</div>
+    </div>
+  </div>
+  
+  <div class="item">
+    <div class="grid-content">
+      <div class="bg-secondary-bg rounded overflow-hidden border hover:shadow-lg transition ease-in-out duration-200">
+  
+  
+  <img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/_index/2021.04.21-17:29:08-D-assets-_index-aHR0cHM6Ly9waWMxLnpoaW1nLmNvbS92Mi0wYmQzNzVmZjBmZTgyZjU0OGE5MDQyNzkxMzMzZDNlN18xMjAweDUwMC5qcGc.jpg" class="w-full" alt="Featured Image">
+  
+  <div class="px-6 pt-6">
+    <div class="font-bold text-xl text-primary-text mb-2">
+      <a href="/posts/6.%E7%9B%91%E6%8E%A7%E7%B3%BB%E7%BB%9F/" class="hover:text-eureka">监控系统</a>
+    </div>
+    <div class=""> 介绍Linux系统有关知识，持续更新中。。。
+</div>
+  </div>
+  <div class="px-6 pb-2">
+    <div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>2020-10-16</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>1分钟阅读时长</span>
+    </div>
+    
+    
+
+    
+</div>
+  </div>
+</div>
+    </div>
+  </div>
+  
+  <div class="item">
+    <div class="grid-content">
+      <div class="bg-secondary-bg rounded overflow-hidden border hover:shadow-lg transition ease-in-out duration-200">
+  
+  
+  <img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/_index/2021.04.21-17:29:08-D-assets-_index-aHR0cHM6Ly9waWMxLnpoaW1nLmNvbS92Mi0wYmQzNzVmZjBmZTgyZjU0OGE5MDQyNzkxMzMzZDNlN18xMjAweDUwMC5qcGc.jpg" class="w-full" alt="Featured Image">
+  
+  <div class="px-6 pt-6">
+    <div class="font-bold text-xl text-primary-text mb-2">
+      <a href="/posts/7.%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4/" class="hover:text-eureka">自动化运维</a>
+    </div>
+    <div class=""> 介绍自动化运维工具。
+致力于提供一个优雅，丰富且已读的自动化运维技术专栏。
+</div>
+  </div>
+  <div class="px-6 pb-2">
+    <div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>2020-10-16</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>1分钟阅读时长</span>
+    </div>
+    
+    
+
+    
+</div>
+  </div>
+</div>
+    </div>
+  </div>
+  
+
+</div>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    enableMasonry()
+  })
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+      </div>
+    </div>
+  </div>
+
+    
+
+  
+  
+    
+      
+  
+
+  
+
+  
+  
+  
+
+  
+    
+    
+    
+    
+      
+      
+    
+  
+
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+
+    
+    
+    
+    
+    
+  
+
+  <div class="pl-scrollbar bg-primary-bg" 
+    >
+    <div class="max-w-screen-xl mx-auto">
+      <div id="文档笔记" class="lg:w-3/4 mx-auto px-6 md:px-8 xl:px-12 py-12">
+        
+  
+
+  
+    
+  <h2 class=" font-bold text-3xl my-4">文档笔记</h2>
+
+
+  
+  
+  <div class="overflow-hidden">
+    
+<div class="mb-6">
+  <div class="bg-secondary-bg rounded border hover:shadow-lg transition ease-in-out duration-200 px-6 pt-6 pb-4">
+  <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full lg:w-2/3">
+    <div class="mb-4">
+  <a href="/docs/iptables/" class="font-bold text-xl hover:text-eureka">Iptables详解</a>
+</div>
+<div class="content">
+  Iptables的常用模块、匹配规则、拓展动作、常用安全策略配置等
+
+</div>
+
+<div class="px-6 pt-4">
+  
+  <div class="">
+      <div class="mb-2">
+          <a href="/docs/iptables/iptables%E8%AF%A6%E8%A7%A31%E6%A6%82%E5%BF%B5/" class="font-semibold hover:text-eureka">Iptables详解(1)概念</a>
+      </div>
+      <div class="">iptables/netfilter的关系，五链四表的关系，数据转发流程。
+</div>
+  </div>
+  
+  
+  <div class="-mx-4 my-4 border-t"></div>
+  <div class="">
+      <div class="mb-2">
+          <a href="/docs/iptables/iptables%E8%AF%A6%E8%A7%A32%E5%9F%BA%E7%A1%80%E7%AE%A1%E7%90%86%E5%91%BD%E4%BB%A4/" class="font-semibold hover:text-eureka">Iptables详解(2)管理</a>
+      </div>
+      <div class="">iptables 增删改查 常用语句
+iptables -t 表名 -[ A | I | D] 链名 (规则编号) 匹配规则 -j 动作
+iptables [-t 表名] 选项 [链名] [匹配条件] [-j 控制类型]
+</div>
+  </div>
+  
+  
+  <div class="-mx-4 my-4 border-t"></div>
+  <div class="">
+      <div class="mb-2">
+          <a href="/docs/iptables/iptables%E8%AF%A6%E8%A7%A332%E6%89%A9%E5%B1%95%E5%8C%B9%E9%85%8D%E6%9D%A1%E4%BB%B6%E6%A8%A1%E5%9D%97/" class="font-semibold hover:text-eureka">Iptables详解(3)2扩展匹配条件模块</a>
+      </div>
+      <div class="">1
+ 基本匹配 拓展匹配模块  s d p i o
+tcp udp icmp
+iprange multiport mac
+string time connlimit limit
+</div>
+  </div>
+  
+  <div class="pt-6 hover:text-eureka">
+      <a href="/docs/iptables/" class="font-semibold">阅读更多</a>
+      <i class="fas fa-caret-right ml-1"></i>
+  </div>
+</div>
+
+  </div>
+
+  
+  <div class="w-full lg:w-1/3 mb-4 lg:mb-0 lg:ml-8">
+    <img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/_index/2021.04.21-17:29:08-D-assets-_index-aHR0cHM6Ly9waWMxLnpoaW1nLmNvbS92Mi0wYmQzNzVmZjBmZTgyZjU0OGE5MDQyNzkxMzMzZDNlN18xMjAweDUwMC5qcGc.jpg" class="w-full" alt="Featured Image">
+  </div>
+  
+</div>
+</div>
+</div>
+
+    <div class="px-8 pt-2 hover:text-eureka">
+      
+  <a href="/docs/" class="font-semibold">阅读更多</a>
+  <i class="fas fa-caret-right ml-1"></i>
+
+    </div>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+      </div>
+    </div>
+  </div>
+
+    
+
+  
+  
+    
+      
+  
+
+  
+
+  
+  
+  
+
+  
+    
+    
+    
+    
+      
+      
+    
+  
+
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+
+    
+    
+    
+    
+    
+  
+
+  <div class="pl-scrollbar bg-primary-bg" 
+    >
+    <div class="max-w-screen-xl mx-auto">
+      <div id="最近文章" class="lg:w-3/4 mx-auto px-6 md:px-8 xl:px-12 py-12">
+        
+  
+
+  
+    
+  <h2 class=" font-bold text-3xl my-4">最近文章</h2>
+
+
+  
+  
+  <div class="overflow-hidden">
+    
+<div class="mb-6">
+  <div class="bg-secondary-bg rounded border hover:shadow-lg transition ease-in-out duration-200 px-6 pt-6 pb-4">
+  <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="mb-4">
+  <a href="/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/4.-%E9%83%A8%E7%BD%B2etcd%E9%9B%86%E7%BE%A4/" class="font-bold text-xl hover:text-eureka">4.1. 部署ETCD集群</a>
+</div>
+<div class="content">
+  本文将引导您使用二进制文件部署ETCD集群，从 证书创建 到 服务管理 以及涉及一小部分调优参数.
+
+</div>
+
+<div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>2021-05-15</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>8分钟阅读时长</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="/categories/blog/" class="hover:text-eureka">blog</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/posts/" class="hover:text-eureka">posts</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/%E4%BA%91%E8%AE%A1%E7%AE%97/" class="hover:text-eureka">云计算</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/kubernetes/" class="hover:text-eureka">Kubernetes</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/" class="hover:text-eureka">K8S二进制部署</a>
+        
+    </div>
+    
+
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-th-list mr-1"></i>
+        
+        <a href="/series/kubernetes%E9%9B%86%E7%BE%A4%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2%E6%8C%87%E5%8D%97/" class="hover:text-eureka">Kubernetes集群二进制部署指南</a>
+        
+    </div>
+    
+</div>
+
+  </div>
+
+  
+</div>
+</div>
+</div>
+
+<div class="mb-6">
+  <div class="bg-secondary-bg rounded border hover:shadow-lg transition ease-in-out duration-200 px-6 pt-6 pb-4">
+  <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="mb-4">
+  <a href="/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/3.0.0-%E9%83%A8%E7%BD%B2etcd%E9%9B%86%E7%BE%A4/" class="font-bold text-xl hover:text-eureka">4.1. 部署etcd集群</a>
+</div>
+<div class="content">
+  本文将引导您使用二进制文件部署ETCD集群，从 证书创建 到 服务管理 以及涉及一小部分调优参数.
+
+</div>
+
+<div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>2021-05-15</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>9分钟阅读时长</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="/categories/blog/" class="hover:text-eureka">blog</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/posts/" class="hover:text-eureka">posts</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/%E4%BA%91%E8%AE%A1%E7%AE%97/" class="hover:text-eureka">云计算</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/kubernetes/" class="hover:text-eureka">Kubernetes</a>
+        
+    </div>
+    
+
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-th-list mr-1"></i>
+        
+        <a href="/series/kubernetes%E9%9B%86%E7%BE%A4%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2%E6%8C%87%E5%8D%97/" class="hover:text-eureka">Kubernetes集群二进制部署指南</a>
+        
+    </div>
+    
+</div>
+
+  </div>
+
+  
+</div>
+</div>
+</div>
+
+<div class="mb-6">
+  <div class="bg-secondary-bg rounded border hover:shadow-lg transition ease-in-out duration-200 px-6 pt-6 pb-4">
+  <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="mb-4">
+  <a href="/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/5.1.-kube-apiserver%E9%9B%86%E7%BE%A4/" class="font-bold text-xl hover:text-eureka">4.2. 部署kube-apiserver集群</a>
+</div>
+<div class="content">
+  本文将引导您使用二进制文件部署kub-apiserver，从 证书创建 到 服务管理.
+
+</div>
+
+<div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>2021-05-14</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>9分钟阅读时长</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="/categories/blog/" class="hover:text-eureka">blog</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/posts/" class="hover:text-eureka">posts</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/%E4%BA%91%E8%AE%A1%E7%AE%97/" class="hover:text-eureka">云计算</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/kubernetes/" class="hover:text-eureka">Kubernetes</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/" class="hover:text-eureka">K8S二进制部署</a>
+        
+    </div>
+    
+
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-th-list mr-1"></i>
+        
+        <a href="/series/kubernetes%E9%9B%86%E7%BE%A4%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2%E6%8C%87%E5%8D%97/" class="hover:text-eureka">Kubernetes集群二进制部署指南</a>
+        
+    </div>
+    
+</div>
+
+  </div>
+
+  
+</div>
+</div>
+</div>
+
+    <div class="px-8 pt-2 hover:text-eureka">
+      
+  <a href="/tags/posts/" class="font-semibold">阅读更多</a>
+  <i class="fas fa-caret-right ml-1"></i>
+
+    </div>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+      </div>
+    </div>
+  </div>
+
+    
+
+  
+  
+  </main>
+  <footer class="pl-scrollbar">
+    <div class="w-full max-w-screen-xl mx-auto"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 2021 <a href="https://www.songjinfeng.com/">SonJinfeng</a> 
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+  </footer>
+</body>
+
+</html>

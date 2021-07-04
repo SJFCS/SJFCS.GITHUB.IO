@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang='zh' ><meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+
+
+<title>云计算 | Songjinfeng&#39;s BLOG</title>
+<link rel="stylesheet" href="/css/eureka.min.css">
+<script defer src="/js/eureka.min.js"></script>
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Noto+Serif+SC:wght@400;600;700&display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/styles/solarized-light.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/highlight.min.js"
+   crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/dart.min.js"
+     crossorigin></script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/js/all.min.js"
+   integrity="sha256-uNYoXefWRqv&#43;PsIF/OflNmwtKM4lStn9yrz2gVl6ymo="  crossorigin></script>
+
+
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css"
+   integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3&#43;Aro6EYUG4&#43;cU&#43;KJWu/X"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js" 
+  integrity="sha384-g7c&#43;Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI&#43;sEnkvrMWph2EDg4"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js"
+   integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC&#43;Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.9.2/dist/mermaid.min.js" 
+  integrity="sha256-Zmpaaj&#43;GXFsPF5WdPArSrnW3b30dovldeKsW00xBVwE="  crossorigin></script>
+
+
+<link rel="icon" type="image/png" sizes="32x32" href="/images/icon_hucfa16751ac9c82c06b84c3502c0db793_16378_32x32_fill_box_center_2.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hucfa16751ac9c82c06b84c3502c0db793_16378_180x180_fill_box_center_2.png">
+
+<meta name="description"
+  content="Eureka is a elegant and powerful theme for Hugo.">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"Categories",
+      "item":"/categories/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"云计算",
+      "item":"/categories/%E4%BA%91%E8%AE%A1%E7%AE%97/"}]
+}
+</script>
+
+
+
+
+<script type="application/ld+json">
+{
+    "@context":"https://schema.org",
+    "@type":"ItemList",
+    "itemListElement":[{
+            "@type":"ListItem",
+            "position":  1 ,
+            "name": "",
+            "description": "Eureka is a elegant and powerful theme for Hugo.",
+            "url": "/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/6.1.-node-kubelet/"
+        },{
+            "@type":"ListItem",
+            "position":  2 ,
+            "name": "",
+            "description": "Eureka is a elegant and powerful theme for Hugo.",
+            "url": "/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/6.2.-node-kube-proxy/"
+        },{
+            "@type":"ListItem",
+            "position":  3 ,
+            "name": "",
+            "description": "Eureka is a elegant and powerful theme for Hugo.",
+            "url": "/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/7.-%E9%AA%8C%E8%AF%81k8s%E9%9B%86%E7%BE%A4/"
+        },{
+            "@type":"ListItem",
+            "position":  4 ,
+            "name": "",
+            "description": "3.11. 部署docker镜像私有仓库harbor hdss7-200.host.com 上 下载软件并解压 harbor官网github地址: https://github.com/goharbor/harbor [root@hdss7-200 src]# tar xf harbor-offline-installer-v1.8.3.tgz -C /opt/ [root@hdss7-200 opt]# mv harbor/ harbor-v1.8.3 [root@hdss7-200 opt]# ln -s /opt/harbor-v1.8.3/ /opt/harbor  配置 [root@hdss7-200 opt]# vi /opt/harbor/harbor.yml hostname: harbor.od.com http: port: 180 harbor_admin_password:Harbor12345 data_volume: /data/harbor log: level: info rotate_count: 50 rotate_size:200M location: /data/harbor/logs [root@hdss7-200 opt]# mkdir -p /data/harbor/logs  安装docker-compose [root@hdss7-200 opt]# yum install docker-compose -y  安装harbor [root@hdss7-200 harbor]# /opt/harbor/install.sh  检查harbor启动情况 [root@hdss7-200 harbor]# docker-compose ps [root@hdss7-200 harbor]# docker ps -a  配置harbor的dns内网解析(注意： 在10.",
+            "url": "/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/8.-harbor%E9%9B%86%E7%BE%A4/"
+        },{
+            "@type":"ListItem",
+            "position":  5 ,
+            "name": "03. 安装和配置 kubectl",
+            "description": "本文档介绍安装和配置 kubernetes 命令行管理工具 kubectl 的步骤。\n注意：\n 本文档只需要部署一次，生成的 kubeconfig 文件是通用的，可以拷贝到需要执行 kubectl 命令的机器的 ·、~/.kube/config 位置；  kubectl二进制分发部署 #[/opt/k8s-deploy/]# # 下载 wget -P /opt/k8s-deploy/ https://dl.k8s.io/v1.16.6/kubernetes-client-linux-amd64.tar.gz # 分发部署 source /opt/k8s-deploy/environment.sh for node_ip in ${NODE_IPS[@]} do echo \u0026quot;\u0026gt;\u0026gt;\u0026gt; ${node_ip}\u0026quot; echo \u0026quot;\u0026gt;\u0026gt;\u0026gt; 检查目录\u0026quot; ssh root@${node_ip} \u0026quot;[ -d /opt/k8s-deploy ] \u0026amp;\u0026amp; echo Check /opt/k8s-deploy Exist OK || (mkdir -p /opt/k8s-deploy \u0026amp;\u0026amp; echo /opt/k8s-deploy Created)\u0026quot; ssh root@${node_ip} \u0026quot;[ -d /usr/local/kubernetes1.16.6/ ] \u0026amp;\u0026amp; (rm -rf /usr/local/kubernetes1.16.6/ \u0026amp;\u0026amp; echo /usr/local/kubernetes1.16.6/ Deleted) || echo check /usr/local/kubernetes1.",
+            "url": "/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/3.-kubectl/"
+        },{
+            "@type":"ListItem",
+            "position":  6 ,
+            "name": "DNS主从备份",
+            "description": "简介 安装Bind # Master \u0026amp; Slave yum install bind -y 或 yum install -y bind-utils bind bind-devel bind-chroot  主配置文件  编辑 vi /etc/named.conf\noptions{} 中添加修改如下\n   主节点：\nvi /etc/named.conf listen-on port 53 { 10.4.7.101; }; allow-query { any; }; forwarders { 8.8.8.8;114.114.114.114; };    从节点：\nvi /etc/named.conf listen-on port 53 { 10.4.7.102; }; allow-query { any; }; forwarders { 8.8.8.8;114.114.114.114; };     字段含义：主节点示例 cat /etc/named.conf\n cat /etc/named.",
+            "url": "/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/3.-dns%E4%B8%BB%E4%BB%8E%E5%A4%87%E4%BB%BD/"
+        },{
+            "@type":"ListItem",
+            "position":  7 ,
+            "name": "Docker时间宿主机同步",
+            "description": "在Docker容器创建好之后，可能会发现容器时间跟宿主机时间不一致，此时需要同步它们的时间，让容器时间跟宿主机时间保持一致。 一、分析时间不一致的原因 宿主机采用了CST时区，CST应该是指（China Shanghai Time，东八区时间）\n容器采用了UTC时区，UTC应该是指（Coordinated Universal Time，标准时间）\n此时，容器与宿主机之间采用的时区不一致，两个时区之间相隔8小时。\n二、同步时间的方法 方案1：共享主机localtime 在创建容器的时候指定启动参数，挂载宿主机的localtime文件到容器内，以此来保证宿主机和容器的时区一致。\ndocker run --privileged --name=qinjiaxi --net=host -it -v ~:/share /etc/localtime:/etc/localtime:ro docker.xxx.xxx.com.cn/robotframework:2.7.14 bash  方案2：复制宿主机localtime到容器中 docker cp /etc/localtime \u0026lt;container_id\u0026gt;:/etc/  方案3：在创建dockerfile时自定义镜像的时间格式与时区 在dockerfile创建初期增加一行内容，内容规定了该镜像的时间格式以及时区。\n#设置时区 RUN /bin/cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \u0026amp;\u0026amp; echo 'Asia/Shanghai' \u0026gt;/etc/timezone  ",
+            "url": "/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_docker/docker%E6%97%B6%E9%97%B4%E5%AE%BF%E4%B8%BB%E5%90%8C%E6%AD%A5/"
+        },{
+            "@type":"ListItem",
+            "position":  8 ,
+            "name": "kubernetes1.16.2部署",
+            "description": "初始化系统 以下操作两个节点都要做并且是root用户安装 #/bin/bash ###################################################### # Written By:Shsnc # Author:direnjie \u0026lt;direnjie@shsnc.com\u0026gt; # Date:2019-10-17 01:32 ##################################################### echo \u0026quot;正在输出结果，请按回车键继续查看... ... ... ... ... ... ...\u0026quot; { echo \u0026quot;####################关闭防火墙和设置防火墙开机不自启#####################\u0026quot; systemctl stop firewalld \u0026amp; systemctl disable firewalld echo \u0026quot;###########################关闭selinux###################################\u0026quot; sed -i 's/enforcing/disabled/g' /etc/selinux/config sed -i 's/permissive/disabled/g' /etc/selinux/config echo \u0026quot;##########################添加本地hosts##################################\u0026quot; echo '192.168.136.134 pinpoint01' \u0026gt;\u0026gt; /etc/hosts echo '192.168.217.135 pinpoint02' \u0026gt;\u0026gt; /etc/hosts echo \u0026quot;###########################关闭swap分区#################################\u0026quot; swapoff -a sed -i '/ swap / s/^/#/' /etc/fstab sed -i 's/.*swap.*/#\u0026amp;/' /etc/fstab free -m echo \u0026quot;###########################配置阿里源#####################################\u0026quot; cat \u0026lt;\u0026lt;EOF \u0026gt; /etc/yum.",
+            "url": "/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/kubernetes1.16.2-%E5%AE%89%E8%A3%85/"
+        },{
+            "@type":"ListItem",
+            "position":  9 ,
+            "name": "证书",
+            "description": "为确保安全，kubernetes 系统各组件需要使用 x509 证书对通信进行加密和认证。\nCA (Certificate Authority) 是自签名的根证书，用来签名后续创建的其它证书。\nCA 证书是集群所有节点共享的，只需要创建一次，后续用它签名其它所有证书。\n本文档使用 CloudFlare's 的 PKI 工具集 cfssl 来配置 PKI Infrastructure，然后使用它去创建 Certificate Authority（CA）， 并为 各服务 创建 TLS 证书。\n签发证书即可使用cfssl也可openssl生成证书 。关于openssl 请阅读：\nhttps://www.cnblogs.com/centos-python/articles/11043570.html\n安装cfssl # 安装cfssl、cfssl-json、cfssl-certinfo wget https://pkg.cfssl.org/R1.2/cfssl_linux-amd64 -O /usr/bin/cfssl wget https://pkg.cfssl.org/R1.2/cfssljson_linux-amd64 -O /usr/bin/cfssl-json wget https://pkg.cfssl.org/R1.2/cfssl-certinfo_linux-amd64 -O /usr/bin/cfssl-certinfo chmod +x /usr/local/bin/cfssl* # 检查 which cfssl cfssl-json cfssl-certinfo ## 正常返回结果如下 /usr/local/bin/cfssl /usr/local/bin/cfssl-json /usr/local/bin/cfssl-certinfo   工作目录 mkdir /opt/k8s-deploy/certs  创建根证书 (CA)和密钥 CA 证书是集群所有节点共享的，只需要创建一个 CA 证书，后续创建的所有证书都由它签名。\n创建证书签名请求文件 #[/opt/k8s-deploy/certs]# cat \u0026gt; ca-csr.",
+            "url": "/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/2.-%E7%AD%BE%E5%8F%91%E8%AF%81%E4%B9%A6/"
+        }
+    ]
+}
+</script><meta property="og:title" content="云计算 | Songjinfeng&#39;s BLOG" />
+<meta property="og:type" content="website" />
+
+
+<meta property="og:image" content="/images/icon.png">
+
+
+<meta property="og:url" content="/categories/%E4%BA%91%E8%AE%A1%E7%AE%97/" />
+
+
+
+
+
+<meta property="og:description" content="Eureka is a elegant and powerful theme for Hugo." />
+
+
+
+
+
+<meta property="og:locale" content="zh" />
+
+
+
+
+<meta property="og:site_name" content="Songjinfeng&#39;s BLOG" />
+
+
+
+
+
+
+<meta property="og:updated_time" content="2021-05-15T00:00:00&#43;00:00" />
+
+
+
+<meta property="article:section" content="categories" />
+
+
+<link rel="alternate" type="application/rss+xml" href="/categories/%E4%BA%91%E8%AE%A1%E7%AE%97/index.xml" title="Songjinfeng's BLOG" />
+
+<body class="flex flex-col min-h-screen">
+  <header class="fixed flex items-center w-full min-h-16 pl-scrollbar z-50 bg-secondary-bg shadow-sm">
+    <div class="w-full max-w-screen-xl mx-auto"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="mr-6 text-primary-text text-xl font-bold">Songjinfeng&#39;s BLOG</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:flex-grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:flex-grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">技术专栏</a>
+            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">文档笔记</a>
+            <a href="/series/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">主题系列</a>
+            <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">标签</a>
+            <a href="/authors/songjinfeng/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">关于</a>
+            <a href="/index.xml" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">RSS</a>
+            <a href="/webstack" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">友链&amp;导航</a>
+        </div>
+
+        <div class="flex">
+            <div class="relative pt-4 md:pt-0">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col left-0 md:left-auto right-auto md:right-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">浅色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">深色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">自动</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            switchMode('Auto')
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+  </header>
+  <main class="flex-grow pt-16">
+    <div class="pl-scrollbar">
+      <div class="w-full max-w-screen-xl lg:px-4 xl:px-8 mx-auto">
+<article class="mx-6 my-8">
+    <h1 class="font-bold text-3xl text-primary-text">云计算</h1>
+    
+</article>
+<div class="bg-secondary-bg rounded px-6">
+    <div class="overflow-hidden divide-y">
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="mb-4">
+  <a href="/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/6.1.-node-kubelet/" class="font-bold text-xl hover:text-eureka"></a>
+</div>
+<div class="content">
+  
+</div>
+
+<div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>0001-01-01</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>0分钟阅读时长</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="/categories/blog/" class="hover:text-eureka">blog</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/posts/" class="hover:text-eureka">posts</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/%E4%BA%91%E8%AE%A1%E7%AE%97/" class="hover:text-eureka">云计算</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/kubernetes/" class="hover:text-eureka">Kubernetes</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/" class="hover:text-eureka">K8S二进制部署</a>
+        
+    </div>
+    
+
+    
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="mb-4">
+  <a href="/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/6.2.-node-kube-proxy/" class="font-bold text-xl hover:text-eureka"></a>
+</div>
+<div class="content">
+  
+</div>
+
+<div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>0001-01-01</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>0分钟阅读时长</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="/categories/blog/" class="hover:text-eureka">blog</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/posts/" class="hover:text-eureka">posts</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/%E4%BA%91%E8%AE%A1%E7%AE%97/" class="hover:text-eureka">云计算</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/kubernetes/" class="hover:text-eureka">Kubernetes</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/" class="hover:text-eureka">K8S二进制部署</a>
+        
+    </div>
+    
+
+    
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="mb-4">
+  <a href="/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/7.-%E9%AA%8C%E8%AF%81k8s%E9%9B%86%E7%BE%A4/" class="font-bold text-xl hover:text-eureka"></a>
+</div>
+<div class="content">
+  
+</div>
+
+<div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>0001-01-01</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>0分钟阅读时长</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="/categories/blog/" class="hover:text-eureka">blog</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/posts/" class="hover:text-eureka">posts</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/%E4%BA%91%E8%AE%A1%E7%AE%97/" class="hover:text-eureka">云计算</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/kubernetes/" class="hover:text-eureka">Kubernetes</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/" class="hover:text-eureka">K8S二进制部署</a>
+        
+    </div>
+    
+
+    
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="mb-4">
+  <a href="/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/8.-harbor%E9%9B%86%E7%BE%A4/" class="font-bold text-xl hover:text-eureka"></a>
+</div>
+<div class="content">
+  3.11. 部署docker镜像私有仓库harbor hdss7-200.host.com 上 下载软件并解压 harbor官网github地址: https://github.com/goharbor/harbor [root@hdss7-200 src]# tar xf harbor-offline-installer-v1.8.3.tgz -C /opt/ [root@hdss7-200 opt]# mv harbor/ harbor-v1.8.3 [root@hdss7-200 opt]# ln -s /opt/harbor-v1.8.3/ /opt/harbor  配置 [root@hdss7-200 opt]# vi /opt/harbor/harbor.yml hostname: harbor.od.com http: port: 180 harbor_admin_password:Harbor12345 data_volume: /data/harbor log: level: info rotate_count: 50 rotate_size:200M location: /data/harbor/logs [root@hdss7-200 opt]# mkdir -p /data/harbor/logs  安装docker-compose [root@hdss7-200 opt]# yum install docker-compose -y  安装harbor [root@hdss7-200 harbor]# /opt/harbor/install.sh  检查harbor启动情况 [root@hdss7-200 harbor]# docker-compose ps [root@hdss7-200 harbor]# docker ps -a  配置harbor的dns内网解析(注意： 在10.
+</div>
+
+<div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>0001-01-01</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>1分钟阅读时长</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="/categories/blog/" class="hover:text-eureka">blog</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/posts/" class="hover:text-eureka">posts</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/%E4%BA%91%E8%AE%A1%E7%AE%97/" class="hover:text-eureka">云计算</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/kubernetes/" class="hover:text-eureka">Kubernetes</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/" class="hover:text-eureka">K8S二进制部署</a>
+        
+    </div>
+    
+
+    
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="mb-4">
+  <a href="/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/3.-kubectl/" class="font-bold text-xl hover:text-eureka">03. 安装和配置 kubectl</a>
+</div>
+<div class="content">
+  本文档介绍安装和配置 kubernetes 命令行管理工具 kubectl 的步骤。
+注意：
+ 本文档只需要部署一次，生成的 kubeconfig 文件是通用的，可以拷贝到需要执行 kubectl 命令的机器的 ·、~/.kube/config 位置；  kubectl二进制分发部署 #[/opt/k8s-deploy/]# # 下载 wget -P /opt/k8s-deploy/ https://dl.k8s.io/v1.16.6/kubernetes-client-linux-amd64.tar.gz # 分发部署 source /opt/k8s-deploy/environment.sh for node_ip in ${NODE_IPS[@]} do echo &amp;quot;&amp;gt;&amp;gt;&amp;gt; ${node_ip}&amp;quot; echo &amp;quot;&amp;gt;&amp;gt;&amp;gt; 检查目录&amp;quot; ssh root@${node_ip} &amp;quot;[ -d /opt/k8s-deploy ] &amp;amp;&amp;amp; echo Check /opt/k8s-deploy Exist OK || (mkdir -p /opt/k8s-deploy &amp;amp;&amp;amp; echo /opt/k8s-deploy Created)&amp;quot; ssh root@${node_ip} &amp;quot;[ -d /usr/local/kubernetes1.16.6/ ] &amp;amp;&amp;amp; (rm -rf /usr/local/kubernetes1.16.6/ &amp;amp;&amp;amp; echo /usr/local/kubernetes1.16.6/ Deleted) || echo check /usr/local/kubernetes1.
+</div>
+
+<div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>0001-01-01</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>2分钟阅读时长</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="/categories/blog/" class="hover:text-eureka">blog</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/posts/" class="hover:text-eureka">posts</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/%E4%BA%91%E8%AE%A1%E7%AE%97/" class="hover:text-eureka">云计算</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/kubernetes/" class="hover:text-eureka">Kubernetes</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/" class="hover:text-eureka">K8S二进制部署</a>
+        
+    </div>
+    
+
+    
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="mb-4">
+  <a href="/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/3.-dns%E4%B8%BB%E4%BB%8E%E5%A4%87%E4%BB%BD/" class="font-bold text-xl hover:text-eureka">DNS主从备份</a>
+</div>
+<div class="content">
+  简介 安装Bind # Master &amp;amp; Slave yum install bind -y 或 yum install -y bind-utils bind bind-devel bind-chroot  主配置文件  编辑 vi /etc/named.conf
+options{} 中添加修改如下
+   主节点：
+vi /etc/named.conf listen-on port 53 { 10.4.7.101; }; allow-query { any; }; forwarders { 8.8.8.8;114.114.114.114; };    从节点：
+vi /etc/named.conf listen-on port 53 { 10.4.7.102; }; allow-query { any; }; forwarders { 8.8.8.8;114.114.114.114; };     字段含义：主节点示例 cat /etc/named.conf
+ cat /etc/named.
+</div>
+
+<div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>0001-01-01</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>3分钟阅读时长</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="/categories/blog/" class="hover:text-eureka">blog</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/posts/" class="hover:text-eureka">posts</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/%E4%BA%91%E8%AE%A1%E7%AE%97/" class="hover:text-eureka">云计算</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/kubernetes/" class="hover:text-eureka">Kubernetes</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/" class="hover:text-eureka">K8S二进制部署</a>
+        
+    </div>
+    
+
+    
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="mb-4">
+  <a href="/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_docker/docker%E6%97%B6%E9%97%B4%E5%AE%BF%E4%B8%BB%E5%90%8C%E6%AD%A5/" class="font-bold text-xl hover:text-eureka">Docker时间宿主机同步</a>
+</div>
+<div class="content">
+  在Docker容器创建好之后，可能会发现容器时间跟宿主机时间不一致，此时需要同步它们的时间，让容器时间跟宿主机时间保持一致。 一、分析时间不一致的原因 宿主机采用了CST时区，CST应该是指（China Shanghai Time，东八区时间）
+容器采用了UTC时区，UTC应该是指（Coordinated Universal Time，标准时间）
+此时，容器与宿主机之间采用的时区不一致，两个时区之间相隔8小时。
+二、同步时间的方法 方案1：共享主机localtime 在创建容器的时候指定启动参数，挂载宿主机的localtime文件到容器内，以此来保证宿主机和容器的时区一致。
+docker run --privileged --name=qinjiaxi --net=host -it -v ~:/share /etc/localtime:/etc/localtime:ro docker.xxx.xxx.com.cn/robotframework:2.7.14 bash  方案2：复制宿主机localtime到容器中 docker cp /etc/localtime &amp;lt;container_id&amp;gt;:/etc/  方案3：在创建dockerfile时自定义镜像的时间格式与时区 在dockerfile创建初期增加一行内容，内容规定了该镜像的时间格式以及时区。
+#设置时区 RUN /bin/cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime &amp;amp;&amp;amp; echo &#39;Asia/Shanghai&#39; &amp;gt;/etc/timezone  
+</div>
+
+<div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>0001-01-01</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>1分钟阅读时长</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="/categories/blog/" class="hover:text-eureka">blog</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/posts/" class="hover:text-eureka">posts</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/%E4%BA%91%E8%AE%A1%E7%AE%97/" class="hover:text-eureka">云计算</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/docker/" class="hover:text-eureka">Docker</a>
+        
+    </div>
+    
+
+    
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="mb-4">
+  <a href="/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/kubernetes1.16.2-%E5%AE%89%E8%A3%85/" class="font-bold text-xl hover:text-eureka">kubernetes1.16.2部署</a>
+</div>
+<div class="content">
+  初始化系统 以下操作两个节点都要做并且是root用户安装 #/bin/bash ###################################################### # Written By:Shsnc # Author:direnjie &amp;lt;direnjie@shsnc.com&amp;gt; # Date:2019-10-17 01:32 ##################################################### echo &amp;quot;正在输出结果，请按回车键继续查看... ... ... ... ... ... ...&amp;quot; { echo &amp;quot;####################关闭防火墙和设置防火墙开机不自启#####################&amp;quot; systemctl stop firewalld &amp;amp; systemctl disable firewalld echo &amp;quot;###########################关闭selinux###################################&amp;quot; sed -i &#39;s/enforcing/disabled/g&#39; /etc/selinux/config sed -i &#39;s/permissive/disabled/g&#39; /etc/selinux/config echo &amp;quot;##########################添加本地hosts##################################&amp;quot; echo &#39;192.168.136.134 pinpoint01&#39; &amp;gt;&amp;gt; /etc/hosts echo &#39;192.168.217.135 pinpoint02&#39; &amp;gt;&amp;gt; /etc/hosts echo &amp;quot;###########################关闭swap分区#################################&amp;quot; swapoff -a sed -i &#39;/ swap / s/^/#/&#39; /etc/fstab sed -i &#39;s/.*swap.*/#&amp;amp;/&#39; /etc/fstab free -m echo &amp;quot;###########################配置阿里源#####################################&amp;quot; cat &amp;lt;&amp;lt;EOF &amp;gt; /etc/yum.
+</div>
+
+<div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>0001-01-01</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>2分钟阅读时长</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="/categories/blog/" class="hover:text-eureka">blog</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/posts/" class="hover:text-eureka">posts</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/%E4%BA%91%E8%AE%A1%E7%AE%97/" class="hover:text-eureka">云计算</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/kubernetes/" class="hover:text-eureka">Kubernetes</a>
+        
+    </div>
+    
+
+    
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="mb-4">
+  <a href="/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/2.-%E7%AD%BE%E5%8F%91%E8%AF%81%E4%B9%A6/" class="font-bold text-xl hover:text-eureka">证书</a>
+</div>
+<div class="content">
+  为确保安全，kubernetes 系统各组件需要使用 x509 证书对通信进行加密和认证。
+CA (Certificate Authority) 是自签名的根证书，用来签名后续创建的其它证书。
+CA 证书是集群所有节点共享的，只需要创建一次，后续用它签名其它所有证书。
+本文档使用 CloudFlare&#39;s 的 PKI 工具集 cfssl 来配置 PKI Infrastructure，然后使用它去创建 Certificate Authority（CA）， 并为 各服务 创建 TLS 证书。
+签发证书即可使用cfssl也可openssl生成证书 。关于openssl 请阅读：
+https://www.cnblogs.com/centos-python/articles/11043570.html
+安装cfssl # 安装cfssl、cfssl-json、cfssl-certinfo wget https://pkg.cfssl.org/R1.2/cfssl_linux-amd64 -O /usr/bin/cfssl wget https://pkg.cfssl.org/R1.2/cfssljson_linux-amd64 -O /usr/bin/cfssl-json wget https://pkg.cfssl.org/R1.2/cfssl-certinfo_linux-amd64 -O /usr/bin/cfssl-certinfo chmod &#43;x /usr/local/bin/cfssl* # 检查 which cfssl cfssl-json cfssl-certinfo ## 正常返回结果如下 /usr/local/bin/cfssl /usr/local/bin/cfssl-json /usr/local/bin/cfssl-certinfo   工作目录 mkdir /opt/k8s-deploy/certs  创建根证书 (CA)和密钥 CA 证书是集群所有节点共享的，只需要创建一个 CA 证书，后续创建的所有证书都由它签名。
+创建证书签名请求文件 #[/opt/k8s-deploy/certs]# cat &amp;gt; ca-csr.
+</div>
+
+<div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>0001-01-01</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>3分钟阅读时长</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="/categories/blog/" class="hover:text-eureka">blog</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/posts/" class="hover:text-eureka">posts</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/%E4%BA%91%E8%AE%A1%E7%AE%97/" class="hover:text-eureka">云计算</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/kubernetes/" class="hover:text-eureka">Kubernetes</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/" class="hover:text-eureka">K8S二进制部署</a>
+        
+    </div>
+    
+
+    
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
+  
+</div>
+
+
+</div>
+
+<ul class="pagination">
+  <li class="page-item">
+    <a href="/categories/%E4%BA%91%E8%AE%A1%E7%AE%97/" class="page-link" aria-label="First"><span aria-hidden="true">&laquo;&laquo;</span></a>
+  </li>
+  <li class="page-item">
+    <a href="/categories/%E4%BA%91%E8%AE%A1%E7%AE%97/" class="page-link" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
+  </li>
+  <li class="page-item">
+    <a class="page-link" href="/categories/%E4%BA%91%E8%AE%A1%E7%AE%97/">1</a>
+  </li>
+  <li class="page-item active">
+    <a class="page-link" href="/categories/%E4%BA%91%E8%AE%A1%E7%AE%97/page/2/">2</a>
+  </li>
+  <li class="page-item disabled">
+    <a  class="page-link" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
+  </li>
+  <li class="page-item">
+    <a href="/categories/%E4%BA%91%E8%AE%A1%E7%AE%97/page/2/" class="page-link" aria-label="Last"><span aria-hidden="true">&raquo;&raquo;</span></a>
+  </li>
+</ul>
+
+
+
+      </div>
+    </div>
+    
+  </main>
+  <footer class="pl-scrollbar">
+    <div class="w-full max-w-screen-xl mx-auto"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 2021 <a href="https://www.songjinfeng.com/">SonJinfeng</a> 
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+  </footer>
+</body>
+
+</html>

@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<html lang='zh' ><meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+
+
+<title>4.2. 部署kube-apiserver集群 | Songjinfeng&#39;s BLOG</title>
+<link rel="stylesheet" href="/css/eureka.min.css">
+<script defer src="/js/eureka.min.js"></script>
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Noto+Serif+SC:wght@400;600;700&display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/styles/solarized-light.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/highlight.min.js"
+   crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/dart.min.js"
+     crossorigin></script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/js/all.min.js"
+   integrity="sha256-uNYoXefWRqv&#43;PsIF/OflNmwtKM4lStn9yrz2gVl6ymo="  crossorigin></script>
+
+
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css"
+   integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3&#43;Aro6EYUG4&#43;cU&#43;KJWu/X"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js" 
+  integrity="sha384-g7c&#43;Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI&#43;sEnkvrMWph2EDg4"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js"
+   integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC&#43;Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.9.2/dist/mermaid.min.js" 
+  integrity="sha256-Zmpaaj&#43;GXFsPF5WdPArSrnW3b30dovldeKsW00xBVwE="  crossorigin></script>
+
+
+<link rel="icon" type="image/png" sizes="32x32" href="/images/icon_hucfa16751ac9c82c06b84c3502c0db793_16378_32x32_fill_box_center_2.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hucfa16751ac9c82c06b84c3502c0db793_16378_180x180_fill_box_center_2.png">
+
+<meta name="description"
+  content="本文将引导您使用二进制文件部署kub-apiserver，从 证书创建 到 服务管理.">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"技术专栏",
+      "item":"/posts/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"容器虚拟化",
+      "item":"/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/"},{
+      "@type": "ListItem",
+      "position": 3 ,
+      "name":"4.2. 部署kube-apiserver集群",
+      "item":"/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/5.1.-kube-apiserver%E9%9B%86%E7%BE%A4/"}]
+}
+</script>
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/5.1.-kube-apiserver%E9%9B%86%E7%BE%A4/"
+    },
+    "headline": "4.2. 部署kube-apiserver集群 | Songjinfeng\u0027s BLOG","datePublished": "2021-05-14T00:00:00+00:00",
+    "dateModified": "2021-05-14T00:00:00+00:00",
+    "wordCount":  1738 ,
+    "author": {
+        "@type": "Person",
+        "name": ["songjinfeng"]
+    },
+    "publisher": {
+        "@type": "Person",
+        "name": "JF. Song",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "/images/icon.png"
+        }
+        },
+    "description": "\u003cp\u003e本文将引导您使用二进制文件部署kub-apiserver，从 证书创建 到 服务管理.\u003c\/p\u003e"
+}
+</script><meta property="og:title" content="4.2. 部署kube-apiserver集群 | Songjinfeng&#39;s BLOG" />
+<meta property="og:type" content="article" />
+
+
+<meta property="og:image" content="/images/icon.png">
+
+
+<meta property="og:url" content="/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/5.1.-kube-apiserver%E9%9B%86%E7%BE%A4/" />
+
+
+
+
+<meta property="og:description" content="本文将引导您使用二进制文件部署kub-apiserver，从 证书创建 到 服务管理." />
+
+
+
+
+<meta property="og:locale" content="zh" />
+
+
+
+
+<meta property="og:site_name" content="Songjinfeng&#39;s BLOG" />
+
+
+
+
+
+
+<meta property="article:published_time" content="2021-05-14T00:00:00&#43;00:00" />
+
+
+<meta property="article:modified_time" content="2021-05-14T00:00:00&#43;00:00" />
+
+
+
+<meta property="article:section" content="posts" />
+
+
+<meta property="article:tag" content="kub-apiserver" />
+
+<meta property="article:tag" content="Kubernetes" />
+
+<meta property="article:tag" content="posts" />
+
+
+
+
+
+
+
+
+
+<meta property="og:see_also" content="/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/4.-%E9%83%A8%E7%BD%B2etcd%E9%9B%86%E7%BE%A4/" />
+
+
+
+<meta property="og:see_also" content="/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/3.0.0-%E9%83%A8%E7%BD%B2etcd%E9%9B%86%E7%BE%A4/" />
+
+
+
+
+
+
+
+<body class="flex flex-col min-h-screen">
+  <header class="fixed flex items-center w-full min-h-16 pl-scrollbar z-50 bg-secondary-bg shadow-sm">
+    <div class="w-full max-w-screen-xl mx-auto"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="mr-6 text-primary-text text-xl font-bold">Songjinfeng&#39;s BLOG</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:flex-grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:flex-grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  mr-4">技术专栏</a>
+            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">文档笔记</a>
+            <a href="/series/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">主题系列</a>
+            <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">标签</a>
+            <a href="/authors/songjinfeng/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">关于</a>
+            <a href="/index.xml" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">RSS</a>
+            <a href="/webstack" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">友链&amp;导航</a>
+        </div>
+
+        <div class="flex">
+            <div class="relative pt-4 md:pt-0">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col left-0 md:left-auto right-auto md:right-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">浅色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">深色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">自动</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            switchMode('Auto')
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+  </header>
+  <main class="flex-grow pt-16">
+    <div class="pl-scrollbar">
+      <div class="w-full max-w-screen-xl lg:px-4 xl:px-8 mx-auto">
+
+
+<div class="grid grid-cols-2 lg:grid-cols-8 gap-4 lg:pt-12">
+    <div
+        class="col-span-2  lg:col-span-6 bg-secondary-bg rounded px-6 py-8">
+        <h1 class="font-bold text-3xl text-primary-text">4.2. 部署kube-apiserver集群</h1>
+        <div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>2021-05-14</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>9分钟阅读时长</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="/categories/blog/" class="hover:text-eureka">blog</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/posts/" class="hover:text-eureka">posts</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/%E4%BA%91%E8%AE%A1%E7%AE%97/" class="hover:text-eureka">云计算</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/kubernetes/" class="hover:text-eureka">Kubernetes</a>
+        
+        
+        <span>, </span>
+        <a href="/categories/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/" class="hover:text-eureka">K8S二进制部署</a>
+        
+    </div>
+    
+
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-th-list mr-1"></i>
+        
+        <a href="/series/kubernetes%E9%9B%86%E7%BE%A4%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2%E6%8C%87%E5%8D%97/" class="hover:text-eureka">Kubernetes集群二进制部署指南</a>
+        
+    </div>
+    
+</div>
+        
+        
+        
+
+        <div class="content">
+            <p>本文将引导您使用二进制文件部署kub-apiserver，从 证书创建 到 服务管理.</p>
+<p>官网：</p>
+<ul>
+<li><a href="https://kubernetes.io/">https://kubernetes.io/</a></li>
+<li><a href="https://github.com/kubernetes/kubernetes">https://github.com/kubernetes/kubernetes</a></li>
+</ul>
+<p>版本：<code>kubernetes-server-v1.21.1</code></p>
+<p>脚本：</p>
+<p>参考文档：https://kubernetes.io/zh/docs/reference/command-line-tools-reference/kube-apiserver/</p>
+<h2 id="421-kub-apiserver-简介">4.2.1. kub-apiserver 简介</h2>
+<blockquote>
+<p>kube-apiserver为无状态服务，可以同时运行多个，通过keepalived或LB负载做高可用，k8s的高可用主要是指api服务的高可用。</p>
+</blockquote>
+<p>k8s API Server提供了k8s各类资源对象（pod,RC,Service等）的增删改查及watch等HTTP Rest接口，是整个系统的数据总线和数据中心。</p>
+<p>kubernetes API Server的功能：</p>
+<ol>
+<li>提供了集群管理的REST API接口(包括认证授权、数据校验以及集群状态变更)；</li>
+<li>提供其他模块之间的数据交互和通信的枢纽（其他模块通过API Server查询或修改数据，只有API Server才直接操作etcd）;</li>
+<li>是资源配额控制的入口；</li>
+<li>拥有完备的集群安全机制.</li>
+</ol>
+<pre><code class="language-bash">
+for node_ip in ${NODE_IPS[@]}
+  do
+    echo &quot;&gt;&gt;&gt; ${node_ip}&quot;
+    echo &quot;&gt;&gt;&gt; 检查目录&quot;
+    ssh root@${node_ip} &quot;[ -d /opt/k8s-deploy/ ] &amp;&amp; echo Check /opt/k8s-deploy Exist OK || (mkdir -p /opt/k8s-deploy &amp;&amp; echo /opt/k8s-deploy Created)&quot;
+    ssh root@${node_ip} &quot;[ -d /usr/local/kubernetes1.16.6/ ] &amp;&amp; echo Check /usr/local/kubernetes1.16.6/ Exist OK || (mkdir -p /usr/local/kubernetes1.16.6/ &amp;&amp; echo /usr/local/kubernetes1.16.6/ Created OK)&quot;
+    ssh root@${node_ip} &quot;[ -d /usr/local/kubernetes1.16.6/server/ ] &amp;&amp; (rm -rf /usr/local/kubernetes1.16.6/server/ &amp;&amp; echo /usr/local/kubernetes1.16.6/server/ Deleted OK) || echo check /usr/local/kubernetes1.16.6/server None OK&quot;
+    echo &quot;&gt;&gt;&gt; 分发部署&quot;
+    scp /opt/k8s-deploy/kubernetes-server-linux-amd64.tar.gz root@${node_ip}:/opt/k8s-deploy/
+    ssh root@${node_ip} &quot;tar -xf /opt/k8s-deploy/kubernetes-server-linux-amd64.tar.gz -C /usr/local/&quot;
+    ssh root@${node_ip} &quot;cd /usr/local/kubernetes &amp;&amp; cp -r  addons/ kubernetes-src.tar.gz  LICENSES  server/* ../kubernetes1.16.6/server&quot;
+    ssh root@${node_ip} &quot;rm -rf /user/local/kubernetes/ &quot;
+
+    echo &quot;&gt;&gt;&gt; 查看结果&quot;
+    ssh root@${node_ip} &quot;ls -l /usr/local/ |grep kube&quot;
+    ssh root@${node_ip} &quot;ls -l /usr/local/kubernetes/&quot;
+    ssh root@${node_ip} &quot;ls -l /usr/local/bin/ |grep kube&quot;
+  done
+  
+ln -s   /usr/local/kubernetes/server/bin/apiextensions-apiserver  /usr/local/bin/apiextensions-apiserver
+ln -s   /usr/local/kubernetes/server/bin/kubeadm /usr/local/bin/kubeadm
+ln -s   /usr/local/kubernetes/server/bin/kube-aggregator  /usr/local/bin/kube-aggregator
+ln -s   /usr/local/kubernetes/server/bin/kube-apiserver  /usr/local/bin/kube-apiserver
+ln -s   /usr/local/kubernetes/server/bin/kube-controller-manager  /usr/local/bin/kube-controller-manager
+ln -s   /usr/local/kubernetes/server/bin/kube-proxy  /usr/local/bin/kube-proxy
+ln -s   /usr/local/kubernetes/server/bin/kube-scheduler  /usr/local/bin/kube-scheduler
+ln -s   /usr/local/kubernetes/server/bin/mounter  /usr/local/bin/mounter
+ln -s   /usr/local/kubernetes/server/bin/kubectl  /usr/local/bin/kubectl
+ln -s   /usr/local/kubernetes/server/bin/kubelet  /usr/local/bin/kubelet
+
+
+
+</code></pre>
+<h2 id="422-实验环境">4.2.2. 实验环境</h2>
+<h3 id="节点规划">节点规划</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">主机名</th>
+<th style="text-align:center">角色</th>
+<th style="text-align:center">ip地址</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">hdss7-21.host.com</td>
+<td style="text-align:center">kube-apiserver，lb-master</td>
+<td style="text-align:center">10.4.7.21</td>
+</tr>
+<tr>
+<td style="text-align:center">hdss7-22.host.com</td>
+<td style="text-align:center">kube-apiserver，lb-slave</td>
+<td style="text-align:center">10.4.7.22</td>
+</tr>
+</tbody>
+</table>
+<h3 id="目录规划">目录规划</h3>
+<table>
+<thead>
+<tr>
+<th>&mdash;</th>
+<th>&mdash;</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="部署流程">部署流程</h3>
+<ul>
+<li>签发证书</li>
+<li>安装文件</li>
+<li>编写配置</li>
+<li>创建服务</li>
+<li>检查服务状态</li>
+</ul>
+<h2 id="423-为apiserver签发证书">4.2.3. 为apiserver签发证书</h2>
+<h3 id="4231-签发client证书">4.2.3.1. 签发client证书</h3>
+<p>（apiserver去和etcd通信的证书，apiserver是客户端，etcd是服务端）</p>
+<p>应该为每个服务签发server证书和client证书，为简化过程，将这里签发的client证书用于每个服务</p>
+<p><code>hdss7-200.host.com上</code></p>
+<h4 id="1-创建client证书配置文件">(1) 创建client证书配置文件</h4>
+<p>client都用这一套证书</p>
+<pre><code class="language-json">[root@hdss7-200 ssl]# vi client-csr-json 
+{
+    &quot;CN&quot;: &quot;k8s-node&quot;,
+    &quot;hosts&quot;: [
+    ],
+    &quot;key&quot;: {
+        &quot;algo&quot;: &quot;rsa&quot;,
+        &quot;size&quot;: 2048
+    },
+    &quot;names&quot;: [
+        {
+            &quot;C&quot;: &quot;CN&quot;,
+            &quot;ST&quot;: &quot;beijing&quot;,
+            &quot;L&quot;: &quot;beijing&quot;,
+            &quot;O&quot;: &quot;organizational&quot;,
+            &quot;OU&quot;: &quot;organizational units&quot;
+        }
+    ]
+}
+
+</code></pre>
+<h4 id="2-生成client证书文件">(2) 生成client证书文件</h4>
+<pre><code class="language-bash">[root@hdss7-200 certs]# cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -profile=client client-csr-json |cfssl-json -bare client
+</code></pre>
+<h3 id="4232-签发server证书">4.2.3.2. 签发server证书</h3>
+<p>外部访问kube-apiserver提供的服务</p>
+<h4 id="创建server证书配置文件">创建server证书配置文件</h4>
+<pre><code>[root@hdss7-200 certs]# vi /opt/certs/apiserver-csr.json
+{
+    &quot;CN&quot;: &quot;k8s-apiserver&quot;,
+    &quot;hosts&quot;: [
+        &quot;127.0.0.1&quot;,
+        &quot;192.168.0.1&quot;,
+        &quot;kubernetes.default&quot;,
+        &quot;kubernetes.default.svc&quot;,
+        &quot;kubernetes.default.svc.cluster&quot;,
+        &quot;kubernetes.default.svc.cluster.local&quot;,
+        &quot;10.4.7.10&quot;,
+        &quot;10.4.7.21&quot;,
+        &quot;10.4.7.22&quot;,
+        &quot;10.4.7.23&quot;
+    ],
+    &quot;key&quot;: {
+        &quot;algo&quot;: &quot;rsa&quot;,
+        &quot;size&quot;: 2048
+    },
+    &quot;names&quot;: [
+        {
+            &quot;C&quot;: &quot;CN&quot;,
+            &quot;ST&quot;: &quot;beijing&quot;,
+            &quot;L&quot;: &quot;beijing&quot;,
+            &quot;O&quot;: &quot;organizational&quot;,
+            &quot;OU&quot;: &quot;organizational units&quot;
+        }
+    ]
+}
+</code></pre>
+<h4 id="生成server证书文件">生成server证书文件</h4>
+<pre><code>[root@hdss7-200 certs]# cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -profile=server apiserver-csr.json |cfssl-json -bare apiserver
+</code></pre>
+<h3 id="4233-分发证书至各节点">4.2.3.3. 分发证书至各节点</h3>
+<pre><code class="language-bash"># 创建目录
+[root@hdss7-21 certs]# 
+mkdir -p /etc/kubernetes/server/ssl
+# 注意文件属性600
+# 拷贝证书文件到/etc/kubernetes/server/ssl目录下
+cd /etc/kubernetes/server/ssl
+scp hdss7-200:/opt/ssl/ca.pem .
+scp hdss7-200:/opt/ssl/ca-key.pem .
+scp hdss7-200:/opt/ssl/client.pem .
+scp hdss7-200:/opt/ssl/client-key.pem .
+scp hdss7-200:/opt/ssl/apiserver.pem .
+scp hdss7-200:/opt/ssl/apiserver-key.pem .
+</code></pre>
+<p><code>部署方法以hdss7-21.host.com为例</code></p>
+<h2 id="423-下载软件解压做软连接">4.2.3. 下载软件，解压，做软连接</h2>
+<pre><code class="language-bash">https://storage.googleapis.com/kubernetes-release/release/v1.21.1/kubernetes-server-linux-amd64.tar.gz
+tar -xvf  /opt/src/kubernetes-server-linux-amd64.tar.gz  -C /usr/local/
+cd /usr/local/
+mv kubernetes/ kubernetes-server-v1.21.1
+ln -s  /usr/local/kubernetes-server-v1.21.1/ /usr/local/kubernetes-server
+
+# 只保留可执行文件
+[root@hdss7-21 opt]# cd kubernetes
+[root@hdss7-21 kubernetes]# rm -rf kubernetes-src.tar.gz
+[root@hdss7-21 kubernetes]# cd server/bin
+[root@hdss7-21 bin]# rm -f *.tar
+[root@hdss7-21 bin]# rm -f *_tag
+# 创建软连接
+ln -s   /usr/local/kubernetes-server/server/bin/apiextensions-apiserver  /usr/local/bin/apiextensions-apiserver
+ln -s   /usr/local/kubernetes-server/server/bin/kubeadm /usr/local/bin/kubeadm
+ln -s   /usr/local/kubernetes-server/server/bin/kube-aggregator  /usr/local/bin/kube-aggregator
+ln -s   /usr/local/kubernetes-server/server/bin/kube-apiserver  /usr/local/bin/kube-apiserver
+ln -s   /usr/local/kubernetes-server/server/bin/kube-controller-manager  /usr/local/bin/kube-controller-manager
+ln -s   /usr/local/kubernetes-server/server/bin/kubectl  /usr/local/bin/kubectl
+ln -s   /usr/local/kubernetes-server/server/bin/kubelet  /usr/local/bin/kubelet
+ln -s   /usr/local/kubernetes-server/server/bin/kube-proxy  /usr/local/bin/kube-proxy
+ln -s   /usr/local/kubernetes-server/server/bin/kube-scheduler  /usr/local/bin/kube-scheduler
+ln -s   /usr/local/kubernetes-server/server/bin/mounter  /usr/local/bin/mounter
+
+</code></pre>
+<p><img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/4.2.%20%E9%83%A8%E7%BD%B2kube-apiserver%E9%9B%86%E7%BE%A4/2021.05.14-16:27:34-D-assets-4.2.%20%E9%83%A8%E7%BD%B2kube-apiserver%E9%9B%86%E7%BE%A4-image-20210514162733365.png" alt="image-20210514162733365"></p>
+<h2 id="424-创建kube-apiserver配置文件">4.2.4. 创建kube-apiserver配置文件</h2>
+<pre><code class="language-bash"># 日志审计 配置清单
+# 创建目录
+[root@hdss7-21 certs]# mkdir -p /etc/kubernetes/server/conf
+ &amp;&amp;  cd /etc/kubernetes/server/conf
+# 创建配置
+#  /etc/kubernetes/server/conf/audit.yml
+apiVersion: audit.k8s.io/v1beta1 # This is required.
+kind: Policy
+# Don't generate audit events for all requests in RequestReceived stage.
+omitStages:
+  - &quot;RequestReceived&quot;
+rules:
+  # Log pod changes at RequestResponse level
+  - level: RequestResponse
+    resources:
+    - group: &quot;&quot;
+      # Resource &quot;pods&quot; doesn't match requests to any subresource of pods,
+      # which is consistent with the RBAC policy.
+      resources: [&quot;pods&quot;]
+  # Log &quot;pods/log&quot;, &quot;pods/status&quot; at Metadata level
+  - level: Metadata
+    resources:
+    - group: &quot;&quot;
+      resources: [&quot;pods/log&quot;, &quot;pods/status&quot;]
+
+  # Don't log requests to a configmap called &quot;controller-leader&quot;
+  - level: None
+    resources:
+    - group: &quot;&quot;
+      resources: [&quot;configmaps&quot;]
+      resourceNames: [&quot;controller-leader&quot;]
+
+  # Don't log watch requests by the &quot;system:kube-proxy&quot; on endpoints or services
+  - level: None
+    users: [&quot;system:kube-proxy&quot;]
+    verbs: [&quot;watch&quot;]
+    resources:
+    - group: &quot;&quot; # core API group
+      resources: [&quot;endpoints&quot;, &quot;services&quot;]
+
+  # Don't log authenticated requests to certain non-resource URL paths.
+  - level: None
+    userGroups: [&quot;system:authenticated&quot;]
+    nonResourceURLs:
+    - &quot;/api*&quot; # Wildcard matching.
+    - &quot;/version&quot;
+
+  # Log the request body of configmap changes in kube-system.
+  - level: Request
+    resources:
+    - group: &quot;&quot; # core API group
+      resources: [&quot;configmaps&quot;]
+    # This rule only applies to resources in the &quot;kube-system&quot; namespace.
+    # The empty string &quot;&quot; can be used to select non-namespaced resources.
+    namespaces: [&quot;kube-system&quot;]
+
+  # Log configmap and secret changes in all other namespaces at the Metadata level.
+  - level: Metadata
+    resources:
+    - group: &quot;&quot; # core API group
+      resources: [&quot;secrets&quot;, &quot;configmaps&quot;]
+
+  # Log all other resources in core and extensions at the Request level.
+  - level: Request
+    resources:
+    - group: &quot;&quot; # core API group
+    - group: &quot;extensions&quot; # Version of group should NOT be included.
+
+  # A catch-all rule to log all other requests at the Metadata level.
+  - level: Metadata
+    # Long-running requests like watches that fall under this rule will not
+    # generate an audit event in RequestReceived.
+    omitStages:
+      - &quot;RequestReceived&quot;
+</code></pre>
+<h2 id="425-创建systemd服务">4.2.5. 创建systemd服务</h2>
+<pre><code class="language-bash">[root@hdss7-21 server]# scp /usr/lib/systemd/system/kube-apiserver.service root@hdss7-22:/usr/lib/systemd/system/ 
+root@hdss7-22's password: 
+kube-apiserver.service                                                                                                                 100% 1687     1.3MB/s   00:00    
+[root@hdss7-21 server]# systemctl daemon-reload
+[root@hdss7-21 server]# systemctl start kube-apiserver
+[root@hdss7-21 server]# cat  /usr/lib/systemd/system/kube-apiserver.service 
+[Unit]
+Description=kube-apiserver
+Documentation=https://github.com/GoogleCloudPlatform/kubernetes
+Requires=etcd.service
+After=etcd.service
+
+[Service]
+Type=notify
+ExecStart=/usr/local/bin/kube-apiserver \
+  --apiserver-count 2 \
+  --audit-log-path /var/logs/kubernetes/kube-apiserver/audit-log \
+  --audit-policy-file /etc/kubernetes/server/conf/audit.yml \
+  --authorization-mode RBAC \
+  --client-ca-file /etc/kubernetes/server/ssl/ca.pem \
+  --requestheader-client-ca-file /etc/kubernetes/server/ssl/ca.pem \
+  --enable-admission-plugins NamespaceLifecycle,LimitRanger,ServiceAccount,DefaultStorageClass,DefaultTolerationSeconds,MutatingAdmissionWebhook,ValidatingAdmissionWebhook,ResourceQuota \
+  --etcd-cafile /etc/kubernetes/server/ssl/ca.pem \
+  --etcd-certfile /etc/kubernetes/server/ssl/client.pem \
+  --etcd-keyfile /etc/kubernetes/server/ssl/client-key.pem \
+  --etcd-servers https://10.4.7.12:2379,https://10.4.7.21:2379,https://10.4.7.22:2379 \
+  --service-account-key-file /etc/kubernetes/server/ssl/ca-key.pem \
+  --service-cluster-ip-range 192.168.0.0/16 \
+  --service-node-port-range 3000-29999 \
+  --target-ram-mb=1024 \
+  --kubelet-client-certificate /etc/kubernetes/server/ssl/client.pem \
+  --kubelet-client-key /etc/kubernetes/server/ssl/client-key.pem \
+  --log-dir  /var/logs/kubernetes/kube-apiserver \
+  --tls-cert-file /etc/kubernetes/server/ssl/apiserver.pem \
+  --tls-private-key-file /etc/kubernetes/server/ssl/apiserver-key.pem \
+  --v 2 \
+  --service-account-issuer=k8s.od.com \
+  --service-account-signing-key-file /etc/kubernetes/server/ssl/ca-key.pem
+
+Restart=on-failure
+RestartSec=10s
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target
+
+systemctl daemon-reload
+systemctl start kub-apiserver
+#  与旧版本不同下面两个为必选参数 
+#  --service-account-issuer=k8s.od.com \
+#  --service-account-signing-key-file /etc/kubernetes/server/ssl/ca-key.pem
+# 若启动失败可直接执行ExecStart部分 查看报错提示
+</code></pre>
+<p><img src="D:/assets/4.2.%20%E9%83%A8%E7%BD%B2kube-apiserver%E9%9B%86%E7%BE%A4/image-20210518084851870.png" alt="image-20210518084851870"></p>
+<h2 id="supervisor服务不建议">supervisor服务（不建议）</h2>
+<p><strong>创建apiserver启动脚本</strong></p>
+<pre><code class="language-bash"># vi /etc/kubernetes/server/kube-apiserver.sh
+chmod +x kube-apiserver.sh
+mkdir -p /var/logs/kubernetes/kube-apiserver
+ln -s /usr/local/kubernetes-server/server/bin/kube-apiserver /usr/local/bin/kube-apiserver
+#!/bin/bash
+/usr/local/bin/kube-apiserver \
+  --apiserver-count 2 \
+  --audit-log-path /var/logs/kubernetes/kube-apiserver/audit-log \
+  --audit-policy-file /etc/kubernetes/server/conf/audit.yml \
+  --authorization-mode RBAC \
+  --client-ca-file /etc/kubernetes/server/ssl/ca.pem \
+  --requestheader-client-ca-file /etc/kubernetes/server/ssl/ca.pem \
+  --enable-admission-plugins NamespaceLifecycle,LimitRanger,ServiceAccount,DefaultStorageClass,DefaultTolerationSeconds,MutatingAdmissionWebhook,ValidatingAdmissionWebhook,ResourceQuota \
+  --etcd-cafile /etc/kubernetes/server/ssl/ca.pem \
+  --etcd-certfile /etc/kubernetes/server/ssl/client.pem \
+  --etcd-keyfile /etc/kubernetes/server/ssl/client-key.pem \
+  --etcd-servers https://10.4.7.12:2379,https://10.4.7.21:2379,https://10.4.7.22:2379 \
+  --service-account-key-file /etc/kubernetes/server/ssl/ca-key.pem \
+  --service-cluster-ip-range 192.168.0.0/16 \
+  --service-node-port-range 3000-29999 \
+  --target-ram-mb=1024 \
+  --kubelet-client-certificate /etc/kubernetes/server/ssl/client.pem \
+  --kubelet-client-key /etc/kubernetes/server/ssl/client-key.pem \
+  --log-dir  /var/logs/kubernetes/kube-apiserver \
+  --tls-cert-file /etc/kubernetes/server/ssl/apiserver.pem \
+  --tls-private-key-file /etc/kubernetes/server/ssl/apiserver-key.pem \
+  --v 2 \
+  --service-account-issuer=k8s.od.com \
+  --service-account-signing-key-file /etc/kubernetes/server/ssl/ca-key.pem
+</code></pre>
+<p><strong>创建supervisor配置</strong></p>
+<pre><code class="language-bash">[root@hdss7-21 bin]#  vi /etc/supervisord.d/kube-apiserver.ini
+[program:kube-apiserver-7-21]
+command=/opt/kubernetes/server/bin/kube-apiserver.sh            ; the program (relative uses PATH, can take args)
+numprocs=1                                                      ; number of processes copies to start (def 1)
+directory=/opt/kubernetes/server/bin                            ; directory to cwd to before exec (def no cwd)
+autostart=true                                                  ; start at supervisord start (default: true)
+autorestart=true                                                ; retstart at unexpected quit (default: true)
+startsecs=30                                                    ; number of secs prog must stay running (def. 1)
+startretries=3                                                  ; max # of serial start failures (default 3)
+exitcodes=0,2                                                   ; 'expected' exit codes for process (default 0,2)
+stopsignal=QUIT                                                 ; signal used to kill process (default TERM)
+stopwaitsecs=10                                                 ; max num secs to wait b4 SIGKILL (default 10)
+user=root                                                       ; setuid to this UNIX account to run the program
+redirect_stderr=true                                            ; redirect proc stderr to stdout (default false)
+stdout_logfile=/data/logs/kubernetes/kube-apiserver/apiserver.stdout.log        ; stderr log path, NONE for none; default AUTO
+stdout_logfile_maxbytes=64MB                                    ; max # logfile bytes b4 rotation (default 50MB)
+stdout_logfile_backups=4                                        ; # of stdout logfile backups (default 10)
+stdout_capture_maxbytes=1MB                                     ; number of bytes in 'capturemode' (default 0)
+stdout_events_enabled=false                                     ; emit events on stdout writes (default false)
+</code></pre>
+<p><strong>启动服务并检查</strong></p>
+<pre><code class="language-bash">[root@hdss7-21 bin]# supervisorctl update
+[root@hdss7-21 bin]# supervisorctl status
+[root@hdss7-21 bin]# netstat -nltup|grep kube-api
+</code></pre>
+<p><strong>修改其他节点</strong></p>
+<pre><code class="language-bash">/etc/supervisord.d/kube-apiserver.ini
+[program:kube-apiserver-7-21]
+</code></pre>
+<h2 id="43-部署四层反向代理-6443">4.3. <strong>部署四层反向代理 6443</strong></h2>
+<h5 id="集群架构"><strong>集群架构</strong></h5>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">主机名</th>
+<th style="text-align:center">角色</th>
+<th style="text-align:center">IP地址</th>
+<th style="text-align:center">VIP地址</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">hdss7-11.host.com</td>
+<td style="text-align:center">L4</td>
+<td style="text-align:center">10.4.7.11</td>
+<td style="text-align:center">10.4.7.10</td>
+</tr>
+<tr>
+<td style="text-align:center">hdss7-12.host.com</td>
+<td style="text-align:center">L4</td>
+<td style="text-align:center">10.4.7.12</td>
+<td style="text-align:center">10.4.7.10</td>
+</tr>
+</tbody>
+</table>
+<h5 id="安装nginx和keepalived"><strong>安装NGINX和keepalived</strong></h5>
+<pre><code class="language-bash">[root@hdss7-12 etcd]# yum install nginx keepalived -y
+</code></pre>
+<h6 id="hdss7-11hostcom和hdss7-12hostcom都安装nginx和keepalived"><strong>hdss7-11.host.com和hdss7-12.host.com都安装NGINX和keepalived</strong></h6>
+<pre><code class="language-bash">[root@hdss7-11 conf.d]# vi /etc/nginx/nginx.conf
+stream {
+    upstream kube-apiserver {
+        server 10.4.7.21:6443     max_fails=3 fail_timeout=30s;
+        server 10.4.7.22:6443     max_fails=3 fail_timeout=30s;
+    }
+    server {
+        listen 7443;
+        proxy_connect_timeout 2s;
+        proxy_timeout 900s;
+        proxy_pass kube-apiserver;
+    }
+}
+[root@hdss7-11 etcd]# nginx -t
+</code></pre>
+<h6 id="hdss7-11hostcom和hdss7-12hostcom配置keepalived"><strong>hdss7-11.host.com和hdss7-12.host.com配置keepalived</strong></h6>
+<pre><code class="language-bash"> 检查端口
+[root@hdss7-11 ~]# vi /etc/keepalived/check_port.sh
+#!/bin/bash
+#keepalived 监控端口脚本
+#使用方法：
+#在keepalived的配置文件中
+#vrrp_script check_port {#创建一个vrrp_script脚本,检查配置
+#    script &quot;/etc/keepalived/check_port.sh 6379&quot; #配置监听的端口
+#    interval 2 #检查脚本的频率,单位（秒）
+#}
+CHK_PORT=$1
+if [ -n &quot;$CHK_PORT&quot; ];then
+        PORT_PROCESS=`ss -lnt|grep $CHK_PORT|wc -l`
+        if [ $PORT_PROCESS -eq 0 ];then
+                echo &quot;Port $CHK_PORT Is Not Used,End.&quot;
+                exit 1
+        fi
+else
+        echo &quot;Check Port Cant Be Empty!&quot;
+fi
+##########
+chmod +x /etc/keepalived/check_port.sh
+##########
+[root@hdss7-11 ~]# 
+##########
+
+# 配置文件(删掉原来文件已经有的内容)
+# keepalived 主:
+[root@hdss7-11 conf.d]# vi /etc/keepalived/keepalived.conf 
+
+! Configuration File for keepalived
+
+global_defs {
+   router_id 10.4.7.11
+
+}
+
+vrrp_script chk_nginx {
+    script &quot;/etc/keepalived/check_port.sh 7443&quot;
+    interval 2
+    weight -20
+}
+
+vrrp_instance VI_1 {
+    state MASTER
+    interface ens32
+    virtual_router_id 251
+    priority 100
+    advert_int 1
+    mcast_src_ip 10.4.7.11
+    nopreempt
+
+    authentication {
+        auth_type PASS
+        auth_pass 11111111
+    }
+    track_script {
+         chk_nginx
+    }
+    virtual_ipaddress {
+        10.4.7.10
+    }
+}
+
+# keepalived 从:
+[root@hdss7-12 conf.d]# vi /etc/keepalived/keepalived.conf 
+
+! Configuration File for keepalived
+global_defs {
+    router_id 10.4.7.12
+}
+vrrp_script chk_nginx {
+    script &quot;/etc/keepalived/check_port.sh 7443&quot;
+    interval 2
+    weight -20
+}
+vrrp_instance VI_1 {
+    state BACKUP
+    interface ens32
+    virtual_router_id 251
+    mcast_src_ip 10.4.7.12
+    priority 90
+    advert_int 1
+    authentication {
+        auth_type PASS
+        auth_pass 11111111
+    }
+    track_script {
+        chk_nginx
+    }
+    virtual_ipaddress {
+        10.4.7.10
+    }
+}
+</code></pre>
+<h6 id="启动代理并检查"><strong>启动代理并检查</strong></h6>
+<pre><code class="language-bash">systemctl start nginx keepalived
+systemctl enable nginx keepalived
+netstat -lntup|grep nginx
+ip addr
+</code></pre>
+<p><img src="D:/assets/3.2.%20%E9%83%A8%E7%BD%B2kube-apiserver%E9%9B%86%E7%BE%A4/20201103125810750.png" alt="在这里插入图片描述"></p>
+<h6 id="注意事项">注意事项</h6>
+<ul>
+<li>keepalived 主从绑定的时候要和自己的网络名称保持一致： <strong>interface ens32</strong></li>
+<li>查看日志排错：<strong>tail -fn 200 /var/log/messages</strong></li>
+<li>生产上vip不能轻易来回飘（故障转移）
+<ul>
+<li>nginx -s stop</li>
+<li>netstat -nltp| grep 7443</li>
+<li>ip addr</li>
+</ul>
+</li>
+</ul>
+<p><img src="D:/assets/3.2.%20%E9%83%A8%E7%BD%B2kube-apiserver%E9%9B%86%E7%BE%A4/20201103144159416.png" alt="在这里插入图片描述"></p>
+<p><img src="D:/assets/3.2.%20%E9%83%A8%E7%BD%B2kube-apiserver%E9%9B%86%E7%BE%A4/20201103144259837.png" alt="在这里插入图片描述"></p>
+<h5 id="模拟漂移">模拟漂移</h5>
+<p><img src="D:/assets/3.2.%20%E9%83%A8%E7%BD%B2kube-apiserver%E9%9B%86%E7%BE%A4/image-20210518092632012.png" alt="image-20210518092632012"></p>
+<ul>
+<li>在10.4.7.11上面（主）停止nginx</li>
+</ul>
+<pre><code class="language-bash">[root@hdss7-11 ~]# netstat -nltp | grep 7443
+tcp        0      0 0.0.0.0:7443            0.0.0.0:*               LISTEN      10757/nginx: master 
+[root@hdss7-11 ~]# nginx -s stop
+[root@hdss7-11 ~]# netstat -nltp | grep 7443
+
+</code></pre>
+<ul>
+<li>在10.4.7.12上面（原来是从的观察, 发生了漂移）</li>
+</ul>
+<pre><code class="language-bash">[root@hdss7-12 ~]# netstat -nltp | grep 7443
+tcp        0      0 0.0.0.0:7443            0.0.0.0:*               LISTEN      10592/nginx: master 
+[root@hdss7-12 ~]# ip addr
+1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host 
+       valid_lft forever preferred_lft forever
+2: ens32: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+    link/ether 00:0c:29:35:04:96 brd ff:ff:ff:ff:ff:ff
+    inet 10.4.7.12/24 brd 10.4.7.255 scope global noprefixroute ens32
+       valid_lft forever preferred_lft forever
+    inet 10.4.7.10/32 scope global ens32
+       valid_lft forever preferred_lft forever
+    inet6 fe80::20c:29ff:fe35:496/64 scope link 
+       valid_lft forever preferred_lft forever
+
+</code></pre>
+<ul>
+<li>在10.4.7.11上面再次重启nginx</li>
+</ul>
+<pre><code class="language-bash">nginx
+#  查看是否又漂移回来，没有，非抢占
+ip addr
+</code></pre>
+<ul>
+<li>由于配置了主非抢占，所以需要手动再次切到10.4.7.11上面</li>
+<li>确定主可用，在从节点重启keepalived服务</li>
+</ul>
+<h2 id="遇到的问题">遇到的问题</h2>
+<blockquote>
+<p>1、</p>
+<p><a href="https://github.com/kelseyhightower/kubernetes-the-hard-way/issues/626">https://github.com/kelseyhightower/kubernetes-the-hard-way/issues/626</a></p>
+<p>2、</p>
+<p><a href="https://github.com/istio/istio/issues/24800">https://github.com/istio/istio/issues/24800</a></p>
+<p>3、</p>
+<p><a href="https://github.com/kubernetes/kubernetes/issues/95334">https://github.com/kubernetes/kubernetes/issues/95334</a></p>
+<p><a href="https://github.com/kubernetes/kubernetes/issues/98720">https://github.com/kubernetes/kubernetes/issues/98720</a></p>
+<p><a href="https://github.com/kubernetes/kubernetes/issues/95893">https://github.com/kubernetes/kubernetes/issues/95893</a></p>
+<p><a href="https://github.com/kubernetes/kubernetes/issues/94155">https://github.com/kubernetes/kubernetes/issues/94155</a></p>
+<p><a href="https://github.com/kubernetes/kubernetes/issues/98778">https://github.com/kubernetes/kubernetes/issues/98778</a></p>
+<pre><code>passthrough.go:48] ccResolverWrapper: sending update to cc: {[{https://10.4.7.12:2379  &lt;nil&gt; 0 &lt;nil&gt;}] &lt;nil&gt; &lt;nil&gt;}
+clientconn.go:948] ClientConn switching balancer to &quot;pick_first&quot;
+balancer_conn_wrappers.go:78] pickfirstBalancer: HandleSubConnStateChange: 0xc00c8eefa0, {CONNECTING &lt;nil&gt;}
+balancer_conn_wrappers.go:78] pickfirstBalancer: HandleSubConnStateChange: 0xc00c8eefa0, {READY &lt;nil&gt;}
+controlbuf.go:508] transport: loopyWriter.run returning. connection error: desc = &quot;transport is closing&quot;
+client.go:360] parsed scheme: &quot;passthrough&quot;
+并且无法通过kubectl get --raw='/readyz?verbose'寻找etcd的条目，提示
+The connection to the server localhost:8080 was refused - did you specify the right host or port?
+
+</code></pre>
+<p>当然也可能是噪音日志</p>
+<p>4、</p>
+<p>[root@hdss7-22 ~]# curl -k &ndash;cert /etc/kubernetes/server/ssl/client.pem &ndash;key /etc/kubernetes/server/ssl/client-key.pem https://10.4.7.22:2379
+404 page not found
+[root@hdss7-22 ~]# ll /etc/kubernetes/server/ssl/
+total 24
+-rw&mdash;&mdash;-. 1 root root 1679 May 13 22:05 apiserver-key.pem
+-rw-r&ndash;r&ndash;. 1 root root 1671 May 13 22:05 apiserver.pem
+-rw&mdash;&mdash;-. 1 root root 1679 May 13 22:04 ca-key.pem
+-rw-r&ndash;r&ndash;. 1 root root 1407 May 13 22:03 ca.pem
+-rw&mdash;&mdash;-. 1 root root 1679 May 13 22:05 client-key.pem
+-rw-r&ndash;r&ndash;. 1 root root 1436 May 13 22:05 client.pem</p>
+</blockquote>
+<blockquote>
+<p>推荐阅读：</p>
+<p>令牌卷投射（新版本默认开启）：https://blog.csdn.net/weixin_30471581/article/details/112297099</p>
+<p>apiserver是k8s的中枢组件，每次api访问请求都需要认证，例如可以通过证书方式，使用curl测试下访问apiserver的版本资源</p>
+<p>curl -k &ndash;cert/etc/kubernetes/ssl/apiserver-kubelet-client.crt &ndash;key /etc/kubernetes/ssl/apiserver-kubelet-client.keyhttps://10.30.0.127:6443/api/</p>
+</blockquote>
+        </div>
+        
+        <div class="my-4">
+    
+    <a href="/tags/kub-apiserver/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#kub-apiserver</a>
+    
+    <a href="/tags/kubernetes/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#Kubernetes</a>
+    
+    <a href="/tags/posts/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#posts</a>
+    
+</div>
+        
+        
+        
+        
+        
+        <div class="py-2">
+    
+    <div class="flex flex-col md:flex-row items-center my-8">
+        <a href="/authors/songjinfeng/" class="w-24 h-24 md:mr-4">
+            
+            
+            <img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/images/2021.04.22-14:35:19-D-assets-images-sjf.png" class="w-full bg-primary-bg rounded-full" alt="Avatar">
+            
+        </a>
+        <div class="w-full md:w-auto mt-4 md:mt-0">
+            <a href="/authors/songjinfeng/" class="block font-bold text-lg pb-1 mb-2 border-b">宋锦丰</a>
+            <span class="block pb-2">一名运维技术爱好者，专注于 Kubernetes 、 Linux 等技术干货分享。</span>
+            
+            
+            
+            
+            
+            <a href="mailto:GW.songjinfengzc@h3c.com" class="mr-1">
+                <i class="fas fa-envelope"></i>
+            </a>
+            
+            
+            
+            
+            
+            <a href="https://github.com/SJFCS/SJFCS.GITHUB.IO" class="mr-1">
+                <i class="fab fa-github"></i>
+            </a>
+            
+            
+            
+            
+            
+            <a href="/index.xml" class="mr-1">
+                <i class="fas fa-rss"></i>
+            </a>
+            
+        </div>
+    </div>
+    
+</div>
+        
+        
+        
+<div class="flex flex-col md:flex-row md:justify-between -mx-2 mt-4 px-2 pt-4 border-t">
+    <div>
+        
+        <span class="block font-bold">上一页</span>
+        <a href="/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/3.0.0-%E9%83%A8%E7%BD%B2etcd%E9%9B%86%E7%BE%A4/" class="block">4.1. 部署etcd集群</a>
+        
+    </div>
+    <div class="md:text-right mt-4 md:mt-0">
+        
+        <span class="block font-bold">下一页</span>
+        <a href="/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_docker/docker%E7%AC%94%E8%AE%B0/" class="block"></a>
+        
+    </div>
+</div>
+
+        
+    </div>
+    
+    <div class="col-span-2">
+        
+        
+<div class="bg-secondary-bg rounded p-6">
+    <h3 class="text-lg font-semibold mb-4">系列文章</h3>
+    <div class="content">
+        
+        
+        <a href="/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/4.-%E9%83%A8%E7%BD%B2etcd%E9%9B%86%E7%BE%A4/">4.1. 部署ETCD集群</a>
+        <br />
+        
+        <a href="/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/3.0.0-%E9%83%A8%E7%BD%B2etcd%E9%9B%86%E7%BE%A4/">4.1. 部署etcd集群</a>
+        <br />
+        
+        <a href="/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/5.1.-kube-apiserver%E9%9B%86%E7%BE%A4/">4.2. 部署kube-apiserver集群</a>
+        <br />
+        
+        
+    </div>
+</div>
+        
+        
+        <div class="sticky top-16 z-10 hidden lg:block px-6 py-4  bg-primary-bg ">
+    <span class="text-lg font-semibold">本页内容</span>
+</div>
+<div class="sticky-toc hidden lg:block px-6 pb-6 ">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#421-kub-apiserver-简介">4.2.1. kub-apiserver 简介</a></li>
+    <li><a href="#422-实验环境">4.2.2. 实验环境</a>
+      <ul>
+        <li><a href="#节点规划">节点规划</a></li>
+        <li><a href="#目录规划">目录规划</a></li>
+        <li><a href="#部署流程">部署流程</a></li>
+      </ul>
+    </li>
+    <li><a href="#423-为apiserver签发证书">4.2.3. 为apiserver签发证书</a>
+      <ul>
+        <li><a href="#4231-签发client证书">4.2.3.1. 签发client证书</a></li>
+        <li><a href="#4232-签发server证书">4.2.3.2. 签发server证书</a></li>
+        <li><a href="#4233-分发证书至各节点">4.2.3.3. 分发证书至各节点</a></li>
+      </ul>
+    </li>
+    <li><a href="#423-下载软件解压做软连接">4.2.3. 下载软件，解压，做软连接</a></li>
+    <li><a href="#424-创建kube-apiserver配置文件">4.2.4. 创建kube-apiserver配置文件</a></li>
+    <li><a href="#425-创建systemd服务">4.2.5. 创建systemd服务</a></li>
+    <li><a href="#supervisor服务不建议">supervisor服务（不建议）</a></li>
+    <li><a href="#43-部署四层反向代理-6443">4.3. <strong>部署四层反向代理 6443</strong></a>
+      <ul>
+        <li></li>
+      </ul>
+    </li>
+    <li><a href="#遇到的问题">遇到的问题</a></li>
+  </ul>
+</nav>
+</div>
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        enableStickyToc();
+    });
+</script>
+        
+    </div>
+    
+
+    
+    
+    <div
+        class="col-span-2  lg:col-span-6 bg-secondary-bg rounded p-6">
+        <h2 class="text-lg font-semibold mb-4">相关</h2>
+        <div class="content">
+            
+            <a href="/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/4.-%E9%83%A8%E7%BD%B2etcd%E9%9B%86%E7%BE%A4/">4.1. 部署ETCD集群</a>
+            <br />
+            
+            <a href="/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/3.0.0-%E9%83%A8%E7%BD%B2etcd%E9%9B%86%E7%BE%A4/">4.1. 部署etcd集群</a>
+            <br />
+            
+        </div>
+    </div>
+    
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', ()=>{
+        hljs.initHighlightingOnLoad();
+    })
+</script>
+
+      </div>
+    </div>
+    
+  </main>
+  <footer class="pl-scrollbar">
+    <div class="w-full max-w-screen-xl mx-auto"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 2021 <a href="https://www.songjinfeng.com/">SonJinfeng</a> 
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+  </footer>
+</body>
+
+</html>

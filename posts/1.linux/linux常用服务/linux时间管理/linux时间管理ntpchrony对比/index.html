@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang='zh' ><meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+
+
+<title>Linux时间管理(4)：chrony ntp 对比 | Songjinfeng&#39;s BLOG</title>
+<link rel="stylesheet" href="/css/eureka.min.css">
+<script defer src="/js/eureka.min.js"></script>
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Noto+Serif+SC:wght@400;600;700&display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/styles/solarized-light.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/highlight.min.js"
+   crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/dart.min.js"
+     crossorigin></script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/js/all.min.js"
+   integrity="sha256-uNYoXefWRqv&#43;PsIF/OflNmwtKM4lStn9yrz2gVl6ymo="  crossorigin></script>
+
+
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css"
+   integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3&#43;Aro6EYUG4&#43;cU&#43;KJWu/X"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js" 
+  integrity="sha384-g7c&#43;Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI&#43;sEnkvrMWph2EDg4"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js"
+   integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC&#43;Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.9.2/dist/mermaid.min.js" 
+  integrity="sha256-Zmpaaj&#43;GXFsPF5WdPArSrnW3b30dovldeKsW00xBVwE="  crossorigin></script>
+
+
+<link rel="icon" type="image/png" sizes="32x32" href="/images/icon_hucfa16751ac9c82c06b84c3502c0db793_16378_32x32_fill_box_center_2.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hucfa16751ac9c82c06b84c3502c0db793_16378_180x180_fill_box_center_2.png">
+
+<meta name="description"
+  content="Eureka is a elegant and powerful theme for Hugo.">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"技术专栏",
+      "item":"/posts/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"Linux",
+      "item":"/posts/1.linux/"},{
+      "@type": "ListItem",
+      "position": 3 ,
+      "name":"Linux时间管理(4)：chrony ntp 对比",
+      "item":"/posts/1.linux/linux%E5%B8%B8%E7%94%A8%E6%9C%8D%E5%8A%A1/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86ntpchrony%E5%AF%B9%E6%AF%94/"}]
+}
+</script>
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/posts/1.linux/linux%E5%B8%B8%E7%94%A8%E6%9C%8D%E5%8A%A1/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86ntpchrony%E5%AF%B9%E6%AF%94/"
+    },
+    "headline": "Linux时间管理(4)：chrony ntp 对比 | Songjinfeng\u0027s BLOG","datePublished": "2021-04-12T00:00:00+00:00",
+    "dateModified": "2021-04-12T00:00:00+00:00",
+    "wordCount":  37 ,
+    "author": {
+        "@type": "Person",
+        "name": "songjinfeng"
+    },
+    "publisher": {
+        "@type": "Person",
+        "name": "JF. Song",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "/images/icon.png"
+        }
+        },
+    "description": "Eureka is a elegant and powerful theme for Hugo."
+}
+</script><meta property="og:title" content="Linux时间管理(4)：chrony ntp 对比 | Songjinfeng&#39;s BLOG" />
+<meta property="og:type" content="article" />
+
+
+<meta property="og:image" content="/images/icon.png">
+
+
+<meta property="og:url" content="/posts/1.linux/linux%E5%B8%B8%E7%94%A8%E6%9C%8D%E5%8A%A1/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86ntpchrony%E5%AF%B9%E6%AF%94/" />
+
+
+
+
+<meta property="og:description" content="" />
+
+
+
+
+<meta property="og:locale" content="zh" />
+
+
+
+
+<meta property="og:site_name" content="Songjinfeng&#39;s BLOG" />
+
+
+
+
+
+
+<meta property="article:published_time" content="2021-04-12T00:00:00&#43;00:00" />
+
+
+<meta property="article:modified_time" content="2021-04-12T00:00:00&#43;00:00" />
+
+
+
+<meta property="article:section" content="posts" />
+
+
+
+
+
+
+
+
+<meta property="og:see_also" content="/posts/1.linux/linux%E5%B8%B8%E7%94%A8%E6%9C%8D%E5%8A%A1/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5&#43;%E5%B7%A5%E5%85%B7/" />
+
+
+
+<meta property="og:see_also" content="/posts/1.linux/linux%E5%B8%B8%E7%94%A8%E6%9C%8D%E5%8A%A1/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86chrony/" />
+
+
+
+<meta property="og:see_also" content="/posts/1.linux/linux%E5%B8%B8%E7%94%A8%E6%9C%8D%E5%8A%A1/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86ntpdntpdate/" />
+
+
+
+
+
+
+
+<body class="flex flex-col min-h-screen">
+  <header class="fixed flex items-center w-full min-h-16 pl-scrollbar z-50 bg-secondary-bg shadow-sm">
+    <div class="w-full max-w-screen-xl mx-auto"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="mr-6 text-primary-text text-xl font-bold">Songjinfeng&#39;s BLOG</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:flex-grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:flex-grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  mr-4">技术专栏</a>
+            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">文档笔记</a>
+            <a href="/series/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">主题系列</a>
+            <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">标签</a>
+            <a href="/authors/songjinfeng/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">关于</a>
+            <a href="/index.xml" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">RSS</a>
+            <a href="/webstack" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">友链&amp;导航</a>
+        </div>
+
+        <div class="flex">
+            <div class="relative pt-4 md:pt-0">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col left-0 md:left-auto right-auto md:right-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">浅色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">深色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">自动</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            switchMode('Auto')
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+  </header>
+  <main class="flex-grow pt-16">
+    <div class="pl-scrollbar">
+      <div class="w-full max-w-screen-xl lg:px-4 xl:px-8 mx-auto">
+
+
+<div class="grid grid-cols-2 lg:grid-cols-8 gap-4 lg:pt-12">
+    <div
+        class="col-span-2  lg:col-span-6 bg-secondary-bg rounded px-6 py-8">
+        <h1 class="font-bold text-3xl text-primary-text">Linux时间管理(4)：chrony ntp 对比</h1>
+        <div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>2021-04-12</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>1分钟阅读时长</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="/categories/linux%E5%B8%B8%E7%94%A8%E6%9C%8D%E5%8A%A1/" class="hover:text-eureka">Linux常用服务</a>
+        
+    </div>
+    
+
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-th-list mr-1"></i>
+        
+        <a href="/series/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86/" class="hover:text-eureka">Linux时间管理</a>
+        
+    </div>
+    
+</div>
+        
+        
+        
+
+        <div class="content">
+            <p><a href="https://blog.gnuers.org/?p=1483">https://blog.gnuers.org/?p=1483</a></p>
+<h1 id="chrony和ntpd精度对比测试">chrony和ntpd精度对比测试</h1>
+<p>从chrony的官方网站上可以看到与ntpd各维度详细对比：https://chrony.tuxfamily.org/comparison.html
+<a href="https://blog.gnuers.org/?attachment_id=1484"><img src="D:%5Cassets%5CNTP%E3%80%81Chrony%E5%AF%B9%E6%AF%94%5C%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7-2018-08-14-23.22.52.png" alt="img"></a>
+从其测试结果上看似乎是各维度性能都可以吊打ntpd。因此chrony对自身的整体评价还是比较高的
+<a href="https://blog.gnuers.org/?attachment_id=1487"><img src="D:%5Cassets%5CNTP%E3%80%81Chrony%E5%AF%B9%E6%AF%94%5C%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7-2018-08-14-23.25.40.png" alt="img"></a></p>
+<p>在测试之前，从理论上说chrony的主要优点在于：</p>
+<ol>
+<li>
+<p>支持Hardware timestamping，时间戳会更加准确，因为从网卡到内核之间的延迟可能有几十us。</p>
+</li>
+<li>
+<p>支持xleave，可以提升对网络延迟的测量精度。
+为了评估内部是否需要使用chrony来替换ntpd，我自己也做了一些测试。主要是从集群的延迟稳定性和时钟偏差2个维度来衡量。
+测试集群选择三个城市的多个机房内服务器做测试。</p>
+</li>
+<li>
+<p>chrony的延迟稳定性
+<a href="https://blog.gnuers.org/?attachment_id=1490"><img src="D:%5Cassets%5CNTP%E3%80%81Chrony%E5%AF%B9%E6%AF%94%5Cchrony-delay.png" alt="img"></a>
+2. ntpd延迟稳定性
+<a href="https://blog.gnuers.org/?attachment_id=1489"><img src="D:%5Cassets%5CNTP%E3%80%81Chrony%E5%AF%B9%E6%AF%94%5Cntpd-delay.png" alt="img"></a></p>
+</li>
+<li>
+<p>chrony时钟稳定性
+<a href="https://blog.gnuers.org/?attachment_id=1492"><img src="D:%5Cassets%5CNTP%E3%80%81Chrony%E5%AF%B9%E6%AF%94%5CChrony%E5%90%8C%E6%AD%A5offset.png" alt="img"></a></p>
+</li>
+<li>
+<p>ntpd的时钟稳定性
+<a href="https://blog.gnuers.org/?attachment_id=1491"><img src="D:%5Cassets%5CNTP%E3%80%81Chrony%E5%AF%B9%E6%AF%94%5CNTPD%E5%90%8C%E6%AD%A5offset.png" alt="img"></a></p>
+</li>
+</ol>
+<p>从上面的4个图可以看到，实际上NTPD的同步稳定性相对比较好一些。NTP协议本身精度的瓶颈是在于网络延迟稳定性，NTPD在这一块有大量的算法保证：
+\1. Clock Filter Algorithm （huff-n’-puff filter）
+\2. Clock Select Algorithm
+\3. Clock Cluster Algorithm：
+\4. Clock Discipline Algorithm：
+整体的流程如下
+<a href="https://blog.gnuers.org/?attachment_id=1493"><img src="D:%5Cassets%5CNTP%E3%80%81Chrony%E5%AF%B9%E6%AF%94%5C%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7-2018-08-14-23.46.26.png" alt="img"></a></p>
+<p>正因为NTP的设计者一开始就考虑的非常全面，使得目前NTP的授时精度早已经达到理论瓶颈。广域网的授时精度要想稳定性&amp;精度超越ntpd，几乎不太可能（PTP只能用户局域网），因此短期内我还是会继续选择NTPD作为时钟同步软件。
+对于NTP这种古老的协议，目前还有人愿意投入精力去改进实际是非常难能可贵的，真心希望chrony能早日从稳定性&amp;精度两个方面超越ntpd。</p>
+        </div>
+        
+        
+        
+        
+        
+        <div class="py-2">
+    
+    <div class="flex flex-col md:flex-row items-center my-8">
+        <a href="/authors/songjinfeng/" class="w-24 h-24 md:mr-4">
+            
+            
+            <img src="https://image-fusice.oss-cn-hangzhou.aliyuncs.com/image/images/2021.04.22-14:35:19-D-assets-images-sjf.png" class="w-full bg-primary-bg rounded-full" alt="Avatar">
+            
+        </a>
+        <div class="w-full md:w-auto mt-4 md:mt-0">
+            <a href="/authors/songjinfeng/" class="block font-bold text-lg pb-1 mb-2 border-b">宋锦丰</a>
+            <span class="block pb-2">一名运维技术爱好者，专注于 Kubernetes 、 Linux 等技术干货分享。</span>
+            
+            
+            
+            
+            
+            <a href="mailto:GW.songjinfengzc@h3c.com" class="mr-1">
+                <i class="fas fa-envelope"></i>
+            </a>
+            
+            
+            
+            
+            
+            <a href="https://github.com/SJFCS/SJFCS.GITHUB.IO" class="mr-1">
+                <i class="fab fa-github"></i>
+            </a>
+            
+            
+            
+            
+            
+            <a href="/index.xml" class="mr-1">
+                <i class="fas fa-rss"></i>
+            </a>
+            
+        </div>
+    </div>
+    
+</div>
+        
+        
+        
+<div class="flex flex-col md:flex-row md:justify-between -mx-2 mt-4 px-2 pt-4 border-t">
+    <div>
+        
+        <span class="block font-bold">上一页</span>
+        <a href="/posts/1.linux/linux%E5%B8%B8%E7%94%A8%E6%9C%8D%E5%8A%A1/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86ntpdntpdate/" class="block">Linux时间管理(3)：ntpd ntpdate使用</a>
+        
+    </div>
+    <div class="md:text-right mt-4 md:mt-0">
+        
+        <span class="block font-bold">下一页</span>
+        <a href="/posts/1.linux/linux%E5%B8%B8%E7%94%A8%E6%9C%8D%E5%8A%A1/%E5%AF%86%E7%A0%81%E5%AD%A6/%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8Ddigital-signature%E5%92%8C%E6%95%B0%E5%AD%97%E8%AF%81%E4%B9%A6digital-certificate/" class="block">数字签名（digital signature）和数字证书（digital certificate）</a>
+        
+    </div>
+</div>
+
+        
+    </div>
+    
+    <div class="col-span-2">
+        
+        
+<div class="bg-secondary-bg rounded p-6">
+    <h3 class="text-lg font-semibold mb-4">系列文章</h3>
+    <div class="content">
+        
+        
+        <a href="/posts/1.linux/linux%E5%B8%B8%E7%94%A8%E6%9C%8D%E5%8A%A1/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5&#43;%E5%B7%A5%E5%85%B7/">Linux时间管理(1)：基本概念&#43;常用工具</a>
+        <br />
+        
+        <a href="/posts/1.linux/linux%E5%B8%B8%E7%94%A8%E6%9C%8D%E5%8A%A1/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86chrony/">Linux时间管理(2)：Chrony</a>
+        <br />
+        
+        <a href="/posts/1.linux/linux%E5%B8%B8%E7%94%A8%E6%9C%8D%E5%8A%A1/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86ntpdntpdate/">Linux时间管理(3)：ntpd ntpdate使用</a>
+        <br />
+        
+        <a href="/posts/1.linux/linux%E5%B8%B8%E7%94%A8%E6%9C%8D%E5%8A%A1/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86ntpchrony%E5%AF%B9%E6%AF%94/">Linux时间管理(4)：chrony ntp 对比</a>
+        <br />
+        
+        
+    </div>
+</div>
+        
+        
+    </div>
+    
+
+    
+    
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', ()=>{
+        hljs.initHighlightingOnLoad();
+    })
+</script>
+
+      </div>
+    </div>
+    
+  </main>
+  <footer class="pl-scrollbar">
+    <div class="w-full max-w-screen-xl mx-auto"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 2021 <a href="https://www.songjinfeng.com/">SonJinfeng</a> 
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+  </footer>
+</body>
+
+</html>

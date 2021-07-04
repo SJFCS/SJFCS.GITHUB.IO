@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>宋锦丰 on Songjinfeng&#39;s BLOG</title>
+    <link>/authors/songjinfeng/</link>
+    <description>Recent content in 宋锦丰 on Songjinfeng&#39;s BLOG</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language>
+    <copyright>&amp;copy; 2021 &lt;a href=&#34;https://www.songjinfeng.com/&#34;&gt;SonJinfeng&lt;/a&gt; 
+</copyright>
+    <lastBuildDate>Sat, 15 May 2021 00:00:00 +0000</lastBuildDate><atom:link href="/authors/songjinfeng/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>4.1. 部署ETCD集群</title>
+      <link>/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/4.-%E9%83%A8%E7%BD%B2etcd%E9%9B%86%E7%BE%A4/</link>
+      <pubDate>Sat, 15 May 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/4.-%E9%83%A8%E7%BD%B2etcd%E9%9B%86%E7%BE%A4/</guid>
+      <description>&lt;p&gt;本文将引导您使用二进制文件部署ETCD集群，从 证书创建 到 服务管理 以及涉及一小部分调优参数.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>4.1. 部署etcd集群</title>
+      <link>/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/3.0.0-%E9%83%A8%E7%BD%B2etcd%E9%9B%86%E7%BE%A4/</link>
+      <pubDate>Sat, 15 May 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/3.0.0-%E9%83%A8%E7%BD%B2etcd%E9%9B%86%E7%BE%A4/</guid>
+      <description>&lt;p&gt;本文将引导您使用二进制文件部署ETCD集群，从 证书创建 到 服务管理 以及涉及一小部分调优参数.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>4.2. 部署kube-apiserver集群</title>
+      <link>/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/5.1.-kube-apiserver%E9%9B%86%E7%BE%A4/</link>
+      <pubDate>Fri, 14 May 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/2.%E5%AE%B9%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96/%E4%BA%91%E8%AE%A1%E7%AE%97_kubernetes/k8s%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/5.1.-kube-apiserver%E9%9B%86%E7%BE%A4/</guid>
+      <description>&lt;p&gt;本文将引导您使用二进制文件部署kub-apiserver，从 证书创建 到 服务管理.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Iptables详解(1)概念</title>
+      <link>/docs/iptables/iptables%E8%AF%A6%E8%A7%A31%E6%A6%82%E5%BF%B5/</link>
+      <pubDate>Wed, 21 Apr 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/docs/iptables/iptables%E8%AF%A6%E8%A7%A31%E6%A6%82%E5%BF%B5/</guid>
+      <description>&lt;p&gt;iptables/netfilter的关系，五链四表的关系，数据转发流程。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Iptables详解(2)管理</title>
+      <link>/docs/iptables/iptables%E8%AF%A6%E8%A7%A32%E5%9F%BA%E7%A1%80%E7%AE%A1%E7%90%86%E5%91%BD%E4%BB%A4/</link>
+      <pubDate>Wed, 21 Apr 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/docs/iptables/iptables%E8%AF%A6%E8%A7%A32%E5%9F%BA%E7%A1%80%E7%AE%A1%E7%90%86%E5%91%BD%E4%BB%A4/</guid>
+      <description>&lt;p&gt;iptables 增删改查 常用语句&lt;/p&gt;
+&lt;p&gt;iptables -t 表名 -[ A | I | D] 链名 (规则编号) 匹配规则 -j 动作&lt;/p&gt;
+&lt;p&gt;iptables [-t 表名] 选项 [链名] [匹配条件] [-j 控制类型]&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Iptables详解(3)2扩展匹配条件模块</title>
+      <link>/docs/iptables/iptables%E8%AF%A6%E8%A7%A332%E6%89%A9%E5%B1%95%E5%8C%B9%E9%85%8D%E6%9D%A1%E4%BB%B6%E6%A8%A1%E5%9D%97/</link>
+      <pubDate>Wed, 21 Apr 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/docs/iptables/iptables%E8%AF%A6%E8%A7%A332%E6%89%A9%E5%B1%95%E5%8C%B9%E9%85%8D%E6%9D%A1%E4%BB%B6%E6%A8%A1%E5%9D%97/</guid>
+      <description>&lt;p&gt;1&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;基本匹配&lt;/li&gt;
+&lt;li&gt;拓展匹配模块&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;s d p i o&lt;/p&gt;
+&lt;p&gt;tcp udp icmp&lt;/p&gt;
+&lt;p&gt;iprange  multiport mac&lt;/p&gt;
+&lt;p&gt;string time connlimit limit&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Iptables详解(3)3安全模块</title>
+      <link>/docs/iptables/iptables%E8%AF%A6%E8%A7%A333%E5%AE%89%E5%85%A8%E6%A8%A1%E5%9D%97/</link>
+      <pubDate>Wed, 21 Apr 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/docs/iptables/iptables%E8%AF%A6%E8%A7%A333%E5%AE%89%E5%85%A8%E6%A8%A1%E5%9D%97/</guid>
+      <description>&lt;p&gt;未完待续。。。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Iptables详解(4)处理动作</title>
+      <link>/docs/iptables/iptables%E8%AF%A6%E8%A7%A34%E5%A4%84%E7%90%86%E5%8A%A8%E4%BD%9C/</link>
+      <pubDate>Wed, 21 Apr 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/docs/iptables/iptables%E8%AF%A6%E8%A7%A34%E5%A4%84%E7%90%86%E5%8A%A8%E4%BD%9C/</guid>
+      <description>参考链接：http://www.faqs.org/docs/iptables/targets.html
+常用的处理动作： (-j 指定对满足条件包的处理，常用动作有ACCEPT接受报、DROP丢弃报、REJECT丢弃报并通知对方、REDIRECT重定向包等)
+-j 参数用来指定要进行的处理动作，常用的处理动作包括：ACCEPT、REJECT、DROP、REDIRECT、MASQUERADE、LOG、DNAT、SNAT、MIRROR、QUEUE、RETURN、MARK，分别说明如下：
+ACCEPT 将封包放行，进行完此处理动作后，将不再比对其它规则，直接跳往下一个规则链（natostrouting）。
+REJECT 拦阻该封包，并传送封包通知对方，可以传送的封包有几个选择：ICMP port-unreachable、ICMP echo-reply 或是 tcp-reset（这个封包会要求对方关闭联机），进行完此处理动作后，将不再比对其它规则，直接中断过滤程序。
+例如：iptables -A FORWARD -p TCP &amp;ndash;dport 22 -j REJECT &amp;ndash;reject-with tcp-reset
+DROP 丢弃封包不予处理，进行完此处理动作后，将不再比对其它规则，直接中断过滤程序。
+REDIRECT 将封包重新导向到另一个端口（PNAT），进行完此处理动作后，将会继续比对其它规则。
+​ 这个功能可以用来实作通透式porxy 或用来保护 web 服务器。
+​ 例如：iptables -t nat -A PREROUTING -p tcp &amp;ndash;dport 80 -j REDIRECT &amp;ndash;to-ports 8080
+MASQUERADE 改写封包来源 IP 为防火墙 NIC IP，可以指定 port 对应的范围，进行完此处理动作后，直接跳往下一个规则（mangleostrouting）。这个功能与 SNAT 略有不同，当进行 IP 伪装时，不需指定要伪装成哪个 IP，IP 会从网卡直接读，当使用拨接连线时，IP 通常是由 ISP 公司的 DHCP 服务器指派的，这个时候 MASQUERADE 特别有用。
+ 例如：iptables -t nat -A POSTROUTING -p TCP -j MASQUERADE --to-ports 1024-31000  LOG 使用LOG动作，可以将符合条件的报文的相关信息记录到日志中，但当前报文具体是被”接受”，还是被”拒绝”，都由后面的规则控制，换句话说，LOG动作只负责记录匹配到的报文的相关信息，不负责对报文的其他处理，如果想要对报文进行进一步的处理，可以在之后设置具体规则，进行进一步的处理。</description>
+    </item>
+    
+    <item>
+      <title>Linux时间管理(1)：基本概念&#43;常用工具</title>
+      <link>/posts/1.linux/linux%E5%B8%B8%E7%94%A8%E6%9C%8D%E5%8A%A1/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5&#43;%E5%B7%A5%E5%85%B7/</link>
+      <pubDate>Thu, 15 Apr 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/1.linux/linux%E5%B8%B8%E7%94%A8%E6%9C%8D%E5%8A%A1/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5&#43;%E5%B7%A5%E5%85%B7/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Linux时间管理(2)：Chrony</title>
+      <link>/posts/1.linux/linux%E5%B8%B8%E7%94%A8%E6%9C%8D%E5%8A%A1/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86chrony/</link>
+      <pubDate>Wed, 14 Apr 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/1.linux/linux%E5%B8%B8%E7%94%A8%E6%9C%8D%E5%8A%A1/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86chrony/</guid>
+      <description>&lt;p&gt;再见 NTP，是时候拥抱下一代时间同步服务 Chrony 了&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Linux时间管理(3)：ntpd ntpdate使用</title>
+      <link>/posts/1.linux/linux%E5%B8%B8%E7%94%A8%E6%9C%8D%E5%8A%A1/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86ntpdntpdate/</link>
+      <pubDate>Tue, 13 Apr 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/1.linux/linux%E5%B8%B8%E7%94%A8%E6%9C%8D%E5%8A%A1/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86ntpdntpdate/</guid>
+      <description>&lt;p&gt;为了避免主机时间因为长期运作下所导致的时间偏差，进行时间同步 (synchronize) 的工作是非常必要的。Linux 系统下，一般使用 ntp 服务器来同步不同机器的时间。一台机器，可以同时是 ntp 服务器和 ntp 客户机。在网络中，推荐使用像 DNS 服务器一样分层的时间服务器来同步时间。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Linux时间管理(4)：chrony ntp 对比</title>
+      <link>/posts/1.linux/linux%E5%B8%B8%E7%94%A8%E6%9C%8D%E5%8A%A1/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86ntpchrony%E5%AF%B9%E6%AF%94/</link>
+      <pubDate>Mon, 12 Apr 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/1.linux/linux%E5%B8%B8%E7%94%A8%E6%9C%8D%E5%8A%A1/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86/linux%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86ntpchrony%E5%AF%B9%E6%AF%94/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>数字签名（digital signature）和数字证书（digital certificate）</title>
+      <link>/posts/1.linux/linux%E5%B8%B8%E7%94%A8%E6%9C%8D%E5%8A%A1/%E5%AF%86%E7%A0%81%E5%AD%A6/%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8Ddigital-signature%E5%92%8C%E6%95%B0%E5%AD%97%E8%AF%81%E4%B9%A6digital-certificate/</link>
+      <pubDate>Sat, 06 Feb 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/1.linux/linux%E5%B8%B8%E7%94%A8%E6%9C%8D%E5%8A%A1/%E5%AF%86%E7%A0%81%E5%AD%A6/%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8Ddigital-signature%E5%92%8C%E6%95%B0%E5%AD%97%E8%AF%81%E4%B9%A6digital-certificate/</guid>
+      <description>&lt;p&gt;本文介绍密码学相关知识，包括证书机构（CA）、证书、数字签名、私钥、公钥、对称加密、非对称加密。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>load average</title>
+      <link>/posts/1.linux/linux%E6%80%A7%E8%83%BD%E7%9B%91%E6%8E%A7%E4%BC%98%E5%8C%96/%E7%B3%BB%E7%BB%9F%E5%B9%B3%E5%9D%87%E8%B4%9F%E8%BD%BD/</link>
+      <pubDate>Fri, 16 Oct 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/1.linux/linux%E6%80%A7%E8%83%BD%E7%9B%91%E6%8E%A7%E4%BC%98%E5%8C%96/%E7%B3%BB%E7%BB%9F%E5%B9%B3%E5%9D%87%E8%B4%9F%E8%BD%BD/</guid>
+      <description>&lt;h2 id=&#34;查看load-average&#34;&gt;查看load average&lt;/h2&gt;</description>
+    </item>
+    
+    <item>
+      <title>logrotate日志切割</title>
+      <link>/posts/1.linux/linux%E5%B8%B8%E7%94%A8%E6%9C%8D%E5%8A%A1/linux%E6%97%A5%E5%BF%97%E7%AE%A1%E7%90%86%E6%96%87%E4%BB%B6%E5%90%8C%E6%AD%A5/logrotate/</link>
+      <pubDate>Fri, 16 Oct 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/1.linux/linux%E5%B8%B8%E7%94%A8%E6%9C%8D%E5%8A%A1/linux%E6%97%A5%E5%BF%97%E7%AE%A1%E7%90%86%E6%96%87%E4%BB%B6%E5%90%8C%E6%AD%A5/logrotate/</guid>
+      <description>&lt;h2 id=&#34;1关于日志切割&#34;&gt;1、关于日志切割&lt;/h2&gt;
+&lt;p&gt;　　日志文件包含了关于系统中发生的事件的有用信息，在排障过程中或者系统性能分析时经常被用到。对于忙碌的服务器，日志文件大小会增长极快，服务器会很快消耗磁盘空间，这成了个问题。除此之外，处理一个单个的庞大日志文件也常常是件十分棘手的事。
+　　logrotate是个十分有用的工具，它可以自动对日志进行截断（或轮循）、压缩以及删除旧的日志文件。例如，你可以设置logrotate，让/var/log/foo日志文件每30天轮循，并删除超过6个月的日志。配置完后，logrotate的运作完全自动化，不必进行任何进一步的人为干预。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>网络基础协议</title>
+      <link></link>
+      <pubDate>Fri, 16 Oct 2020 00:00:00 +0000</pubDate>
+      
+      <guid></guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>ssh原理应用</title>
+      <link>/posts/1.linux/linux%E5%B8%B8%E7%94%A8%E6%9C%8D%E5%8A%A1/ssh/ssh%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/1.linux/linux%E5%B8%B8%E7%94%A8%E6%9C%8D%E5%8A%A1/ssh/ssh%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/</guid>
+      <description>&lt;p&gt;本文对SSH连接验证机制进行了非常详细的分析，还详细介绍了&amp;quot;Shell基本功能&amp;quot;和了解&amp;quot;公钥加密&amp;quot;的概念。，相信能让各位对ssh有个全方位较透彻的了解，而不是仅仅只会用它来连接远程主机。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>
